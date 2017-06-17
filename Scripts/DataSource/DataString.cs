@@ -1,0 +1,23 @@
+﻿/*
+{"Items":
+[
+{"agentName":"",
+	"monsterId":,
+			"monsterSkill_1":,
+			"monsterSkill_2":,
+			"monsterSkill_3":,
+			"items":,
+			"originalMaxHealth":,
+			"originalMaxStrength":,
+			"originalAttack":,
+			"originalPower":,
+			"originalMagic",
+			"originalCrit",
+			"originalAmour":,
+			"originalMagicResist":,
+			"originalAgility":
+
+}
+]
+}
+*/
