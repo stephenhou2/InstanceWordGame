@@ -18,6 +18,7 @@ public class ThunderChain : BaseSkillEffect {
 				Debug.Log ("enemy dodge your attack");
 				//目标触发闪避成功效果
 				enemy.OnTrigger (enemies,self,friends,TriggerType.Dodge, 0);
+				enemy.PlayHurtHUD ("<color=gray>miss</color>");
 				return;
 			}
 
@@ -45,6 +46,13 @@ public class ThunderChain : BaseSkillEffect {
 			self.OnTrigger (friends,targetEnemy,enemies,TriggerType.MagicalHit, 0);
 			//目标触发被击中效果
 			enemy.OnTrigger (enemies,self,friends,TriggerType.BeMagicalHit, DamageOffset);
+
+			if (self.critScaler == 2.0f) {
+				enemy.PlayHurtHUD ("<color=red>暴击 -" + actualDamage + "</color>");
+			} else {
+				enemy.PlayHurtHUD ("<color=red>    -" + actualDamage + "</color>");
+			}
+
 
 			enemy.health -= actualDamage;
 

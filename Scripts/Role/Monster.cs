@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Monster : BattleAgent {
+public class Monster : BattleAgent,IPointerClickHandler {
 
 	public int monsterId;
 
@@ -53,6 +54,11 @@ public class Monster : BattleAgent {
 			}
 		}
 
+	}
+
+	public void OnPointerClick(PointerEventData data){
+		GameObject battleManager = GameObject.Find ("BattleManager");
+		battleManager.GetComponent<BattleManager> ().PlayerSelectMonster (monsterId);
 	}
 
 }

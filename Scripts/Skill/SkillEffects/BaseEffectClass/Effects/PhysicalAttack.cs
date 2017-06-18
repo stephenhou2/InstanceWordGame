@@ -19,6 +19,7 @@ public class PhysicalAttack : BaseSkillEffect {
 				Debug.Log (targetEnemy.agentName + "成功躲避了攻击");
 				//目标触发闪避成功效果
 				targetEnemy.OnTrigger (enemies,self,friends,TriggerType.Dodge, 0);
+				targetEnemy.PlayHurtHUD ("<color=gray>miss</color>");
 				return;
 			}
 
@@ -42,6 +43,12 @@ public class PhysicalAttack : BaseSkillEffect {
 			self.OnTrigger (friends,targetEnemy,enemies,TriggerType.PhysicalHit, 0);
 			//目标触发被击中效果
 			targetEnemy.OnTrigger (enemies,self,friends,TriggerType.BePhysicalHit, DamageOffset);
+
+			if (self.critScaler == 2.0f) {
+				targetEnemy.PlayHurtHUD ("<color=red>暴击 -" + actualDamage + "</color>");
+			} else {
+				targetEnemy.PlayHurtHUD ("<color=red>    -" + actualDamage + "</color>");
+			}
 
 			targetEnemy.health -= actualDamage;
 

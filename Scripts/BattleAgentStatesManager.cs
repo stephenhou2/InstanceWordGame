@@ -10,7 +10,6 @@ public class BattleAgentStatesManager:MonoBehaviour {
 	public static void AddStateCopyToBattleAgents (BattleAgent self,List<BattleAgent> friends,BattleAgent targetEnemy, List<BattleAgent> enemies, StateSkillEffect sse,int skillLevel)
 	{
 		sse.skillLevel = skillLevel;
-		Debug.Log (sse.effectTarget + ";;;;;;;;;");
 		// 根据技能指向将状态加到指定的对象身上
 		switch (sse.effectTarget) {
 		case SkillEffectTarget.Self:

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public abstract class BattleAgent : MonoBehaviour {
 
@@ -11,10 +12,15 @@ public abstract class BattleAgent : MonoBehaviour {
 
 //	[HideInInspector]public BattleAgent[] enemies;
 
-	public Slider healthBar;
-	public Slider strengthBar;
 
-	//*****玩家初始信息********//
+	public Slider healthBar;//血量槽
+	public Slider strengthBar;//气力槽
+
+	public Text hurtHUD;//血量提示文字
+	public GameObject statesPlane;//状态图片容器
+	public Image[] stateImages; // 状态图片
+
+	//*****初始信息********//
 	public int originalMaxHealth;
 	public int originalMaxStrength;
 	public int originalHealth;
@@ -26,7 +32,7 @@ public abstract class BattleAgent : MonoBehaviour {
 	public int originalAgility;
 	public int originalAmour;
 	public int originalMagicResist;
-	//*****玩家初始信息********//
+	//*****初始信息********//
 
 
 	public int maxHealth;//最大血量
@@ -72,6 +78,10 @@ public abstract class BattleAgent : MonoBehaviour {
 	[HideInInspector]public Transform skillsContainer;
 
 	[HideInInspector]public Transform statesContainer;
+
+
+
+
 
 	public virtual void Awake(){
 		statesContainer = ContainerManager.NewContainer ("States", this.transform);
@@ -137,14 +147,21 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		maxHealth = originalMaxHealth + healthGainScaler * power;
 		maxStrength = originalMaxStrength + (int)(strengthGainScaler * power);
-		validActionType = ValidActionType.All;
+
 		hurtScaler = 1.0f;//伤害系数
 		critScaler = 1.0f;//暴击伤害系数
 		healthAbsorbScalser = 0f;//吸血比例
 		attackTime = 1;
 
+		if (toOriginalState) {
+			validActionType = ValidActionType.All;
+		}
+
 		foreach (Skill s in skills) {
-			s.isAvalible = true;
+			if (toOriginalState) {
+				s.isAvalible = true;
+			}
+
 			foreach (BaseSkillEffect bse in s.skillEffects) {
 				bse.actionCount = 0;
 			}
@@ -157,6 +174,30 @@ public abstract class BattleAgent : MonoBehaviour {
 
 
 	}
+
+	public void PlayHurtHUD(string text){
+
+		isAnimating = true;
+
+		hurtHUD.text = text;
+		hurtHUD.GetComponent<Text> ().enabled = true;
+
+		TweenCallback tc = OnAnimationComplete;
+
+		hurtHUD.transform.DOLocalMove(new Vector3 (0, 200, 0), 1.0f, false);
+
+		hurtHUD.DOFade (0f, 1.0f).OnComplete(tc);
+	}
+
+	private void OnAnimationComplete(){
+		Text hurtText = hurtHUD.GetComponent<Text> ();
+		hurtText.enabled = false;
+		hurtText.color = Color.white;
+		hurtHUD.transform.localPosition = new Vector3 (0, 135, 0);
+		isAnimating = false;
+
+	}
+
 
 	public override string ToString ()
 	{

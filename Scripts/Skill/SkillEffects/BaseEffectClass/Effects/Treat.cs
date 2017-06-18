@@ -6,7 +6,9 @@ public class Treat : BaseSkillEffect {
 
 	public override void AffectAgents (BattleAgent self, List<BattleAgent> friends, BattleAgent targetEnemy, List<BattleAgent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
 	{
-		self.health += (int)(this.scaler * skillLevel * self.magic);
+		int healthIncreased = (int)(this.scaler * skillLevel * self.magic);
+		self.health += healthIncreased;
+		self.PlayHurtHUD ("<color=green>  +" + healthIncreased + "</color>");
 		if (self.health >= self.maxHealth) {
 			self.health = self.maxHealth;
 		}

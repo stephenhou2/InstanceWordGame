@@ -48,26 +48,13 @@ public class BattleManager : MonoBehaviour {
 
 	private Skill playerSkill;
 
-	public Button[] skillButtons;
-
-	public Button attackButton;
-
-	public Button defenceButton;
-
-	public Button[] itemButtons;
-
-	public Slider playerHealth;
-
-	public Slider playerStrength;
-
-	public Slider monsterHealth;
-
-	public Slider monsterStrength;
-
 	public Text description;
 
-	public GameObject controlPlane;
+	public GameObject playerControlPlane;
 
+	public GameObject monsterControlPlane;
+
+	/************ for test *************/
 	public GameObject battleEndHUD;
 
 	public Text battleEndResult;
@@ -75,6 +62,7 @@ public class BattleManager : MonoBehaviour {
 	public Button quit;
 
 	public Button reset;
+	/************ for test *************/
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 	static private void CallBackAfterBattleSceneLoaded(){
@@ -126,19 +114,21 @@ public class BattleManager : MonoBehaviour {
 
 	}
 
-	public void PlayerSelectSkill(int skillId){
+	public void PlayerSelectSkill(Skill playerSkill){
 
-		controlPlane.gameObject.SetActive (true);// 遮罩，下回合开始前用户无法再点击按钮
+		playerControlPlane.gameObject.SetActive (true);// 遮罩，下回合开始前用户无法再点击按钮
 
-		playerSkill = player.skills [skillId];// 用户选择的技能
-
+		this.playerSkill = playerSkill;
+			
 		description.text = "player 使用了" + playerSkill.skillName;
 
 		Debug.Log("player 使用了" + playerSkill.skillName);
 
 		// 如果技能不需要指定对象(对象为玩家自己或者敌方全部)
 		if (!playerSkill.needSelectEnemy) {
-			
+
+			monsterControlPlane.gameObject.SetActive (true);
+
 			playerSkill.AffectAgents (player,null,null, monsters, playerSkill.skillLevel);
 
 			playerSkill.isAvalible = false;// 使用技能之后该技能暂时进入不可用状态
@@ -150,13 +140,26 @@ public class BattleManager : MonoBehaviour {
 			} catch (System.Exception e) {
 				Debug.Log (e.Message);
 			}
+			return;
 		}
+		// 如果需要选择怪物，打开怪物前面的遮罩
+		monsterControlPlane.gameObject.SetActive (false);
 	}
 
 	// 如果技能需要选择作用对象，则技能效果由该方法触发
 	public void PlayerSelectMonster(int monsterId){
-		
-		Monster monster = monsters [monsterId] as Monster;
+
+		// 选择完怪物之后打开怪物前面的遮罩
+		monsterControlPlane.gameObject.SetActive (true);
+
+		Monster monster = null;
+		foreach (Monster m in monsters) {
+			if (m.monsterId == monsterId) {
+				monster = m;
+			}
+		}
+
+//		Monster monster = monsters [monsterId] as Monster
 
 		playerSkill.AffectAgents (player,players, monster,monsters, playerSkill.skillLevel);
 
@@ -224,7 +227,7 @@ public class BattleManager : MonoBehaviour {
 		}
 		if (monsters.Count >= 1 && monsters [monsters.Count - 1].validActionType == ValidActionType.None) {
 
-			controlPlane.gameObject.SetActive (false);
+			playerControlPlane.gameObject.SetActive (false);
 
 			StartCoroutine ("EnterNextTurn");//进入下一回合
 
@@ -242,8 +245,6 @@ public class BattleManager : MonoBehaviour {
 		UpdateUIAndBattleResult ();//更新玩家和怪物状态,判断游戏是否结束
 
 		if (monster.monsterId == monsters.Count - 1) {
-
-			controlPlane.gameObject.SetActive (false);
 
 			StartCoroutine ("EnterNextTurn");//进入下一回合
 
@@ -263,8 +264,11 @@ public class BattleManager : MonoBehaviour {
 		BattleAgentStatesManager.CheckStates (players,monsters);
 
 		// 根据玩家可采取的行动类型设定技能按钮是否可以交互
-		ValidActionForPlayer ();
+		player.ValidActionForPlayer ();
 
+		// 下回合开始时关闭技能、物品前面的遮罩，打开怪物前面的遮罩
+		playerControlPlane.gameObject.SetActive (false);
+		monsterControlPlane.gameObject.SetActive (true);
 
 	}
 
@@ -303,7 +307,7 @@ public class BattleManager : MonoBehaviour {
 			Monster monster = monsters [i] as Monster;
 			if (monster.health <= 0) {
 				monsters.Remove (monster);
-				i--;
+				i--;//删除怪物后继续从当前索引遍历
 			}
 		}
 		if (monsters.Count == 0) {
@@ -327,83 +331,23 @@ public class BattleManager : MonoBehaviour {
 
 	}
 
-	public void ValidActionForPlayer(){
-
-		switch (players[0].validActionType) {
-
-		case ValidActionType.All:
-			break;
-		case ValidActionType.PhysicalExcption:
-			EnableOrDisableButtons (false, true, true, true);
-			break;
-		case ValidActionType.MagicException:
-			EnableOrDisableButtons (true, false, true, true);
-			break;
-		case ValidActionType.None:
-			EnableOrDisableButtons (false, false, false, false);
-			break;
-		case ValidActionType.PhysicalOnly:
-			EnableOrDisableButtons (true, false, false, true);
-			break;
-		case ValidActionType.MagicOnly:
-			EnableOrDisableButtons (false, true, false, true);
-			break;
-		default:
-			break;
-		}
-		// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用
-		Player player = players[0] as Player;
-		for (int i = 0;i < player.skills.Count;i++) {
-			
-			Skill s = player.skills [i];
-
-			// 如果是冷却中的技能
-			if (s.isAvalible == false) {
-				s.actionCount++;
-				Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
-				if (s.actionCount >= s.actionConsume && player.strength >= s.strengthConsume) {
-					skillButtons [i].interactable = true;
-					s.isAvalible = true;
-					s.actionCount = 0;
-				} else {
-					skillButtons [i].interactable = false;
-				}
-			}
-			// 如果不是冷却中的技能
-			else {
-				skillButtons [i].interactable = player.strength >= s.strengthConsume;
-			} 
-		}
-
-	}
-
-	//根据玩家状态判断按钮是否可以交互
-	private void EnableOrDisableButtons(bool isAttackEnable,bool isSkillEnable,bool isItemEnable,bool isDefenceEnable){
-		attackButton.interactable = isAttackEnable && attackButton.interactable;
-		defenceButton.interactable = isDefenceEnable && defenceButton.interactable;
-		foreach (Button btn in skillButtons) {
-			btn.interactable = isSkillEnable && btn.interactable;
-		}
-		foreach (Button btn in itemButtons) {
-			btn.interactable = isItemEnable && btn.interactable;
-		}
-	}
 
 
-
+	// 用户点击按钮响应
 	public void OnAttack(){
-		PlayerSelectSkill (3);
+		PlayerSelectSkill (player.attackSkill);
 	}
 
 	public void OnDenfence(){
-		PlayerSelectSkill (4);
+		PlayerSelectSkill (player.defenceSkill);
 	}
 
-	public void OnSkill(int skillIndex){
-		PlayerSelectSkill (skillIndex);
+	public void OnUseSkill(int skillIndex){
+		
+		PlayerSelectSkill (player.skills [skillIndex]);
 	}
 
-	public void OnItem(int itemIndex){
+	public void OnUseItem(int itemIndex){
 
 	}
 
@@ -415,15 +359,19 @@ public class BattleManager : MonoBehaviour {
 		for (int i = 0; i < monsters.Count; i++) {
 			monsters[i].states.Clear ();
 		}
+
 		OnReset ();
 
 		battleEndHUD.SetActive (false);
 		UpdateStatesUI (players);
 		UpdateStatesUI (monsters);
-		foreach (Button btn in skillButtons) {
-			btn.interactable = true;
+		foreach (Player p in players) {
+			foreach (Button btn in p.skillButtons) {
+				btn.interactable = true;
+			}
 		}
-		controlPlane.gameObject.SetActive (false);
+		playerControlPlane.gameObject.SetActive (false);
+		monsterControlPlane.gameObject.SetActive (true);
 
 		/****************测试用，重置所有怪物****************/
 		foreach (Monster m in monstersModel) {
