@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Monster : BattleAgent,IPointerClickHandler {
+public class Monster : BattleAgent,IPointerClickHandler{
 
 	public int monsterId;
+
+
 
 	public void SetupMonster(int gameProcess){
 		GameManager.gameManager.OnGenerateSkill ();
@@ -55,6 +57,8 @@ public class Monster : BattleAgent,IPointerClickHandler {
 		}
 
 	}
+
+
 
 	public void OnPointerClick(PointerEventData data){
 		GameObject battleManager = GameObject.Find ("BattleManager");

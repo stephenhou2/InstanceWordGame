@@ -8,17 +8,44 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public string agentName;
 
-	public bool isAnimating;
+	public bool isActive = true;
+
+	public GameObject agentPlane;
+
+	public List<Tweener> allTweeners = new List<Tweener>();
+
+	public bool isAnimating{
+
+		get{ 
+			foreach (Tweener t in allTweeners) {
+				if (!t.IsComplete())
+					return true;
+			}
+			if (allTweeners.Count == 0) {
+				return false;
+			}
+			return false;
+		}
+	}
 
 //	[HideInInspector]public BattleAgent[] enemies;
 
 
 	public Slider healthBar;//血量槽
+	public Text healthText;//血量值
+
 	public Slider strengthBar;//气力槽
+	public Text strengthText;//气力值
 
 	public Text hurtHUD;//血量提示文字
 	public GameObject statesPlane;//状态图片容器
 	public Image[] stateImages; // 状态图片
+
+	public Image agentIcon; //角色头像
+	public Image effectMaskImg; // 攻击效果图片遮罩
+
+
+//	public Image backImg;
 
 	//*****初始信息********//
 	public int originalMaxHealth;
@@ -38,8 +65,22 @@ public abstract class BattleAgent : MonoBehaviour {
 	public int maxHealth;//最大血量
 	public int maxStrength;//最大气力值
 
-	public int health;//实际血量
-	public int strength;//实际气力值
+	private int mHealth;//实际血量
+	public int health{
+		get{return mHealth;}
+		set{
+			mHealth = value;
+			UpdateHealthAndStrengthBar ();
+		}
+
+	}
+	private int mStrength;//实际气力值
+	public int strength{
+		get{ return mStrength; }
+		set{ mStrength = value;
+			UpdateHealthAndStrengthBar ();
+		}
+	}
 
 	public int attack;//攻击力
 	public int power;//力量
@@ -107,10 +148,14 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	// 状态效果触发执行的方法
 	public void OnTrigger(List<BattleAgent> friends,BattleAgent triggerAgent,List<BattleAgent> enemies, TriggerType triggerType,int arg){
+
+		if (triggerType == TriggerType.BePhysicalHit) {
+			this.agentIcon.transform.DOShakeRotation (0.5f,20f);
+			this.effectMaskImg.DOFillAmount (1.0f, 0.2f).OnComplete(()=>{this.effectMaskImg.fillAmount = 0f;});
+		}
+			
 		foreach(StateSkillEffect sse in states){
-//			if (sse.triggerType == TriggerType.None) {
-//				return;
-//			}
+			
 			sse.AffectAgents (this,friends,triggerAgent,enemies, sse.skillLevel, triggerType, arg);
 		}
 
@@ -155,6 +200,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		if (toOriginalState) {
 			validActionType = ValidActionType.All;
+//			allTweeners.Clear ();
 		}
 
 		foreach (Skill s in skills) {
@@ -172,31 +218,76 @@ public abstract class BattleAgent : MonoBehaviour {
 			strength = maxStrength;
 		}
 
+		UpdateHealthAndStrengthBar ();
+	}
+
+	private void UpdateHealthAndStrengthBar(){
+		healthBar.maxValue = maxHealth;
+		healthBar.DOValue (health, 1.0f);
+		healthText.text = health + "/" + maxHealth;
+
+		strengthBar.maxValue = maxStrength;
+		strengthBar.DOValue (strength, 1.0f);
+		strengthText.text = strength + "/" + maxStrength;
 
 	}
 
-	public void PlayHurtHUD(string text){
+	// 伤害文本动画
+	public void PlayHurtHUDAnim(string text){
 
-		isAnimating = true;
+		hurtHUD.fontSize = 40;
 
 		hurtHUD.text = text;
-		hurtHUD.GetComponent<Text> ().enabled = true;
 
-		TweenCallback tc = OnAnimationComplete;
+		hurtHUD.GetComponent<Text>().enabled = true;
 
-		hurtHUD.transform.DOLocalMove(new Vector3 (0, 200, 0), 1.0f, false);
+		Tweener scaleAnim = hurtHUD.transform.DOScale (2.5f, 0.5f);
 
-		hurtHUD.DOFade (0f, 1.0f).OnComplete(tc);
+		ManageAnimations(scaleAnim,()=>{
+
+			Vector3 newPos = hurtHUD.transform.localPosition + new Vector3 (0, 100, 0);
+
+			Tweener positionAnim = hurtHUD.transform.DOLocalMove (newPos, 1.0f, false);
+
+			Tweener colorAnim = hurtHUD.DOFade (0f, 1.0f);
+
+			ManageAnimations (positionAnim, null);
+
+			TweenCallback tc = OnHurtTextAnimationComplete;
+
+			ManageAnimations (colorAnim, tc);
+		});
+			
 	}
 
-	private void OnAnimationComplete(){
-		Text hurtText = hurtHUD.GetComponent<Text> ();
-		hurtText.enabled = false;
-		hurtText.color = Color.white;
-		hurtHUD.transform.localPosition = new Vector3 (0, 135, 0);
-		isAnimating = false;
+
+
+	public void AgentDie(){
+		agentIcon.DOFade (0f, 1.0f).OnComplete(()=>{
+			this.gameObject.SetActive (false);
+			this.enabled = false;
+		});
+	}
+
+	private void OnHurtTextAnimationComplete(){
+		hurtHUD.transform.localScale = new Vector3 (1.0f, 1.0f);
+		hurtHUD.GetComponent<Text>().enabled = false;
+		hurtHUD.color = Color.red;
+		hurtHUD.transform.localPosition = hurtHUD.transform.localPosition + new Vector3 (0, -100, 0);
 
 	}
+
+	// 动画管理方法，复杂回调单独写函数传入，简单回调使用拉姆达表达式
+	private void ManageAnimations(Tweener newTweener,TweenCallback tc){
+		allTweeners.Add (newTweener);
+
+		newTweener.OnComplete (
+			() => {allTweeners.Remove (newTweener);
+			if (tc != null) {
+				tc ();
+			}});
+	}
+
 
 
 	public override string ToString ()

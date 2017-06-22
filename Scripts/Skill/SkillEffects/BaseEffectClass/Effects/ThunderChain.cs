@@ -17,8 +17,8 @@ public class ThunderChain : BaseSkillEffect {
 			if (isEffective (dodge)) {
 				Debug.Log ("enemy dodge your attack");
 				//目标触发闪避成功效果
-				enemy.OnTrigger (enemies,self,friends,TriggerType.Dodge, 0);
-				enemy.PlayHurtHUD ("<color=gray>miss</color>");
+				enemy.OnTrigger (enemies, self, friends, TriggerType.Dodge, 0);
+				enemy.PlayHurtHUDAnim ("<color=gray>miss</color>");
 				return;
 			}
 
@@ -43,14 +43,14 @@ public class ThunderChain : BaseSkillEffect {
 			int DamageOffset = originalDamage - actualDamage;
 
 			//己方触发命中效果
-			self.OnTrigger (friends,targetEnemy,enemies,TriggerType.MagicalHit, 0);
+			self.OnTrigger (friends, targetEnemy, enemies, TriggerType.MagicalHit, 0);
 			//目标触发被击中效果
-			enemy.OnTrigger (enemies,self,friends,TriggerType.BeMagicalHit, DamageOffset);
+			enemy.OnTrigger (enemies, self, friends, TriggerType.BeMagicalHit, DamageOffset);
 
 			if (self.critScaler == 2.0f) {
-				enemy.PlayHurtHUD ("<color=red>暴击 -" + actualDamage + "</color>");
+				enemy.PlayHurtHUDAnim ("<color=red>暴击 -" + actualDamage + "</color>");
 			} else {
-				enemy.PlayHurtHUD ("<color=red>    -" + actualDamage + "</color>");
+				enemy.PlayHurtHUDAnim ("<color=red>-" + actualDamage + "</color>");
 			}
 
 
@@ -69,6 +69,9 @@ public class ThunderChain : BaseSkillEffect {
 			Debug.Log ("target health:" + enemy.health);
 
 			int healthAbsorb = (int)(actualDamage * self.healthAbsorbScalser);
+			if (healthAbsorb > 0) {
+				enemy.PlayHurtHUDAnim ("<color=green>    +" + actualDamage + "</color>");
+			}
 
 			self.health += healthAbsorb;
 			if (self.health >= self.maxHealth) {

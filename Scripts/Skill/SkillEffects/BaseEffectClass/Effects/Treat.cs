@@ -8,7 +8,7 @@ public class Treat : BaseSkillEffect {
 	{
 		int healthIncreased = (int)(this.scaler * skillLevel * self.magic);
 		self.health += healthIncreased;
-		self.PlayHurtHUD ("<color=green>  +" + healthIncreased + "</color>");
+		self.PlayHurtHUDAnim ("<color=green>  +" + healthIncreased + "</color>");
 		if (self.health >= self.maxHealth) {
 			self.health = self.maxHealth;
 		}

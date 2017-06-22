@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class BattleManager : MonoBehaviour {
 
@@ -45,8 +46,6 @@ public class BattleManager : MonoBehaviour {
 
 
 	public int gameProcess;
-
-	private Skill playerSkill;
 
 	public Text description;
 
@@ -114,11 +113,52 @@ public class BattleManager : MonoBehaviour {
 
 	}
 
+	public Skill DefaultSelectedSkill(){
+
+
+		// 如果气力大于普通攻击所需的气力值，则默认选中普通攻击
+		if (player.strength >= player.attackSkill.strengthConsume && player.validActionType != ValidActionType.PhysicalExcption) {
+			player.currentSkill = player.attackSkill;
+			player.SelectedSkillAnim (true, false, -1);
+			return player.attackSkill;
+
+		}
+
+		// 如果玩家没有被沉默，默认选中可以第一个可以使用的技能
+		if (player.validActionType != ValidActionType.MagicException) {
+			foreach (Skill s in player.skills) {
+				if (s.isAvalible && player.strength >= s.strengthConsume) {
+					player.currentSkill = s;
+					player.SelectedSkillAnim (false, false, s.skillId);
+					return s;
+				}
+			}
+		}
+
+
+		// 如果其他技能都无法使用，则默认选中防御
+		player.currentSkill = player.defenceSkill;
+		player.SelectedSkillAnim(false,true,-1);
+		return player.defenceSkill;
+
+
+
+	}
+
+
 	public void PlayerSelectSkill(Skill playerSkill){
 
-		playerControlPlane.gameObject.SetActive (true);// 遮罩，下回合开始前用户无法再点击按钮
 
-		this.playerSkill = playerSkill;
+
+		monsterControlPlane.gameObject.SetActive (true);
+		playerControlPlane.gameObject.SetActive (true);
+
+		player.currentSkill = playerSkill;
+
+
+		player.SelectedSkillAnim (player.currentSkill == player.attackSkill,
+			player.currentSkill == player.defenceSkill,
+			player.currentSkill.skillId);
 			
 		description.text = "player 使用了" + playerSkill.skillName;
 
@@ -127,7 +167,7 @@ public class BattleManager : MonoBehaviour {
 		// 如果技能不需要指定对象(对象为玩家自己或者敌方全部)
 		if (!playerSkill.needSelectEnemy) {
 
-			monsterControlPlane.gameObject.SetActive (true);
+			player.KillSelectedAnim ();
 
 			playerSkill.AffectAgents (player,null,null, monsters, playerSkill.skillLevel);
 
@@ -142,15 +182,32 @@ public class BattleManager : MonoBehaviour {
 			}
 			return;
 		}
-		// 如果需要选择怪物，打开怪物前面的遮罩
+
+		if (monsters.Count == 1) {
+			PlayerSelectMonster ((monsters [0] as Monster).monsterId);
+			return;
+		}
+		// 如果是指向型技能，关闭怪物前面的遮罩
 		monsterControlPlane.gameObject.SetActive (false);
 	}
 
 	// 如果技能需要选择作用对象，则技能效果由该方法触发
 	public void PlayerSelectMonster(int monsterId){
 
-		// 选择完怪物之后打开怪物前面的遮罩
+		if (player.currentSkill == null) {
+			player.currentSkill = DefaultSelectedSkill ();
+		}
+
+		if (!player.currentSkill.needSelectEnemy) {
+			return;
+		}
+
+		// 选择完怪物之后打开遮罩
 		monsterControlPlane.gameObject.SetActive (true);
+		playerControlPlane.gameObject.SetActive (true);
+
+
+		player.KillSelectedAnim ();
 
 		Monster monster = null;
 		foreach (Monster m in monsters) {
@@ -159,13 +216,11 @@ public class BattleManager : MonoBehaviour {
 			}
 		}
 
-//		Monster monster = monsters [monsterId] as Monster
+		player.currentSkill.AffectAgents (player,players, monster,monsters, player.currentSkill.skillLevel);
 
-		playerSkill.AffectAgents (player,players, monster,monsters, playerSkill.skillLevel);
+		player.currentSkill.isAvalible = false;// 使用技能之后该技能暂时进入不可用状态
 
-		playerSkill.isAvalible = false;// 使用技能之后该技能暂时进入不可用状态
-
-		player.strength -= playerSkill.strengthConsume;//使用魔法后使用者减去对应的气力消耗
+		player.strength -= player.currentSkill.strengthConsume;//使用魔法后使用者减去对应的气力消耗
 
 		try {
 			StartCoroutine ("PlayerAnimation");
@@ -198,9 +253,15 @@ public class BattleManager : MonoBehaviour {
 
 		Debug.Log ("monsters action");
 
+
+
 		foreach (Monster monster in monsters) {
 
 			yield return new WaitUntil (() => allAnimationEnd);
+
+			if (!monster.isActive) {
+				continue;
+			}
 
 			if (!battleEnd) {
 				if (monster.validActionType != ValidActionType.None) {
@@ -227,8 +288,6 @@ public class BattleManager : MonoBehaviour {
 		}
 		if (monsters.Count >= 1 && monsters [monsters.Count - 1].validActionType == ValidActionType.None) {
 
-			playerControlPlane.gameObject.SetActive (false);
-
 			StartCoroutine ("EnterNextTurn");//进入下一回合
 
 		}
@@ -237,14 +296,14 @@ public class BattleManager : MonoBehaviour {
 
 	public IEnumerator MonsterAnimation(Monster monster){
 
-		#warning player animation
+		#warning monster animation
 		yield return new WaitForSeconds (1.0f);
 
 		UpdatePropertiesByStates ();
 
 		UpdateUIAndBattleResult ();//更新玩家和怪物状态,判断游戏是否结束
 
-		if (monster.monsterId == monsters.Count - 1) {
+		if (monster.monsterId == (monsters[monsters.Count - 1] as Monster).monsterId) {
 
 			StartCoroutine ("EnterNextTurn");//进入下一回合
 
@@ -259,16 +318,24 @@ public class BattleManager : MonoBehaviour {
 
 		Debug.Log ("Enter Next Turn!");
 
+		player.currentSkill = null;
+
 		UpdatePropertiesByStates ();
 
 		BattleAgentStatesManager.CheckStates (players,monsters);
 
 		// 根据玩家可采取的行动类型设定技能按钮是否可以交互
 		player.ValidActionForPlayer ();
+		// 如果玩家本轮无法行动，则直接进入怪物行动轮
+		if (player.validActionType == ValidActionType.None) {
+			MonsterAction ();
+		} else {
+			// 下回合开始时关闭所有遮罩
+			monsterControlPlane.gameObject.SetActive(false);
+			playerControlPlane.gameObject.SetActive (false);
+		}
 
-		// 下回合开始时关闭技能、物品前面的遮罩，打开怪物前面的遮罩
-		playerControlPlane.gameObject.SetActive (false);
-		monsterControlPlane.gameObject.SetActive (true);
+		DefaultSelectedSkill ();
 
 	}
 
@@ -290,8 +357,8 @@ public class BattleManager : MonoBehaviour {
 
 	public void UpdateUIAndBattleResult(){
 		
-		UpdateStatesUI (players);
-		UpdateStatesUI (monsters);
+//		UpdateStatesUI (players);
+//		UpdateStatesUI (monsters);
 
 		#warning picturs of states toAdd
 
@@ -307,7 +374,7 @@ public class BattleManager : MonoBehaviour {
 			Monster monster = monsters [i] as Monster;
 			if (monster.health <= 0) {
 				monsters.Remove (monster);
-				i--;//删除怪物后继续从当前索引遍历
+				monster.AgentDie ();
 			}
 		}
 		if (monsters.Count == 0) {
@@ -318,35 +385,34 @@ public class BattleManager : MonoBehaviour {
 
 	}
 
-	public void UpdateStatesUI(List<BattleAgent> bas){
-		for (int i = 0; i < bas.Count; i++) {
-			BattleAgent ba = bas [i];
-			ba.healthBar.value = ba.health;
-			ba.strengthBar.value = ba.strength;
-		}
+//	public void UpdateStatesUI(List<BattleAgent> bas){
+//		for (int i = 0; i < bas.Count; i++) {
+//			BattleAgent ba = bas [i];
+//			ba.healthBar.value = ba.health;
+//			ba.strengthBar.value = ba.strength;
+//		}
 //		playerHealth.value = player.health;
 //		playerStrength.value = player.strength;
 //		monsterHealth.value = monster.health;
 //		monsterStrength.value = monster.strength;
 
-	}
+//	}
 
 
 
-	// 用户点击按钮响应
+	// 用户点击攻击按钮响应
 	public void OnAttack(){
-		PlayerSelectSkill (player.attackSkill);
+		PlayerSelectSkill(player.attackSkill);
 	}
-
+	// 用户点击防御按钮响应
 	public void OnDenfence(){
-		PlayerSelectSkill (player.defenceSkill);
+		PlayerSelectSkill(player.defenceSkill);
 	}
-
+	// 用户点击技能按钮响应
 	public void OnUseSkill(int skillIndex){
-		
-		PlayerSelectSkill (player.skills [skillIndex]);
+		PlayerSelectSkill(player.skills [skillIndex]);
 	}
-
+	// 用户点击物品按钮响应
 	public void OnUseItem(int itemIndex){
 
 	}
@@ -358,28 +424,35 @@ public class BattleManager : MonoBehaviour {
 		}
 		for (int i = 0; i < monsters.Count; i++) {
 			monsters[i].states.Clear ();
+			monsters [i].gameObject.SetActive (true);
+			monsters [i].enabled = true;
 		}
 
 		OnReset ();
 
 		battleEndHUD.SetActive (false);
-		UpdateStatesUI (players);
-		UpdateStatesUI (monsters);
+//		UpdateStatesUI (players);
+//		UpdateStatesUI (monsters);
 		foreach (Player p in players) {
-			foreach (Button btn in p.skillButtons) {
+			for(int i = 0;i<p.skillButtons.Length;i++){
+				Button btn = p.skillButtons [i];
 				btn.interactable = true;
+				btn.transform.parent.GetChild (1).GetComponent<Text>().text = p.skills [i].strengthConsume.ToString();
 			}
 		}
 		playerControlPlane.gameObject.SetActive (false);
-		monsterControlPlane.gameObject.SetActive (true);
+		monsterControlPlane.gameObject.SetActive (false);
 
 		/****************测试用，重置所有怪物****************/
 		foreach (Monster m in monstersModel) {
 			m.ResetBattleAgentProperties (true);
-
+			m.agentIcon.color = Color.white;
+			m.gameObject.SetActive (true);
 			monsters.Add (m);
 		}
-		UpdateStatesUI (monsters);
+
+		StartCoroutine ("EnterNextTurn");
+//		UpdateStatesUI (monsters);
 
 		/****************测试用，重置所有怪物****************/
 	}

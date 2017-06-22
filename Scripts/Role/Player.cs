@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Player : BattleAgent {
 
@@ -22,15 +23,25 @@ public class Player : BattleAgent {
 
 	public Button[] itemButtons;
 
+	private Sequence mSequence;
+
+	public Sprite skillNormalBackImg; // 技能框默认背景图片
+	public Sprite skillSelectedBackImg; // 选中技能的背景高亮图片
+	public Sprite attackAndDefenceNormalBackImg;
+	public Sprite attackAndDenfenceSelectedBackImg;
+
+//	Button selectedButton;
+//	Image selectedButtonBackImg;
+
 
 	private bool isAttackEnable = true;
 	private bool isSkillEnable = true;
 	private bool isItemEnable = true;
 	private bool isDefenceEnable = true;
 
+	Image selectedButtonBackImg;
 
-
-
+	private Tweener selectedButtonTweener;
 
 	public override void Awake(){
 
@@ -91,8 +102,9 @@ public class Player : BattleAgent {
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				s.actionCount++;
+				skillButtons [i].GetComponent<Text> ().text = (s.actionConsume - s.actionCount + 1).ToString();
 				Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
-				if (s.actionCount >= s.actionConsume && strength >= s.strengthConsume) {
+				if (s.actionCount > s.actionConsume && strength >= s.strengthConsume) {
 					skillButtons [i].interactable = isSkillEnable;
 					s.isAvalible = true;
 					s.actionCount = 0;
@@ -119,6 +131,49 @@ public class Player : BattleAgent {
 		this.isSkillEnable = isSkillEnable;
 		this.isItemEnable = isItemEnable;
 		this.isDefenceEnable = isDefenceEnable;
+	}
+
+	public void SelectedSkillAnim(bool isAttack,bool isDefence,int skillId){
+
+		if (selectedButtonBackImg != null) {
+			KillSelectedAnim ();
+		}
+
+
+		mSequence = null;
+
+		if (isAttack) {
+			selectedButtonBackImg = attackButton.transform.parent.GetComponent<Image> ();
+		} else if (isDefence) {
+			selectedButtonBackImg = defenceButton.transform.parent.GetComponent<Image> ();
+
+		} else {
+			Debug.Log (skillButtons [currentSkill.skillId]);
+			selectedButtonBackImg = skillButtons [currentSkill.skillId].transform.parent.GetComponent<Image> ();
+		}
+
+		selectedButtonBackImg.sprite = (isAttack || isDefence) ? attackAndDenfenceSelectedBackImg : skillSelectedBackImg;
+
+		mSequence = DOTween.Sequence ();
+
+		mSequence.Append (selectedButtonTweener = selectedButtonBackImg.DOFade (0.5f, 3.0f));
+		mSequence.Append(selectedButtonBackImg.DOFade(1.0f,3.0f));
+		mSequence.SetLoops(int.MaxValue);
+	}
+
+	public void KillSelectedAnim(){
+		
+		if (selectedButtonBackImg.sprite == attackAndDenfenceSelectedBackImg) {
+			selectedButtonBackImg.color = Color.white;
+			selectedButtonBackImg.sprite = attackAndDefenceNormalBackImg;
+		} else {
+			selectedButtonBackImg.color = Color.white;
+			selectedButtonBackImg.sprite = skillNormalBackImg;
+		}
+
+		mSequence.Kill (false);
+		selectedButtonBackImg = null;
+
 	}
 
 

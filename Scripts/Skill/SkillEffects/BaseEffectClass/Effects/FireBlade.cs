@@ -15,7 +15,7 @@ public class FireBlade : BaseSkillEffect {
 			Debug.Log ("enemy dodge your attack");
 			//目标触发闪避成功效果
 			targetEnemy.OnTrigger (enemies,self,friends,TriggerType.Dodge, 0);
-			targetEnemy.PlayHurtHUD ("<color=gray>miss</color>");
+			targetEnemy.PlayHurtHUDAnim ("<color=gray>miss</color>");
 			return;
 		}
 
@@ -55,9 +55,9 @@ public class FireBlade : BaseSkillEffect {
 		int actualDamage = actualMagicalDamage + actualPhysicalDamage;
 
 		if (self.critScaler == 2.0f) {
-			targetEnemy.PlayHurtHUD ("<color=red>暴击 -" + actualDamage + "</color>");
+			targetEnemy.PlayHurtHUDAnim ("<color=red>暴击 -" + actualDamage + "</color>");
 		} else {
-			targetEnemy.PlayHurtHUD ("<color=red>    -" + actualDamage + "</color>");
+			targetEnemy.PlayHurtHUDAnim ("<color=red>-" + actualDamage + "</color>");
 		}
 
 		targetEnemy.health -= (actualMagicalDamage + actualPhysicalDamage);

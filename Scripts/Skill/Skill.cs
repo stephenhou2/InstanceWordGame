@@ -7,6 +7,8 @@ public class Skill : MonoBehaviour {
 
 	public string skillName;// 技能名称
 
+	public int skillId;
+
 	public BaseSkillEffect[] skillEffects;//魔法效果数组
 
 	public int strengthConsume;//技能的气力消耗
