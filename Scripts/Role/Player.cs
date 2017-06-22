@@ -102,20 +102,16 @@ public class Player : BattleAgent {
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				s.actionCount++;
-				skillButtons [i].GetComponent<Text> ().text = (s.actionConsume - s.actionCount + 1).ToString();
+				int actionBackCount = s.actionConsume - s.actionCount + 1;
+				skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount == 0 ? "" : actionBackCount.ToString ();
 				Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
-				if (s.actionCount > s.actionConsume && strength >= s.strengthConsume) {
-					skillButtons [i].interactable = isSkillEnable;
+				if (s.actionCount > s.actionConsume) {
 					s.isAvalible = true;
 					s.actionCount = 0;
-				} else {
-					skillButtons [i].interactable = false;
-				}
+				} 
 			}
-			// 如果不是冷却中的技能
-			else {
-				skillButtons [i].interactable = strength >= s.strengthConsume;
-			} 
+	
+			skillButtons [i].interactable = s.isAvalible && strength >= s.strengthConsume; 
 
 			attackButton.interactable = isAttackEnable && strength >= attackSkill.strengthConsume;
 			defenceButton.interactable = isDefenceEnable && strength >= defenceSkill.strengthConsume;;

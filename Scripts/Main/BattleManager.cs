@@ -183,10 +183,10 @@ public class BattleManager : MonoBehaviour {
 			return;
 		}
 
-		if (monsters.Count == 1) {
-			PlayerSelectMonster ((monsters [0] as Monster).monsterId);
-			return;
-		}
+//		if (monsters.Count == 1) {
+//			PlayerSelectMonster ((monsters [0] as Monster).monsterId);
+//			return;
+//		}
 		// 如果是指向型技能，关闭怪物前面的遮罩
 		monsterControlPlane.gameObject.SetActive (false);
 	}
@@ -437,7 +437,8 @@ public class BattleManager : MonoBehaviour {
 			for(int i = 0;i<p.skillButtons.Length;i++){
 				Button btn = p.skillButtons [i];
 				btn.interactable = true;
-				btn.transform.parent.GetChild (1).GetComponent<Text>().text = p.skills [i].strengthConsume.ToString();
+				Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
+				btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text = p.skills [i].strengthConsume.ToString();
 			}
 		}
 		playerControlPlane.gameObject.SetActive (false);

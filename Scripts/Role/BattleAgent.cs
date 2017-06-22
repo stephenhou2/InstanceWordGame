@@ -216,6 +216,8 @@ public abstract class BattleAgent : MonoBehaviour {
 		if (toOriginalState) {
 			health = maxHealth;
 			strength = maxStrength;
+			healthBar.value = maxHealth;
+			strengthBar.value = maxStrength;
 		}
 
 		UpdateHealthAndStrengthBar ();
