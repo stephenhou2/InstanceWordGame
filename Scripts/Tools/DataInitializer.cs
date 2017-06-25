@@ -7,7 +7,7 @@ public static class DataInitializer{
 
 
 	// 数据转模型
-	public static T[] LoadDataWithPath<T>(string filePath,string fileName){
+	public static T[] LoadDataToModelWithPath<T>(string filePath,string fileName){
 
 		string jsonStr = LoadDataString (filePath, fileName);
 
@@ -23,7 +23,7 @@ public static class DataInitializer{
 	}
 
 	// 加载指定路径的文件数据
-	public static string LoadDataString(string filePath,string fileName){
+	private static string LoadDataString(string filePath,string fileName){
 		StreamReader sr = null;
 		//读取文件
 

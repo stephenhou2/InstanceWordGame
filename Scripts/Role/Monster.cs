@@ -15,31 +15,31 @@ public class Monster : BattleAgent,IPointerClickHandler{
 	}
 		
 	//怪物的技能选择
-	public Skill SkillOfMonster(){
-		Skill monsterSkill = null;
-		switch (validActionType) {
-		case ValidActionType.All:
-			
-			break;
-		case ValidActionType.PhysicalExcption:
-			
-			break;
-		case ValidActionType.MagicException:
-			
-			break;
-		case ValidActionType.PhysicalOnly:
-			
-			break;
-		case ValidActionType.MagicOnly:
-			
-			break;
-		default:
-			break;
-		}
-
-		return monsterSkill;
-
-	}
+//	public Skill SkillOfMonster(){
+//		Skill monsterSkill = null;
+//		switch (validActionType) {
+//		case ValidActionType.All:
+//			
+//			break;
+//		case ValidActionType.PhysicalExcption:
+//			
+//			break;
+//		case ValidActionType.MagicException:
+//			
+//			break;
+//		case ValidActionType.PhysicalOnly:
+//			
+//			break;
+//		case ValidActionType.MagicOnly:
+//			
+//			break;
+//		default:
+//			break;
+//		}
+//
+//		return monsterSkill;
+//
+//	}
 
 
 	public void ManageSkillAvalibility(){
@@ -62,7 +62,7 @@ public class Monster : BattleAgent,IPointerClickHandler{
 
 	public void OnPointerClick(PointerEventData data){
 		GameObject battleManager = GameObject.Find ("BattleManager");
-		battleManager.GetComponent<BattleManager> ().PlayerSelectMonster (monsterId);
+		battleManager.GetComponent<BattleManager> ().OnPlayerSelectMonster (monsterId);
 	}
 
 }

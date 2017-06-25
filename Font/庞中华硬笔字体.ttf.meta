@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 0c449b75b0de54b32b31d3d5c51278ec
+timeCreated: 1495358923
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: AMCSongGBK-Light
+  fontNames:
+  - AMCSongGBK-Light
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

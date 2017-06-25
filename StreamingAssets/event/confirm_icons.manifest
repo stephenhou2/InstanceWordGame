@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 922109282
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ef76a83a6bb96c61cde2e5bc40209eba
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Explore/watchIcon.png
+- Assets/Resources/Sprites/Explore/battleIcon.png
+- Assets/Resources/Sprites/Explore/chatIcon.png
+Dependencies: []

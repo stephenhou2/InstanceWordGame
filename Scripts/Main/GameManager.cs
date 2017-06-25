@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
 	[HideInInspector]public EffectData[] effectsData{
 		get{
 			if (mEffectsData == null || mEffectsData.Length == 0) {
-				mEffectsData = DataInitializer.LoadDataWithPath <EffectData>(CommonData.effectsFilePath, CommonData.effectsFileName);
+				mEffectsData = DataInitializer.LoadDataToModelWithPath <EffectData>(CommonData.JsonFileDirectoryPath, CommonData.effectsFileName);
 			}
 			return mEffectsData;
 		}

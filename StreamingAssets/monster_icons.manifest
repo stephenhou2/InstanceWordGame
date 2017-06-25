@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 4212561323
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e25bce14fa1c40f7cdde52357ecc3054
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Explore/monster1.png
+- Assets/Resources/Sprites/Explore/monster2.png
+Dependencies: []

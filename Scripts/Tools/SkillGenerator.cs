@@ -21,7 +21,7 @@ public class SkillGenerator : MonoBehaviour {
 
 	// *********** for test use **********//
 	void Awake(){
-		EffectData[] skillEffectsData = DataInitializer.LoadDataWithPath<EffectData> (CommonData.effectsFilePath, CommonData.effectsFileName);
+		EffectData[] skillEffectsData = DataInitializer.LoadDataToModelWithPath<EffectData> (CommonData.JsonFileDirectoryPath, CommonData.effectsFileName);
 		SetupSkillGenerator (skillEffectsData);
 	}
 

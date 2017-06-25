@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public delegate void CallBack ();
+
+
 public struct CommonData{
 	
-	public static string effectsFilePath = "Assets/Scripts/DataSource";
+	public static string JsonFileDirectoryPath = "Assets/Scripts/JsonData";
 //	public static string effectsFileName = "SkillEffectData.txt";
 	public static string effectsFileName = "TestEffectString.txt";
+	public static string chapterFileName = "ChaptersString.txt";
+
 }
+
+public enum EventType{
+	Monster,
+	NPC,
+	Item
+}
+
 
 public enum ValidActionType{
 	All,
@@ -102,3 +115,5 @@ public struct Word{
 	public string description;
 
 }
+
+

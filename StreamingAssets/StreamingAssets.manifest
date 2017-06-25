@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 1079456122
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: roles/player
+      Dependencies: {}
+    Info_1:
+      Name: roles/monster
+      Dependencies: {}
+    Info_2:
+      Name: explore
+      Dependencies: {}
+    Info_3:
+      Name: monster_icons
+      Dependencies: {}
+    Info_4:
+      Name: event/icons
+      Dependencies: {}
+    Info_5:
+      Name: event/confirm_icons
+      Dependencies: {}

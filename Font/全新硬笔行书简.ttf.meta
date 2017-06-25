@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e344b29e4eb7d41ffbdd7048a52ed07f
+timeCreated: 1495358917
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: QXyingbixing
+  fontNames:
+  - QXyingbixing
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

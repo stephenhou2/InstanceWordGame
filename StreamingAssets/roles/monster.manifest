@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 2585271396
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a030a7c4066da3a1e9ae54f6644a9826
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 8373933ea7cb775c08f8223c04d5ac77
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: c4f31e4d67f4b4777bd8e625edc644cd, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Monster.prefab
+Dependencies: []

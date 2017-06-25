@@ -13,7 +13,7 @@ public class WordGenerator : MonoBehaviour {
 	private Word[] words;
 
 	void Awake(){
-		words = DataInitializer.LoadDataWithPath<Word> ("Assets", "WordsTestJson.txt");
+		words = DataInitializer.LoadDataToModelWithPath<Word> ("Assets", "WordsTestJson.txt");
 	}
 
 

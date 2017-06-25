@@ -13,6 +13,8 @@ public class Player : BattleAgent {
 	public Skill attackSkill;
 	public Skill defenceSkill;
 
+	public int playerLevel;
+
 	// 角色管理的UI
 
 	public Button attackButton;
@@ -30,9 +32,6 @@ public class Player : BattleAgent {
 	public Sprite attackAndDefenceNormalBackImg;
 	public Sprite attackAndDenfenceSelectedBackImg;
 
-//	Button selectedButton;
-//	Image selectedButtonBackImg;
-
 
 	private bool isAttackEnable = true;
 	private bool isSkillEnable = true;
@@ -40,8 +39,6 @@ public class Player : BattleAgent {
 	private bool isDefenceEnable = true;
 
 	Image selectedButtonBackImg;
-
-	private Tweener selectedButtonTweener;
 
 	public override void Awake(){
 
@@ -110,12 +107,13 @@ public class Player : BattleAgent {
 					s.actionCount = 0;
 				} 
 			}
-	
-			skillButtons [i].interactable = s.isAvalible && strength >= s.strengthConsume; 
-
 			attackButton.interactable = isAttackEnable && strength >= attackSkill.strengthConsume;
 			defenceButton.interactable = isDefenceEnable && strength >= defenceSkill.strengthConsume;;
 
+			skillButtons [i].interactable = s.isAvalible && strength >= s.strengthConsume && isSkillEnable; 
+		}
+		foreach (Button btn in itemButtons) {
+			btn.interactable = isItemEnable;
 		}
 
 	}
@@ -132,7 +130,7 @@ public class Player : BattleAgent {
 	public void SelectedSkillAnim(bool isAttack,bool isDefence,int skillId){
 
 		if (selectedButtonBackImg != null) {
-			KillSelectedAnim ();
+			KillSelectedSkillAnim ();
 		}
 
 
@@ -152,12 +150,12 @@ public class Player : BattleAgent {
 
 		mSequence = DOTween.Sequence ();
 
-		mSequence.Append (selectedButtonTweener = selectedButtonBackImg.DOFade (0.5f, 3.0f));
+		mSequence.Append (selectedButtonBackImg.DOFade (0.5f, 3.0f));
 		mSequence.Append(selectedButtonBackImg.DOFade(1.0f,3.0f));
 		mSequence.SetLoops(int.MaxValue);
 	}
 
-	public void KillSelectedAnim(){
+	public void KillSelectedSkillAnim(){
 		
 		if (selectedButtonBackImg.sprite == attackAndDenfenceSelectedBackImg) {
 			selectedButtonBackImg.color = Color.white;
@@ -171,12 +169,5 @@ public class Player : BattleAgent {
 		selectedButtonBackImg = null;
 
 	}
-
-
-//	public static Player GetPlayer(){
-//		Player player = mainPlayer;
-//		player.ResetBattleAgentProperties (false);
-//		return player;
-//	}
 
 }
