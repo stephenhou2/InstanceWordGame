@@ -15,11 +15,13 @@ public class Player : BattleAgent {
 		get{
 			if (mPlayerSingleton == null) {
 				lock (objectLock) {
-					GameObject go = new GameObject ();
-					mPlayerSingleton = go.AddComponent<Player> ();
+					ResourceManager.Instance.LoadAssetWithName("player",()=>{
+						mPlayerSingleton = GameObject.Find ("Player").GetComponent<Player>();
+						DontDestroyOnLoad (mPlayerSingleton);
+					},true);
 				}
 			}
-			mPlayerSingleton.ResetBattleAgentProperties (false);
+			mPlayerSingleton.ResetBattleAgentProperties (true);
 			return mPlayerSingleton;
 		}
 		set{
@@ -27,7 +29,6 @@ public class Player : BattleAgent {
 		}
 
 	}
-
 
 	public Skill attackSkill;
 	public Skill defenceSkill;
@@ -41,19 +42,57 @@ public class Player : BattleAgent {
 	public bool isDefenceEnable = true;
 
 
-	public override void Awake(){
+//	public void Awake(){
+//
+//		if (mainPlayer == null) {
+//			mainPlayer = this;
+//		} else if (mainPlayer != this) {
+//			Destroy (gameObject);
+//		}
+//
+//		DontDestroyOnLoad (gameObject);
+//	}
 
-		base.Awake ();
 
-		if (mainPlayer == null) {
-			mainPlayer = this;
-		} else if (mainPlayer != this) {
-			Destroy (gameObject);
-		}
+	public void CopyMainPlayerStatus(){
+		
+		Player mainPlayer = Player.mainPlayer;
 
-		DontDestroyOnLoad (gameObject);
+		this.originalMaxHealth = mainPlayer.originalMaxHealth;
+		this.originalMaxStrength = mainPlayer.originalMaxStrength;
+		this.originalHealth = mainPlayer.originalHealth;
+		this.originalStrength = mainPlayer.originalStrength;
+		this.originalAttack = mainPlayer.originalAttack;
+		this.originalPower = mainPlayer.originalPower;
+		this.originalMagic = mainPlayer.originalMagic;
+		this.originalCrit = mainPlayer.originalCrit;
+		this.originalAgility = mainPlayer.originalAgility;
+		this.originalAmour = mainPlayer.originalAmour;
+		this.originalMagicResist = mainPlayer.originalMagicResist;
+
+		this.maxHealth = mainPlayer.maxHealth;
+		this.maxStrength = mainPlayer.maxStrength;
+		this.health = mainPlayer.health;
+		this.strength = mainPlayer.strength;
+
+
+		this.attack = mainPlayer.attack;//攻击力
+		this.power = mainPlayer.power;//力量
+		this.magic = mainPlayer.magic;//魔法
+		this.agility = mainPlayer.agility;//敏捷
+		this.amour = mainPlayer.amour;//护甲
+		this.magicResist = mainPlayer.magicResist;//魔抗
+		this.crit = mainPlayer.crit;//暴击
+
+
+		this.attackSkill = mainPlayer.attackSkill;
+		this.defenceSkill = mainPlayer.defenceSkill;
+		this.skills = mainPlayer.skills;
+		this.items = mainPlayer.items;
+
+		this.isActive = mainPlayer.isActive;
+
 	}
-
 
 	public void UpdateValidActionType(){
 
@@ -86,7 +125,7 @@ public class Player : BattleAgent {
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				s.actionCount++;
-				int actionBackCount = s.actionConsume - s.actionCount + 1;
+//				int actionBackCount = s.actionConsume - s.actionCount + 1;
 				Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
 				if (s.actionCount > s.actionConsume) {
 					s.isAvalible = true;
@@ -104,4 +143,8 @@ public class Player : BattleAgent {
 		this.isItemEnable = isItemEnable;
 		this.isDefenceEnable = isDefenceEnable;
 	}
+
+
+
+
 }

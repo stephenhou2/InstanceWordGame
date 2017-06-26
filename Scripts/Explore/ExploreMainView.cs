@@ -51,7 +51,7 @@ public class ExploreMainView: MonoBehaviour {
 		
 		CallBack callBack = SetUpScene;
 
-		ResourceManager.Instance.LoadAssetWithName ("event/icons",callBack,true);
+		ResourceManager.Instance.LoadAssetWithName ("event/icons",callBack);
 	}
 		
 

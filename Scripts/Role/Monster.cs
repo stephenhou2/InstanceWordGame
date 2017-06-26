@@ -7,7 +7,19 @@ public class Monster : BattleAgent,IPointerClickHandler{
 
 	public int monsterId;
 
+	private BattleMonsterView mBaMonsterView;
 
+	// 角色UIView
+	public new BattleMonsterView baView{
+
+		get{
+			if (mBaMonsterView == null) {
+				mBaMonsterView = GetComponent<BattleMonsterView> ();
+			}
+			return mBaMonsterView;
+		}
+
+	}
 
 	public void SetupMonster(int gameProcess){
 		GameManager.gameManager.OnGenerateSkill ();

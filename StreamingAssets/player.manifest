@@ -1,0 +1,30 @@
+ManifestFileVersion: 0
+CRC: 2551047906
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 3abfc6792e9c26d79d13a297901bc12c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: ad3b9fbda627ab915236f1988822d68e
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2c6104151625d4f0b9f95550663627d0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7bb24e7513b324e94a40c1d025670888, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 676468b5126ab400e86227db8cd3f718, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Battle/Player.prefab
+Dependencies: []

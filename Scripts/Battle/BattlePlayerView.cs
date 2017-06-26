@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class BattlePlayerView : MonoBehaviour {
+public class BattlePlayerView : BattleAgentView {
 
 	// 战斗中的玩家UI
 	public Button attackButton;
@@ -29,14 +29,9 @@ public class BattlePlayerView : MonoBehaviour {
 			Skill s = player.skills [i];
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
-				s.actionCount++;
 				int actionBackCount = s.actionConsume - s.actionCount + 1;
 				skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount == 0 ? "" : actionBackCount.ToString ();
-				Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
-				if (s.actionCount > s.actionConsume) {
-					s.isAvalible = true;
-					s.actionCount = 0;
-				} 
+
 			}
 			attackButton.interactable = player.isAttackEnable && player.strength >= player.attackSkill.strengthConsume;
 			defenceButton.interactable = player.isDefenceEnable && player.strength >= player.defenceSkill.strengthConsume;;
@@ -90,6 +85,17 @@ public class BattlePlayerView : MonoBehaviour {
 		mSequence.Kill (false);
 		selectedButtonBackImg = null;
 
+	}
+
+	public void ResetPlayerUI(){
+		Player p = GetComponent<Player> ();
+		for(int i = 0;i < p.skills.Count;i++){
+			Button btn = skillButtons [i];
+			btn.interactable = true;
+			Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
+			btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
+			= p.skills [i].strengthConsume.ToString();
+		}
 	}
 
 }

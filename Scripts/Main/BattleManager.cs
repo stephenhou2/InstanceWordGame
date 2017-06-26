@@ -15,7 +15,9 @@ public class BattleManager : MonoBehaviour {
 //	private Monster monster;
 
 	// ********for test use**********//
-	public Player player;
+	public BattlePlayerController bpController;
+
+	private Player player;
 
 	private List<BattleAgent> players = new List<BattleAgent>();
 
@@ -31,10 +33,10 @@ public class BattleManager : MonoBehaviour {
 			bool animationEnd = true;
 
 			foreach (Monster m in monsters) {
-				animationEnd = animationEnd && !m.isAnimating;
+				animationEnd = animationEnd && !m.baView.isAnimating;
 			}
 			foreach (Player p in players) {
-				animationEnd = animationEnd && !p.isAnimating;
+				animationEnd = animationEnd && !p.baView.isAnimating;
 			}
 			return animationEnd;
 		}
@@ -45,9 +47,6 @@ public class BattleManager : MonoBehaviour {
 
 
 	public int gameProcess;
-
-
-	public BattlePlayerView battlePlayerView;
 
 	public Text description;
 
@@ -88,33 +87,29 @@ public class BattleManager : MonoBehaviour {
 		OnEnterBattle ();
 	}
 
+
+
 	// 进入战斗场景时初始化玩家和怪物数据
-	public void SetupBattleManager(Player player,int gameProcess){
+	public void SetupBattleManager(int gameProcess){
 
 		// 每一关根据游戏进度创建新的怪物
-//		monster = Instantiate (monsterModel);
-
-//		monster.SetupMonster (gameProcess);
 
 //		player = Player.mainPlayer;
+//		bpController.player = Player.mainPlayer;
 
-		#warning 这里是否会产生循环引用？注意一下
-//		foreach (Player player in players) {
-//			player.enemies = monsters;
-//		}
-//
-//		foreach (Monster monster in monsters) {
-//			monster.enemies = players;
-//		}
+		Player battlePlayer = bpController.GetComponent<Player> ();
+		player = battlePlayer;
+		battlePlayer.CopyMainPlayerStatus ();
+		bpController.player = battlePlayer;
 
-
-
+		players.Add (player);
 
 	}
 
+
 	private void OnEnterBattle(){
-		SetupBattleManager (player, gameProcess);
-		players.Add (player);
+		SetupBattleManager (gameProcess);
+
 		OnResetGame ();
 	}
 		
@@ -122,11 +117,10 @@ public class BattleManager : MonoBehaviour {
 	public void OnPlayerSelectSkill(Skill playerSkill){
 
 		monsterControlPlane.gameObject.SetActive (true);
-//		playerControlPlane.gameObject.SetActive (true);
 
 		player.currentSkill = playerSkill;
 
-		battlePlayerView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
+		bpController.baView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
 			player.currentSkill == player.defenceSkill,
 			player.currentSkill.skillId);
 
@@ -137,7 +131,7 @@ public class BattleManager : MonoBehaviour {
 		// 如果技能不需要指定对象(对象为玩家自己或者敌方全部)
 		if (!playerSkill.needSelectEnemy) {
 
-			battlePlayerView.KillSelectedSkillAnim ();
+			bpController.baView.KillSelectedSkillAnim ();
 
 			playerSkill.AffectAgents (player,null,null, monsters, playerSkill.skillLevel);
 
@@ -179,7 +173,7 @@ public class BattleManager : MonoBehaviour {
 		playerControlPlane.gameObject.SetActive (true);
 
 
-		battlePlayerView.KillSelectedSkillAnim ();
+		bpController.baView.KillSelectedSkillAnim ();
 
 		Monster monster = null;
 		foreach (Monster m in monsters) {
@@ -276,7 +270,8 @@ public class BattleManager : MonoBehaviour {
 		player.UpdateValidActionType ();
 
 		// 更新按钮是否可以交互
-		battlePlayerView.UpdateUIStatus(player);
+		bpController.baView.UpdateUIStatus(player);
+
 		// 如果玩家本轮无法行动，则直接进入怪物行动轮
 		if (player.validActionType == ValidActionType.None) {
 			OnMonsterAction ();
@@ -295,7 +290,7 @@ public class BattleManager : MonoBehaviour {
 		// 如果气力大于普通攻击所需的气力值，则默认选中普通攻击
 		if (player.strength >= player.attackSkill.strengthConsume && player.validActionType != ValidActionType.PhysicalExcption) {
 			player.currentSkill = player.attackSkill;
-			battlePlayerView.SelectedSkillAnim (true, false, -1);
+			bpController.baView.SelectedSkillAnim (true, false, -1);
 			return player.attackSkill;
 
 		}
@@ -305,7 +300,7 @@ public class BattleManager : MonoBehaviour {
 			foreach (Skill s in player.skills) {
 				if (s.isAvalible && player.strength >= s.strengthConsume) {
 					player.currentSkill = s;
-					battlePlayerView.SelectedSkillAnim (false, false, s.skillId);
+					bpController.baView.SelectedSkillAnim (false, false, s.skillId);
 					return s;
 				}
 			}
@@ -314,7 +309,7 @@ public class BattleManager : MonoBehaviour {
 
 		// 如果其他技能都无法使用，则默认选中防御
 		player.currentSkill = player.defenceSkill;
-		battlePlayerView.SelectedSkillAnim(false,true,-1);
+		bpController.baView.SelectedSkillAnim(false,true,-1);
 		return player.defenceSkill;
 
 	}
@@ -393,7 +388,7 @@ public class BattleManager : MonoBehaviour {
 		/****************测试用，重置所有怪物****************/
 		foreach (Monster m in monstersModel) {
 			m.ResetBattleAgentProperties (true);
-			m.agentIcon.color = Color.white;
+			m.baView.agentIcon.color = Color.white;
 			m.gameObject.SetActive (true);
 			monsters.Add (m);
 		}
@@ -411,14 +406,13 @@ public class BattleManager : MonoBehaviour {
 
 		battleEndHUD.SetActive (false);
 
-		foreach (Player p in players) {
-			for(int i = 0;i<battlePlayerView.skillButtons.Length;i++){
-				Button btn = battlePlayerView.skillButtons [i];
-				btn.interactable = true;
-				Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
-				btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text = p.skills [i].strengthConsume.ToString();
-			}
-		}
+//		foreach (Player p in players) {
+//		p.baView.ResetPlayerUI ();
+//		}
+
+		bpController.baView.ResetPlayerUI();
+
+
 		playerControlPlane.gameObject.SetActive (false);
 		monsterControlPlane.gameObject.SetActive (false);
 

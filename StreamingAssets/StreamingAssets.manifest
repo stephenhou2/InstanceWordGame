@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 4193719585
+CRC: 3616703868
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -16,4 +16,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_4:
       Name: event/icons
+      Dependencies: {}
+    Info_5:
+      Name: player
       Dependencies: {}
