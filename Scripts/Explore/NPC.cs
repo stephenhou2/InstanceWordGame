@@ -10,9 +10,17 @@ public class NPC  {
 
 	public string npcDescription;
 
+	public string spriteName;
+
 	public Dialog[] dialogs;
 
 	public Choice[] choices;
+
+	public override string ToString ()
+	{
+		return string.Format ("[NPC]:" + npcName + "[\nnpcDesc:]" + npcDescription);
+	}
+
 
 }
 

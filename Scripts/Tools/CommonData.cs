@@ -10,8 +10,9 @@ public struct CommonData{
 	
 	public static string JsonFileDirectoryPath = "Assets/Scripts/JsonData";
 //	public static string effectsFileName = "SkillEffectData.txt";
-	public static string effectsFileName = "TestEffectString.txt";
-	public static string chapterFileName = "ChaptersString.txt";
+	public static string effectsDataFileName = "TestEffectString.txt";
+	public static string chaptersDataFileName = "ChaptersString.txt";
+	public static string chapterDataFileName = "DataString.txt";
 
 }
 

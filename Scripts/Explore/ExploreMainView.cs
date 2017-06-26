@@ -24,7 +24,7 @@ public class ExploreMainView: MonoBehaviour {
 	private Image eventConfirmIcon;
 
 
-	private Sprite[] sprites;
+	private List<Sprite> sprites = new List<Sprite>();
 
 	public int maxEventCountForOnce = 4;
 
@@ -35,15 +35,12 @@ public class ExploreMainView: MonoBehaviour {
 
 		this.detailInfo = detailInfo;
 
-
 		LoadAssets ();
-
-
-
 
 	}
 
 	private void LoadAssets(){
+		
 		CallBack callBack = LoadEventSprites;
 
 		ResourceManager.Instance.LoadAssetWithName ("explore",callBack);
@@ -51,9 +48,10 @@ public class ExploreMainView: MonoBehaviour {
 	}
 
 	private void LoadEventSprites(){
+		
 		CallBack callBack = SetUpScene;
 
-		ResourceManager.Instance.LoadAssetWithName ("event/confirm_icons",callBack,true);
+		ResourceManager.Instance.LoadAssetWithName ("event/icons",callBack,true);
 	}
 		
 
@@ -63,7 +61,7 @@ public class ExploreMainView: MonoBehaviour {
 
 //		SetUpTopBar ();
 
-		SetUpChapterEvents ();
+		SetUpChapterEventsPlane ();
 	}
 
 	private void InitUI(){
@@ -80,52 +78,79 @@ public class ExploreMainView: MonoBehaviour {
 	}
 
 
+	// 初始化顶部bar
+	private void SetUpTopBar(){
 
-	private void SetUpChapterEvents(){
-		sprites = new Sprite[10];
-		Debug.Log (ResourceManager.Instance.sprites.Count);
-		ResourceManager.Instance.sprites.CopyTo(sprites);
+		playerLevelText.text = Player.mainPlayer.playerLevel.ToString();
+		stepsLeftText.text = detailInfo.totalSteps.ToString();
+		chapterLocationText.text = detailInfo.chapterLocation;
+		playerHealthBar.maxValue = Player.mainPlayer.maxHealth;
+		playerHealthBar.value = Player.mainPlayer.health;
+		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = Player.mainPlayer.health + "/" + Player.mainPlayer.maxHealth;
+
+	}
+
+	// 初始化事件面板
+	public void SetUpChapterEventsPlane(){
+		
+		sprites = ResourceManager.Instance.sprites;
 
 		for (int i = 0; i < maxEventCountForOnce; i++) {
-			
-			GameObject mChapterEvent = Instantiate (chapterEvent, chapterEventsContainer.transform);
-
-//			Image eventIcon = mChapterEvent.transform.FindChild ("EventIcon").GetComponent<Image>();
-//			Text eventTitle = mChapterEvent.transform.FindChild ("EventTitle").GetComponent<Text>();
-//			Text eventDescription = mChapterEvent.transform.FindChild ("EventDescription").GetComponent<Text>();
-//			Image eventConfirmIcon = mChapterEvent.transform.FindChild ("EventConfirmIcon").GetComponent<Image>();
-
-			Image eventIcon = GameObject.Find ("EventIcon").GetComponent<Image>();
-			Text eventTitle = GameObject.Find ("EventTitle").GetComponent<Text>();
-			Text eventDescription = GameObject.Find ("EventDescription").GetComponent<Text>();
-			Image eventConfirmIcon = GameObject.Find ("EventConfirmIcon").GetComponent<Image>();
-
-
-//			eventTitle.text = npc.npcName;
-//			eventDescription.text = npc.npcDescription;
-			eventIcon.sprite = sprites[0];
-			eventConfirmIcon.sprite = sprites[1];
-
-//			switch (RandomEvent ()) {
-//			case EventType.Monster:
-//				Monster[] monsters = RandomReturn<Monster[]> (detailInfo.monstersGroup);
-//				break;
-//			case EventType.NPC:
-//				NPC npc = RandomReturn<NPC> (detailInfo.npcs);
-//				eventTitle.text = npc.npcName;
-//				eventDescription.text = npc.npcDescription;
-//				eventIcon.sprite = GameObject.Find ("people1") as Sprite;
-//				eventConfirmIcon.sprite = GameObject.Find("chatIcon") as Sprite;
-//				break;
-//			case EventType.Item:
-//				Item item = RandomReturn<Item> (detailInfo.items);
-//				break;
-//			default:
-//				break;
-//			}
+			SetUpChapterEvents ();
 		}
 	}
 
+	// 初始化单个事件控件
+	private void SetUpChapterEvents(){
+
+		GameObject mChapterEvent = Instantiate (chapterEvent, chapterEventsContainer.transform);
+
+		Image eventIcon = mChapterEvent.transform.Find ("ChapterEventView/EventIcon").GetComponent<Image>();
+		Text eventTitle = mChapterEvent.transform.Find ("ChapterEventView/EventTitle").GetComponent<Text>();
+		Text eventDescription = mChapterEvent.transform.Find ("ChapterEventView/EventDescription").GetComponent<Text>();
+		Image eventConfirmIcon = mChapterEvent.transform.Find("ChapterEventView/EventSelectButton/EventConfirmIcon").GetComponent<Image>();
+
+
+		switch (RandomEvent ()) {
+		case EventType.Monster:
+			MonsterGroup monsterGroup = RandomReturn<MonsterGroup> (detailInfo.monsterGroups);
+			eventTitle.text = monsterGroup.monsterGroupName;
+			eventDescription.text = monsterGroup.monsterGroupDescription;
+			eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == monsterGroup.spriteName; 
+			});
+			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == "battleIcon"; 
+			});
+			break;
+		case EventType.NPC:
+			NPC npc = RandomReturn<NPC> (detailInfo.npcs);
+			eventTitle.text = npc.npcName;
+			eventDescription.text = npc.npcDescription;
+			eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == npc.spriteName;
+			});
+			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == "chatIcon";
+			});
+			break;
+		case EventType.Item:
+			Item item = RandomReturn<Item> (detailInfo.items);
+			eventTitle.text = item.itemName;
+			eventDescription.text = item.itemDescription;
+			eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
+			});
+			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == "watchIcon";
+			});
+			break;
+		default:
+			break;
+			}
+	}
+
+	// 返回随机事件
 	private EventType RandomEvent(){
 		float i = 0f;
 		i = Random.Range (0f, 10f);
@@ -137,28 +162,12 @@ public class ExploreMainView: MonoBehaviour {
 			return EventType.Item;
 		}
 	}
-
+	// 随机返回当前事件中的npc／怪物组／物品
 	private T RandomReturn<T>(T[] array){
 		int randomIndex = (int)(Random.Range (0, array.Length - float.Epsilon));
 		return array[randomIndex];
 	}
 
-
-	private void SetUpTopBar(){
-
-
-		playerLevelText.text = Player.mainPlayer.playerLevel.ToString();
-		stepsLeftText.text = detailInfo.totalSteps.ToString();
-		chapterLocationText.text = detailInfo.chapterLocation;
-		playerHealthBar.maxValue = Player.mainPlayer.maxHealth;
-		playerHealthBar.value = Player.mainPlayer.health;
-		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = Player.mainPlayer.health + "/" + Player.mainPlayer.maxHealth;
-
-	}
-
-	public void SetUpChapterEventsPlane(ChapterDetailInfo detailInfo){
-
-	}
 
 
 }

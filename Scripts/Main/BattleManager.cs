@@ -46,6 +46,9 @@ public class BattleManager : MonoBehaviour {
 
 	public int gameProcess;
 
+
+	public BattlePlayerView battlePlayerView;
+
 	public Text description;
 
 	public GameObject playerControlPlane;
@@ -123,7 +126,7 @@ public class BattleManager : MonoBehaviour {
 
 		player.currentSkill = playerSkill;
 
-		player.SelectedSkillAnim (player.currentSkill == player.attackSkill,
+		battlePlayerView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
 			player.currentSkill == player.defenceSkill,
 			player.currentSkill.skillId);
 
@@ -134,7 +137,7 @@ public class BattleManager : MonoBehaviour {
 		// 如果技能不需要指定对象(对象为玩家自己或者敌方全部)
 		if (!playerSkill.needSelectEnemy) {
 
-			player.KillSelectedSkillAnim ();
+			battlePlayerView.KillSelectedSkillAnim ();
 
 			playerSkill.AffectAgents (player,null,null, monsters, playerSkill.skillLevel);
 
@@ -176,7 +179,7 @@ public class BattleManager : MonoBehaviour {
 		playerControlPlane.gameObject.SetActive (true);
 
 
-		player.KillSelectedSkillAnim ();
+		battlePlayerView.KillSelectedSkillAnim ();
 
 		Monster monster = null;
 		foreach (Monster m in monsters) {
@@ -269,8 +272,11 @@ public class BattleManager : MonoBehaviour {
 
 		BattleAgentStatesManager.CheckStates (players,monsters);
 
-		// 根据玩家可采取的行动类型设定技能按钮是否可以交互
-		player.ValidActionForPlayer ();
+		// 更新玩家可采取的行动类型
+		player.UpdateValidActionType ();
+
+		// 更新按钮是否可以交互
+		battlePlayerView.UpdateUIStatus(player);
 		// 如果玩家本轮无法行动，则直接进入怪物行动轮
 		if (player.validActionType == ValidActionType.None) {
 			OnMonsterAction ();
@@ -289,7 +295,7 @@ public class BattleManager : MonoBehaviour {
 		// 如果气力大于普通攻击所需的气力值，则默认选中普通攻击
 		if (player.strength >= player.attackSkill.strengthConsume && player.validActionType != ValidActionType.PhysicalExcption) {
 			player.currentSkill = player.attackSkill;
-			player.SelectedSkillAnim (true, false, -1);
+			battlePlayerView.SelectedSkillAnim (true, false, -1);
 			return player.attackSkill;
 
 		}
@@ -299,7 +305,7 @@ public class BattleManager : MonoBehaviour {
 			foreach (Skill s in player.skills) {
 				if (s.isAvalible && player.strength >= s.strengthConsume) {
 					player.currentSkill = s;
-					player.SelectedSkillAnim (false, false, s.skillId);
+					battlePlayerView.SelectedSkillAnim (false, false, s.skillId);
 					return s;
 				}
 			}
@@ -308,7 +314,7 @@ public class BattleManager : MonoBehaviour {
 
 		// 如果其他技能都无法使用，则默认选中防御
 		player.currentSkill = player.defenceSkill;
-		player.SelectedSkillAnim(false,true,-1);
+		battlePlayerView.SelectedSkillAnim(false,true,-1);
 		return player.defenceSkill;
 
 	}
@@ -406,8 +412,8 @@ public class BattleManager : MonoBehaviour {
 		battleEndHUD.SetActive (false);
 
 		foreach (Player p in players) {
-			for(int i = 0;i<p.skillButtons.Length;i++){
-				Button btn = p.skillButtons [i];
+			for(int i = 0;i<battlePlayerView.skillButtons.Length;i++){
+				Button btn = battlePlayerView.skillButtons [i];
 				btn.interactable = true;
 				Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
 				btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text = p.skills [i].strengthConsume.ToString();

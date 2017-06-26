@@ -13,13 +13,13 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	public void SelectChapter(int selectedChapterIndex){
 
-//		ChapterDetailInfo[] chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>("", "");
-
+		ChapterDetailInfo[] chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>(CommonData.JsonFileDirectoryPath,CommonData.chapterDataFileName);
+		Debug.Log (chapterDetails[selectedChapterIndex]);
 //		expChapterView.SetUpExploreMainView (chapterDetails[selectedChapterIndex]);
 
 		expChapterView = GetComponent<ExploreMainView> ();
 
-		expChapterView.SetUpExploreMainView (null);
+		expChapterView.SetUpExploreMainView (chapterDetails[selectedChapterIndex]);
 	}
 
 

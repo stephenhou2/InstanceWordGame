@@ -14,12 +14,12 @@ public class ExploreManager : MonoBehaviour {
 		/********for test**********/
 		ExploreManager.unlockedMaxChapterIndex = 2;
 		/********for test**********/
-		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.JsonFileDirectoryPath, CommonData.chapterFileName);
+		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.JsonFileDirectoryPath, CommonData.chaptersDataFileName);
 //		expListView.SetUpExploreListView (chapterLists,ExploreManager.unlockedMaxChapterIndex);
 
 		expMainViewController = GetComponent<ExploreMainViewController> ();
 
-		expMainViewController.SelectChapter(1);
+		expMainViewController.SelectChapter(0);
 	}
 
 	public void OnSelectChapter(int chapterIndex){

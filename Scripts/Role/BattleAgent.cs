@@ -28,8 +28,6 @@ public abstract class BattleAgent : MonoBehaviour {
 		}
 	}
 
-//	[HideInInspector]public BattleAgent[] enemies;
-
 
 	public Slider healthBar;//血量槽
 	public Text healthText;//血量值
@@ -200,7 +198,6 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		if (toOriginalState) {
 			validActionType = ValidActionType.All;
-//			allTweeners.Clear ();
 		}
 
 		foreach (Skill s in skills) {

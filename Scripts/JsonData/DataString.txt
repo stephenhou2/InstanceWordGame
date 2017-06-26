@@ -1,0 +1,29 @@
+﻿{
+	"Items": [
+		{
+			"chapterIndex":0,
+			"totalSteps": 50,
+			"chapterLocation": "黑暗之森",
+			"items": [
+				{
+					"itemName": "木箱",
+					"itemDescription": "一个被人遗弃的箱子",
+					"spriteName": "boxIcon"
+				}
+			],
+			"npcs": [
+				{
+					"npcName": "老头",
+					"npcDescription": "一个老头",
+					"spriteName": "people1"
+				}
+			],
+			"monsterGroups": [{
+				"monsterGroupName": "兽人",
+				"monsterGroupDescription": "嗜血的半兽人",
+				"spriteName": "monster1"
+			}
+			]
+		}
+	]
+}

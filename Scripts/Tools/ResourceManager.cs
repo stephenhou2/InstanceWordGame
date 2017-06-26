@@ -64,11 +64,12 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 		}
 
 		isSprites = false;
-//		sprites.Clear ();
+
 		myLoadedAssetBundle.Unload (false);
 
 		if (callBack != null) {
 			callBack ();
+			sprites.Clear ();
 		}
 
 	}

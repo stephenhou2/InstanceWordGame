@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour {
+[System.Serializable]
+public class Item {
 
 	public string itemName;
-	public string description;
+	public string itemDescription;
+	public string spriteName;
 
 	public int itemId;
 
@@ -21,5 +23,12 @@ public class Item : MonoBehaviour {
 
 	public int healthGain;//血量增益
 	public int strengGain;//气力增益
+
+
+	public override string ToString ()
+	{
+		return string.Format ("[Item]:" + itemName + "[\nItemDesc]:" + itemDescription);
+	}
+
 
 }
