@@ -1,0 +1,49 @@
+ManifestFileVersion: 0
+CRC: 1283436467
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9e9ed5a0aac5cef0925d9c0ee2fc5658
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 6cbbac8413a4d878fdbbab54d8401b1d
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 676468b5126ab400e86227db8cd3f718, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5db94a988516743a5a9abf0f59eb69a8, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c4f31e4d67f4b4777bd8e625edc644cd, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Battle/MonsterView.prefab
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/battle/monster_icons

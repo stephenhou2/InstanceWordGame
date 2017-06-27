@@ -23,7 +23,7 @@ public class BattleManager : MonoBehaviour {
 
 	public List<BattleAgent> monsters = new List<BattleAgent>();
 
-	public List<BattleAgent> monstersModel;
+//	public List<BattleAgent> monstersModel;
 
 	// ********for test use**********//
 
@@ -62,54 +62,51 @@ public class BattleManager : MonoBehaviour {
 	public Button quit;
 
 	public Button reset;
-	/************ for test *************/
-
-	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-	static private void CallBackAfterBattleSceneLoaded(){
-		SceneManager.sceneLoaded += OnSceneLoaded;
-	}
-
-	static private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
-	{
-
-		BattleManager bm = GameObject.Find ("BattleManager").GetComponent<BattleManager> ();
-
-		int gameProcess = GameManager.gameManager.gameProcess;
-
-		Player[] players = new Player[]{GameManager.gameManager.player};
-
-//		bm.SetupBattleManager (player, gameProcess);
-	}
-
-	// **************for test use************//
-	// 后面改为scene加载后执行的函数（上面的）
-	void Awake(){
-		OnEnterBattle ();
-	}
 
 
-
-	// 进入战斗场景时初始化玩家和怪物数据
-	public void SetupBattleManager(int gameProcess){
-
-		// 每一关根据游戏进度创建新的怪物
-
-//		player = Player.mainPlayer;
-//		bpController.player = Player.mainPlayer;
-
-		Player battlePlayer = bpController.GetComponent<Player> ();
-		player = battlePlayer;
-		battlePlayer.CopyMainPlayerStatus ();
-		bpController.player = battlePlayer;
+	// 进入战斗场景时初始化玩家数据
+	private void SetUpPlayer(){
+		player = bpController.GetComponent<Player> ();
+		player.CopyAgentStatus (Player.mainPlayer);
+		bpController.player = player;
 
 		players.Add (player);
-
 	}
 
+	// 进入战斗场景时初始化怪物数据
+	private void SetUpMonsters(MonsterGroup monsterGroup){
+//		monsters = monsterGroup.monsters;
+		GameObject monsterView = null;
+		ResourceManager.Instance.LoadAssetWithName ("battle/monster_view", ()=>{
+			monsterView = ResourceManager.Instance.gos [0];
+		}, true);
+		GameObject upperPlane = GameObject.Find ("UpperPlane");
+		float screenWidth = Screen.width;
+		int monsterNum = monsterGroup.monsters.Count;
+		for(int i = 0;i<monsterNum;i++){
+			GameObject mMonsterView = Instantiate (monsterView, upperPlane.transform);
+			Monster mMonster = mMonsterView.GetComponent<Monster> ();
+			mMonster.CopyAgentStatus (monsterGroup.monsters [i]);
+			monsters.Add (mMonster);
+			switch (monsterNum) {
+			case 1:
+				mMonster.transform.localPosition = Vector3.zero;
+				break;
+			case 2:
+				mMonster.transform.localPosition = new Vector3 (2 * (i - 0.5f) * 230f, 0, 0);
+				break;
+			case 3:
+				mMonster.transform.localPosition = new Vector3 ((i - 1f) * 350f,
+					(i % 2 == 0 ? 1 : -1) * 50f,
+					0);
+				break;
+			}
+		}
+	}
 
-	private void OnEnterBattle(){
-		SetupBattleManager (gameProcess);
-
+	public void OnEnterBattle(MonsterGroup monsterGroup){
+		SetUpPlayer ();
+		SetUpMonsters (monsterGroup);
 		OnResetGame ();
 	}
 		
@@ -386,7 +383,7 @@ public class BattleManager : MonoBehaviour {
 		
 
 		/****************测试用，重置所有怪物****************/
-		foreach (Monster m in monstersModel) {
+		foreach (Monster m in monsters) {
 			m.ResetBattleAgentProperties (true);
 			m.baView.agentIcon.color = Color.white;
 			m.gameObject.SetActive (true);
@@ -423,8 +420,12 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	public void OnQuitBattle(){
+		Player.mainPlayer.CopyAgentStatus (player);
 		Debug.Log ("quit to main screen");
 		battleEndHUD.gameObject.SetActive (false);
+		GameObject.Find ("ExploreCanvas").GetComponent<Canvas>().enabled = true;
+		GameObject.Find ("BattleCanvas").GetComponent<Canvas>().enabled = false;
+//		Destroy(GameObject.Find("BattleCanvas"));
 	}
 
 	public void OnReset(){

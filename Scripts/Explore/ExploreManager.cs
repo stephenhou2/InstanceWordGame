@@ -17,7 +17,9 @@ public class ExploreManager : MonoBehaviour {
 		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.JsonFileDirectoryPath, CommonData.chaptersDataFileName);
 //		expListView.SetUpExploreListView (chapterLists,ExploreManager.unlockedMaxChapterIndex);
 
-		expMainViewController = GetComponent<ExploreMainViewController> ();
+		ResourceManager.Instance.LoadAssetWithName ("explore/explore",null,true);
+
+		expMainViewController = GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ();
 
 		expMainViewController.SelectChapter(0);
 	}
@@ -26,9 +28,12 @@ public class ExploreManager : MonoBehaviour {
 		
 //		expListView.KillExploreListView ();
 
+
+
 		ChapterList cl = chapterLists [chapterIndex];
 
 		expMainViewController.SelectChapter (chapterIndex);
+
 		Debug.Log ("Enter chapter" + chapterIndex);
 	}
 

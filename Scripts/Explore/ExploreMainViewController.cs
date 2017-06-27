@@ -6,14 +6,27 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	private ExploreMainView expChapterView;
 
-//	public void Awake(){
-//		SelectChapter (1);
-//	}
+	private GameObject mDialogAndItemPlane;
 
+	public GameObject dialogAndItemPlane{
+		get{
+			if (mDialogAndItemPlane == null) {
+				ResourceManager.Instance.LoadAssetWithName ("explore/dialog_and_item_view", ()=>{
+					mDialogAndItemPlane = ResourceManager.Instance.gos.Find(delegate(GameObject go) {
+						return go.name == "DialogAndItemPlane";
+					});
+				}, true);
+				mDialogAndItemPlane.transform.SetParent (GetComponent<Transform> (),false);
+			}
+			return mDialogAndItemPlane;
+		}
+
+	}
 
 	public void SelectChapter(int selectedChapterIndex){
 
 		ChapterDetailInfo[] chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>(CommonData.JsonFileDirectoryPath,CommonData.chapterDataFileName);
+
 		Debug.Log (chapterDetails[selectedChapterIndex]);
 //		expChapterView.SetUpExploreMainView (chapterDetails[selectedChapterIndex]);
 
@@ -35,18 +48,59 @@ public class ExploreMainViewController:MonoBehaviour {
 	public void OnSettingButtonSelected(){
 
 	}
+
+//	public void OnEnterEvent(int eventType){
+//
+//	}
+
 		
-	public void OnEnterBattle(){
+	public void OnEnterBattle(MonsterGroup monsterGroup){
+		
+		// 进入战斗场景前将探索场景隐藏
+		GameObject battleCanvas = GameObject.Find ("BattleCanvas");
+		GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
+		if (battleCanvas != null) {
+			exploreCanvas.GetComponent<Canvas> ().enabled = false;
+			battleCanvas.GetComponent<Canvas> ().enabled = true;
+			GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
+
+		} else {
+			ResourceManager.Instance.LoadAssetWithName ("battle/battle", () => {
+				exploreCanvas.GetComponent<Canvas> ().enabled = false;
+				GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
+
+			});// 若当前场景中没有battleCanvas，从assetBundle中加载
+		}
+//		Debug.Log (GameObject.Find ("BattleManager"));
+		// 初始化战斗场景
+//		GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
 
 	}
 
-	public void OnEnterDialog(){
+	// 初始化与npc交谈界面
+	public void OnEnterNPC(NPC npc){
+		
+		Debug.Log (dialogAndItemPlane);
+		dialogAndItemPlane.gameObject.SetActive (true);
 
+		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpDialogPlane(npc);
+
+		Debug.Log (npc);
 	}
+	// 初始化物品展示界面
+	public void OnEnterItem(Item item){
+		
+		dialogAndItemPlane.gameObject.SetActive (true);
 
+		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpItemPlane(item);
 
+		Debug.Log (item);
+	}
 
 	public void OnQuitExploreChapterView(){
 
 	}
+
+
+
 }

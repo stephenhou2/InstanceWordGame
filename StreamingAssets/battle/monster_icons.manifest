@@ -1,0 +1,19 @@
+ManifestFileVersion: 0
+CRC: 2700449118
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 414095b2e6530f563b3acd4b657830de
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Battle/monster2.png
+- Assets/Resources/Sprites/Battle/monster1.png
+Dependencies: []

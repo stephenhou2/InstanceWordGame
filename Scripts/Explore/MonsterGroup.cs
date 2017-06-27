@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class MonsterGroup{
 
-	public List<Monster> monsters = new List<Monster>();
+	public List<BattleAgent> monsters = new List<BattleAgent>();
 
 	public string monsterGroupName;
 

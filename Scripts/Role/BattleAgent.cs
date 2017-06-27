@@ -11,6 +11,17 @@ public abstract class BattleAgent : MonoBehaviour {
 	public bool isActive = true;
 
 
+	public Skill attackSkill;
+	public Skill defenceSkill;
+
+	public int agentLevel;
+
+
+	public bool isAttackEnable = true;
+	public bool isSkillEnable = true;
+	public bool isItemEnable = true;
+	public bool isDefenceEnable = true;
+
 	//*****初始信息********//
 	public int originalMaxHealth;
 	public int originalMaxStrength;
@@ -98,10 +109,43 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public Skill currentSkill;
 
-//	public virtual void Awake(){
-//		statesContainer = ContainerManager.NewContainer ("States", this.transform);
-//		skillsContainer = ContainerManager.NewContainer ("Skills", this.transform);
-//	}
+	public void CopyAgentStatus(BattleAgent ba){
+
+		this.originalMaxHealth = ba.originalMaxHealth;
+		this.originalMaxStrength = ba.originalMaxStrength;
+		this.originalHealth = ba.originalHealth;
+		this.originalStrength = ba.originalStrength;
+		this.originalAttack = ba.originalAttack;
+		this.originalPower = ba.originalPower;
+		this.originalMagic = ba.originalMagic;
+		this.originalCrit = ba.originalCrit;
+		this.originalAgility = ba.originalAgility;
+		this.originalAmour = ba.originalAmour;
+		this.originalMagicResist = ba.originalMagicResist;
+
+		this.maxHealth = ba.maxHealth;
+		this.maxStrength = ba.maxStrength;
+		this.health = ba.health;
+		this.strength = ba.strength;
+
+
+		this.attack = ba.attack;//攻击力
+		this.power = ba.power;//力量
+		this.magic = ba.magic;//魔法
+		this.agility = ba.agility;//敏捷
+		this.amour = ba.amour;//护甲
+		this.magicResist = ba.magicResist;//魔抗
+		this.crit = ba.crit;//暴击
+
+
+		this.attackSkill = ba.attackSkill;
+		this.defenceSkill = ba.defenceSkill;
+		this.skills = ba.skills;
+		this.items = ba.items;
+
+		this.isActive = ba.isActive;
+
+	}
 
 	//添加状态 
 	public void AddState(StateSkillEffect sse){

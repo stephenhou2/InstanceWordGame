@@ -9,106 +9,145 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 
 	private CallBack callBack;
 
-//	private bool stayInMemory;
-
 	public List<Sprite> sprites = new List<Sprite>();
 
 	public List<GameObject> gos = new List<GameObject> ();
 
-//	private Dictionary<string,AssetBundle> dataCache = new Dictionary<string, AssetBundle> ();
+	private string fileName;
+
+//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
+
+	public void MaxCachingSpace(int maxCaching){
+		Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
+	}
 
 
+	public void LoadAssetWithName(string bundlePath,CallBack callBack,bool isSync = false,string fileName = null){
 
-	public void LoadAssetWithName(string filePath,CallBack callBack,bool isSync = false){
-
-
-//		this.stayInMemory = stayInMemory;
+		this.fileName = fileName;
 
 		this.callBack = callBack;
 
 		if (isSync) {
-			LoadFromFileSync (filePath);
+			LoadFromFileSync (bundlePath);
 		} else {
-			StartCoroutine ("LoadFromFileAsync",filePath);
+			StartCoroutine ("LoadFromFileAsync",bundlePath);
 		}
 
 	}
 
 
-	private void LoadFromFileSync(string filePath){
-		string targetPath = Path.Combine (Application.streamingAssetsPath, filePath);
-		var bundleLoadRequest = AssetBundle.LoadFromFile (targetPath);
-		var assetsLoaded = bundleLoadRequest.LoadAllAssets ();
+	private void LoadFromFileSync(string bundlePath){
+		
+		string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
-		foreach (Object obj in assetsLoaded) {
-			GameObject go = Instantiate (obj as GameObject);
-			go.name = obj.name;
-			gos.Add(go);
+		var myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
+
+		if (fileName != null) {
+			
+			var assetLoaded = myLoadedAssetBundle.LoadAsset (fileName);
+
+			GameObject go = Instantiate (assetLoaded as GameObject);
+
+			go.name = assetLoaded.name;
+
+			gos.Add (go);
+
+
+		} else {
+
+			var assetsLoaded = myLoadedAssetBundle.LoadAllAssets ();
+
+			foreach (Object obj in assetsLoaded) {
+				if (obj.GetType () == typeof(Sprite)) {
+					sprites.Add (obj as Sprite);
+				} else if (obj.GetType () == typeof(Texture2D)) {
+					continue;
+				} else {
+					GameObject go = Instantiate (obj as GameObject);
+					go.name = obj.name;
+					gos.Add (go);
+
+				}
+			}
+
 		}
+			
+		myLoadedAssetBundle.Unload (false);
 
 		if (callBack != null) {
 			callBack ();
-			gos.Clear ();
-			sprites.Clear ();
 		}
+		gos.Clear ();
+		sprites.Clear ();
 	}
 
-	private IEnumerator LoadFromFileAsync(string filePath){
+	private IEnumerator LoadFromFileAsync(string bundlePath){
 
-//		AssetBundle myLoadedAssetBundle = null;
-//
-//		foreach (string path in dataCache.Keys) {
-//			if (filePath.Equals (path)) {
-//				myLoadedAssetBundle = dataCache [path];
-//				break;
-//			}
-//		}
-//		if (myLoadedAssetBundle == null) {
+		string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
-			string targetPath = Path.Combine (Application.streamingAssetsPath, filePath);
+		var bundleLoadRequest = AssetBundle.LoadFromFileAsync (targetPath);
 
-			var bundleLoadRequest = AssetBundle.LoadFromFileAsync (targetPath);
+		loadProgress = bundleLoadRequest.progress;
 
-			loadProgress = bundleLoadRequest.progress;
+		yield return bundleLoadRequest;
 
-			yield return bundleLoadRequest;
-
-			var myLoadedAssetBundle = bundleLoadRequest.assetBundle;
+		var myLoadedAssetBundle = bundleLoadRequest.assetBundle;
 
 
-//		}
 
-//		if (stayInMemory) {
-//			dataCache [filePath] = myLoadedAssetBundle;
-//		}
 
 		if (myLoadedAssetBundle == null)
 		{
 			Debug.Log("Failed to load AssetBundle!");
 			yield break;
 		}
+			
 
-		var assetLoadRequest = myLoadedAssetBundle.LoadAllAssetsAsync ();
-		yield return assetLoadRequest;
-		foreach (Object obj in assetLoadRequest.allAssets) {
-			if (obj.GetType() == typeof(Sprite)) {
-				sprites.Add (obj as Sprite);
-			}else if(obj.GetType() == typeof(Texture2D)){
-				continue;
-			}else {
-				Instantiate (obj as GameObject).name = obj.name;
-				Debug.Log (obj.name);
+		if (fileName != null) {
+
+			var assetLoadRequest = myLoadedAssetBundle.LoadAssetAsync (fileName);
+
+			yield return assetLoadRequest;
+
+			var assetLoaded = assetLoadRequest.asset;
+
+			GameObject go = Instantiate (assetLoaded as GameObject);
+
+			go.name = assetLoaded.name;
+
+			gos.Add (go);
+
+		} else {
+			
+			var assetLoadRequest = myLoadedAssetBundle.LoadAllAssetsAsync ();
+
+			yield return assetLoadRequest;
+
+			var assetsLoaded = assetLoadRequest.allAssets;
+
+			foreach (Object obj in assetsLoaded) {
+				if (obj.GetType () == typeof(Sprite)) {
+					sprites.Add (obj as Sprite);
+				} else if (obj.GetType () == typeof(Texture2D)) {
+					continue;
+				} else {
+					GameObject go = Instantiate (obj as GameObject);
+					go.name = obj.name;
+					gos.Add (go);
+				}
 			}
 		}
+
+
 
 		myLoadedAssetBundle.Unload (false);
 
 		if (callBack != null) {
 			callBack ();
-			gos.Clear ();
-			sprites.Clear ();
 		}
-
+		gos.Clear ();
+		sprites.Clear ();
 	}
 		
 }

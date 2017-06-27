@@ -8,9 +8,11 @@ public class ExploreMainView: MonoBehaviour {
 
 
 
-	private GameObject chapterEvent;
+	public GameObject chapterEventView;
 
 	private GameObject chapterEventsContainer;
+
+//	public GameObject mChapterEvent;
 
 
 	private Text playerLevelText;
@@ -35,23 +37,20 @@ public class ExploreMainView: MonoBehaviour {
 
 		this.detailInfo = detailInfo;
 
-		LoadAssets ();
+//		LoadAssets ();
 
+		LoadEventSprites ();
 	}
 
 	private void LoadAssets(){
 		
-		CallBack callBack = LoadEventSprites;
-
-		ResourceManager.Instance.LoadAssetWithName ("explore",callBack);
+		ResourceManager.Instance.LoadAssetWithName ("explore/explore",LoadEventSprites);
 
 	}
 
 	private void LoadEventSprites(){
-		
-		CallBack callBack = SetUpScene;
 
-		ResourceManager.Instance.LoadAssetWithName ("event/icons",callBack);
+		ResourceManager.Instance.LoadAssetWithName ("explore/icons",SetUpScene);
 	}
 		
 
@@ -59,9 +58,15 @@ public class ExploreMainView: MonoBehaviour {
 
 		InitUI ();
 
-//		SetUpTopBar ();
-
 		SetUpChapterEventsPlane ();
+
+		SetUpTopBar ();
+
+
+
+
+
+
 	}
 
 	private void InitUI(){
@@ -71,30 +76,15 @@ public class ExploreMainView: MonoBehaviour {
 		chapterLocationText = GameObject.Find ("ChapterLocationText").GetComponent<Text>();
 		playerHealthBar = GameObject.Find ("PlayerHealth").GetComponent<Slider>();
 
-		chapterEvent = GameObject.Find ("ChapterEvent");
+//		chapterEventView = GameObject.Find ("ChapterEvent");
 		chapterEventsContainer = GameObject.Find ("ChapterEventsContainer");
 
 
 	}
 
-
-	// 初始化顶部bar
-	private void SetUpTopBar(){
-
-		playerLevelText.text = Player.mainPlayer.playerLevel.ToString();
-		stepsLeftText.text = detailInfo.totalSteps.ToString();
-		chapterLocationText.text = detailInfo.chapterLocation;
-		playerHealthBar.maxValue = Player.mainPlayer.maxHealth;
-		playerHealthBar.value = Player.mainPlayer.health;
-		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = Player.mainPlayer.health + "/" + Player.mainPlayer.maxHealth;
-
-	}
-
 	// 初始化事件面板
 	public void SetUpChapterEventsPlane(){
-		
 		sprites = ResourceManager.Instance.sprites;
-
 		for (int i = 0; i < maxEventCountForOnce; i++) {
 			SetUpChapterEvents ();
 		}
@@ -103,13 +93,15 @@ public class ExploreMainView: MonoBehaviour {
 	// 初始化单个事件控件
 	private void SetUpChapterEvents(){
 
-		GameObject mChapterEvent = Instantiate (chapterEvent, chapterEventsContainer.transform);
+		GameObject mChapterEvent = Instantiate (chapterEventView, chapterEventsContainer.transform);
+
+		ExploreMainViewController exploreMainViewController = GetComponent<ExploreMainViewController> ();
 
 		Image eventIcon = mChapterEvent.transform.Find ("ChapterEventView/EventIcon").GetComponent<Image>();
 		Text eventTitle = mChapterEvent.transform.Find ("ChapterEventView/EventTitle").GetComponent<Text>();
 		Text eventDescription = mChapterEvent.transform.Find ("ChapterEventView/EventDescription").GetComponent<Text>();
 		Image eventConfirmIcon = mChapterEvent.transform.Find("ChapterEventView/EventSelectButton/EventConfirmIcon").GetComponent<Image>();
-
+		Button eventSelectButton = mChapterEvent.transform.Find ("ChapterEventView/EventSelectButton").GetComponent<Button> ();
 
 		switch (RandomEvent ()) {
 		case EventType.Monster:
@@ -122,6 +114,10 @@ public class ExploreMainView: MonoBehaviour {
 			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "battleIcon"; 
 			});
+
+			eventSelectButton.onClick.AddListener (delegate {
+				exploreMainViewController.OnEnterBattle (monsterGroup);
+			});
 			break;
 		case EventType.NPC:
 			NPC npc = RandomReturn<NPC> (detailInfo.npcs);
@@ -132,6 +128,10 @@ public class ExploreMainView: MonoBehaviour {
 			});
 			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "chatIcon";
+			});
+
+			eventSelectButton.onClick.AddListener (delegate{
+				exploreMainViewController.OnEnterNPC(npc);
 			});
 			break;
 		case EventType.Item:
@@ -144,11 +144,34 @@ public class ExploreMainView: MonoBehaviour {
 			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "watchIcon";
 			});
+
+			eventSelectButton.onClick.AddListener (delegate{
+				exploreMainViewController.OnEnterItem(item);
+			});
 			break;
 		default:
 			break;
-			}
+		}
 	}
+
+
+	// 初始化顶部bar
+	private void SetUpTopBar(){
+
+		Player player = Player.mainPlayer;
+	
+		playerLevelText.text = player.agentLevel.ToString();
+		stepsLeftText.text = detailInfo.totalSteps.ToString();
+		chapterLocationText.text = detailInfo.chapterLocation;
+		playerHealthBar.maxValue = player.maxHealth;
+		playerHealthBar.value = player.health;
+		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+
+
+
+	}
+
+
 
 	// 返回随机事件
 	private EventType RandomEvent(){

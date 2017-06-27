@@ -13,7 +13,7 @@ public struct CommonData{
 	public static string effectsDataFileName = "TestEffectString.txt";
 	public static string chaptersDataFileName = "ChaptersString.txt";
 	public static string chapterDataFileName = "DataString.txt";
-
+//	public static string battleDataCanvansName = ""
 }
 
 public enum EventType{

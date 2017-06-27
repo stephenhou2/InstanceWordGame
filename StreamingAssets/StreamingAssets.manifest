@@ -1,22 +1,26 @@
 ManifestFileVersion: 0
-CRC: 3616703868
+CRC: 338217456
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: roles/player
+      Name: player
       Dependencies: {}
     Info_1:
-      Name: roles/monster
-      Dependencies: {}
+      Name: battle/monster_view
+      Dependencies:
+        Dependency_0: battle/monster_icons
     Info_2:
-      Name: explore
+      Name: battle/monster_icons
       Dependencies: {}
     Info_3:
-      Name: monster_icons
+      Name: explore/dialog_and_item_view
       Dependencies: {}
     Info_4:
-      Name: event/icons
+      Name: explore/explore
       Dependencies: {}
     Info_5:
-      Name: player
+      Name: explore/icons
+      Dependencies: {}
+    Info_6:
+      Name: battle/battle
       Dependencies: {}

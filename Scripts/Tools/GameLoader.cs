@@ -15,11 +15,10 @@ public class GameLoader : MonoBehaviour {
 //
 //	}
 	void Awake(){
+		
+		ResourceManager.Instance.MaxCachingSpace (200);
 
-//		if (Player.mainPlayer == null) {
-//			Instantiate (player);
-//			Player.mainPlayer.ResetBattleAgentProperties (true);
-//		}
+		player = Player.mainPlayer;
 //
 //		if (GameManager.gameManager == null) {
 //			Instantiate (gameManager);

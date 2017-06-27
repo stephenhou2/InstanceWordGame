@@ -30,17 +30,6 @@ public class Player : BattleAgent {
 
 	}
 
-	public Skill attackSkill;
-	public Skill defenceSkill;
-
-	public int playerLevel;
-
-
-	public bool isAttackEnable = true;
-	public bool isSkillEnable = true;
-	public bool isItemEnable = true;
-	public bool isDefenceEnable = true;
-
 
 //	public void Awake(){
 //
@@ -54,45 +43,7 @@ public class Player : BattleAgent {
 //	}
 
 
-	public void CopyMainPlayerStatus(){
-		
-		Player mainPlayer = Player.mainPlayer;
 
-		this.originalMaxHealth = mainPlayer.originalMaxHealth;
-		this.originalMaxStrength = mainPlayer.originalMaxStrength;
-		this.originalHealth = mainPlayer.originalHealth;
-		this.originalStrength = mainPlayer.originalStrength;
-		this.originalAttack = mainPlayer.originalAttack;
-		this.originalPower = mainPlayer.originalPower;
-		this.originalMagic = mainPlayer.originalMagic;
-		this.originalCrit = mainPlayer.originalCrit;
-		this.originalAgility = mainPlayer.originalAgility;
-		this.originalAmour = mainPlayer.originalAmour;
-		this.originalMagicResist = mainPlayer.originalMagicResist;
-
-		this.maxHealth = mainPlayer.maxHealth;
-		this.maxStrength = mainPlayer.maxStrength;
-		this.health = mainPlayer.health;
-		this.strength = mainPlayer.strength;
-
-
-		this.attack = mainPlayer.attack;//攻击力
-		this.power = mainPlayer.power;//力量
-		this.magic = mainPlayer.magic;//魔法
-		this.agility = mainPlayer.agility;//敏捷
-		this.amour = mainPlayer.amour;//护甲
-		this.magicResist = mainPlayer.magicResist;//魔抗
-		this.crit = mainPlayer.crit;//暴击
-
-
-		this.attackSkill = mainPlayer.attackSkill;
-		this.defenceSkill = mainPlayer.defenceSkill;
-		this.skills = mainPlayer.skills;
-		this.items = mainPlayer.items;
-
-		this.isActive = mainPlayer.isActive;
-
-	}
 
 	public void UpdateValidActionType(){
 
