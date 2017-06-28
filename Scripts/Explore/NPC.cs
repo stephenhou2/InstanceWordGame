@@ -29,34 +29,26 @@ public class Dialog {
 
 	// 每步的情节
 	public string dialog;
-	// 是否会触发选择
-	public bool isTrigger = false;
 	// 选择数组
 	public int[] choiceIds;
 
 
 	public override string ToString ()
 	{
-		return string.Format ("[Plot]" + dialog + "\n"+ "[isTrigger]" + isTrigger + "\n" + "[choices]" + choiceIds);
+		return string.Format ("[Plot]" + dialog + "\n[choiceIds]" + choiceIds);
 	}
 
 }
 
 
-public enum ChoiceTriggerType{
-	Plot,
-	Fight,
-	Magic
-}
 [System.Serializable]
 public class Choice {
 
-	public string text;
-	public int plotId;
-	public ChoiceTriggerType triggerType;
+	public string choice;
+	public int dialogId;
 
 	public override string ToString ()
 	{
-		return string.Format ("[Choice]" + text + "\n" + "[plots]" + plotId + "\n" + "[isFightTrigger]" + triggerType);
+		return string.Format ("[Choice]" + choice + "\n" + "[dialog]" + dialogId);
 	}
 }

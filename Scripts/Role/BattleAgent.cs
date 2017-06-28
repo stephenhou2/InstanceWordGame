@@ -7,7 +7,7 @@ using DG.Tweening;
 public abstract class BattleAgent : MonoBehaviour {
 
 	public string agentName;
-
+	public string agentIconName;
 	public bool isActive = true;
 
 
@@ -147,6 +147,40 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	}
 
+	public void CopyAgentStatus(BattleAgentModel ba){
+
+		this.agentIconName = ba.agentIconName;
+
+		this.originalMaxHealth = ba.originalMaxHealth;
+		this.originalMaxStrength = ba.originalMaxStrength;
+		this.originalHealth = ba.originalHealth;
+		this.originalStrength = ba.originalStrength;
+		this.originalAttack = ba.originalAttack;
+		this.originalPower = ba.originalPower;
+		this.originalMagic = ba.originalMagic;
+		this.originalCrit = ba.originalCrit;
+		this.originalAgility = ba.originalAgility;
+		this.originalAmour = ba.originalAmour;
+		this.originalMagicResist = ba.originalMagicResist;
+
+		this.maxHealth = ba.maxHealth;
+		this.maxStrength = ba.maxStrength;
+		this.health = ba.health;
+		this.strength = ba.strength;
+
+
+		this.attack = ba.attack;//攻击力
+		this.power = ba.power;//力量
+		this.magic = ba.magic;//魔法
+		this.agility = ba.agility;//敏捷
+		this.amour = ba.amour;//护甲
+		this.magicResist = ba.magicResist;//魔抗
+		this.crit = ba.crit;//暴击
+
+		this.isActive = ba.isActive;
+
+	}
+
 	//添加状态 
 	public void AddState(StateSkillEffect sse){
 		states.Add (sse);
@@ -257,4 +291,48 @@ public abstract class BattleAgent : MonoBehaviour {
 			"\n[maxHealth]:" + maxHealth +
 			"\n[maxStrength]:" + maxStrength);
 	}
+}
+
+
+
+[System.Serializable]
+public class BattleAgentModel{
+
+	public string agentName;
+
+	public string agentIconName;
+
+	public bool isActive = true;
+
+	public int agentLevel;
+
+	//*****初始信息********//
+	public int originalMaxHealth;
+	public int originalMaxStrength;
+	public int originalHealth;
+	public int originalStrength;
+	public int originalAttack;
+	public int originalPower;
+	public int originalMagic;
+	public int originalCrit;
+	public int originalAgility;
+	public int originalAmour;
+	public int originalMagicResist;
+	//*****初始信息********//
+
+	public int maxHealth;//最大血量
+	public int maxStrength;//最大气力值
+
+	public int health;
+	public int strength;
+
+	public int attack;//攻击力
+	public int power;//力量
+	public int magic;//魔法
+	public int agility;//敏捷
+	public int amour;//护甲
+	public int magicResist;//魔抗
+	public int crit;//暴击
+
+
 }

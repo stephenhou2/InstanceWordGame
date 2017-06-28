@@ -47,11 +47,20 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 			
 			var assetLoaded = myLoadedAssetBundle.LoadAsset (fileName);
 
-			GameObject go = Instantiate (assetLoaded as GameObject);
+			if (assetLoaded.GetType () == typeof(Sprite)) {
+				Debug.Log ("加载图片" + assetLoaded.name);
+				sprites.Add (assetLoaded as Sprite);
+			} else if (assetLoaded.GetType () == typeof(Texture2D)) {
+				Texture2D t2d = assetLoaded as Texture2D;
+				Sprite s = Sprite.Create(t2d,new Rect(0.0f, 0.0f, t2d.width, t2d.height),new Vector2(0.5f,0.5f));
+				Debug.Log ("加载图片" + assetLoaded.name);
+				sprites.Add (s);
+			} else {
+				GameObject go = Instantiate (assetLoaded as GameObject);
+				go.name = assetLoaded.name;
+				gos.Add (go);
 
-			go.name = assetLoaded.name;
-
-			gos.Add (go);
+			}
 
 
 		} else {

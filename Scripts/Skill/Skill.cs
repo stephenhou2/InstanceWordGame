@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Skill : MonoBehaviour {
+public class Skill:MonoBehaviour {
 
 	public string skillName;// 技能名称
 

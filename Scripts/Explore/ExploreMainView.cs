@@ -136,10 +136,10 @@ public class ExploreMainView: MonoBehaviour {
 			break;
 		case EventType.Item:
 			Item item = RandomReturn<Item> (detailInfo.items);
-			eventTitle.text = item.itemName;
-			eventDescription.text = item.itemDescription;
+			eventTitle.text = "木箱";
+			eventDescription.text = "一个被人遗弃的箱子";
 			eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
+				return obj.name == "boxIcon";
 			});
 			eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "watchIcon";

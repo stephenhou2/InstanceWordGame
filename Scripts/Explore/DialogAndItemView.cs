@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DialogAndItemView : MonoBehaviour {
 
 	public Transform dialogPlane;
+	public Transform choicePlane;
 
 	public Transform itemPlane;
 
@@ -28,8 +29,9 @@ public class DialogAndItemView : MonoBehaviour {
 		int[] choicesIds = firstDialog.choiceIds; 
 		for (int i = 0; i < choicesIds.Length; i++) {
 			Choice choice = npc.choices [i];
-			Button mChoiceButton = Instantiate (choiceButton);
-
+			Button mChoiceButton = Instantiate (choiceButton,choicePlane.transform);
+			Text choiceText = mChoiceButton.transform.FindChild ("Text").GetComponent<Text> ();
+			choiceText.text = choice.choice;
 		}
 
 

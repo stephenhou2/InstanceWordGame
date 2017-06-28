@@ -62,19 +62,15 @@ public class ExploreMainViewController:MonoBehaviour {
 		if (battleCanvas != null) {
 			exploreCanvas.GetComponent<Canvas> ().enabled = false;
 			battleCanvas.GetComponent<Canvas> ().enabled = true;
-			GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
 
 		} else {
 			ResourceManager.Instance.LoadAssetWithName ("battle/battle", () => {
 				exploreCanvas.GetComponent<Canvas> ().enabled = false;
-				GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
-
-			});// 若当前场景中没有battleCanvas，从assetBundle中加载
+			},true);// 若当前场景中没有battleCanvas，从assetBundle中加载
 		}
-//		Debug.Log (GameObject.Find ("BattleManager"));
-		// 初始化战斗场景
-//		GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
 
+		//初始化战斗场景
+		GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
 	}
 
 	// 初始化与npc交谈界面

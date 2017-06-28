@@ -82,25 +82,31 @@ public class BattleManager : MonoBehaviour {
 		}, true);
 		GameObject upperPlane = GameObject.Find ("UpperPlane");
 		float screenWidth = Screen.width;
-		int monsterNum = monsterGroup.monsters.Count;
+		int monsterNum = monsterGroup.monsters.Length;
 		for(int i = 0;i<monsterNum;i++){
-			GameObject mMonsterView = Instantiate (monsterView, upperPlane.transform);
+			Debug.Log ("-------------" + i);
+			GameObject mMonsterView = Instantiate (monsterView, upperPlane.transform,false);
 			Monster mMonster = mMonsterView.GetComponent<Monster> ();
+			mMonster.monsterId = i;
 			mMonster.CopyAgentStatus (monsterGroup.monsters [i]);
 			monsters.Add (mMonster);
 			switch (monsterNum) {
 			case 1:
-				mMonster.transform.localPosition = Vector3.zero;
+				mMonsterView.transform.localPosition = Vector3.zero;
 				break;
 			case 2:
-				mMonster.transform.localPosition = new Vector3 (2 * (i - 0.5f) * 230f, 0, 0);
+				mMonsterView.transform.localPosition = new Vector3 (2 * (i - 0.5f) * 230f, -600f, 0);
 				break;
 			case 3:
-				mMonster.transform.localPosition = new Vector3 ((i - 1f) * 350f,
-					(i % 2 == 0 ? 1 : -1) * 50f,
+				mMonsterView.transform.localPosition = new Vector3 ((i - 1f) * 350f,
+					-600f + (i % 2 == 0 ? 1 : -1) * 50f,
 					0);
 				break;
 			}
+			mMonsterView.transform.localRotation = Quaternion.identity;
+			mMonsterView.transform.localScale = Vector3.one;
+			Debug.Log (monsters [i]);
+			mMonsterView.GetComponent<BattleMonsterView>().SetUpMonsterView ((Monster)monsters[i]);
 		}
 	}
 
@@ -387,7 +393,7 @@ public class BattleManager : MonoBehaviour {
 			m.ResetBattleAgentProperties (true);
 			m.baView.agentIcon.color = Color.white;
 			m.gameObject.SetActive (true);
-			monsters.Add (m);
+//			monsters.Add (m);
 		}
 
 		for (int i = 0; i < players.Count; i++) {
