@@ -8,6 +8,11 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	private GameObject mDialogAndItemPlane;
 
+	private GameObject currentSelectedEventView;
+
+	private int stepsLeft;
+
+
 	public GameObject dialogAndItemPlane{
 		get{
 			if (mDialogAndItemPlane == null) {
@@ -27,13 +32,22 @@ public class ExploreMainViewController:MonoBehaviour {
 
 		ChapterDetailInfo[] chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>(CommonData.JsonFileDirectoryPath,CommonData.chapterDataFileName);
 
-		Debug.Log (chapterDetails[selectedChapterIndex]);
-//		expChapterView.SetUpExploreMainView (chapterDetails[selectedChapterIndex]);
-
 		expChapterView = GetComponent<ExploreMainView> ();
 
-		expChapterView.SetUpExploreMainView (chapterDetails[selectedChapterIndex]);
+		stepsLeft = chapterDetails [selectedChapterIndex].totalSteps;
+
+		expChapterView.detailInfo = chapterDetails [selectedChapterIndex];
+
+		LoadEventSprites ();
+	
 	}
+
+
+	private void LoadEventSprites(){
+
+		ResourceManager.Instance.LoadAssetWithName ("explore/icons",expChapterView.SetUpScene);
+	}
+
 
 
 	public void OnSkillButtonSelected(){
@@ -54,8 +68,8 @@ public class ExploreMainViewController:MonoBehaviour {
 //	}
 
 		
-	public void OnEnterBattle(MonsterGroup monsterGroup){
-		
+	public void OnEnterBattle(MonsterGroup monsterGroup,GameObject chapterEventView){
+		currentSelectedEventView = chapterEventView;
 		// 进入战斗场景前将探索场景隐藏
 		GameObject battleCanvas = GameObject.Find ("BattleCanvas");
 		GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
@@ -74,9 +88,10 @@ public class ExploreMainViewController:MonoBehaviour {
 	}
 
 	// 初始化与npc交谈界面
-	public void OnEnterNPC(NPC npc){
+	public void OnEnterNPC(NPC npc,GameObject chapterEventView){
 		
-		Debug.Log (dialogAndItemPlane);
+		currentSelectedEventView = chapterEventView;
+
 		dialogAndItemPlane.gameObject.SetActive (true);
 
 		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpDialogPlane(npc);
@@ -84,14 +99,29 @@ public class ExploreMainViewController:MonoBehaviour {
 		Debug.Log (npc);
 	}
 	// 初始化物品展示界面
-	public void OnEnterItem(Item item){
+	public void OnEnterItem(Item item,GameObject chapterEventView){
 		
+		currentSelectedEventView = chapterEventView;
+
 		dialogAndItemPlane.gameObject.SetActive (true);
 
 		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpItemPlane(item);
 
 		Debug.Log (item);
 	}
+
+	public void OnResetExploreChapterView(){
+
+		stepsLeft--;
+
+		if (stepsLeft <= 0) {
+			Debug.Log ("本章节结束");
+			return;
+		}
+
+		expChapterView.SetUpNextStepChapterEventPlane (currentSelectedEventView, stepsLeft);
+	}
+
 
 	public void OnQuitExploreChapterView(){
 

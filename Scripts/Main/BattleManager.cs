@@ -84,7 +84,6 @@ public class BattleManager : MonoBehaviour {
 		float screenWidth = Screen.width;
 		int monsterNum = monsterGroup.monsters.Length;
 		for(int i = 0;i<monsterNum;i++){
-			Debug.Log ("-------------" + i);
 			GameObject mMonsterView = Instantiate (monsterView, upperPlane.transform,false);
 			Monster mMonster = mMonsterView.GetComponent<Monster> ();
 			mMonster.monsterId = i;
@@ -225,7 +224,7 @@ public class BattleManager : MonoBehaviour {
 
 					#warning 这里添加怪物技能逻辑，选择使用的技能
 					//		Skill monsterSkill = monster.SkillOfMonster ();
-					Skill monsterSkill = monster.skills [0];//怪物技能暂时都使用第一个技能
+					Skill monsterSkill = monster.attackSkill;
 
 					monsterSkill.AffectAgents (monster, monsters, player, players, monsterSkill.skillLevel);
 

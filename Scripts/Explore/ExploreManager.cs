@@ -25,10 +25,6 @@ public class ExploreManager : MonoBehaviour {
 	}
 
 	public void OnSelectChapter(int chapterIndex){
-		
-//		expListView.KillExploreListView ();
-
-
 
 		ChapterList cl = chapterLists [chapterIndex];
 

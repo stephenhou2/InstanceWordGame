@@ -33,11 +33,12 @@ public class BattlePlayerView : BattleAgentView {
 				skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount == 0 ? "" : actionBackCount.ToString ();
 
 			}
-			attackButton.interactable = player.isAttackEnable && player.strength >= player.attackSkill.strengthConsume;
-			defenceButton.interactable = player.isDefenceEnable && player.strength >= player.defenceSkill.strengthConsume;;
-
 			skillButtons [i].interactable = s.isAvalible && player.strength >= s.strengthConsume && player.isSkillEnable; 
 		}
+
+		attackButton.interactable = player.isAttackEnable && player.strength >= player.attackSkill.strengthConsume;
+		defenceButton.interactable = player.isDefenceEnable && player.strength >= player.defenceSkill.strengthConsume;
+
 		foreach (Button btn in itemButtons) {
 			btn.interactable = player.isItemEnable;
 		}

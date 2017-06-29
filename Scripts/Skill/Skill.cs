@@ -21,7 +21,7 @@ public class Skill:MonoBehaviour {
 
 	public bool isAvalible = true;
 
-	public bool isCopiedSkill;
+	public bool isCopiedSkill = false;
 
 	public int copiedSkillAvalibleTime = 2;
 
@@ -29,7 +29,7 @@ public class Skill:MonoBehaviour {
 
 	public void AffectAgents(BattleAgent self, List<BattleAgent> friends,BattleAgent targetEnemy, List<BattleAgent> enemies,int skillLevel){
 		foreach (BaseSkillEffect bse in skillEffects) {
-//			Debug.Log (self.ToString() + bse + "-------------");
+
 			if (!bse.isStateEffect) {
 				bse.AffectAgents (self,friends,targetEnemy,enemies, skillLevel, TriggerType.None, 0);
 			} else {
