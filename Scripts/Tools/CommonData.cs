@@ -14,6 +14,13 @@ public struct CommonData{
 	public static string chaptersDataFileName = "ChaptersString.txt";
 	public static string chapterDataFileName = "DataString.txt";
 //	public static string battleDataCanvansName = ""
+
+	public static string instanceContainerName = "InstanceContainer";
+	public static string poolContainerName = "PoolContainer";
+
+
+
+
 }
 
 public enum EventType{

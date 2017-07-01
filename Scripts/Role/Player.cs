@@ -17,16 +17,17 @@ public class Player : BattleAgent {
 				lock (objectLock) {
 					ResourceManager.Instance.LoadAssetWithName("player",()=>{
 						mPlayerSingleton = GameObject.Find ("Player").GetComponent<Player>();
+						mPlayerSingleton.transform.SetParent(null);
 						DontDestroyOnLoad (mPlayerSingleton);
 					},true);
 				}
 			}
-			mPlayerSingleton.ResetBattleAgentProperties (true);
+			mPlayerSingleton.ResetBattleAgentProperties (false);
 			return mPlayerSingleton;
 		}
-		set{
-			mPlayerSingleton = value;
-		}
+//		set{
+//			mPlayerSingleton = value;
+//		}
 
 	}
 

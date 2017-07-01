@@ -23,6 +23,8 @@ public class BattleManager : MonoBehaviour {
 
 	public List<BattleAgent> monsters = new List<BattleAgent>();
 
+	private List<GameObject> monsterViewPool = new List<GameObject> ();
+
 //	public List<BattleAgent> monstersModel;
 
 	// ********for test use**********//
@@ -38,6 +40,7 @@ public class BattleManager : MonoBehaviour {
 			foreach (Player p in players) {
 				animationEnd = animationEnd && !p.baView.isAnimating;
 			}
+			Debug.Log (animationEnd);
 			return animationEnd;
 		}
 
@@ -50,9 +53,11 @@ public class BattleManager : MonoBehaviour {
 
 	public Text description;
 
-	public GameObject playerControlPlane;
+	public Transform playerControlPlane;
 
-	public GameObject monsterControlPlane;
+	public Transform monsterControlPlane;
+
+	public Transform upperPlane;
 
 	/************ for test *************/
 	public GameObject battleEndHUD;
@@ -62,6 +67,12 @@ public class BattleManager : MonoBehaviour {
 	public Button quit;
 
 	public Button reset;
+
+	public void OnEnterBattle(MonsterGroup monsterGroup){
+		SetUpPlayer ();
+		SetUpMonsters (monsterGroup);
+		OnResetGame ();
+	}
 
 
 	// 进入战斗场景时初始化玩家数据
@@ -73,18 +84,34 @@ public class BattleManager : MonoBehaviour {
 		players.Add (player);
 	}
 
+	private GameObject GetMonsterView(){
+		GameObject monsterView = null;
+		if (monsterViewPool.Count != 0) {
+			monsterView = monsterViewPool [0];
+			monsterView.SetActive (true);
+			monsterViewPool.RemoveAt (0);
+		} else {
+			ResourceManager.Instance.LoadAssetWithName ("battle/monster_view", ()=>{
+				monsterView = ResourceManager.Instance.gos [0];
+			}, true);
+		}
+
+		return monsterView;
+	}
+
+
 	// 进入战斗场景时初始化怪物数据
 	private void SetUpMonsters(MonsterGroup monsterGroup){
-//		monsters = monsterGroup.monsters;
-		GameObject monsterView = null;
-		ResourceManager.Instance.LoadAssetWithName ("battle/monster_view", ()=>{
-			monsterView = ResourceManager.Instance.gos [0];
-		}, true);
-		GameObject upperPlane = GameObject.Find ("UpperPlane");
+
 		float screenWidth = Screen.width;
 		int monsterNum = monsterGroup.monsters.Length;
+
 		for(int i = 0;i<monsterNum;i++){
-			GameObject mMonsterView = Instantiate (monsterView, upperPlane.transform,false);
+
+			GameObject mMonsterView = GetMonsterView ();
+
+			mMonsterView.transform.SetParent (upperPlane, false);
+
 			Monster mMonster = mMonsterView.GetComponent<Monster> ();
 			mMonster.monsterId = i;
 			mMonster.CopyAgentStatus (monsterGroup.monsters [i]);
@@ -109,11 +136,7 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	public void OnEnterBattle(MonsterGroup monsterGroup){
-		SetUpPlayer ();
-		SetUpMonsters (monsterGroup);
-		OnResetGame ();
-	}
+
 		
 	// 玩家选择技能后的响应方法
 	public void OnPlayerSelectSkill(Skill playerSkill){
@@ -143,7 +166,7 @@ public class BattleManager : MonoBehaviour {
 
 			UpdatePropertiesByStates ();
 
-			UpdateUIAndBattleResult ();//更新玩家和怪物状态,判断游戏是否结束
+			UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 			if (!battleEnd) {
 				StartCoroutine ("OnMonsterAction");
@@ -192,7 +215,7 @@ public class BattleManager : MonoBehaviour {
 
 		UpdatePropertiesByStates ();
 
-		UpdateUIAndBattleResult ();//更新玩家和怪物状态,判断游戏是否结束
+		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 		if (!battleEnd) {
 			StartCoroutine ("OnMonsterAction");
@@ -218,6 +241,12 @@ public class BattleManager : MonoBehaviour {
 			}
 
 			if (!battleEnd) {
+
+				if (!monster.baView.isActiveAndEnabled) {
+					i--;
+					continue;
+				}
+
 				if (monster.validActionType != ValidActionType.None) {
 
 					monster.ManageSkillAvalibility ();
@@ -234,7 +263,7 @@ public class BattleManager : MonoBehaviour {
 
 					UpdatePropertiesByStates ();
 
-					UpdateUIAndBattleResult ();//更新玩家和怪物状态,判断游戏是否结束
+					UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 					if (!battleEnd) {
 						if (monster.monsterId == (monsters[monsters.Count - 1] as Monster).monsterId) {
@@ -335,11 +364,9 @@ public class BattleManager : MonoBehaviour {
 	}
 
 
-	private void UpdateUIAndBattleResult(){
+	private void UpdateUIAndCheckAgentAlive(){
 
 		#warning picturs of states toAdd
-
-
 
 		if (players[0].health <= 0) {
 			battleEndHUD.gameObject.SetActive (true);
@@ -347,20 +374,26 @@ public class BattleManager : MonoBehaviour {
 			battleEndResult.text = "You Lose!";
 			return;
 		} 
+
 		for (int i = 0; i < monsters.Count; i++) {
 			Monster monster = monsters [i] as Monster;
-			if (monster.health <= 0) {
+			CallBack cb = () => {
+				monsterViewPool.Add(monster.baView.gameObject);
+				monster.baView.transform.SetParent(ContainerManager.FindContainer(CommonData.poolContainerName));
 				monsters.Remove (monster);
-				monster.AgentDie ();
+
+				if (monsters.Count == 0) {
+					battleEndHUD.gameObject.SetActive (true);
+					battleEnd = true;
+					battleEndResult.text = "you win";
+					return;
+				}
+				battleEnd = false;
+			};
+			if (monster.health <= 0) {
+				monster.AgentDie (cb);
 			}
 		}
-		if (monsters.Count == 0) {
-			battleEndHUD.gameObject.SetActive (true);
-			battleEnd = true;
-			battleEndResult.text = "you win";
-			return;
-		}
-		battleEnd = false;
 
 	}
 
@@ -408,10 +441,6 @@ public class BattleManager : MonoBehaviour {
 
 		battleEndHUD.SetActive (false);
 
-//		foreach (Player p in players) {
-//		p.baView.ResetPlayerUI ();
-//		}
-
 		bpController.baView.ResetPlayerUI();
 
 
@@ -425,12 +454,21 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	public void OnQuitBattle(){
+
 		Player.mainPlayer.CopyAgentStatus (player);
+
 		Debug.Log ("quit to main screen");
+
 		battleEndHUD.gameObject.SetActive (false);
-		GameObject.Find ("ExploreCanvas").GetComponent<Canvas>().enabled = true;
+
+		GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
+
+		exploreCanvas.GetComponent<Canvas>().enabled = true;
+
 		GameObject.Find ("BattleCanvas").GetComponent<Canvas>().enabled = false;
-//		Destroy(GameObject.Find("BattleCanvas"));
+
+		exploreCanvas.GetComponent<ExploreMainViewController> ().OnNextEvent ();
+
 	}
 
 	public void OnReset(){

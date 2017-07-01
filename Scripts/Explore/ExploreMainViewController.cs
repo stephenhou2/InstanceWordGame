@@ -44,7 +44,6 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 	private void LoadEventSprites(){
-
 		ResourceManager.Instance.LoadAssetWithName ("explore/icons",expChapterView.SetUpScene);
 	}
 
@@ -99,18 +98,18 @@ public class ExploreMainViewController:MonoBehaviour {
 		Debug.Log (npc);
 	}
 	// 初始化物品展示界面
-	public void OnEnterItem(Item item,GameObject chapterEventView){
+	public void OnEnterItem(Item item,GameObject chapterEventView,Sprite itemSprite){
 		
 		currentSelectedEventView = chapterEventView;
 
 		dialogAndItemPlane.gameObject.SetActive (true);
 
-		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpItemPlane(item);
+		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpItemPlane(item,itemSprite);
 
 		Debug.Log (item);
 	}
 
-	public void OnResetExploreChapterView(){
+	public void OnNextEvent(){
 
 		stepsLeft--;
 

@@ -25,6 +25,10 @@ public abstract class BattleAgentView : MonoBehaviour {
 
 	[HideInInspector]public Transform statesContainer;
 
+	public bool firstSetHealthBar = true;
+	public bool firstSetStrengthBar = true;
+
+
 
 	public bool isAnimating{
 
@@ -47,15 +51,27 @@ public abstract class BattleAgentView : MonoBehaviour {
 		}
 	}
 
-
-	public void UpdateHealthAndStrengthBarAnim(BattleAgent ba){
+	// 更新血量槽的动画（首次进入设置血量不播放动画，在ResetBattleAgentProperties（BattleAgent）后开启动画）
+	public void UpdateHealthBarAnim(BattleAgent ba){
 		healthBar.maxValue = ba.maxHealth;
-		healthBar.DOValue (ba.health, 0.5f);
 		healthText.text = ba.health + "/" + ba.maxHealth;
+		if (firstSetHealthBar) {
+			healthBar.value = ba.health;
+		} else {
+			healthBar.DOValue (ba.health, 0.5f);
+		}
+	}
 
+	public void UpdateStrengthBarAnim(BattleAgent ba){
 		strengthBar.maxValue = ba.maxStrength;
-		strengthBar.DOValue (ba.strength, 0.5f);
 		strengthText.text = ba.strength + "/" + ba.maxStrength;
+
+
+		if (firstSetStrengthBar) {
+			strengthBar.value = ba.strength;
+		} else {
+			strengthBar.DOValue (ba.strength, 0.5f);
+		}
 
 	}
 
@@ -87,11 +103,15 @@ public abstract class BattleAgentView : MonoBehaviour {
 
 	}
 		
-	public void AgentDieAnim(){
-		agentIcon.DOFade (0f, 1.0f).OnComplete(()=>{
+	public void AgentDieAnim(CallBack cb){
+		ManageAnimations (agentIcon.DOFade (0f, 1.0f), () => {
 			this.gameObject.SetActive (false);
-			this.enabled = false;
+//			this.enabled = false;
+			firstSetHealthBar = true;
+			firstSetStrengthBar = true;
+			cb();
 		});
+
 	}
 
 	private void OnHurtTextAnimationComplete(){

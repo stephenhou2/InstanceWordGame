@@ -12,6 +12,10 @@ public class DialogAndItemView : MonoBehaviour {
 
 	public Text dialogText;
 
+	public Image itemIcon;
+
+	public Text itemDescription;
+
 	public GameObject choiceButton;
 
 	private GameObject GetChoiceButton(){
@@ -24,29 +28,28 @@ public class DialogAndItemView : MonoBehaviour {
 		} 
 		btn = Instantiate (choiceButton);
 		btn.GetComponent<Button> ().onClick.AddListener (delegate {
-			Debug.Log ("here");
 			foreach (Transform trans in choicePlane.transform) {
 				buttonPool.Add (trans.gameObject);
 			}
-			choicePlane.DetachChildren();
+//			choicePlane.DetachChildren();
+			foreach(Transform trans in choicePlane.transform){
+				trans.SetParent(ContainerManager.FindContainer(CommonData.poolContainerName));
+			}
+			dialogPlane.gameObject.SetActive(false);
 			gameObject.SetActive (false);
-			GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ().OnResetExploreChapterView ();
+			GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ().OnNextEvent ();
 		});
+
 		return btn;
 
 	}
 
-	public Image itemIcon;
-
-	public Text itemDescription;
 
 	private List<GameObject> buttonPool = new List<GameObject> ();
 
 
 
 	public void SetUpDialogPlane(NPC npc){
-
-		Debug.Log ("setup");
 
 		dialogPlane.gameObject.SetActive (true);
 
@@ -55,8 +58,6 @@ public class DialogAndItemView : MonoBehaviour {
 		dialogText.text = firstDialog.dialog;
 
 		int[] choicesIds = firstDialog.choiceIds; 
-
-
 
 		for (int i = 0; i < choicesIds.Length; i++) {
 	
@@ -70,17 +71,35 @@ public class DialogAndItemView : MonoBehaviour {
 
 	}
 
-	public void SetUpItemPlane(Item item){
+	public void SetUpItemPlane(Item item,Sprite itemSprite){
+		
 		itemPlane.gameObject.SetActive (true);
-	}
+
+		itemIcon.sprite = itemSprite;
+
+		itemDescription.text = item.itemDescription;
 
 
-	private void DialogChoiceButtonClicked(){
-
-	}
-
-//	public void MakeDialogChoice(){
+		#warning 选择按钮代码后面再写
+//		for (int i = 0; i < 2; i++) {
+//			
+//			GameObject btn = GetChoiceButton();
 //
-//	}
+//			Text choiceText = btn.transform.FindChild ("Text").GetComponent<Text> ();
+//
+//
+//			btn.GetComponent<Button> ().onClick.AddListener (delegate {
+//				foreach (Transform trans in choicePlane.transform) {
+//					buttonPool.Add (trans.gameObject);
+//				}
+//				choicePlane.DetachChildren();
+//				dialogPlane.gameObject.SetActive(false);
+//				gameObject.SetActive (false);
+//				GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ().OnResetExploreChapterView ();
+//			});
+//
+//		}
+
+	}
 
 }

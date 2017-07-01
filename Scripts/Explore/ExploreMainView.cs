@@ -11,7 +11,7 @@ public class ExploreMainView: MonoBehaviour {
 
 	public GameObject chapterEventView;
 
-	private GameObject chapterEventsPlane;
+	public GameObject chapterEventsPlane;
 
 	private List<GameObject> chapterEventViewsVisible = new List<GameObject> ();
 
@@ -20,21 +20,15 @@ public class ExploreMainView: MonoBehaviour {
 //	private GameObject chapterEventViewCache;
 
 
-	private Text playerLevelText;
-	private Text stepsLeftText;
-	private Text chapterLocationText;
-	private Slider playerHealthBar;
+	public Text playerLevelText;
+	public Text stepsLeftText;
+	public Text chapterLocationText;
+	public Slider playerHealthBar;
 
-//	private Image eventIcon;
-//	private Text eventTitle;
-//	private Text eventDescription;
-//	private Image eventConfirmIcon;
 
 
 	private List<Sprite> sprites = new List<Sprite>();
 
-//	private Transform chapterEventViewPoolContainer{
-//	}
 
 
 	public int maxEventCountForOnce = 4;
@@ -51,26 +45,13 @@ public class ExploreMainView: MonoBehaviour {
 
 	public void SetUpScene(){
 
-		InitUI ();
-
 		InitChapterEventsPlane ();
 
 		SetUpTopBar ();
 
 
 	}
-
-	private void InitUI(){
-
-		playerLevelText = GameObject.Find ("PlayerLevelText").GetComponent<Text>();
-		stepsLeftText = GameObject.Find ("StepsLeftText").GetComponent<Text>();
-		chapterLocationText = GameObject.Find ("ChapterLocationText").GetComponent<Text>();
-		playerHealthBar = GameObject.Find ("PlayerHealth").GetComponent<Slider>();
-
-//		chapterEventsContainer = GameObject.Find ("ChapterEventsContainer");
-		chapterEventsPlane = GameObject.Find ("ChapterEventsPlane");
-
-	}
+		
 
 	// 初始化事件面板
 	public void InitChapterEventsPlane(){
@@ -126,9 +107,10 @@ public class ExploreMainView: MonoBehaviour {
 			NPC npc = RandomReturn<NPC> (detailInfo.npcs);
 			mChapterEventViewScript.eventTitle.text = npc.npcName;
 			mChapterEventViewScript.eventDescription.text = npc.npcDescription;
-			mChapterEventViewScript.eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			Sprite npcSprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == npc.spriteName;
 			});
+			mChapterEventViewScript.eventIcon.sprite = npcSprite;
 			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "chatIcon";
 			});
@@ -147,9 +129,12 @@ public class ExploreMainView: MonoBehaviour {
 			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "watchIcon";
 			});
+			Sprite itemSprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
+			});
 			mChapterEventViewScript.eventSelectButton.onClick.RemoveAllListeners ();
 			mChapterEventViewScript.eventSelectButton.onClick.AddListener (delegate{
-				exploreMainViewController.OnEnterItem(item,mChapterEventView);
+				exploreMainViewController.OnEnterItem(item,mChapterEventView,itemSprite);
 			});
 			break;
 		default:
@@ -176,7 +161,17 @@ public class ExploreMainView: MonoBehaviour {
 
 	public void SetUpNextStepChapterEventPlane(GameObject currentSelectedEventView,int stepsLeft){
 
+
+
 		stepsLeftText.text = stepsLeft.ToString();
+		Player player = Player.mainPlayer;
+
+//		Debug.Log (player.health);
+
+		playerHealthBar.maxValue = player.maxHealth;
+		playerHealthBar.value = player.health;
+		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+
 
 		Sequence mSequence = DOTween.Sequence ();
 
@@ -188,7 +183,6 @@ public class ExploreMainView: MonoBehaviour {
 				float currentSelectedEventViewY = currentSelectedEventView.transform.localPosition.y;
 
 				currentSelectedEventView.gameObject.SetActive(false);
-//				currentSelectedEventView.transform.localPosition = new Vector3 (0, -(chapterEventViewHeight + padding) * maxEventCountForOnce, 0);
 				chapterEventViewsVisible.Remove(currentSelectedEventView);
 				chapterEventViewPool.Add(currentSelectedEventView);
 
@@ -196,8 +190,6 @@ public class ExploreMainView: MonoBehaviour {
 				{
 					GameObject eventView = chapterEventViewsVisible[i];
 					if (eventView.transform.localPosition.y < currentSelectedEventViewY){
-
-
 
 						eventView.transform.DOLocalMoveY((chapterEventViewHeight + padding) * (-i),1.0f);
 
@@ -247,9 +239,9 @@ public class ExploreMainView: MonoBehaviour {
 	private EventType RandomEvent(){
 		float i = 0f;
 		i = Random.Range (0f, 10f);
-		if (i >= 0f && i < .5f) {
+		if (i >= 0f && i < 5f) {
 			return EventType.Monster;
-		} else if (i >= .5f && i < 9.5f) {
+		} else if (i >= 5f && i < 7.5f) {
 			return EventType.NPC;
 		} else {
 			return EventType.Item;

@@ -57,6 +57,7 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 				sprites.Add (s);
 			} else {
 				GameObject go = Instantiate (assetLoaded as GameObject);
+				go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 				go.name = assetLoaded.name;
 				gos.Add (go);
 
@@ -74,6 +75,7 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 					continue;
 				} else {
 					GameObject go = Instantiate (obj as GameObject);
+					go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 					go.name = obj.name;
 					gos.Add (go);
 
@@ -123,6 +125,8 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 
 			GameObject go = Instantiate (assetLoaded as GameObject);
 
+			go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
+
 			go.name = assetLoaded.name;
 
 			gos.Add (go);
@@ -142,6 +146,7 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 					continue;
 				} else {
 					GameObject go = Instantiate (obj as GameObject);
+					go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 					go.name = obj.name;
 					gos.Add (go);
 				}

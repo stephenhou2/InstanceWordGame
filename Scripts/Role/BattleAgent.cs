@@ -63,7 +63,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		set{
 			mHealth = value;
 			if (baView != null) {
-				baView.UpdateHealthAndStrengthBarAnim (this);
+				baView.UpdateHealthBarAnim (this);
 			}
 		}
 
@@ -73,7 +73,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		get{ return mStrength; }
 		set{ mStrength = value;
 			if (baView != null) {
-				baView.UpdateHealthAndStrengthBarAnim (this);
+				baView.UpdateStrengthBarAnim (this);
 			}
 		}
 	}
@@ -125,9 +125,9 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		this.maxHealth = ba.maxHealth;
 		this.maxStrength = ba.maxStrength;
+
 		this.health = ba.health;
 		this.strength = ba.strength;
-
 
 		this.attack = ba.attack;//攻击力
 		this.power = ba.power;//力量
@@ -166,6 +166,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		this.maxHealth = ba.maxHealth;
 		this.maxStrength = ba.maxStrength;
 		this.health = ba.health;
+
 		this.strength = ba.strength;
 
 
@@ -266,16 +267,18 @@ public abstract class BattleAgent : MonoBehaviour {
 		if (toOriginalState) {
 			health = maxHealth;
 			strength = maxStrength;
-//			healthBar.value = maxHealth;
-//			strengthBar.value = maxStrength;
+			// 开启血量槽和气力槽的设置动画
+			baView.firstSetHealthBar = false;
+			baView.firstSetStrengthBar = false;
 		} 
 		if (baView != null) {
-			baView.UpdateHealthAndStrengthBarAnim (this);
+			baView.UpdateHealthBarAnim (this);
+			baView.UpdateStrengthBarAnim (this);
 		}
 	}
 
-	public void AgentDie(){
-		baView.AgentDieAnim ();
+	public void AgentDie(CallBack cb){
+		baView.AgentDieAnim (cb);
 	}
 
 	public override string ToString ()
