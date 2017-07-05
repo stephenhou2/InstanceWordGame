@@ -24,9 +24,9 @@ public class BattlePlayerView : BattleAgentView {
 
 	// 更新战斗中玩家UI的状态
 	public void UpdateUIStatus(Player player){
-		for (int i = 0;i < player.skills.Count;i++) {
+		for (int i = 0;i < player.skillsEquipped.Count;i++) {
 
-			Skill s = player.skills [i];
+			Skill s = player.skillsEquipped [i];
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				int actionBackCount = s.actionConsume - s.actionCount + 1;
@@ -90,12 +90,12 @@ public class BattlePlayerView : BattleAgentView {
 
 	public void ResetPlayerUI(){
 		Player p = GetComponent<Player> ();
-		for(int i = 0;i < p.skills.Count;i++){
+		for(int i = 0;i < p.skillsEquipped.Count;i++){
 			Button btn = skillButtons [i];
 			btn.interactable = true;
 			Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
 			btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
-			= p.skills [i].strengthConsume.ToString();
+			= p.skillsEquipped [i].strengthConsume.ToString();
 		}
 	}
 

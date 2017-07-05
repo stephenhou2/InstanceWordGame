@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 public class Skill:MonoBehaviour {
@@ -8,6 +9,10 @@ public class Skill:MonoBehaviour {
 	public string skillName;// 技能名称
 
 	public int skillId;
+
+	public string skillIconName;
+
+	public string skillDescription;
 
 	public BaseSkillEffect[] skillEffects;//魔法效果数组
 
@@ -27,6 +32,14 @@ public class Skill:MonoBehaviour {
 
 	public bool needSelectEnemy;
 
+	public string skillType;
+
+	public string associatedSkillName;
+
+	public int associatedSkillUnlockLevel;
+
+	public bool unlocked;
+
 	public void AffectAgents(BattleAgent self, List<BattleAgent> friends,BattleAgent targetEnemy, List<BattleAgent> enemies,int skillLevel){
 		foreach (BaseSkillEffect bse in skillEffects) {
 
@@ -43,6 +56,20 @@ public class Skill:MonoBehaviour {
 //			}
 //		}
 	}
+
+//	public int CompareTo(Skill other){
+//		Debug.Log (this.skillId);
+//		Debug.Log (other.skillId);
+//		if (this.skillId < other.skillId) {
+//			return 1;
+//		} else if (this.skillId == other.skillId) {
+////			RankException e = new RankException ();
+//			Debug.Log ("same skill id");
+////			throw e;
+//		}
+//		return 0;
+//
+//	}
 
 	public override string ToString ()
 	{

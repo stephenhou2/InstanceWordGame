@@ -1,0 +1,55 @@
+ManifestFileVersion: 0
+CRC: 2913878614
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 057412bd5a579aed56beb7a8f3fd077c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 744d8d48da417d4f0116d5d858222341
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: c541f611133a64546bc497a395ff3f36, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: efe860c1c5c2f4dffa0473b50c840ea7, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2684c8460829d4298aa185d25b3050eb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 380dfaa60f1c54acca4c4871d1e8351a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0f1d39d8ed0814a569d8ffbb16972c1d, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6a7ca77a93e22410c80d29168f00d422, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0fd6f13c5c29c40a1a6beb9727053e08, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f83500ceeaa5b44b4a6b898ebf9f75ed, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Explore/Skills/skillIcon7.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon3.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon5.png
+- Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
+- Assets/Prefabs/Skill/Skills/FireBlade.prefab
+- Assets/Resources/Sprites/Explore/Skills/skillIcon1.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon2.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon8.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon4.png
+- Assets/Resources/Sprites/Explore/Skills/skillIcon6.png
+- Assets/Prefabs/Skill/Skills/Treat.prefab
+- Assets/Prefabs/Skill/Skills/ThunderChain.prefab
+- Assets/Prefabs/Skill/Skills/Roar.prefab
+- Assets/Prefabs/Skill/Skills/Thunder.prefab
+Dependencies: []

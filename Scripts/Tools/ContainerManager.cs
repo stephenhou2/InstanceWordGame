@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ContainerManager:MonoBehaviour {
 
-	private static Transform commonContainer;
+//	private static Transform commonContainer;
 
 
 	public static Transform FindContainer(string containerName){
@@ -23,12 +23,12 @@ public class ContainerManager:MonoBehaviour {
 
 	public static Transform NewContainer(string containerName,Transform parentTrans = null){
 
-		if (commonContainer == null) {
-			commonContainer = (new GameObject ()).transform;
-			commonContainer.name = "ContainerModel";
-		}
+//		if (commonContainer == null) {
+//			commonContainer = (new GameObject ()).transform;
+//			commonContainer.name = "ContainerModel";
+//		}
 
-		Transform mContainer = Instantiate (commonContainer);
+		Transform mContainer = (new GameObject ()).transform;
 		if (parentTrans != null) {
 			mContainer.SetParent (parentTrans);
 		}

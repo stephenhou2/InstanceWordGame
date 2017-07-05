@@ -99,7 +99,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public float healthAbsorbScalser = 0f;//回血比例
 
-	public List<Skill> skills = new List<Skill>();//技能数组
+	public List<Skill> skillsEquipped = new List<Skill>();//技能数组
 
 	public List<Item> items = new List<Item>();//物品数组
 
@@ -140,7 +140,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		this.attackSkill = ba.attackSkill;
 		this.defenceSkill = ba.defenceSkill;
-		this.skills = ba.skills;
+		this.skillsEquipped = ba.skillsEquipped;
 		this.items = ba.items;
 
 		this.isActive = ba.isActive;
@@ -252,12 +252,10 @@ public abstract class BattleAgent : MonoBehaviour {
 		}
 
 
-		foreach (Skill s in skills) {
+		foreach (Skill s in skillsEquipped) {
 			if (toOriginalState) {
 				s.isAvalible = true;
 			}
-			Debug.Log (skills.Count);
-			Debug.Log (s);
 			foreach (BaseSkillEffect bse in s.skillEffects) {
 				bse.actionCount = 0;
 			}

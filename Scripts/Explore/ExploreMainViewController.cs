@@ -49,16 +49,21 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 
-	public void OnSkillButtonSelected(){
-
+	public void OnSkillButtonClick(){
+		GameObject skillsCanvas = null;
+		ResourceManager.Instance.LoadAssetWithName ("skills/canvas", () => {
+			skillsCanvas = ResourceManager.Instance.gos [0];
+//			skillsCanvas.transform.SetParent (GetComponent<Transform> (), false);
+			skillsCanvas.GetComponent<SkillsViewController>().OnEnterSkillsView();
+		});
 
 	}
 
-	public void OnBagButtonSelected(){
+	public void OnBagButtonClick(){
 
 	}
 
-	public void OnSettingButtonSelected(){
+	public void OnSettingButtonClick(){
 
 	}
 

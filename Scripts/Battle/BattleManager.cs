@@ -328,7 +328,7 @@ public class BattleManager : MonoBehaviour {
 
 		// 如果玩家没有被沉默，默认选中可以第一个可以使用的技能
 		if (player.validActionType != ValidActionType.MagicException) {
-			foreach (Skill s in player.skills) {
+			foreach (Skill s in player.skillsEquipped) {
 				if (s.isAvalible && player.strength >= s.strengthConsume) {
 					player.currentSkill = s;
 					bpController.baView.SelectedSkillAnim (false, false, s.skillId);
@@ -409,7 +409,7 @@ public class BattleManager : MonoBehaviour {
 	}
 	// 用户点击技能按钮响应
 	public void OnSkill(int skillIndex){
-		OnPlayerSelectSkill(player.skills [skillIndex]);
+		OnPlayerSelectSkill(player.skillsEquipped [skillIndex]);
 	}
 	// 用户点击物品按钮响应
 	public void OnItem(int itemIndex){
