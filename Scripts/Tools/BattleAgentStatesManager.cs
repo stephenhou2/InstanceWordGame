@@ -54,7 +54,8 @@ public class BattleAgentStatesManager:MonoBehaviour {
 				return;
 			}
 		}
-		state = Instantiate (sse);
+
+		state = Instantiate (sse,ba.transform.FindChild ("States").transform);
 		ba.AddState (state);
 		Debug.Log (ba.agentName + " add state: " + state.effectName);
 

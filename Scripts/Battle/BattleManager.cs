@@ -40,7 +40,6 @@ public class BattleManager : MonoBehaviour {
 			foreach (Player p in players) {
 				animationEnd = animationEnd && !p.baView.isAnimating;
 			}
-			Debug.Log (animationEnd);
 			return animationEnd;
 		}
 
@@ -80,8 +79,8 @@ public class BattleManager : MonoBehaviour {
 		player = bpController.GetComponent<Player> ();
 		player.CopyAgentStatus (Player.mainPlayer);
 		bpController.player = player;
-
 		players.Add (player);
+		bpController.SetUpBattlePlayerView ();
 	}
 
 	private GameObject GetMonsterView(){
@@ -91,7 +90,7 @@ public class BattleManager : MonoBehaviour {
 			monsterView.SetActive (true);
 			monsterViewPool.RemoveAt (0);
 		} else {
-			ResourceManager.Instance.LoadAssetWithName ("battle/monster_view", ()=>{
+			ResourceManager.Instance.LoadAssetWithFileName ("battle/monster_view", ()=>{
 				monsterView = ResourceManager.Instance.gos [0];
 			}, true);
 		}
@@ -139,7 +138,7 @@ public class BattleManager : MonoBehaviour {
 
 		
 	// 玩家选择技能后的响应方法
-	public void OnPlayerSelectSkill(Skill playerSkill){
+	public void OnPlayerSelectSkill(Skill playerSkill,int buttonIndex){
 
 		monsterControlPlane.gameObject.SetActive (true);
 
@@ -147,7 +146,7 @@ public class BattleManager : MonoBehaviour {
 
 		bpController.baView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
 			player.currentSkill == player.defenceSkill,
-			player.currentSkill.skillId);
+			buttonIndex);
 
 		description.text = "player 使用了" + playerSkill.skillName;
 
@@ -401,15 +400,15 @@ public class BattleManager : MonoBehaviour {
 
 	// 用户点击攻击按钮响应
 	public void OnAttack(){
-		OnPlayerSelectSkill(player.attackSkill);
+		OnPlayerSelectSkill(player.attackSkill,-1);
 	}
 	// 用户点击防御按钮响应
 	public void OnDenfence(){
-		OnPlayerSelectSkill(player.defenceSkill);
+		OnPlayerSelectSkill(player.defenceSkill,-1);
 	}
 	// 用户点击技能按钮响应
-	public void OnSkill(int skillIndex){
-		OnPlayerSelectSkill(player.skillsEquipped [skillIndex]);
+	public void OnSkill(int buttonIndex){
+		OnPlayerSelectSkill(player.skillsEquipped [buttonIndex],buttonIndex);
 	}
 	// 用户点击物品按钮响应
 	public void OnItem(int itemIndex){
@@ -422,7 +421,7 @@ public class BattleManager : MonoBehaviour {
 
 		/****************测试用，重置所有怪物****************/
 		foreach (Monster m in monsters) {
-			m.ResetBattleAgentProperties (true);
+			m.ResetBattleAgentProperties (true,true);
 			m.baView.agentIcon.color = Color.white;
 			m.gameObject.SetActive (true);
 //			monsters.Add (m);
@@ -438,11 +437,6 @@ public class BattleManager : MonoBehaviour {
 		}
 
 		OnReset ();
-
-		battleEndHUD.SetActive (false);
-
-		bpController.baView.ResetPlayerUI();
-
 
 		playerControlPlane.gameObject.SetActive (false);
 		monsterControlPlane.gameObject.SetActive (false);
@@ -467,16 +461,18 @@ public class BattleManager : MonoBehaviour {
 
 		GameObject.Find ("BattleCanvas").GetComponent<Canvas>().enabled = false;
 
+		battleEndHUD.SetActive (false);
+
 		exploreCanvas.GetComponent<ExploreMainViewController> ().OnNextEvent ();
 
 	}
 
 	public void OnReset(){
 		for (int i = 0; i < players.Count; i++) {
-			players[i].ResetBattleAgentProperties (true);
+			players[i].ResetBattleAgentProperties (false,true);
 		}
 		for (int i = 0; i < monsters.Count; i++) {
-			monsters[i].ResetBattleAgentProperties (true);
+			monsters[i].ResetBattleAgentProperties (true,true);
 		}
 			
 	}

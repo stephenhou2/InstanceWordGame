@@ -143,6 +143,16 @@ public abstract class BattleAgent : MonoBehaviour {
 		this.skillsEquipped = ba.skillsEquipped;
 		this.items = ba.items;
 
+		this.skillsEquipped = ba.skillsEquipped;
+
+		foreach (StateSkillEffect state in ba.states) {
+			state.transform.SetParent (this.transform.FindChild ("States").transform);
+		}
+		ba.states.Clear ();
+		this.states = ba.states;
+
+
+
 		this.isActive = ba.isActive;
 
 	}
@@ -185,7 +195,7 @@ public abstract class BattleAgent : MonoBehaviour {
 	//添加状态 
 	public void AddState(StateSkillEffect sse){
 		states.Add (sse);
-		ResetBattleAgentProperties (false);
+		ResetBattleAgentProperties (false,false);
 	}
 	//删除状态
 	public void RemoveState(StateSkillEffect sse){
@@ -193,7 +203,7 @@ public abstract class BattleAgent : MonoBehaviour {
 			if (sse.effectName == states[i].effectName) {
 				states.RemoveAt(i);
 				Destroy (sse);
-				ResetBattleAgentProperties (false);
+				ResetBattleAgentProperties (false,false);
 				return;
 			}
 		}
@@ -211,7 +221,7 @@ public abstract class BattleAgent : MonoBehaviour {
 	}
 
 	// 仅根据物品重新计人物的属性，其余属性重置为初始状态
-	public void ResetBattleAgentProperties (bool toOriginalState)
+	public void ResetBattleAgentProperties (bool toOriginalState,bool firstEnterBattle)
 	{
 
 		if (items.Count != 0) {
@@ -249,26 +259,33 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		if (toOriginalState) {
 			validActionType = ValidActionType.All;
-		}
-
-
-		foreach (Skill s in skillsEquipped) {
-			if (toOriginalState) {
-				s.isAvalible = true;
-			}
-			foreach (BaseSkillEffect bse in s.skillEffects) {
-				bse.actionCount = 0;
-			}
-		}
-	
-
-		if (toOriginalState) {
 			health = maxHealth;
 			strength = maxStrength;
 			// 开启血量槽和气力槽的设置动画
-			baView.firstSetHealthBar = false;
-			baView.firstSetStrengthBar = false;
-		} 
+			if (baView != null) {
+				baView.firstSetHealthBar = false;
+				baView.firstSetStrengthBar = false;
+			}
+			foreach (Skill s in skillsEquipped) {
+				s.isAvalible = true;
+				s.actionCount = 0;
+				foreach (BaseSkillEffect bse in s.skillEffects) {
+					bse.actionCount = 0;
+				}
+			}
+		}
+
+		if (firstEnterBattle) {
+			validActionType = ValidActionType.All;
+			foreach (Skill s in skillsEquipped) {
+				s.isAvalible = true;
+				s.actionCount = 0;
+				foreach (BaseSkillEffect bse in s.skillEffects) {
+					bse.actionCount = 0;
+				}
+			}
+		}
+
 		if (baView != null) {
 			baView.UpdateHealthBarAnim (this);
 			baView.UpdateStrengthBarAnim (this);

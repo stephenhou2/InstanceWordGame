@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using DG.Tweening;
 
 public class BattlePlayerView : BattleAgentView {
@@ -20,7 +21,31 @@ public class BattlePlayerView : BattleAgentView {
 	public Sprite attackAndDefenceNormalBackImg;
 	public Sprite attackAndDenfenceSelectedBackImg;
 
-	Image selectedButtonBackImg;
+	private Image selectedButtonBackImg;
+
+	private List<Sprite> skillIcons = new List<Sprite> ();
+
+	public void SetUpUI(Player player,List<Sprite> sprites){
+		if (skillIcons.Count == 0) {
+			foreach (Sprite s in sprites) {
+				skillIcons.Add (s);
+			}
+		}
+		for (int i = 0; i < player.skillsEquipped.Count; i++) {
+
+			Button skillButton = skillButtons [i];
+
+			Image skillIcon = skillButton.GetComponent<Image> ();
+			skillIcon.sprite = skillIcons.Find (delegate(Sprite obj) {
+				return obj.name == player.skillsEquipped[i].skillIconName;
+			});
+			skillIcon.enabled = true;
+			skillButton.interactable = true;
+			skillButton.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
+			= player.skillsEquipped [i].strengthConsume.ToString();
+			skillButton.transform.GetComponentInChildren<Text> ().text = "";
+		}
+	}
 
 	// 更新战斗中玩家UI的状态
 	public void UpdateUIStatus(Player player){
@@ -30,8 +55,9 @@ public class BattlePlayerView : BattleAgentView {
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				int actionBackCount = s.actionConsume - s.actionCount + 1;
-				skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount == 0 ? "" : actionBackCount.ToString ();
-
+				skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount.ToString ();
+			} else {
+				skillButtons [i].GetComponentInChildren<Text> ().text = "";
 			}
 			skillButtons [i].interactable = s.isAvalible && player.strength >= s.strengthConsume && player.isSkillEnable; 
 		}
@@ -45,7 +71,7 @@ public class BattlePlayerView : BattleAgentView {
 	}
 
 	// 选择技能后的动画
-	public void SelectedSkillAnim(bool isAttack,bool isDefence,int skillId){
+	public void SelectedSkillAnim(bool isAttack,bool isDefence,int buttonIndex){
 
 		if (selectedButtonBackImg != null) {
 			KillSelectedSkillAnim ();
@@ -60,7 +86,7 @@ public class BattlePlayerView : BattleAgentView {
 			selectedButtonBackImg = defenceButton.transform.parent.GetComponent<Image> ();
 
 		} else {
-			selectedButtonBackImg = skillButtons [skillId].transform.parent.GetComponent<Image> ();
+			selectedButtonBackImg = skillButtons [buttonIndex].transform.parent.GetComponent<Image> ();
 		}
 
 		selectedButtonBackImg.sprite = (isAttack || isDefence) ? attackAndDenfenceSelectedBackImg : skillSelectedBackImg;
@@ -86,17 +112,6 @@ public class BattlePlayerView : BattleAgentView {
 		mSequence.Kill (false);
 		selectedButtonBackImg = null;
 
-	}
-
-	public void ResetPlayerUI(){
-		Player p = GetComponent<Player> ();
-		for(int i = 0;i < p.skillsEquipped.Count;i++){
-			Button btn = skillButtons [i];
-			btn.interactable = true;
-			Debug.Log (btn.transform.parent.FindChild("StrengthConsumeText"));
-			btn.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
-			= p.skillsEquipped [i].strengthConsume.ToString();
-		}
 	}
 
 }

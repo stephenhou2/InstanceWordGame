@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class SkillsView : MonoBehaviour{
+
+	public GameObject skillPlane;
 
 	public Text skillPointsTotal;
 
@@ -43,6 +47,9 @@ public class SkillsView : MonoBehaviour{
 
 	private List<Skill> skillsOfCurrentType = new List<Skill> ();
 	private List<Sprite> spritesOfCurrentType = new List<Sprite> ();
+
+	public Sprite skillTypeButtonNormalIcon;
+	public Sprite skillTypeButtonSelectedIcon;
 
 
 	/// <summary>
@@ -86,24 +93,42 @@ public class SkillsView : MonoBehaviour{
 
 		for (int i = 0; i < player.skillsEquipped.Count; i++) {
 			
-			Image skillIcon = equipedSkillButtons [i].transform.FindChild ("Skill_Icon").GetComponent<Image> ();
+			Image skillIcon = equipedSkillButtons [i].transform.FindChild ("SkillIcon").GetComponent<Image> ();
 
 			skillIcon.sprite = sprites.Find (delegate (Sprite obj) {
 				return obj.name == player.skillsEquipped [i].skillIconName;
 			});
 			skillIcon.enabled = true;
 		}
-		skillTypeButtons [0].Select ();
-		OnSkillTypeButtonClick ("type1");
+
+		OnSkillTypeButtonClick ("type1_0");
 		OnSkillTreeButtonClick (0);
+		skillPlane.SetActive (true);
+
 	}
 
 	// 技能类型按钮点击响应
-	public void OnSkillTypeButtonClick(string skillType){
-		
+	public void OnSkillTypeButtonClick(string skillTypeInfo){
+		Debug.Log (skillTypeInfo);
+		string[] strs = skillTypeInfo.Split (new char[] {'_'});
+		string skillType = strs [0];
+//		Debug.Log (strs [0]);
+//		Debug.Log (strs [1]);
+		Debug.Log(strs.Length);
+		int buttonIndex = Convert.ToInt32 (strs [1]);
+
+		for (int i = 0; i < skillTypeButtons.Length; i++) {
+			Button skillTypeBtn = skillTypeButtons [i];
+			if (i == buttonIndex) {
+				skillTypeBtn.GetComponent<Image> ().sprite = skillTypeButtonSelectedIcon;
+			} else {
+				skillTypeBtn.GetComponent<Image> ().sprite = skillTypeButtonNormalIcon;
+			}
+		}
+
 		skillsOfCurrentType.Clear ();
 		spritesOfCurrentType.Clear ();
-		currentSkillType = skillType;
+		currentSkillType = skillTypeInfo;
 
 		for(int i = 0;i<skills.Count;i++){
 			Skill s = skills [i];
@@ -343,8 +368,13 @@ public class SkillsView : MonoBehaviour{
 
 	// 退出按钮点击响应
 	public void OnQuitSkillsPlane(){
-		Destroy (GameObject.Find ("SkillsCanvas"));
-		Destroy (GameObject.Find (CommonData.instanceContainerName +  "/Skills").gameObject);
+
+//		GameObject skillCanvas = GameObject.Find ("SkillsCanvas");
+		skillPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
+			Destroy (GameObject.Find ("SkillsCanvas"));
+			Destroy (GameObject.Find (CommonData.instanceContainerName + "/Skills").gameObject);
+		});
+
 	}
 	// 提示弹窗点击响应
 	public void OnTintHUDClick(){

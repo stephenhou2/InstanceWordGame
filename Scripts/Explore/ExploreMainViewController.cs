@@ -16,7 +16,7 @@ public class ExploreMainViewController:MonoBehaviour {
 	public GameObject dialogAndItemPlane{
 		get{
 			if (mDialogAndItemPlane == null) {
-				ResourceManager.Instance.LoadAssetWithName ("explore/dialog_and_item_view", ()=>{
+				ResourceManager.Instance.LoadAssetWithFileName ("explore/dialog_and_item_view", ()=>{
 					mDialogAndItemPlane = ResourceManager.Instance.gos.Find(delegate(GameObject go) {
 						return go.name == "DialogAndItemPlane";
 					});
@@ -44,14 +44,14 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 	private void LoadEventSprites(){
-		ResourceManager.Instance.LoadAssetWithName ("explore/icons",expChapterView.SetUpScene);
+		ResourceManager.Instance.LoadAssetWithFileName ("explore/icons",expChapterView.SetUpScene);
 	}
 
 
 
 	public void OnSkillButtonClick(){
 		GameObject skillsCanvas = null;
-		ResourceManager.Instance.LoadAssetWithName ("skills/canvas", () => {
+		ResourceManager.Instance.LoadAssetWithFileName ("skills/canvas", () => {
 			skillsCanvas = ResourceManager.Instance.gos [0];
 //			skillsCanvas.transform.SetParent (GetComponent<Transform> (), false);
 			skillsCanvas.GetComponent<SkillsViewController>().OnEnterSkillsView();
@@ -82,7 +82,7 @@ public class ExploreMainViewController:MonoBehaviour {
 			battleCanvas.GetComponent<Canvas> ().enabled = true;
 
 		} else {
-			ResourceManager.Instance.LoadAssetWithName ("battle/battle", () => {
+			ResourceManager.Instance.LoadAssetWithFileName ("battle/battle", () => {
 				exploreCanvas.GetComponent<Canvas> ().enabled = false;
 			},true);// 若当前场景中没有battleCanvas，从assetBundle中加载
 		}

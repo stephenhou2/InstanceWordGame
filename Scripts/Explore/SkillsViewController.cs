@@ -12,7 +12,7 @@ public class SkillsViewController : MonoBehaviour {
 
 	public void OnEnterSkillsView(){
 //		skillsView.ctrl = this;
-		ResourceManager.Instance.LoadAssetWithName ("skills/skills", () => {
+		ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
 			
 			if(mSkills.Count == 0){
 				Transform skillsTrans = ContainerManager.NewContainer("Skills",GameObject.Find(CommonData.instanceContainerName).transform);

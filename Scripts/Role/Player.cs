@@ -15,14 +15,17 @@ public class Player : BattleAgent {
 		get{
 			if (mPlayerSingleton == null) {
 				lock (objectLock) {
-					ResourceManager.Instance.LoadAssetWithName("player",()=>{
+					ResourceManager.Instance.LoadAssetWithFileName("player",()=>{
 						mPlayerSingleton = GameObject.Find ("Player").GetComponent<Player>();
 						mPlayerSingleton.transform.SetParent(null);
+						mPlayerSingleton.ResetBattleAgentProperties (true,false);
 						DontDestroyOnLoad (mPlayerSingleton);
 					},true);
 				}
+			}else{
+				mPlayerSingleton.ResetBattleAgentProperties (false,false);
 			}
-			mPlayerSingleton.ResetBattleAgentProperties (false);
+
 			return mPlayerSingleton;
 		}
 //		set{
@@ -98,6 +101,7 @@ public class Player : BattleAgent {
 		this.isSkillEnable = isSkillEnable;
 		this.isItemEnable = isItemEnable;
 		this.isDefenceEnable = isDefenceEnable;
+
 	}
 
 

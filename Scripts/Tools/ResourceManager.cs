@@ -3,41 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class ResourceManager:SingletonMono<ResourceManager> {
+public class ResourceManager:SingletonMono<ResourceManager>
+{
 
 	public float loadProgress;
 
 	private CallBack callBack;
 
-	public List<Sprite> sprites = new List<Sprite>();
+	private bool spriteOnly;
+
+	public List<Sprite> sprites = new List<Sprite> ();
 
 	public List<GameObject> gos = new List<GameObject> ();
 
 	private string fileName;
 
-//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
+	//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
 
-	public void MaxCachingSpace(int maxCaching){
+	public void MaxCachingSpace (int maxCaching)
+	{
 		Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
 	}
 
 
-	public void LoadAssetWithName(string bundlePath,CallBack callBack,bool isSync = false,string fileName = null){
+	public void LoadAssetWithFileName (string bundlePath, CallBack callBack, bool isSync = false, string fileName = null)
+	{
 
 		this.fileName = fileName;
 
 		this.callBack = callBack;
 
+		this.spriteOnly = false;
+
 		if (isSync) {
 			LoadFromFileSync (bundlePath);
 		} else {
-			StartCoroutine ("LoadFromFileAsync",bundlePath);
+			StartCoroutine ("LoadFromFileAsync", bundlePath);
 		}
 
 	}
 
+	public void LoadSpritesAssetWithFileName(string bundlePath,CallBack callBack,bool isSync = false,string fileName = null){
 
-	private void LoadFromFileSync(string bundlePath){
+		this.fileName = fileName;
+
+		this.callBack = callBack;
+
+		this.spriteOnly = true;
+
+		if (isSync) {
+			LoadFromFileSync (bundlePath);
+		} else {
+			StartCoroutine ("LoadFromFileAsync", bundlePath);
+		}
+	}
+
+
+	private void LoadFromFileSync (string bundlePath)
+	{
 		
 		string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
@@ -52,10 +75,10 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 				sprites.Add (assetLoaded as Sprite);
 			} else if (assetLoaded.GetType () == typeof(Texture2D)) {
 				Texture2D t2d = assetLoaded as Texture2D;
-				Sprite s = Sprite.Create(t2d,new Rect(0.0f, 0.0f, t2d.width, t2d.height),new Vector2(0.5f,0.5f));
+				Sprite s = Sprite.Create (t2d, new Rect (0.0f, 0.0f, t2d.width, t2d.height), new Vector2 (0.5f, 0.5f));
 				Debug.Log ("加载图片" + assetLoaded.name);
 				sprites.Add (s);
-			} else {
+			} else if (!spriteOnly) {
 				GameObject go = Instantiate (assetLoaded as GameObject);
 				go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 				go.name = assetLoaded.name;
@@ -73,7 +96,7 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 					sprites.Add (obj as Sprite);
 				} else if (obj.GetType () == typeof(Texture2D)) {
 					continue;
-				} else {
+				} else if (!spriteOnly) {
 					GameObject go = Instantiate (obj as GameObject);
 					go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 					go.name = obj.name;
@@ -93,7 +116,8 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 		sprites.Clear ();
 	}
 
-	private IEnumerator LoadFromFileAsync(string bundlePath){
+	private IEnumerator LoadFromFileAsync (string bundlePath)
+	{
 
 		string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
@@ -108,9 +132,8 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 
 
 
-		if (myLoadedAssetBundle == null)
-		{
-			Debug.Log("Failed to load AssetBundle!");
+		if (myLoadedAssetBundle == null) {
+			Debug.Log ("Failed to load AssetBundle!");
 			yield break;
 		}
 			
@@ -123,13 +146,21 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 
 			var assetLoaded = assetLoadRequest.asset;
 
-			GameObject go = Instantiate (assetLoaded as GameObject);
+			if (assetLoaded.GetType () == typeof(Sprite)) {
+				Debug.Log ("加载图片" + assetLoaded.name);
+				sprites.Add (assetLoaded as Sprite);
+			} else if (assetLoaded.GetType () == typeof(Texture2D)) {
+				Texture2D t2d = assetLoaded as Texture2D;
+				Sprite s = Sprite.Create (t2d, new Rect (0.0f, 0.0f, t2d.width, t2d.height), new Vector2 (0.5f, 0.5f));
+				Debug.Log ("加载图片" + assetLoaded.name);
+				sprites.Add (s);
+			} else if (!spriteOnly) {
+				GameObject go = Instantiate (assetLoaded as GameObject);
+				go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
+				go.name = assetLoaded.name;
+				gos.Add (go);
 
-			go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
-
-			go.name = assetLoaded.name;
-
-			gos.Add (go);
+			}
 
 		} else {
 			
@@ -144,7 +175,7 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 					sprites.Add (obj as Sprite);
 				} else if (obj.GetType () == typeof(Texture2D)) {
 					continue;
-				} else {
+				} else if (!spriteOnly) {
 					GameObject go = Instantiate (obj as GameObject);
 					go.transform.SetParent (ContainerManager.FindContainer (CommonData.instanceContainerName));
 					go.name = obj.name;
@@ -152,8 +183,6 @@ public class ResourceManager:SingletonMono<ResourceManager> {
 				}
 			}
 		}
-
-
 
 		myLoadedAssetBundle.Unload (false);
 
