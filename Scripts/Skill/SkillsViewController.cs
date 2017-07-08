@@ -11,18 +11,18 @@ public class SkillsViewController : MonoBehaviour {
 
 
 	public void OnEnterSkillsView(){
-//		skillsView.ctrl = this;
+
+		if(mSkills.Count == 0 || mSprites.Count == 0)
 		ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
-			
-			if(mSkills.Count == 0){
-				Transform skillsTrans = ContainerManager.NewContainer("Skills",GameObject.Find(CommonData.instanceContainerName).transform);
-				foreach(GameObject go in ResourceManager.Instance.gos){
-					mSkills.Add(go.GetComponent<Skill>());
-					go.transform.SetParent(skillsTrans);
-				}
+
+			Transform skillsTrans = ContainerManager.NewContainer("Skills",GameObject.Find(CommonData.instanceContainerName).transform);
+			foreach(GameObject go in ResourceManager.Instance.gos){
+				mSkills.Add(go.GetComponent<Skill>());
+				go.transform.SetParent(skillsTrans);
 			}
-			if(mSprites.Count == 0){
-				mSprites = ResourceManager.Instance.sprites;
+
+			foreach (Sprite s in ResourceManager.Instance.sprites) {
+				mSprites.Add (s);
 			}
 			skillsView.SetUpSkillsView (mSkills, mSprites);
 		});

@@ -56,8 +56,8 @@ public class Monster : BattleAgent,IPointerClickHandler{
 
 	public void ManageSkillAvalibility(){
 		// 如果技能还在冷却中或者怪物气力值小于技能消耗的气力值，则相应技能不可用
-		for (int i = 0;i < skillsEquipped.Count;i++) {
-			Skill s = skillsEquipped [i];
+		for (int i = 0;i < skillsEquiped.Count;i++) {
+			Skill s = skillsEquiped [i];
 
 			if (s.isAvalible == false) {
 				s.actionCount++;

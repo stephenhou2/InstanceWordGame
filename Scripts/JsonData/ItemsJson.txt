@@ -1,0 +1,32 @@
+﻿{"Items":
+[
+		{	"itemName":"治疗药剂",
+			"itemDescription":"用于治疗的小红瓶",
+			"spriteName":"good1",
+			"itemType":3,
+			"itemId":0,
+			"attackGain":0,
+			"powerGain":0,
+			"magicGain":0,
+			"critGain":0,
+			"amourGain":0,
+			"magicResistGain":0,
+			"healthGain":50,
+			"strengGain":0
+		},
+		{	"itemName":"气力药剂",
+			"itemDescription":"补充气力小黄瓶",
+			"spriteName":"good2",
+			"itemType":0,
+			"itemId":1,
+			"attackGain":0,
+			"powerGain":0,
+			"magicGain":0,
+			"critGain":0,
+			"amourGain":0,
+			"magicResistGain":0,
+			"healthGain":0,
+			"strengGain":10
+		}
+]
+}

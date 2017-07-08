@@ -78,9 +78,9 @@ public class Player : BattleAgent {
 			break;
 		}
 		// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用
-		for (int i = 0;i < skillsEquipped.Count;i++) {
+		for (int i = 0;i < skillsEquiped.Count;i++) {
 
-			Skill s = skillsEquipped [i];
+			Skill s = skillsEquiped [i];
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				s.actionCount++;

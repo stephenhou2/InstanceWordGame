@@ -81,9 +81,7 @@ public class SkillsView : MonoBehaviour{
 	public void SetUpSkillsView(List<Skill> skills,List<Sprite>sprites){
 		
 		this.skills = skills;
-		foreach (Sprite s in sprites) {
-			this.sprites.Add (s);
-		}
+		this.sprites = sprites;
 
 		Player player = Player.mainPlayer;
 
@@ -91,12 +89,12 @@ public class SkillsView : MonoBehaviour{
 
 		skillPointsLeft.text = player.skillPointsLeft.ToString();
 
-		for (int i = 0; i < player.skillsEquipped.Count; i++) {
+		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 			
 			Image skillIcon = equipedSkillButtons [i].transform.FindChild ("SkillIcon").GetComponent<Image> ();
 
 			skillIcon.sprite = sprites.Find (delegate (Sprite obj) {
-				return obj.name == player.skillsEquipped [i].skillIconName;
+				return obj.name == player.skillsEquiped [i].skillIconName;
 			});
 			skillIcon.enabled = true;
 		}
@@ -318,7 +316,7 @@ public class SkillsView : MonoBehaviour{
 				if (skillIcon.enabled == false) {
 					skillIcon.sprite = spritesOfCurrentType [currentSelectSkillIndex];
 					skillIcon.enabled = true;
-					Player.mainPlayer.skillsEquipped.Insert (i, playerSkill);
+					Player.mainPlayer.skillsEquiped.Insert (i, playerSkill);
 					return;
 				}
 			} 
@@ -329,7 +327,7 @@ public class SkillsView : MonoBehaviour{
 				equipedSkillIconOfHUD.sprite = equipedSkillIcon.sprite;
 
 				Text equipedSkillNameOfHUD = equipedSkillButtonsOfHUD [i].GetComponentInChildren<Text> ();
-				equipedSkillNameOfHUD.text = Player.mainPlayer.skillsEquipped [i].skillName;
+				equipedSkillNameOfHUD.text = Player.mainPlayer.skillsEquiped [i].skillName;
 
 			}
 
@@ -342,7 +340,7 @@ public class SkillsView : MonoBehaviour{
 	// 已装备技能栏上的技能点击响应
 	public void OnEquipedSkillButtonClick(int index){
 		skillDetailHUD.SetActive (true);
-		Skill s = Player.mainPlayer.skillsEquipped [index];
+		Skill s = Player.mainPlayer.skillsEquiped [index];
 		skillNameOnHUD.text = s.skillName;
 		skillDescOnHUD.text = s.skillDescription;
 		skillCosumeOnHUD.text = "气力消耗： " + s.strengthConsume.ToString ();
@@ -353,12 +351,12 @@ public class SkillsView : MonoBehaviour{
 	// 已装备技能弹窗上按技能的点击响应
 	public void OnSkillButtonOnEquipedSkillHUDClick(int index){
 
-		Player.mainPlayer.skillsEquipped.RemoveAt (index);
+		Player.mainPlayer.skillsEquiped.RemoveAt (index);
 
 		Skill playerSkill = Player.mainPlayer.allLearnedSkills.Find (delegate(Skill obj) {
 			return obj.skillId == skillsOfCurrentType [currentSelectSkillIndex].skillId;
 		});
-		Player.mainPlayer.skillsEquipped.Insert (index, playerSkill);
+		Player.mainPlayer.skillsEquiped.Insert (index, playerSkill);
 
 		Image SkillIcon = equipedSkillButtons [index].transform.FindChild ("SkillIcon").GetComponent<Image> ();
 		SkillIcon.sprite = spritesOfCurrentType [currentSelectSkillIndex];

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ContainerManager:MonoBehaviour {
 
-//	private static Transform commonContainer;
-
 
 	public static Transform FindContainer(string containerName){
 

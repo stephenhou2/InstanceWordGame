@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2565046445
+CRC: 3659584725
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -7,26 +7,28 @@ AssetBundleManifest:
       Dependencies: {}
     Info_1:
       Name: battle/monster_view
-      Dependencies:
-        Dependency_0: battle/monster_icons
-    Info_2:
-      Name: battle/monster_icons
       Dependencies: {}
-    Info_3:
+    Info_2:
       Name: explore/dialog_and_item_view
       Dependencies: {}
-    Info_4:
+    Info_3:
       Name: explore/explore
       Dependencies: {}
-    Info_5:
+    Info_4:
       Name: explore/icons
       Dependencies: {}
-    Info_6:
+    Info_5:
       Name: battle/battle
       Dependencies: {}
-    Info_7:
+    Info_6:
       Name: skills/skills
       Dependencies: {}
-    Info_8:
+    Info_7:
       Name: skills/canvas
+      Dependencies: {}
+    Info_8:
+      Name: bag/canvas
+      Dependencies: {}
+    Info_9:
+      Name: item/icons
       Dependencies: {}

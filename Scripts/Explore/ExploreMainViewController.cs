@@ -53,14 +53,17 @@ public class ExploreMainViewController:MonoBehaviour {
 		GameObject skillsCanvas = null;
 		ResourceManager.Instance.LoadAssetWithFileName ("skills/canvas", () => {
 			skillsCanvas = ResourceManager.Instance.gos [0];
-//			skillsCanvas.transform.SetParent (GetComponent<Transform> (), false);
 			skillsCanvas.GetComponent<SkillsViewController>().OnEnterSkillsView();
 		});
 
 	}
 
 	public void OnBagButtonClick(){
-
+		GameObject bagCanvas = null;
+		ResourceManager.Instance.LoadAssetWithFileName ("bag/canvas", () => {
+			bagCanvas = ResourceManager.Instance.gos [0];
+			bagCanvas.GetComponent<BagController>().OnEnterBagView();
+		});
 	}
 
 	public void OnSettingButtonClick(){

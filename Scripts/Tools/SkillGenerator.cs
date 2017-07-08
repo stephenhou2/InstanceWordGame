@@ -74,7 +74,7 @@ public class SkillGenerator : MonoBehaviour {
 		mySkill.strengthConsume = skillEffect_1.strengthConsume + skillEffect_2.strengthConsume;
 		mySkill.actionConsume = skillEffect_1.actionConsume + skillEffect_2.actionConsume;
 
-		ba.skillsEquipped.Add (mySkill);
+		ba.skillsEquiped.Add (mySkill);
 
 		return mySkill;
 

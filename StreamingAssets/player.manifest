@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4255023491
+CRC: 360782948
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 872d139dcc49ee0d9d2d173b6bfe1d8c
+    Hash: bbeb4c3f516bc401d9db42d625b03e63
   TypeTreeHash:
     serializedVersion: 2
-    Hash: dd9e2b262958b2dd3d98a5209b65e042
+    Hash: c3e0126f733b4018c46b00bc5c48765c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -26,5 +26,5 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Battle/Player.prefab
+- Assets/Prefabs/Player.prefab
 Dependencies: []

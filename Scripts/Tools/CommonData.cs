@@ -11,9 +11,9 @@ public struct CommonData{
 	public static string JsonFileDirectoryPath = "Assets/Scripts/JsonData";
 //	public static string effectsFileName = "SkillEffectData.txt";
 	public static string effectsDataFileName = "TestEffectString.txt";
-	public static string chaptersDataFileName = "ChaptersString.txt";
-	public static string chapterDataFileName = "DataString.txt";
-//	public static string battleDataCanvansName = ""
+	public static string chaptersDataFileName = "ChaptersJson.txt";
+	public static string chapterDataFileName = "ChapterJson.txt";
+	public static string itemsDataFileName = "ItemsJson.txt";
 
 	public static string instanceContainerName = "InstanceContainer";
 	public static string poolContainerName = "PoolContainer";
@@ -21,6 +21,15 @@ public struct CommonData{
 
 
 
+}
+
+
+public enum ItemType{
+	Weapon,
+	Amour,
+	Shoes,
+	Consumables,
+	Task
 }
 
 public enum EventType{

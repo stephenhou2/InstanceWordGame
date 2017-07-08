@@ -31,27 +31,27 @@ public class BattlePlayerView : BattleAgentView {
 				skillIcons.Add (s);
 			}
 		}
-		for (int i = 0; i < player.skillsEquipped.Count; i++) {
+		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 
 			Button skillButton = skillButtons [i];
 
 			Image skillIcon = skillButton.GetComponent<Image> ();
 			skillIcon.sprite = skillIcons.Find (delegate(Sprite obj) {
-				return obj.name == player.skillsEquipped[i].skillIconName;
+				return obj.name == player.skillsEquiped[i].skillIconName;
 			});
 			skillIcon.enabled = true;
 			skillButton.interactable = true;
 			skillButton.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
-			= player.skillsEquipped [i].strengthConsume.ToString();
+			= player.skillsEquiped [i].strengthConsume.ToString();
 			skillButton.transform.GetComponentInChildren<Text> ().text = "";
 		}
 	}
 
 	// 更新战斗中玩家UI的状态
 	public void UpdateUIStatus(Player player){
-		for (int i = 0;i < player.skillsEquipped.Count;i++) {
+		for (int i = 0;i < player.skillsEquiped.Count;i++) {
 
-			Skill s = player.skillsEquipped [i];
+			Skill s = player.skillsEquiped [i];
 			// 如果是冷却中的技能
 			if (s.isAvalible == false) {
 				int actionBackCount = s.actionConsume - s.actionCount + 1;

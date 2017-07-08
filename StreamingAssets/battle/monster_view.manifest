@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4150072716
+CRC: 3126384568
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d3586df811289249a8c2638492843711
+    Hash: cf6c400ee061191ba9c80b482bfd2057
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 3ea357fcfd3a447f2a73474d4467c19c
+    Hash: c80ca15c2dcc3daa2628847ef4985c46
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -47,5 +47,4 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Battle/MonsterView.prefab
-Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/battle/monster_icons
+Dependencies: []

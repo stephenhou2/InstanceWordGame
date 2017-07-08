@@ -9,6 +9,8 @@ public class Item {
 	public string itemDescription;
 	public string spriteName;
 
+	public ItemType itemType;
+
 	public int itemId;
 
 	public int attackGain;//攻击力增益
@@ -19,7 +21,7 @@ public class Item {
 	public int magicResistGain;//魔抗增益
 	public int agilityGain;//闪避增益
 
-	public int strengthConsume;//气力消耗
+//	public int strengthConsume;//气力消耗
 
 	public int healthGain;//血量增益
 	public int strengGain;//气力增益
