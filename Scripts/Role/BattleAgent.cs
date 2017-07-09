@@ -105,7 +105,7 @@ public abstract class BattleAgent : MonoBehaviour {
 	public Item amourEquiped;
 	public Item shoesEquiped;
 
-	public List<Item> consumablesEquiped = new List<Item>();// 消耗品数组
+	public List<Item> allEquipedItems = new List<Item>();// 已装备物品数组
 
 	public List<Item> allItems = new List<Item> (); // 所有物品
 
@@ -149,10 +149,10 @@ public abstract class BattleAgent : MonoBehaviour {
 		this.skillsEquiped = ba.skillsEquiped;
 
 
-		this.weaponEquiped = ba.weaponEquiped;
-		this.amourEquiped = ba.amourEquiped;
-		this.shoesEquiped = ba.shoesEquiped;
-		this.consumablesEquiped = ba.consumablesEquiped;
+//		this.weaponEquiped = ba.weaponEquiped;
+//		this.amourEquiped = ba.amourEquiped;
+//		this.shoesEquiped = ba.shoesEquiped;
+		this.allEquipedItems = ba.allEquipedItems;
 
 		this.allItems = ba.allItems;
 

@@ -23,20 +23,19 @@ public class BagView : MonoBehaviour {
 	public Text critText;
 	public Text agilityText;
 
-	public Image weaponImage;
-	public Image amourImage;
-	public Image shoesImage;
-	public Image[] consumablesImages;
+//	public Image weaponImage;
+//	public Image amourImage;
+//	public Image shoesImage;
+	public Button[] allEquipedItemBtns;
 
 	public Button[] bags;
 
 	public Button[] allItemsBtns;
 
-
-
+	public Transform itemPropertiesPlane;
 	public Image itemIcon;
 	public Text itemName;
-	public Text propertyText;
+	public GameObject propertyText;
 
 	private Player player;
 
@@ -46,11 +45,25 @@ public class BagView : MonoBehaviour {
 	public GameObject specificTypeItemPlane;
 	public GameObject itemDetailHUD;
 
+	public Transform specificTypeItemsGridPlane;
+	public GameObject itemButton;
+
+	public InstancePool instancePool;
+
+	private InstancePool propertyTextPool;
+
+	private InstancePool itemButtonPool;
+
+	private int currentSelectEquipIndex;
+
+
+
+	private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
+
+
 
 
 	public void SetUpBagView(List<Sprite> sprites){
-
-
 
 		this.sprites = sprites;
 		this.player = Player.mainPlayer;
@@ -92,47 +105,208 @@ public class BagView : MonoBehaviour {
 
 	private void SetUpEquipedItemPlane(){
 
-		SetIcon (player.weaponEquiped, weaponImage);
-		SetIcon (player.amourEquiped, amourImage);
-		SetIcon (player.shoesEquiped, shoesImage);
-
-		for(int i = 0;i<player.consumablesEquiped.Count;i++){
-			Item item = player.consumablesEquiped[i];
-			SetIcon (item, consumablesImages [i]);
+		for(int i = 0;i<player.allEquipedItems.Count;i++){
+			Item item = player.allEquipedItems[i];
+			SetUpItemButton (item, allEquipedItemBtns [i]);
 		}
 
 	}
 
 	private void SetUpAllItemsPlane(){
 		for (int i = 0; i < player.allItems.Count; i++) {
-			Image itemIcon = allItemsBtns [i].transform.FindChild("ItemIcon").GetComponent<Image>();
-			SetIcon (player.allItems [i], itemIcon);
+			Button itemBtn = allItemsBtns [i];
+			SetUpItemButton (player.allItems [i], itemBtn);
+			Text itemCount = allItemsBtns [i].transform.FindChild ("ItemCount").GetComponent<Text> ();
+			itemCount.text = player.allItems [i].itemCount.ToString();
 		}
+
 
 	}
 
 
 	public void OnEquipedItemButtonsClick(int index){
 
+		allItemsOfCurrentSelcetType.Clear ();
+
+		ItemType type = ItemType.None;
+
+		currentSelectEquipIndex = index;
+
+		switch (index) {
+		case 0:
+			type = ItemType.Weapon;
+			break;
+		case 1:
+			type = ItemType.Amour;
+			break;
+		case 2:
+			type = ItemType.Shoes;
+			break;
+		case 3:
+			type = ItemType.Consumables;
+			break;
+		case 4:
+			type = ItemType.Consumables;
+			break;
+		case 5:
+			type = ItemType.Consumables;
+			break;
+		default:
+			break;
+		}
+
+		if (itemButtonPool == null) {
+			itemButtonPool = Instantiate (instancePool,ContainerManager.FindContainer (CommonData.poolContainerName));
+			itemButtonPool.name = "ItemButtonPool";
+		}
+			
+		List<Button> allCurrentTypeItemBtns = new List<Button> ();
+
+		foreach (Item i in player.allItems) {
+			if (i.itemType == type) {
+				
+				Button itemBtn = itemButtonPool.GetInstance<Button> (itemButton, specificTypeItemsGridPlane);
+
+				allCurrentTypeItemBtns.Add (itemBtn);
+
+				SetUpItemButton (i, itemBtn);
+
+				allItemsOfCurrentSelcetType.Add (i);
+			}
+		}
+
+		for(int i = 0;i < allCurrentTypeItemBtns.Count;i++){
+			int btnIndex = i;
+			Button itemBtn = allCurrentTypeItemBtns [i];
+			itemBtn.onClick.RemoveAllListeners ();
+			itemBtn.onClick.AddListener (delegate {
+				OnItemButtonOfSpecificItemPlaneClick(btnIndex);
+			});
+		}
+
 		specificTypeItemPlane.SetActive (true);
+
+	}
+
+	public void OnItemButtonOfSpecificItemPlaneClick(int index){
+
+		Debug.Log (index);
+
+		Item item = allItemsOfCurrentSelcetType [index];
+
+		OnQuitSpecificTypePlane ();
+
+		Button btn = allEquipedItemBtns [currentSelectEquipIndex];
+
+		SetUpItemButton (item, btn);
 
 	}
 
 	public void OnItemButtonClick(int index){
 
 		itemDetailHUD.SetActive (true);
+
+		for(int i = 0;i<allItemsBtns.Length;i++){
+			Button btn = allItemsBtns [i];
+			btn.transform.FindChild ("SelectedBorder").GetComponent<Image> ().enabled = i == index;
+		}
+
+
+
+		Item item = player.allItems [index];
+
+		itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			return obj.name == item.spriteName;
+		});
+		itemIcon.GetComponent<Image> ().enabled = true;
+
+		itemName.text = item.itemName;
+
+		if (item.attackGain != 0) {
+			AddPropertyText (item.attackGain, PropertyType.Attack);
+		} else if (item.magicGain != 0) {
+			AddPropertyText (item.magicGain, PropertyType.Magic);
+		} else if (item.amourGain != 0) {
+			AddPropertyText (item.amourGain, PropertyType.Amour);
+		} else if (item.magicResistGain != 0) {
+			AddPropertyText (item.magicResistGain, PropertyType.MagicResist);
+		} else if (item.critGain != 0) {
+			AddPropertyText (item.critGain, PropertyType.Crit);
+		} else if (item.agilityGain != 0) {
+			AddPropertyText (item.agilityGain, PropertyType.Agility);
+		} else if (item.healthGain != 0) {
+			AddPropertyText (item.healthGain, PropertyType.Health);
+		} else if (item.strengGain != 0) {
+			AddPropertyText (item.strengGain, PropertyType.Strength);
+		}
+			
 	}
 
-	public void OnItemDetailHUDClick(){
+	private void AddPropertyText(int gain,PropertyType type){
+
+		if (propertyTextPool == null) {
+			propertyTextPool = Instantiate (instancePool, ContainerManager.FindContainer (CommonData.poolContainerName));
+			propertyTextPool.name = "PropertyTextPool";
+		}
+		
+		Text newPropertyText = propertyTextPool.GetInstance<Text> (propertyText, itemPropertiesPlane);
+
+		string preText = null;
+
+		switch (type) {
+		case PropertyType.Attack:
+			preText = "攻击 + ";
+			break;
+		case PropertyType.Magic:
+			preText = "魔法 + ";
+			break;
+		case PropertyType.Amour:
+			preText = "护甲 + ";
+			break;
+		case PropertyType.MagicResist:
+			preText = "抗性 + ";
+			break;
+		case PropertyType.Crit:
+			preText = "暴击 + ";
+			break;
+		case PropertyType.Agility:
+			preText = "闪避 + ";
+			break;
+		case PropertyType.Health:
+			preText = "血量 + ";
+			break;
+		case PropertyType.Strength:
+			preText = "气力 + ";
+			break;
+		default:
+			break;
+		}
+
+		newPropertyText.text = preText + gain.ToString ();
+
+	}
+
+	public void OnQuitItemDetailHUD(){
 		itemDetailHUD.SetActive (false);
+		while (itemPropertiesPlane.transform.childCount > 0) {
+			Transform trans = itemPropertiesPlane.transform.GetChild (0);
+			propertyTextPool.AddInstanceToPool (trans.gameObject,"PropertyTextPool");
+		}
+
 	}
 
-	private void SetIcon(Item item,Image image){
+	private void SetUpItemButton(Item item,Button btn){
+		
 		if (item.itemName != "") {
+			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
 			image.enabled = true;
 			image.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
 			});
+			if (btn.transform.FindChild ("ItemCount") != null) {
+				Text itemCountText = btn.transform.FindChild ("ItemCount").GetComponent<Text> ();
+				itemCountText.text = item.itemCount.ToString ();
+			}
 		}
 	}
 
@@ -141,7 +315,13 @@ public class BagView : MonoBehaviour {
 			Destroy (GameObject.Find ("BagCanvas"));
 		});
 	}
+
 	public void OnQuitSpecificTypePlane(){
+		while (specificTypeItemsGridPlane.transform.childCount > 0) {
+			Transform trans = specificTypeItemsGridPlane.transform.GetChild (0);
+			itemButtonPool.AddInstanceToPool (trans.gameObject,"ItemButtonPool");
+		}
+
 		specificTypeItemPlane.SetActive (false);
 	}
 }

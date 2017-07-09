@@ -29,7 +29,19 @@ public enum ItemType{
 	Amour,
 	Shoes,
 	Consumables,
-	Task
+	Task,
+	None
+}
+
+public enum PropertyType{
+	Attack,
+	Magic,
+	Amour,
+	MagicResist,
+	Crit,
+	Agility,
+	Health,
+	Strength
 }
 
 public enum EventType{

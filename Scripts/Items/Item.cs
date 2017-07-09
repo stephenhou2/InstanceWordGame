@@ -12,6 +12,7 @@ public class Item {
 	public ItemType itemType;
 
 	public int itemId;
+	public int itemCount;
 
 	public int attackGain;//攻击力增益
 	public int powerGain;//力量增益

@@ -14,12 +14,12 @@ public class BagController : MonoBehaviour {
 
 	public void OnEnterBagView(){
 
-		#warning 这里测试用，玩家的游戏物品暂时定为从本地读取的所有游戏物品
+		#warning ----明天从这里开始----这里测试用，玩家的游戏物品暂时定为从本地读取的所有游戏物品
 		if (Player.mainPlayer.allItems.Count == 0) {
 			Player.mainPlayer.allItems.AddRange(DataInitializer.LoadDataToModelWithPath<Item> (CommonData.JsonFileDirectoryPath, CommonData.itemsDataFileName));
 		}
 
-		Player.mainPlayer.consumablesEquiped = Player.mainPlayer.allItems;
+//		Player.mainPlayer.consumablesEquiped = Player.mainPlayer.allItems;
 		 
 
 		// 异步加载物品图片,完成后回调初始化背包界面
