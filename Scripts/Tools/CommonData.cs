@@ -18,7 +18,7 @@ public struct CommonData{
 	public static string instanceContainerName = "InstanceContainer";
 	public static string poolContainerName = "PoolContainer";
 
-
+	public static string playerPrefsDB = string.Empty;
 
 
 }

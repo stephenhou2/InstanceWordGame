@@ -67,7 +67,11 @@ public class ExploreMainViewController:MonoBehaviour {
 	}
 
 	public void OnSettingButtonClick(){
-
+		GameObject spellCanvas = null;
+		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+			spellCanvas = ResourceManager.Instance.gos [0];
+			spellCanvas.GetComponent<SpellController> ().OnEnterSpellView ();
+		});
 	}
 
 //	public void OnEnterEvent(int eventType){

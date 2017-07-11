@@ -101,11 +101,25 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public List<Skill> skillsEquiped = new List<Skill>();//技能数组
 
-	public Item weaponEquiped;
-	public Item amourEquiped;
-	public Item shoesEquiped;
+//	public Item weaponEquiped;
+//	public Item amourEquiped;
+//	public Item shoesEquiped;
+	private List<Item> mAllEquipedItems = new List<Item>();
 
-	public List<Item> allEquipedItems = new List<Item>();// 已装备物品数组
+	public List<Item> allEquipedItems{
+		get{
+			if (mAllEquipedItems.Count == 0) {
+				for (int i = 0; i < 6; i++) {
+					mAllEquipedItems.Add (new Item ());
+				}
+			}
+			return mAllEquipedItems;
+		}
+		set{
+			mAllEquipedItems = value;
+		}
+	}
+//	= new List<Item>();// 已装备物品数组
 
 	public List<Item> allItems = new List<Item> (); // 所有物品
 
@@ -262,9 +276,12 @@ public abstract class BattleAgent : MonoBehaviour {
 		agility = originalAgility;
 
 		// 根据装备更新属性
-		ResetPropertiesByEquipment (weaponEquiped);
-		ResetPropertiesByEquipment (amourEquiped);
-		ResetPropertiesByEquipment (shoesEquiped);
+		foreach (Item item in allEquipedItems) {
+			ResetPropertiesByEquipment (item);
+		}
+//		ResetPropertiesByEquipment (weaponEquiped);
+//		ResetPropertiesByEquipment (amourEquiped);
+//		ResetPropertiesByEquipment (shoesEquiped);
 
 		maxHealth = originalMaxHealth + healthGainScaler * power;
 		maxStrength = originalMaxStrength + (int)(strengthGainScaler * power);

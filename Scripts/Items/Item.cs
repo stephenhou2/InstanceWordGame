@@ -11,7 +11,8 @@ public class Item {
 
 	public ItemType itemType;
 
-	public int itemId;
+	public string itemNameInEnglish;
+	public int itemId = -1;
 	public int itemCount;
 
 	public int attackGain;//攻击力增益

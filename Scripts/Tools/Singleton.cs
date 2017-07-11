@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Reflection;
 
-public class Singleton<T> where T:new()
+public class Singleton<T> where T:class
 {
 	private static T instance;
 
 	private static object objectLock = new object();
+
+	public static readonly Type[] ms_EmptyTypes = new Type[0];
 
 	public static T Instance{
 
@@ -14,8 +18,17 @@ public class Singleton<T> where T:new()
 			if (instance == null) {
 				lock (objectLock)    
 				{   
-					if (instance == null)    
-						instance = new T();   
+//					if (instance == null)    
+//						instance = new T(); 
+					ConstructorInfo ci = typeof(T).GetConstructor(
+						BindingFlags.NonPublic | BindingFlags.Instance, null, ms_EmptyTypes, null);
+
+					if (ci == null)
+					{
+						throw new InvalidOperationException("class must contain a private constructor");
+					}
+
+					instance = (T)ci.Invoke(null);
 				}   
 			}
 			return instance;
@@ -27,7 +40,7 @@ public class Singleton<T> where T:new()
 public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour  
 {  
 	private static volatile T instance;  
-	private static object objectLock = new Object();  
+	private static object objectLock = new System.Object();  
 	public static T Instance  
 	{  
 		get  

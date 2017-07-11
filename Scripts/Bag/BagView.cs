@@ -190,9 +190,9 @@ public class BagView : MonoBehaviour {
 
 	public void OnItemButtonOfSpecificItemPlaneClick(int index){
 
-		Debug.Log (index);
-
 		Item item = allItemsOfCurrentSelcetType [index];
+
+		player.allEquipedItems [currentSelectEquipIndex] = item;
 
 		OnQuitSpecificTypePlane ();
 
@@ -297,7 +297,7 @@ public class BagView : MonoBehaviour {
 
 	private void SetUpItemButton(Item item,Button btn){
 		
-		if (item.itemName != "") {
+		if (item != null && item.itemName != null) {
 			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
 			image.enabled = true;
 			image.sprite = sprites.Find (delegate(Sprite obj) {
