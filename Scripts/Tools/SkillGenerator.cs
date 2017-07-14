@@ -21,13 +21,13 @@ public class SkillGenerator : MonoBehaviour {
 
 	// *********** for test use **********//
 	void Awake(){
-		EffectData[] skillEffectsData = DataInitializer.LoadDataToModelWithPath<EffectData> (CommonData.JsonFileDirectoryPath, CommonData.effectsDataFileName);
+		EffectData[] skillEffectsData = DataInitializer.LoadDataToModelWithPath<EffectData> (CommonData.jsonFileDirectoryPath, CommonData.effectsDataFileName);
 		SetupSkillGenerator (skillEffectsData);
 	}
 
 	public void SetupSkillGenerator(EffectData[] skillEffectsData){
 		
-		mEffectsAndStatesContainer = ContainerManager.NewContainer ("Effects", null);
+		mEffectsAndStatesContainer = TransformManager.NewTransform ("Effects", null);
 
 		//所有的技能效果数据转为技能效果对象,存放在effectGenerator的skillEffectsList中
 		effectGenerator.GenerateEffectObjects (skillEffectsData,false,null,mEffectsAndStatesContainer);
@@ -40,7 +40,7 @@ public class SkillGenerator : MonoBehaviour {
 	// 初始化所有的状态类技能效果
 	public StateSkillEffect[] GenerateStateSkillEffects(EffectData[] skillEffectsData,string effectName){
 
-		mEffectsAndStatesContainer = ContainerManager.NewContainer ("States", null);
+		mEffectsAndStatesContainer = TransformManager.NewTransform ("States", null);
 
 		effectGenerator.GenerateEffectObjects (skillEffectsData, true, effectName,mEffectsAndStatesContainer);
 
@@ -97,7 +97,7 @@ public class SkillGenerator : MonoBehaviour {
 	}
 
 	public void QuitSkillGenerate(){
-		ContainerManager.DestroyContainer (mEffectsAndStatesContainer);
+		TransformManager.DestroyTransform (mEffectsAndStatesContainer);
 	}
 
 	public void AddEffectIndex(int effectIndex){

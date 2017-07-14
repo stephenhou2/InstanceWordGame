@@ -8,30 +8,27 @@ public class ExploreManager : MonoBehaviour {
 
 	private ChapterList[] chapterLists;
 
-	public static int unlockedMaxChapterIndex = 1;
-
-	public void Awake(){
-		/********for test**********/
-		ExploreManager.unlockedMaxChapterIndex = 2;
-		/********for test**********/
-		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.JsonFileDirectoryPath, CommonData.chaptersDataFileName);
-//		expListView.SetUpExploreListView (chapterLists,ExploreManager.unlockedMaxChapterIndex);
-
-		ResourceManager.Instance.LoadAssetWithFileName ("explore/explore",null,true);
-
-		expMainViewController = GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ();
-
-		expMainViewController.SelectChapter(0);
-	}
-
-	public void OnSelectChapter(int chapterIndex){
-
-		ChapterList cl = chapterLists [chapterIndex];
-
-		expMainViewController.SelectChapter (chapterIndex);
-
-		Debug.Log ("Enter chapter" + chapterIndex);
-	}
+//	public void Awake(){
+//		
+//
+//		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.jsonFileDirectoryPath, CommonData.chaptersDataFileName);
+////		expListView.SetUpExploreListView (chapterLists,ExploreManager.unlockedMaxChapterIndex);
+//
+//		ResourceManager.Instance.LoadAssetWithFileName ("explore/explore_list_canvas",null,true);
+//
+//		expMainViewController = GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ();
+//
+//		expMainViewController.SelectChapter(0);
+//	}
+//
+//	public void OnSelectChapter(int chapterIndex){
+//
+//		ChapterList cl = chapterLists [chapterIndex];
+//
+//		expMainViewController.SelectChapter (chapterIndex);
+//
+//		Debug.Log ("Enter chapter" + chapterIndex);
+//	}
 
 	public void OnQuitExploreView(){
 

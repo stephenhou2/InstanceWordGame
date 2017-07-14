@@ -9,7 +9,6 @@ using System.Text;
 
 public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
-	private SqlDbType type;
 
 	private IDbCommand m_command;
 
@@ -17,15 +16,12 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 	private IDataReader m_reader;
 
-	private IDbDataParameter m_param;
-
-	private IDbTransaction m_transaction;
-
 	// 已建立连接的数据库
 	private Dictionary<string,IDbConnection> connectionDic = new Dictionary<string, IDbConnection>();
 
 
 	private MySQLiteHelper(){
+
 
 	}
 
@@ -35,47 +31,63 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// </summary>
 	/// <returns>The connection with.</returns>
 	/// <param name="DbName">Db name.</param>
-	public IDbConnection GetConnectionWith(string dbName){
+	public IDbConnection GetConnectionWith(string dbName,string password = null){
 
-		// 根据运行平台获取数据库的存储路径
-//		string dbFilePath = GetDbFilePath (DbName);
+		// 如果数据库连接字典中查询到指定名称的数据库连接，则直接返回该连接
+		foreach (KeyValuePair<string,IDbConnection> kv in connectionDic) {
+
+			if(kv.Key.Equals(dbName)){
+				if (kv.Value.State != ConnectionState.Open) {
+					kv.Value.Open ();
+				}
+				return kv.Value;
+			}
+		}
 
 
+		// 如果数据库连接字典中未能查询到指定名称的数据库连接（例如退出游戏后重新进入），
+		// 则在本地文件中根据文件名进行查询，查到后重新建立连接
+
+		// 根据运行平台获取存放数据库的文件夹路径
 		string dbDirectoryPath = GetDbDirectoryPath ();
 
-		string dbFilePath = GetDbFilePath (dbName);
-
 		DirectoryInfo folder = new DirectoryInfo (dbDirectoryPath);
+		
+		// 根据运行平台获取数据库的存储路径
+		string dbBuildString = GetDbStrBuilder (dbName,password);
 
-
-		foreach (FileInfo file in folder.GetFiles("*.db"))
+		foreach (FileInfo fileInfo in folder.GetFiles("*.db"))
 		{
 			// 如果本地有指定名称的数据库，则尝试打开数据库
-			if (dbFilePath.Contains(dbFilePath)){
+			if (dbName.Equals(fileInfo.Name)){
 
 				try{
 					// 创建数据库
-					m_connection = new SqliteConnection (dbFilePath);
+					m_connection = new SqliteConnection (dbBuildString);
 					// 打开数据库
-					m_connection.Open ();
+					if(m_connection.State != ConnectionState.Open){
+						m_connection.Open ();
+					}
 					// 数据库连接写入字典数据中
 					connectionDic.Add(dbName,m_connection);
 
 					return m_connection;
 
 				}catch(Exception e){
-					
+
 					Debug.Log (e);
 
-					if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
-						m_connection.Close ();
-						m_connection = null;
-					}
+					// 如果出现异常则关闭所有的数据库连接
+					CloseAllConnections ();
+
+//					if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
+//						m_connection.Close ();
+//						m_connection = null;
+//					}
 					return null;
 				}
 			}
 		}
-
 		// 如果本地没有指定名称的数据库，则给出提示
 		Debug.Log ("未找到指定名称的数据库");
 		return null;
@@ -88,17 +100,30 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// </summary>
 	/// <returns>The database.</returns>
 	/// <param name="DbName">Db name.</param>
-	public IDbConnection CreatDatabase(string DbName){
+	public IDbConnection CreatDatabase(string dbName,string password = null){
 
-		string dbFilePath = GetDbFilePath (DbName);
+		// 如果数据库连接字典中查询到指定名称的数据库连接，则直接返回该连接
+		foreach (KeyValuePair<string,IDbConnection> kv in connectionDic) {
+
+			if(kv.Key.Equals(dbName)){
+				m_connection = kv.Value;
+				return m_connection;
+			}
+
+		}
+
+		// 如果数据库连接字典中未能查询到指定名称的数据库连接，则根据文件名进行连接
+		// 没有指定名称的数据库则创建新数据库
+		// 与数据库建立连接
+		string dbBuildString = GetDbStrBuilder (dbName,password);
 
 		try{
 			// 创建数据库
-			m_connection = new SqliteConnection (dbFilePath);
+			m_connection = new SqliteConnection (dbBuildString);
 			// 打开数据库
 			m_connection.Open ();
 			// 数据库连接写入字典数据中
-			connectionDic.Add(dbFilePath,m_connection);
+			connectionDic.Add(dbName,m_connection);
 
 			return m_connection;
 
@@ -106,20 +131,28 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 			Debug.Log (e);
 
-			if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
-				m_connection.Close ();
-				m_connection = null;
-			}
+			CloseAllConnections ();
+
+//			if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
+//				m_connection.Close ();
+//				m_connection = null;
+//			}
 			return null;
 		}
 	}
+
+
+
+//	public IDbConnection CreatDataBaseWithDetailInfo(string dbName,string password,
 
 	/// <summary>
 	/// 获取不同平台下存储数据库的文件夹路径
 	/// </summary>
 	/// <returns>存储数据库的文件夹路径.</returns>
 	private string GetDbDirectoryPath(){
+		
 		string dbDirectoryPath = string.Empty;
+
 		// pc平台 or 编译器环境
 		if (Application.platform == RuntimePlatform.WindowsEditor ||
 		    Application.platform == RuntimePlatform.OSXEditor ||
@@ -140,26 +173,31 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	}
 
 	// 数据库名称 -> 数据库完整路径
-	private string GetDbFilePath(string dbName){
+	private string GetDbStrBuilder(string dbName,string password = null){
 				
-		string dbFilePath = string.Empty;
+		SqliteConnectionStringBuilder connBuilder = new SqliteConnectionStringBuilder ();
 
 		// pc平台 or 编译器环境
 		if (Application.platform == RuntimePlatform.WindowsEditor ||
 			Application.platform == RuntimePlatform.OSXEditor ||
 			Application.platform == RuntimePlatform.WindowsPlayer ||
 			Application.platform == RuntimePlatform.OSXPlayer) {
-			dbFilePath = string.Format ("data source={0}/{1}", Application.streamingAssetsPath,dbName);
+			connBuilder.DataSource = string.Format("{0}/{1}", Application.streamingAssetsPath,dbName);
 		} 
 		// android平台
 		else if (Application.platform == RuntimePlatform.Android) {
-			dbFilePath = string.Format ("URI=file:{0}/{1}", Application.persistentDataPath,dbName);
+			connBuilder.Uri = string.Format ("file:{0}/{1}", Application.persistentDataPath,dbName);
 		}
 		// ios平台
 		else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-			dbFilePath = string.Format ("data source={0}/{1}", Application.persistentDataPath,dbName);
+			connBuilder.DataSource = string.Format ("{0}/{1}", Application.persistentDataPath,dbName);
 		}
-		return dbFilePath;
+
+		if(password != null){
+			connBuilder.Password = password;
+		}
+
+		return connBuilder.ToString();
 
 	}
 
@@ -193,8 +231,6 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 				
 			connection.Close ();
 
-			connection.Dispose ();
-
 			connection = null;
 
 			if (removeConnection) {
@@ -220,23 +256,23 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <summary>
 	/// 清理SQLite的引用关系
 	/// </summary>
-	public void CleanSQLiteReference()
-	{
-		// 销毁Command
-		if (m_command != null)
-		{
-			m_command.Cancel ();
-			m_command.Dispose();
-			m_command = null;
-		}
-
-		// 销毁Reader
-		if (m_reader != null)
-		{
-			m_reader.Close();
-			m_reader = null;
-		}
-	}
+//	public void CleanSQLiteReference()
+//	{
+//		// 销毁Command
+//		if (m_command != null)
+//		{
+//			m_command.Cancel ();
+//			m_command.Dispose();
+//			m_command = null;
+//		}
+//
+//		// 销毁Reader
+//		if (m_reader != null)
+//		{
+//			m_reader.Close();
+//			m_reader = null;
+//		}
+//	}
 
 	/// <summary>
 	/// 执行无参数SQL命令
@@ -276,10 +312,12 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 		{
 			Debug.LogError(e);
 
-			if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
-				m_connection.Close ();
-				m_connection = null;
-			}
+			CloseAllConnections ();
+
+//			if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
+//				m_connection.Close ();
+//				m_connection = null;
+//			}
 
 			return null;
 		}
@@ -300,10 +338,10 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 			throw new SqliteException ("类型数量错误");
 		}
 
-//		if(CheckTableExist(tableName)){
-//			Debug.Log ("-------表" + tableName + "已存在----------");
-//			return false;
-//		}
+		if(CheckTableExist(tableName)){
+			Debug.Log ("-------表" + tableName + "已存在----------");
+			return false;
+		}
 
 		StringBuilder queryString = new StringBuilder ();
 
@@ -317,7 +355,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		ExecuteQuery (queryString.ToString());
 
-		return true;
+		return CheckTableExist(tableName);
 	}
 
 
@@ -332,8 +370,11 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		IDataReader reader = ExecuteQuery (queryString);
 
-		if (reader.GetInt32(0) == 0) {
-			return false;
+		while(reader.Read()){
+
+			if (reader.GetInt32(0) == 0) {
+				return false;
+			}
 		}
 
 		return true;
@@ -381,23 +422,25 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <param name="tableName">表名.</param>
 	/// <param name="fieldName">字段名.</param>
 	/// <param name="condition">查询条件.</param>
-	public IDataReader ReadSpecificRowsOfTable(string tableName,string fieldName,string[] conditions,string ANDorOR){
+	public IDataReader ReadSpecificRowsAndColsOfTable(string tableName,string fieldName,string[] conditions,bool isLinkStrAND){
 
 		StringBuilder queryString = new StringBuilder ();
 
-		queryString.AppendFormat("SELECT {0} FROM {1}",fieldName,tableName);
+		queryString.AppendFormat("SELECT {0} FROM {1}",fieldName == null ? "*" : fieldName,tableName);
 
-		if (conditions.Length > 0) {
+		if (conditions != null && conditions.Length > 0) {
 
 			queryString.Append (" WHERE ");
 
+			string linkString = isLinkStrAND ? "AND" : "OR";
+
 			for (int i = 0; i < conditions.Length; i++) {
 
-				queryString.AppendFormat ("{0} {1} ", conditions [i],ANDorOR);
+				queryString.AppendFormat ("{0} {1} ", conditions [i],linkString);
 
 			}
 
-			queryString.Remove (queryString.Length - ANDorOR.Length - 1, ANDorOR.Length);
+			queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
 
 		}
 
@@ -448,7 +491,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <param name="cols">字段名.</param>
 	/// <param name="values">赋值数组.</param>
 	/// <param name="condition">查询条件字符串.</param>
-	public IDataReader UpdateSpecificColsWithValues(string tableName,string[] cols,string[] values,string[] conditions,string ANDorOR){
+	public IDataReader UpdateSpecificColsWithValues(string tableName,string[] cols,string[] values,string[] conditions,bool isLinkStrAND){
 
 		if (cols.Length != values.Length) {
 			throw new SqliteException ("字段数量和赋值数量不匹配");
@@ -462,17 +505,19 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 			queryString.AppendFormat (" ,{0} = {1}", cols [i], values [i]);
 		}
 
-		if (conditions.Length > 0) {
+		if (conditions != null && conditions.Length > 0) {
 
 			queryString.Append (" WHERE ");
 
+			string linkString = isLinkStrAND ? "AND" : "OR";
+
 			for (int i = 0; i < conditions.Length; i++) {
 
-				queryString.AppendFormat ("{0} {1} ", conditions [i],ANDorOR);
+				queryString.AppendFormat ("{0} {1} ", conditions [i],linkString);
 
 			}
 
-			queryString.Remove (queryString.Length - ANDorOR.Length - 1, ANDorOR.Length);
+			queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
 
 		}
 			
@@ -489,23 +534,25 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <returns>IDataReader.</returns>
 	/// <param name="tableName">Table name.</param>
 	/// <param name="condition">Condition.</param>
-	public IDataReader DeleteSpecificRows(string tableName,string[] conditions,string ANDorOR){
+	public IDataReader DeleteSpecificRows(string tableName,string[] conditions,bool isLinkStrAND){
 
 		StringBuilder queryString = new StringBuilder ();
 
 		queryString.AppendFormat ("DELETE FROM {0}", tableName);
 
-		if (conditions.Length > 0) {
+		if (conditions != null && conditions.Length > 0) {
 
 			queryString.Append (" WHERE ");
 
+			string linkString = isLinkStrAND ? "AND" : "OR";
+
 			for (int i = 0; i < conditions.Length; i++) {
 
-				queryString.AppendFormat ("{0} {1} ", conditions [i],ANDorOR);
+				queryString.AppendFormat ("{0} {1} ", conditions [i],linkString);
 
 			}
 
-			queryString.Remove (queryString.Length - ANDorOR.Length - 1, ANDorOR.Length);
+			queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
 
 		}
 		Debug.Log (queryString);
@@ -515,6 +562,62 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 	#region 
 
+	/// <summary>
+	/// 移动平台数据库持久化方法
+	/// </summary>
+	/// <param name= "*.extention"  > 格式为  "*.扩展名"  .</param>
+	/// <param name="overrideIfExist">If set to <c>true</c> 如果文件存在是否覆盖目标文件 </param>
+	public static IEnumerator PersistDatabases(string fileNameModel,bool overrideIfExist){
+
+		if (Application.platform == RuntimePlatform.Android || 
+			Application.platform == RuntimePlatform.IPhonePlayer) {
+
+			string streamingAssetsDirPath = Application.streamingAssetsPath;
+
+			string persistDirPath = Application.persistentDataPath;
+
+			DirectoryInfo folder = new DirectoryInfo (streamingAssetsDirPath);
+
+			FileInfo[] fileInfos = folder.GetFiles (fileNameModel);
+
+			string persistFilePath = string.Empty;
+
+			for(int i = 0;i<fileInfos.Length;i++){
+
+				FileInfo fileInfo = fileInfos [i];
+
+//				File.Move (fileInfo.FullName, persistDirPath + "/" + fileInfo.Name);
+
+				persistFilePath = persistDirPath + "/" + fileInfo.Name;
+
+				if (File.Exists (persistFilePath) && !overrideIfExist) {
+					
+					continue;
+
+				} else {
+					
+					WWW fileData = new WWW (fileInfo.FullName);
+
+					yield return fileData;
+
+					try{
+						
+						File.WriteAllBytes (persistFilePath,fileData.bytes);
+
+					}catch(Exception e){
+						
+						Debug.Log ("error during persistance " + e.ToString());
+
+					}
+
+				} 
+			}
+
+		}
+
+	}
+
 	#endregion
+
 
 }

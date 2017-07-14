@@ -13,12 +13,11 @@ public class ExploreMainView: MonoBehaviour {
 
 	public GameObject chapterEventsPlane;
 
-	private List<GameObject> chapterEventViewsVisible = new List<GameObject> ();
+	private List<GameObject> chapterEventViewsVisible = new List<GameObject> (); // 可见的eventView
 
-	private List<GameObject> chapterEventViewPool = new List<GameObject> ();
+	private List<GameObject> chapterEventViewPool = new List<GameObject> (); // eventView 缓存池
 
-//	private GameObject chapterEventViewCache;
-
+	public int maxEventCountForOnce = 4; // 一次显示的事件数 
 
 	public Text playerLevelText;
 	public Text stepsLeftText;
@@ -26,15 +25,9 @@ public class ExploreMainView: MonoBehaviour {
 	public Slider playerHealthBar;
 
 
-
 	private List<Sprite> sprites = new List<Sprite>();
 
-
-
-	public int maxEventCountForOnce = 4;
-
-
-	[HideInInspector]public ChapterDetailInfo detailInfo;
+	private ChapterDetailInfo detailInfo;
 
 
 	float chapterEventViewHeight = 270.0f;
@@ -43,7 +36,9 @@ public class ExploreMainView: MonoBehaviour {
 
 
 
-	public void SetUpScene(){
+	public void SetUpExploreMainView(ChapterDetailInfo chapterDetail){
+
+		detailInfo = chapterDetail;
 
 		InitChapterEventsPlane ();
 
@@ -63,10 +58,78 @@ public class ExploreMainView: MonoBehaviour {
 		}
 	}
 
+
+	// 初始化顶部bar
+	private void SetUpTopBar(){
+
+		Player player = Player.mainPlayer;
+
+		playerLevelText.text = player.agentLevel.ToString();
+		stepsLeftText.text = detailInfo.totalSteps.ToString();
+		chapterLocationText.text = detailInfo.chapterLocation;
+		playerHealthBar.maxValue = player.maxHealth;
+		playerHealthBar.value = player.health;
+		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+
+	}
+
+
+	public void SetUpNextStepChapterEventPlane(GameObject currentSelectedEventView,int stepsLeft){
+
+		stepsLeftText.text = stepsLeft.ToString();
+		Player player = Player.mainPlayer;
+
+		playerHealthBar.maxValue = player.maxHealth;
+		playerHealthBar.value = player.health;
+		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+
+
+		Sequence mSequence = DOTween.Sequence ();
+
+		mSequence.Append (currentSelectedEventView.transform.DOLocalMoveX (Screen.width, 0.5f, false).
+			OnComplete(()=>{
+
+				AddNewChapterEvent(maxEventCountForOnce);
+
+				float currentSelectedEventViewY = currentSelectedEventView.transform.localPosition.y;
+
+				currentSelectedEventView.gameObject.SetActive(false);
+				chapterEventViewsVisible.Remove(currentSelectedEventView);
+				chapterEventViewPool.Add(currentSelectedEventView);
+
+				for(int i = 0;i<chapterEventViewsVisible.Count;i++)
+				{
+					GameObject eventView = chapterEventViewsVisible[i];
+					if (eventView.transform.localPosition.y < currentSelectedEventViewY){
+
+						eventView.transform.DOLocalMoveY((chapterEventViewHeight + padding) * (-i),1.0f);
+
+//						TweenCallback tcb = ()=>{
+//							currentSelectedEventView.gameObject.SetActive(false);
+//							currentSelectedEventView.transform.position = new Vector3(0,-Screen.height,0);
+//							chapterEventViewsVisible.Remove(currentSelectedEventView);
+//							chapterEventViewPool.Add(currentSelectedEventView);
+//						};
+//
+//						if(i == chapterEventViewsVisible.Count - 1){
+//							myTween.OnComplete(tcb);
+//						}
+					}
+				}
+
+//				currentSelectedEventView.gameObject.SetActive(false);
+//				chapterEventViewPool.Add(currentSelectedEventView);
+			}));
+
+
+
+	}
+
+
 	// 初始化单个事件控件
 	private void AddNewChapterEvent(int eventIndex){
 
-		bool newChapterEventView;
+//		bool newChapterEventView;
 
 		GameObject mChapterEventView = GetChapterEventView ();
 
@@ -143,76 +206,7 @@ public class ExploreMainView: MonoBehaviour {
 	}
 
 
-	// 初始化顶部bar
-	private void SetUpTopBar(){
 
-		Player player = Player.mainPlayer;
-	
-		playerLevelText.text = player.agentLevel.ToString();
-		stepsLeftText.text = detailInfo.totalSteps.ToString();
-		chapterLocationText.text = detailInfo.chapterLocation;
-		playerHealthBar.maxValue = player.maxHealth;
-		playerHealthBar.value = player.health;
-		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
-
-
-	}
-
-
-	public void SetUpNextStepChapterEventPlane(GameObject currentSelectedEventView,int stepsLeft){
-
-
-
-		stepsLeftText.text = stepsLeft.ToString();
-		Player player = Player.mainPlayer;
-
-//		Debug.Log (player.health);
-
-		playerHealthBar.maxValue = player.maxHealth;
-		playerHealthBar.value = player.health;
-		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
-
-
-		Sequence mSequence = DOTween.Sequence ();
-
-		mSequence.Append (currentSelectedEventView.transform.DOLocalMoveX (Screen.width, 0.5f, false).
-			OnComplete(()=>{
-				
-				AddNewChapterEvent(maxEventCountForOnce);
-
-				float currentSelectedEventViewY = currentSelectedEventView.transform.localPosition.y;
-
-				currentSelectedEventView.gameObject.SetActive(false);
-				chapterEventViewsVisible.Remove(currentSelectedEventView);
-				chapterEventViewPool.Add(currentSelectedEventView);
-
-				for(int i = 0;i<chapterEventViewsVisible.Count;i++)
-				{
-					GameObject eventView = chapterEventViewsVisible[i];
-					if (eventView.transform.localPosition.y < currentSelectedEventViewY){
-
-						eventView.transform.DOLocalMoveY((chapterEventViewHeight + padding) * (-i),1.0f);
-
-//						TweenCallback tcb = ()=>{
-//							currentSelectedEventView.gameObject.SetActive(false);
-//							currentSelectedEventView.transform.position = new Vector3(0,-Screen.height,0);
-//							chapterEventViewsVisible.Remove(currentSelectedEventView);
-//							chapterEventViewPool.Add(currentSelectedEventView);
-//						};
-//
-//						if(i == chapterEventViewsVisible.Count - 1){
-//							myTween.OnComplete(tcb);
-//						}
-					}
-				}
-
-//				currentSelectedEventView.gameObject.SetActive(false);
-//				chapterEventViewPool.Add(currentSelectedEventView);
-			}));
-				
-
-		
-	}
 
 	private GameObject GetChapterEventView(){
 		GameObject mChapterEventView = null;
@@ -235,25 +229,24 @@ public class ExploreMainView: MonoBehaviour {
 	}
 
 
-	// 返回随机事件
-	private EventType RandomEvent(){
-		float i = 0f;
-		i = Random.Range (0f, 10f);
-		if (i >= 0f && i < 5f) {
-			return EventType.Monster;
-		} else if (i >= 5f && i < 7.5f) {
-			return EventType.NPC;
-		} else {
-			return EventType.Item;
+
+		// 返回随机事件
+		private EventType RandomEvent(){
+			float i = 0f;
+			i = Random.Range (0f, 10f);
+			if (i >= 0f && i < 5f) {
+				return EventType.Monster;
+			} else if (i >= 5f && i < 7.5f) {
+				return EventType.NPC;
+			} else {
+				return EventType.Item;
+			}
 		}
-	}
-	// 随机返回当前事件中的npc／怪物组／物品
-	private T RandomReturn<T>(T[] array){
-		int randomIndex = (int)(Random.Range (0, array.Length - float.Epsilon));
-		return array[randomIndex];
-	}
-
-
+		// 随机返回当前事件中的npc／怪物组／物品
+		private T RandomReturn<T>(T[] array){
+			int randomIndex = (int)(Random.Range (0, array.Length - float.Epsilon));
+			return array[randomIndex];
+		}
 
 
 

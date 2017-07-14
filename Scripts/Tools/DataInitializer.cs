@@ -24,10 +24,10 @@ public static class DataInitializer{
 
 	// 加载指定路径的文件数据
 	private static string LoadDataString(string filePath,string fileName){
+		
 		StreamReader sr = null;
-		//读取文件
 
-		#warning 后面研究一下打包和读包  （assetBundle的使用）
+		//读取文件
 		try{
 			sr = File.OpenText (filePath + "/" + fileName);
 			string dataString = sr.ReadToEnd ();

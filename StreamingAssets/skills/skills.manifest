@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 77030865
+CRC: 2684523452
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 21d7fe62227f86f58c4c458a6d79810a
+    Hash: e39b80339e680bb32c91f057cb438ac6
   TypeTreeHash:
     serializedVersion: 2
     Hash: 744d8d48da417d4f0116d5d858222341
@@ -38,16 +38,16 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Sprites/Explore/Skills/skillIcon7.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon3.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon5.png
+- Assets/Resources/Sprites/Skills/skillIcon7.png
+- Assets/Resources/Sprites/Skills/skillIcon3.png
+- Assets/Resources/Sprites/Skills/skillIcon5.png
 - Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
 - Assets/Prefabs/Skill/Skills/FireBlade.prefab
-- Assets/Resources/Sprites/Explore/Skills/skillIcon1.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon2.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon8.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon4.png
-- Assets/Resources/Sprites/Explore/Skills/skillIcon6.png
+- Assets/Resources/Sprites/Skills/skillIcon1.png
+- Assets/Resources/Sprites/Skills/skillIcon2.png
+- Assets/Resources/Sprites/Skills/skillIcon8.png
+- Assets/Resources/Sprites/Skills/skillIcon4.png
+- Assets/Resources/Sprites/Skills/skillIcon6.png
 - Assets/Prefabs/Skill/Skills/Treat.prefab
 - Assets/Prefabs/Skill/Skills/ThunderChain.prefab
 - Assets/Prefabs/Skill/Skills/Roar.prefab

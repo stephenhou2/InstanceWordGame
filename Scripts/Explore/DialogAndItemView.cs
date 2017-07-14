@@ -35,13 +35,13 @@ public class DialogAndItemView : MonoBehaviour {
 
 			while(choicePlane.transform.childCount > 0){
 				Transform trans = choicePlane.transform.GetChild(0);
-				trans.SetParent(ContainerManager.FindContainer(CommonData.poolContainerName));
+				trans.SetParent(TransformManager.FindTransform(CommonData.poolContainerName));
 
 			}
 
 			dialogPlane.gameObject.SetActive(false);
 			gameObject.SetActive (false);
-			GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ().OnNextEvent ();
+			GameObject.Find("ExploreMainCanvas").GetComponent<ExploreMainViewController> ().OnNextEvent ();
 		});
 
 		return btn;

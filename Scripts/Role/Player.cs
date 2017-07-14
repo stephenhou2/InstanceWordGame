@@ -10,6 +10,8 @@ public class Player : BattleAgent {
 
 	private static object objectLock = new object();
 
+	[HideInInspector]public int[] charactersCount = new int[26];
+
 	// 玩家角色单例
 	public static Player mainPlayer{
 		get{
@@ -22,9 +24,10 @@ public class Player : BattleAgent {
 						DontDestroyOnLoad (mPlayerSingleton);
 					},true);
 				}
-			}else{
-				mPlayerSingleton.ResetBattleAgentProperties (false,false);
 			}
+//			else{
+//				mPlayerSingleton.ResetBattleAgentProperties (false,false);
+//			}
 
 			return mPlayerSingleton;
 		}
@@ -104,7 +107,14 @@ public class Player : BattleAgent {
 
 	}
 
-
+	// 获取玩家已学习的技能
+	public Skill GetPlayerLearnedSkill(string skillName){
+		Skill s = null;
+		s = allLearnedSkills.Find (delegate(Skill obj) {
+			return obj.skillName == skillName;	
+		});
+		return s;
+	}
 
 
 }

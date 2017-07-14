@@ -6,9 +6,23 @@ using UnityEngine;
 public delegate void CallBack ();
 
 
+//public interface GameFlow{
+//
+//
+//	void SetUpView();
+//
+//	void LoadAssets ();
+//
+// 	void DestroyInstances();
+//
+//
+//
+//}
+
+
 public struct CommonData{
 	
-	public static string JsonFileDirectoryPath = "Assets/Scripts/JsonData";
+	public static string jsonFileDirectoryPath = "Assets/Scripts/JsonData";
 //	public static string effectsFileName = "SkillEffectData.txt";
 	public static string effectsDataFileName = "TestEffectString.txt";
 	public static string chaptersDataFileName = "ChaptersJson.txt";
@@ -18,11 +32,26 @@ public struct CommonData{
 	public static string instanceContainerName = "InstanceContainer";
 	public static string poolContainerName = "PoolContainer";
 
-	public static string playerPrefsDB = string.Empty;
+
+	public static string homeCanvas = "HomeCanvas";
+	public static string exploreListCanvas = "ExploreListCanvas";
+	public static string exploreMainCanvas = "ExploreMainCanvas";
+	public static string dialogAndItemCanvas = "DialogAndItemCanvas";
+	public static string battleCanvas = "BattleCanvas";
+	public static string bagCanvas = "BagCanvas";
+	public static string skillCanvas = "SkillCanvas";
+	public static string settingCanvas = "SettingCanvas";
+	public static string spellCanvas = "SpellCanvas";
 
 
 }
 
+
+public enum TransformRoot{
+	InstanceContainer,
+	PoolContainer,
+	Plain
+}
 
 public enum ItemType{
 	Weapon,

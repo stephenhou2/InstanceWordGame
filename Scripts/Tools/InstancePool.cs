@@ -6,9 +6,19 @@ using UnityEngine;
 public class InstancePool: MonoBehaviour{
 
 
-
 	private List<GameObject> mInstancePool = new List<GameObject>();
 
+	public static InstancePool GetOrCreatInstancePool(string poolName){
+
+		Transform trans = TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName);
+
+		InstancePool instancePool = trans.GetComponent<InstancePool> ();
+
+		if (instancePool == null) {
+			instancePool = trans.gameObject.AddComponent<InstancePool> ();
+		}
+		return instancePool;
+	}
 
 	public T GetInstance<T>(GameObject instanceModel,Transform instanceParent)
 		where T:Component
@@ -27,7 +37,7 @@ public class InstancePool: MonoBehaviour{
 	}
 
 	public void AddInstanceToPool(GameObject instance,string poolName){
-		instance.transform.SetParent(ContainerManager.FindContainer (CommonData.poolContainerName + "/" + poolName));
+		instance.transform.SetParent(TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName));
 		mInstancePool.Add (instance);
 	}
 }

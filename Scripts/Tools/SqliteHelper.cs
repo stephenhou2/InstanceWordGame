@@ -22,7 +22,7 @@ public class SQLiteHelper : Singleton<SQLiteHelper>
 	/// <summary>
 	/// 所有数据库文件名的数组
 	/// </summary>
-	private string[] m_DatabaseFiles = new string[] {CommonData.playerPrefsDB};
+//	private string[] m_DatabaseFiles = new string[] {CommonData.playerPrefsDB};
 
 	// <summary>
 	/// 数据库连接定义
@@ -619,72 +619,72 @@ public class SQLiteHelper : Singleton<SQLiteHelper>
 	/// 从StreamAssets目录下导出sqlite database文件到Persistent目录，然后
 	/// android平台特有的机制，在lua开发阶段使用,
 	/// </summary>
-	public IEnumerator ReleaseDatabaseFromStreamingAssetsToPersistent()
-	{
-		if (RuntimePlatform.Android == Application.platform)
-		{
-			// 首先读取到StreamingAssets目录下llist.txt的目录和文件名，然后依次拷贝和生成
-			string dbFilePath = string.Empty;
-			string dbFileInPersistent = string.Empty;
-
-			// 遍历所要移动的文件
-			for (int i = 0; i < m_DatabaseFiles.Length; i++)
-			{                    
-				dbFilePath = string.Format("{0}/{1}", Application.streamingAssetsPath, m_DatabaseFiles[i]);
-				dbFileInPersistent = string.Format("{0}/{1}", Application.persistentDataPath, m_DatabaseFiles[i]);
-
-				// 如果player数据存盘文件已经在持久化目录中存在了，就不拷贝了
-				if (m_DatabaseFiles[i].Equals(CommonData.playerPrefsDB) && File.Exists(dbFileInPersistent))
-					continue;
-
-				Debug.LogFormat("Read database file {0} Begin", dbFilePath);
-				FileStream dbFS = null;
-
-				WWW dbListGetter = new WWW(dbFilePath);
-				yield return dbListGetter;
-
-				if (!string.IsNullOrEmpty(dbListGetter.error)) // 能取出文件的话才执行操作
-				{
-					Debug.LogError(SQLiteHelper.MakeDatabaseExceptionMessage(dbListGetter.error));
-					yield break;
-				}
-
-				while (dbListGetter.isDone == false)  // 等待下载完成再继续
-					yield return null;
-
-				// 取出原始文件字节流，保存到 persistent 目录下
-				dbFS = null;
-
-				try
-				{
-					// 删旧建新
-					if (File.Exists(dbFileInPersistent))
-						File.Delete(dbFileInPersistent);
-
-					dbFS = File.Create(dbFileInPersistent);
-				}
-				catch (System.Exception ex)
-				{
-					Debug.LogErrorFormat("SQLite Exception : Load datebase file {0} from streaming assets directory error\n,Reason is:\n{1}",
-						dbFilePath, ex.ToString());
-					yield break; // 读取文件异常了就不处理，直接报错，游戏逻辑上不允许不成功！！！
-				}
-
-				Byte[] fileContent = dbListGetter.bytes;
-				dbFS.Write(fileContent, 0, fileContent.Length);
-				dbFS.Close();
-
-				Debug.LogFormat("SQLiteHelper Read database file {0} success", dbFilePath);                   
-			}
-			yield return null;
-		}
-		 
-		else
-		{
-			m_ReleasedFromStreamingAssets = true;
-			yield return null;
-		}
-
-	}
+//	public IEnumerator ReleaseDatabaseFromStreamingAssetsToPersistent()
+//	{
+//		if (RuntimePlatform.Android == Application.platform)
+//		{
+//			// 首先读取到StreamingAssets目录下llist.txt的目录和文件名，然后依次拷贝和生成
+//			string dbFilePath = string.Empty;
+//			string dbFileInPersistent = string.Empty;
+//
+//			// 遍历所要移动的文件
+//			for (int i = 0; i < m_DatabaseFiles.Length; i++)
+//			{                    
+//				dbFilePath = string.Format("{0}/{1}", Application.streamingAssetsPath, m_DatabaseFiles[i]);
+//				dbFileInPersistent = string.Format("{0}/{1}", Application.persistentDataPath, m_DatabaseFiles[i]);
+//
+//				// 如果player数据存盘文件已经在持久化目录中存在了，就不拷贝了
+//				if (m_DatabaseFiles[i].Equals(CommonData.playerPrefsDB) && File.Exists(dbFileInPersistent))
+//					continue;
+//
+//				Debug.LogFormat("Read database file {0} Begin", dbFilePath);
+//				FileStream dbFS = null;
+//
+//				WWW dbListGetter = new WWW(dbFilePath);
+//				yield return dbListGetter;
+//
+//				if (!string.IsNullOrEmpty(dbListGetter.error)) // 能取出文件的话才执行操作
+//				{
+//					Debug.LogError(SQLiteHelper.MakeDatabaseExceptionMessage(dbListGetter.error));
+//					yield break;
+//				}
+//
+//				while (dbListGetter.isDone == false)  // 等待下载完成再继续
+//					yield return null;
+//
+//				// 取出原始文件字节流，保存到 persistent 目录下
+//				dbFS = null;
+//
+//				try
+//				{
+//					// 删旧建新
+//					if (File.Exists(dbFileInPersistent))
+//						File.Delete(dbFileInPersistent);
+//
+//					dbFS = File.Create(dbFileInPersistent);
+//				}
+//				catch (System.Exception ex)
+//				{
+//					Debug.LogErrorFormat("SQLite Exception : Load datebase file {0} from streaming assets directory error\n,Reason is:\n{1}",
+//						dbFilePath, ex.ToString());
+//					yield break; // 读取文件异常了就不处理，直接报错，游戏逻辑上不允许不成功！！！
+//				}
+//
+//				Byte[] fileContent = dbListGetter.bytes;
+//				dbFS.Write(fileContent, 0, fileContent.Length);
+//				dbFS.Close();
+//
+//				Debug.LogFormat("SQLiteHelper Read database file {0} success", dbFilePath);                   
+//			}
+//			yield return null;
+//		}
+//		 
+//		else
+//		{
+//			m_ReleasedFromStreamingAssets = true;
+//			yield return null;
+//		}
+//
+//	}
 	#endregion
 }

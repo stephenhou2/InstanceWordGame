@@ -22,8 +22,8 @@ public class Monster : BattleAgent,IPointerClickHandler{
 	}
 
 	public void SetupMonster(int gameProcess){
-		GameManager.gameManager.OnGenerateSkill ();
-		GameManager.gameManager.skillGenerator.GenerateSkillWithIds (2, 20,this);
+//		GameManager.gameManager.OnGenerateSkill ();
+//		GameManager.gameManager.skillGenerator.GenerateSkillWithIds (2, 20,this);
 	}
 		
 	//怪物的技能选择
@@ -73,8 +73,7 @@ public class Monster : BattleAgent,IPointerClickHandler{
 
 
 	public void OnPointerClick(PointerEventData data){
-		GameObject battleManager = GameObject.Find ("BattleManager");
-		battleManager.GetComponent<BattleManager> ().OnPlayerSelectMonster (monsterId);
+		GameObject.Find (CommonData.battleCanvas).GetComponent<BattleViewController> ().OnPlayerSelectMonster (monsterId);
 	}
 
 }

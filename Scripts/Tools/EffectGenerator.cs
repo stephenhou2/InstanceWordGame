@@ -16,7 +16,7 @@ public class EffectGenerator : MonoBehaviour {
 
 		foreach (EffectData ed in edArray) {
 
-			GameObject skillEffect = ContainerManager.NewContainer ("effects", effectsContainer).gameObject;
+			GameObject skillEffect = TransformManager.NewTransform ("effects", effectsContainer).gameObject;
 
 			if (effectName != null && ed.effectName != effectName) {
 				continue;

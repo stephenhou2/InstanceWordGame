@@ -33,11 +33,11 @@ public class MyTest : MonoBehaviour
 		sql.GetConnectionWith ("test2.db");
 
 
-//		sql.CreatTable ("test", new string[]{ "age","name" }, new string[]{ "INTEGER","TEXT" });
+		sql.CreatTable ("test", new string[]{ "age","name" }, new string[]{ "INTEGER","TEXT" });
 
 		sql.InsertValues("test",new string[] {"18","'haha'"});
 
-
+		sql.InsertValues("test",new string[]{"30","'laowang'"});
 
 		IDataReader reader = sql.ReadFullTable ("test");
 
@@ -49,15 +49,15 @@ public class MyTest : MonoBehaviour
 			new string[]{"age","name" },
 			new string[]{ "20","'a'"},
 			new string[]{ "age=18"},
-			"AND");
+			true);
 
-		reader = sql.ReadSpecificRowsOfTable ("test", "name", new string[]{"name='a'"}, "And");
+		reader = sql.ReadSpecificRowsAndColsOfTable ("test", "name", null, true);
 
 		while (reader.Read ()) {
 			Debug.Log (reader.GetString (0));
 		}
 
-		sql.DeleteSpecificRows ("test", new string[]{ "age =20" }, "AND");
+		sql.DeleteSpecificRows ("test", new string[]{ "age =18" }, true);
 
 		reader = sql.ReadFullTable ("test");
 

@@ -3,6 +3,7 @@
 		{
 			"chapterIndex":0,
 			"totalSteps": 50,
+			"stepsLeft":50,
 			"chapterLocation": "黑暗之森",
 			"items": [
 				{

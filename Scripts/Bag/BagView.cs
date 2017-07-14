@@ -48,17 +48,12 @@ public class BagView : MonoBehaviour {
 	public Transform specificTypeItemsGridPlane;
 	public GameObject itemButton;
 
-	public InstancePool instancePool;
+
+//	public InstancePool instancePool;
 
 	private InstancePool propertyTextPool;
 
 	private InstancePool itemButtonPool;
-
-	private int currentSelectEquipIndex;
-
-
-
-	private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
 
 
 
@@ -67,7 +62,6 @@ public class BagView : MonoBehaviour {
 
 		this.sprites = sprites;
 		this.player = Player.mainPlayer;
-
 
 		SetUpPlayerStatusPlane ();
 
@@ -112,6 +106,8 @@ public class BagView : MonoBehaviour {
 
 	}
 
+
+	#warning 现在用所有物品做测试，后面按照类型进行分
 	private void SetUpAllItemsPlane(){
 		for (int i = 0; i < player.allItems.Count; i++) {
 			Button itemBtn = allItemsBtns [i];
@@ -123,64 +119,52 @@ public class BagView : MonoBehaviour {
 
 	}
 
-
-	public void OnEquipedItemButtonsClick(int index){
-
-		allItemsOfCurrentSelcetType.Clear ();
-
-		ItemType type = ItemType.None;
-
-		currentSelectEquipIndex = index;
-
-		switch (index) {
-		case 0:
-			type = ItemType.Weapon;
-			break;
-		case 1:
-			type = ItemType.Amour;
-			break;
-		case 2:
-			type = ItemType.Shoes;
-			break;
-		case 3:
-			type = ItemType.Consumables;
-			break;
-		case 4:
-			type = ItemType.Consumables;
-			break;
-		case 5:
-			type = ItemType.Consumables;
-			break;
-		default:
-			break;
-		}
-
-		if (itemButtonPool == null) {
-			itemButtonPool = Instantiate (instancePool,ContainerManager.FindContainer (CommonData.poolContainerName));
-			itemButtonPool.name = "ItemButtonPool";
-		}
-			
-		List<Button> allCurrentTypeItemBtns = new List<Button> ();
-
-		foreach (Item i in player.allItems) {
-			if (i.itemType == type) {
-				
-				Button itemBtn = itemButtonPool.GetInstance<Button> (itemButton, specificTypeItemsGridPlane);
-
-				allCurrentTypeItemBtns.Add (itemBtn);
-
-				SetUpItemButton (i, itemBtn);
-
-				allItemsOfCurrentSelcetType.Add (i);
+	private void SetUpItemButton(Item item,Button btn){
+		
+		if (item != null && item.itemName != null) {
+			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+			image.enabled = true;
+			image.sprite = sprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
+			});
+			if (btn.transform.FindChild ("ItemCount") != null) {
+				Text itemCountText = btn.transform.FindChild ("ItemCount").GetComponent<Text> ();
+				itemCountText.text = item.itemCount.ToString ();
 			}
 		}
+	}
+
+
+	public void OnEquipedItemButtonsClick(ItemType type,List<Item> allItemsOfCurrentSelectType){
+
+//		if (itemButtonPool == null) {
+//			itemButtonPool = Instantiate (instancePool,TransformManager.FindTransform (CommonData.poolContainerName));
+//			itemButtonPool.name = "ItemButtonPool";
+//		}
+
+		itemButtonPool = InstancePool.GetOrCreatInstancePool ("ItemButtonPool");
+
+		List<Button> allCurrentTypeItemBtns = new List<Button> ();
+
+		for(int i =0;i<allItemsOfCurrentSelectType.Count;i++){
+			
+			Item item = allItemsOfCurrentSelectType[i];
+
+			Button itemBtn = itemButtonPool.GetInstance<Button> (itemButton, specificTypeItemsGridPlane);
+
+			allCurrentTypeItemBtns.Add (itemBtn);
+
+			SetUpItemButton (item, itemBtn);
+		}
+
+		BagViewController bagViewCtr = GetComponent<BagViewController> ();
 
 		for(int i = 0;i < allCurrentTypeItemBtns.Count;i++){
 			int btnIndex = i;
 			Button itemBtn = allCurrentTypeItemBtns [i];
 			itemBtn.onClick.RemoveAllListeners ();
 			itemBtn.onClick.AddListener (delegate {
-				OnItemButtonOfSpecificItemPlaneClick(btnIndex);
+				bagViewCtr.OnItemButtonOfSpecificItemPlaneClick(btnIndex);
 			});
 		}
 
@@ -188,11 +172,7 @@ public class BagView : MonoBehaviour {
 
 	}
 
-	public void OnItemButtonOfSpecificItemPlaneClick(int index){
-
-		Item item = allItemsOfCurrentSelcetType [index];
-
-		player.allEquipedItems [currentSelectEquipIndex] = item;
+	public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
 
 		OnQuitSpecificTypePlane ();
 
@@ -239,16 +219,18 @@ public class BagView : MonoBehaviour {
 		} else if (item.strengGain != 0) {
 			AddPropertyText (item.strengGain, PropertyType.Strength);
 		}
-			
+
 	}
 
 	private void AddPropertyText(int gain,PropertyType type){
 
-		if (propertyTextPool == null) {
-			propertyTextPool = Instantiate (instancePool, ContainerManager.FindContainer (CommonData.poolContainerName));
-			propertyTextPool.name = "PropertyTextPool";
-		}
-		
+//		if (propertyTextPool == null) {
+//			propertyTextPool = Instantiate (instancePool, TransformManager.FindTransform(CommonData.poolContainerName));
+//			propertyTextPool.name = "PropertyTextPool";
+//		}
+
+		propertyTextPool = InstancePool.GetOrCreatInstancePool ("PropertyTextPool");
+
 		Text newPropertyText = propertyTextPool.GetInstance<Text> (propertyText, itemPropertiesPlane);
 
 		string preText = null;
@@ -286,42 +268,36 @@ public class BagView : MonoBehaviour {
 
 	}
 
+
+
+
+	// 关闭物品详细说明HUD
 	public void OnQuitItemDetailHUD(){
 		itemDetailHUD.SetActive (false);
 		while (itemPropertiesPlane.transform.childCount > 0) {
 			Transform trans = itemPropertiesPlane.transform.GetChild (0);
 			propertyTextPool.AddInstanceToPool (trans.gameObject,"PropertyTextPool");
 		}
-
 	}
 
-	private void SetUpItemButton(Item item,Button btn){
-		
-		if (item != null && item.itemName != null) {
-			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
-			image.enabled = true;
-			image.sprite = sprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
-			});
-			if (btn.transform.FindChild ("ItemCount") != null) {
-				Text itemCountText = btn.transform.FindChild ("ItemCount").GetComponent<Text> ();
-				itemCountText.text = item.itemCount.ToString ();
-			}
+	// 关闭更换物品的界面
+	public void OnQuitSpecificTypePlane(){
+		specificTypeItemPlane.SetActive (false);
+
+		while (specificTypeItemsGridPlane.transform.childCount > 0) {
+			Transform trans = specificTypeItemsGridPlane.transform.GetChild (0);
+			itemButtonPool.AddInstanceToPool (trans.gameObject, "ItemButtonPool");
 		}
 	}
 
-	public void OnQuitBagPlane(){
+	// 关闭背包界面
+	public void OnQuitBagPlane(CallBack cb){
 		bagPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
-			Destroy (GameObject.Find ("BagCanvas"));
+			cb();
 		});
 	}
 
-	public void OnQuitSpecificTypePlane(){
-		while (specificTypeItemsGridPlane.transform.childCount > 0) {
-			Transform trans = specificTypeItemsGridPlane.transform.GetChild (0);
-			itemButtonPool.AddInstanceToPool (trans.gameObject,"ItemButtonPool");
-		}
 
-		specificTypeItemPlane.SetActive (false);
-	}
+
+
 }

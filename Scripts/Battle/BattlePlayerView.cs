@@ -23,28 +23,55 @@ public class BattlePlayerView : BattleAgentView {
 
 	private Image selectedButtonBackImg;
 
-	private List<Sprite> skillIcons = new List<Sprite> ();
+	private List<Sprite> icons = new List<Sprite> ();
+
 
 	public void SetUpUI(Player player,List<Sprite> sprites){
-		if (skillIcons.Count == 0) {
+		
+		if (icons.Count == 0) {
 			foreach (Sprite s in sprites) {
-				skillIcons.Add (s);
+				icons.Add (s);
 			}
 		}
+
 		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 
 			Button skillButton = skillButtons [i];
 
 			Image skillIcon = skillButton.GetComponent<Image> ();
-			skillIcon.sprite = skillIcons.Find (delegate(Sprite obj) {
+			skillIcon.sprite = icons.Find (delegate(Sprite obj) {
 				return obj.name == player.skillsEquiped[i].skillIconName;
 			});
 			skillIcon.enabled = true;
 			skillButton.interactable = true;
-			skillButton.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text 
-			= player.skillsEquiped [i].strengthConsume.ToString();
+			skillButton.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text = player.skillsEquiped [i].strengthConsume.ToString();
 			skillButton.transform.GetComponentInChildren<Text> ().text = "";
 		}
+
+		List<Item> consumables = new List<Item> ();
+
+		foreach (Item i in player.allEquipedItems) {
+			if (i.itemType == ItemType.Consumables) {
+				consumables.Add (i);
+			}
+		}
+
+		for (int i = 0; i < consumables.Count; i++) {
+			Debug.Log (i);
+			Button itemButton = itemButtons [i];
+			Item consumable = consumables [i];
+			Image itemIcon = itemButton.GetComponent<Image> ();
+			itemIcon.sprite = icons.Find (delegate(Sprite obj) {
+				return obj.name == consumable.spriteName;
+			});
+			if (itemIcon.sprite != null) {
+				itemIcon.enabled = true;
+				itemButton.interactable = true;
+				itemButton.transform.FindChild ("Text").GetComponent<Text> ().text = consumable.itemCount.ToString ();
+			}
+		}
+
+
 	}
 
 	// 更新战斗中玩家UI的状态
@@ -112,6 +139,23 @@ public class BattlePlayerView : BattleAgentView {
 		mSequence.Kill (false);
 		selectedButtonBackImg = null;
 
+	}
+
+	public void OnQuitBattle(){
+
+		foreach (Button btn in skillButtons) {
+			btn.interactable = false;
+			btn.GetComponent<Image> ().enabled = false;
+			foreach (Text t in btn.GetComponentsInChildren<Text>()) {
+				t.text = string.Empty;
+			}
+		}
+
+		foreach (Button btn in itemButtons) {
+			btn.interactable = false;
+			btn.GetComponent<Image> ().enabled = false;
+			btn.GetComponentInChildren<Text> ().text = string.Empty;
+		}
 	}
 
 }

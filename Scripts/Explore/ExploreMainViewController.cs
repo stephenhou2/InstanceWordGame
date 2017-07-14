@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class ExploreMainViewController:MonoBehaviour {
 
-	private ExploreMainView expChapterView;
+	public ExploreMainView exploreMainView;
 
 	private GameObject mDialogAndItemPlane;
 
 	private GameObject currentSelectedEventView;
 
 	private int stepsLeft;
+
+	private ChapterDetailInfo detailInfo;
+
 
 
 	public GameObject dialogAndItemPlane{
@@ -28,75 +31,44 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	}
 
-	public void SelectChapter(int selectedChapterIndex){
 
-		ChapterDetailInfo[] chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>(CommonData.JsonFileDirectoryPath,CommonData.chapterDataFileName);
+	public void SetUpExploreMainView(ChapterDetailInfo chapterDetail){
 
-		expChapterView = GetComponent<ExploreMainView> ();
+		detailInfo = chapterDetail;
 
-		stepsLeft = chapterDetails [selectedChapterIndex].totalSteps;
+		stepsLeft = chapterDetail.stepsLeft;
 
-		expChapterView.detailInfo = chapterDetails [selectedChapterIndex];
+		Debug.Log (stepsLeft);
 
-		LoadEventSprites ();
-	
-	}
-
-
-	private void LoadEventSprites(){
-		ResourceManager.Instance.LoadAssetWithFileName ("explore/icons",expChapterView.SetUpScene);
-	}
-
-
-
-	public void OnSkillButtonClick(){
-		GameObject skillsCanvas = null;
-		ResourceManager.Instance.LoadAssetWithFileName ("skills/canvas", () => {
-			skillsCanvas = ResourceManager.Instance.gos [0];
-			skillsCanvas.GetComponent<SkillsViewController>().OnEnterSkillsView();
+		ResourceManager.Instance.LoadAssetWithFileName ("explore/icons",()=>{
+			exploreMainView.SetUpExploreMainView(detailInfo);
 		});
 
 	}
 
-	public void OnBagButtonClick(){
-		GameObject bagCanvas = null;
-		ResourceManager.Instance.LoadAssetWithFileName ("bag/canvas", () => {
-			bagCanvas = ResourceManager.Instance.gos [0];
-			bagCanvas.GetComponent<BagController>().OnEnterBagView();
-		});
-	}
-
-	public void OnSettingButtonClick(){
-		GameObject spellCanvas = null;
-		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
-			spellCanvas = ResourceManager.Instance.gos [0];
-			spellCanvas.GetComponent<SpellController> ().OnEnterSpellView ();
-		});
-	}
-
-//	public void OnEnterEvent(int eventType){
-//
-//	}
-
-		
+	// 进入战斗场景
 	public void OnEnterBattle(MonsterGroup monsterGroup,GameObject chapterEventView){
+
 		currentSelectedEventView = chapterEventView;
+
 		// 进入战斗场景前将探索场景隐藏
-		GameObject battleCanvas = GameObject.Find ("BattleCanvas");
-		GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
+		GameObject battleCanvas = GameObject.Find (CommonData.battleCanvas);
+		GameObject exploreCanvas = GameObject.Find (CommonData.exploreMainCanvas);
+
 		if (battleCanvas != null) {
 			exploreCanvas.GetComponent<Canvas> ().enabled = false;
 			battleCanvas.GetComponent<Canvas> ().enabled = true;
 
 		} else {
-			ResourceManager.Instance.LoadAssetWithFileName ("battle/battle", () => {
+			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas", () => {
 				exploreCanvas.GetComponent<Canvas> ().enabled = false;
 			},true);// 若当前场景中没有battleCanvas，从assetBundle中加载
 		}
 
 		//初始化战斗场景
-		GameObject.Find ("BattleManager").GetComponent<BattleManager> ().OnEnterBattle (monsterGroup);
+		GameObject.Find (CommonData.battleCanvas).GetComponent<BattleViewController> ().SetUpBattleView (monsterGroup);
 	}
+
 
 	// 初始化与npc交谈界面
 	public void OnEnterNPC(NPC npc,GameObject chapterEventView){
@@ -109,6 +81,7 @@ public class ExploreMainViewController:MonoBehaviour {
 
 		Debug.Log (npc);
 	}
+
 	// 初始化物品展示界面
 	public void OnEnterItem(Item item,GameObject chapterEventView,Sprite itemSprite){
 		
@@ -125,16 +98,50 @@ public class ExploreMainViewController:MonoBehaviour {
 
 		stepsLeft--;
 
+		Debug.Log (stepsLeft);
+
 		if (stepsLeft <= 0) {
 			Debug.Log ("本章节结束");
 			return;
 		}
 
-		expChapterView.SetUpNextStepChapterEventPlane (currentSelectedEventView, stepsLeft);
+		exploreMainView.SetUpNextStepChapterEventPlane (currentSelectedEventView, stepsLeft);
 	}
 
 
+	public void OnSkillButtonClick(){
+
+		ResourceManager.Instance.LoadAssetWithFileName ("skills/canvas", () => {
+
+			ResourceManager.Instance.gos[0].GetComponent<SkillsViewController>().SetUpSkillsView();
+
+		});
+
+	}
+
+	public void OnBagButtonClick(){
+
+		ResourceManager.Instance.LoadAssetWithFileName ("bag/canvas", () => {
+
+			ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
+
+		});
+	}
+
+	public void OnSettingButtonClick(){
+
+		ResourceManager.Instance.LoadAssetWithFileName ("setting/canvas", () => {
+
+			ResourceManager.Instance.gos [0].GetComponent<SettingViewController> ().SetUpSettingView ();
+
+		});
+	}
+
+
+
 	public void OnQuitExploreChapterView(){
+
+		Destroy(GameObject.Find (CommonData.exploreMainCanvas).gameObject);
 
 	}
 

@@ -9,6 +9,8 @@ public class ChapterDetailInfo {
 
 	public int totalSteps;
 
+	public int stepsLeft;
+
 	public string chapterLocation;
 
 	public MonsterGroup[] monsterGroups;

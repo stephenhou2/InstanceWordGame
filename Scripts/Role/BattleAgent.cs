@@ -57,7 +57,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	}
 		
-	private int mHealth;//实际血量
+	[SerializeField]private int mHealth;//实际血量
 	public int health{
 		get{return mHealth;}
 		set{
@@ -68,7 +68,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		}
 
 	}
-	private int mStrength;//实际气力值
+	[SerializeField]private int mStrength;//实际气力值
 	public int strength{
 		get{ return mStrength; }
 		set{ mStrength = value;
@@ -101,9 +101,6 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public List<Skill> skillsEquiped = new List<Skill>();//技能数组
 
-//	public Item weaponEquiped;
-//	public Item amourEquiped;
-//	public Item shoesEquiped;
 	private List<Item> mAllEquipedItems = new List<Item>();
 
 	public List<Item> allEquipedItems{
@@ -119,7 +116,6 @@ public abstract class BattleAgent : MonoBehaviour {
 			mAllEquipedItems = value;
 		}
 	}
-//	= new List<Item>();// 已装备物品数组
 
 	public List<Item> allItems = new List<Item> (); // 所有物品
 
@@ -162,10 +158,6 @@ public abstract class BattleAgent : MonoBehaviour {
 		this.defenceSkill = ba.defenceSkill;
 		this.skillsEquiped = ba.skillsEquiped;
 
-
-//		this.weaponEquiped = ba.weaponEquiped;
-//		this.amourEquiped = ba.amourEquiped;
-//		this.shoesEquiped = ba.shoesEquiped;
 		this.allEquipedItems = ba.allEquipedItems;
 
 		this.allItems = ba.allItems;
@@ -247,24 +239,26 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	}
 
-	private void ResetPropertiesByEquipment(Item equipment){
+	public void ResetPropertiesByEquipment(Item equipment){
 
-		if (equipment == null) {
+		if (equipment.itemName == null) {
 			return;
 		}
 
-		attack = originalAttack + equipment.attackGain;
-		power = originalPower + equipment.powerGain;
-		magic = originalMagic + equipment.magicGain;
-		crit = originalCrit + equipment.critGain;
-		amour = originalAmour + equipment.amourGain;
-		magicResist = originalMagicResist + equipment.magicResistGain;
-		agility = originalAgility + equipment.agilityGain;
+		Debug.Log (this.ToString() + equipment.ToString());
+
+		attack += equipment.attackGain;
+		power += equipment.powerGain;
+		magic += equipment.magicGain;
+		crit += equipment.critGain;
+		amour += equipment.amourGain;
+		magicResist += equipment.magicResistGain;
+		agility += equipment.agilityGain;
 
 	}
 
 	// 仅根据物品重新计人物的属性，其余属性重置为初始状态
-	public void ResetBattleAgentProperties (bool toOriginalState,bool firstEnterBattle)
+	public void ResetBattleAgentProperties (bool toOriginalState,bool firstEnterBattleOrQuitBattle)
 	{
 		// 所有属性重置未初始值
 		attack = originalAttack;
@@ -276,12 +270,10 @@ public abstract class BattleAgent : MonoBehaviour {
 		agility = originalAgility;
 
 		// 根据装备更新属性
+
 		foreach (Item item in allEquipedItems) {
 			ResetPropertiesByEquipment (item);
 		}
-//		ResetPropertiesByEquipment (weaponEquiped);
-//		ResetPropertiesByEquipment (amourEquiped);
-//		ResetPropertiesByEquipment (shoesEquiped);
 
 		maxHealth = originalMaxHealth + healthGainScaler * power;
 		maxStrength = originalMaxStrength + (int)(strengthGainScaler * power);
@@ -309,7 +301,7 @@ public abstract class BattleAgent : MonoBehaviour {
 			}
 		}
 
-		if (firstEnterBattle) {
+		if (firstEnterBattleOrQuitBattle) {
 			validActionType = ValidActionType.All;
 			foreach (Skill s in skillsEquiped) {
 				s.isAvalible = true;
@@ -318,6 +310,8 @@ public abstract class BattleAgent : MonoBehaviour {
 					bse.actionCount = 0;
 				}
 			}
+			#warning 这里暂时设定为每次进入战斗／战斗结束后气力值回满
+			strength = maxStrength;
 		}
 
 		if (baView != null) {

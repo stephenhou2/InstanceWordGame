@@ -3,43 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using System.Text;
+using System.Data;
 
 public class SpellView: MonoBehaviour {
 
 	public GameObject spellPlane;
 
-	public Text[] characters;
+	public Text[] characterTexts;
 
-	private List<string> enteredCharacters = new List<string>();
+	private StringBuilder enteredCharacters = new StringBuilder();
 
 	public void SetUpSpellView(){
 
 	}
 
 	public void OnEnterCharacter(string character){
-
-		enteredCharacters.Add (character);
-
-		for (int i = 0; i < enteredCharacters.Count; i++) {
-			characters [i].text = enteredCharacters [i];
+		
+		if (enteredCharacters.Length < characterTexts.Length) {
+			enteredCharacters.Append (character);
+			characterTexts [enteredCharacters.Length - 1].text = character;
 		}
 
 	}
 
 	public void OnBackspace(){
-		if (enteredCharacters.Count >= 1) {
-			enteredCharacters.RemoveAt (enteredCharacters.Count - 1);
+		
+		if (enteredCharacters.Length >= 1) {
+			enteredCharacters.Remove (enteredCharacters.Length - 1, 1);
 		}
-		foreach (Text t in characters) {
-			t.text = "";
-		}
-		for (int i = 0; i < enteredCharacters.Count; i++) {
-			characters [i].text = enteredCharacters [i];
-		}
+			
+		characterTexts [enteredCharacters.Length].text = string.Empty;
+
 	}
 
 	public void OnGenerate(){
-		
+
+		MySQLiteHelper sql = MySQLiteHelper.Instance;
+
+		sql.GetConnectionWith ("test2.db");
+
+		sql.InsertValues ("test", new string[]{"10","'sword'"});
+
+		string condition = "name='" + enteredCharacters.ToString() + "'";
+
+		IDataReader reader = sql.ReadSpecificRowsAndColsOfTable ("test", null, new string[]{ condition },true);
+
+		while (reader.Read ()) {
+			if(reader.GetString(1) != null){
+				Item newItem = new Item ();
+				newItem.itemName = enteredCharacters.ToString ();
+				newItem.attackGain = reader.GetInt32 (0);
+
+				Debug.Log (newItem);
+			}
+		}
+
+
+		sql.CloseConnection ("test2.db");
 	}
 
 	public void OnQuitSpellPlane(){

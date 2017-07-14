@@ -7,5 +7,8 @@ public class Defence : StateSkillEffect {
 	{
 		self.hurtScaler = this.scaler;
 		self.strength += 3;
+		if (self.strength > self.maxStrength) {
+			self.strength = self.maxStrength;
+		}
 	}
 }
