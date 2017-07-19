@@ -61,7 +61,11 @@ public abstract class BattleAgent : MonoBehaviour {
 	public int health{
 		get{return mHealth;}
 		set{
-			mHealth = value;
+			if (value <= maxHealth) {
+				mHealth = value;
+			} else {
+				mHealth = maxHealth;
+			}
 			if (baView != null) {
 				baView.UpdateHealthBarAnim (this);
 			}
@@ -71,7 +75,12 @@ public abstract class BattleAgent : MonoBehaviour {
 	[SerializeField]private int mStrength;//实际气力值
 	public int strength{
 		get{ return mStrength; }
-		set{ mStrength = value;
+		set{ 
+			if (value <= maxStrength) {
+				mStrength = value;
+			} else {
+				mStrength = maxStrength;
+			}
 			if (baView != null) {
 				baView.UpdateStrengthBarAnim (this);
 			}
@@ -239,13 +248,11 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	}
 
-	public void ResetPropertiesByEquipment(Item equipment){
+	private void ResetPropertiesByEquipment(Item equipment){
 
 		if (equipment.itemName == null) {
 			return;
 		}
-
-		Debug.Log (this.ToString() + equipment.ToString());
 
 		attack += equipment.attackGain;
 		power += equipment.powerGain;
@@ -260,7 +267,7 @@ public abstract class BattleAgent : MonoBehaviour {
 	// 仅根据物品重新计人物的属性，其余属性重置为初始状态
 	public void ResetBattleAgentProperties (bool toOriginalState,bool firstEnterBattleOrQuitBattle)
 	{
-		// 所有属性重置未初始值
+		// 所有属性重置为初始值
 		attack = originalAttack;
 		power = originalPower;
 		magic = originalMagic;
@@ -272,7 +279,9 @@ public abstract class BattleAgent : MonoBehaviour {
 		// 根据装备更新属性
 
 		foreach (Item item in allEquipedItems) {
-			ResetPropertiesByEquipment (item);
+			if (item.itemType != ItemType.Consumables) {
+				ResetPropertiesByEquipment (item);
+			}
 		}
 
 		maxHealth = originalMaxHealth + healthGainScaler * power;

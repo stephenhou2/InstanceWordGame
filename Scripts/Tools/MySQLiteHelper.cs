@@ -332,9 +332,9 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <param name="tableName">Table name.</param>
 	/// <param name="colNames">Col names.</param>
 	/// <param name="colTypes">Col types.</param>
-	public bool CreatTable(string tableName,string[] colNames,string[] colTypes){
+	public bool CreatTable(string tableName,string[] colNames,string[] constraints,string[] colTypes){
 
-		if (colNames.Length != colTypes.Length) {
+		if (colNames.Length != colTypes.Length || colNames.Length != constraints.Length || constraints.Length != colTypes.Length) {
 			throw new SqliteException ("类型数量错误");
 		}
 
@@ -345,10 +345,10 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		StringBuilder queryString = new StringBuilder ();
 
-		queryString.AppendFormat ("CREATE TABLE {0}( {1} {2}", tableName, colNames[0], colTypes[0]);
+		queryString.AppendFormat ("CREATE TABLE {0}( {1} {2} {3}", tableName, colNames[0], colTypes[0],constraints[0]);
 
 		for (int i = 1; i < colNames.Length; i++) {
-			queryString.AppendFormat (", {0} {1}", colNames [i], colTypes [i]);
+			queryString.AppendFormat (", {0} {1} {2}", colNames [i], colTypes [i],constraints[i]);
 		}
 
 		queryString.Append (" )");
@@ -462,11 +462,14 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 		//获取数据表中字段数目
 		int fieldCount = ReadFullTable(tableName).FieldCount;
 
+//		string findTypesString = "SELECT"
+
 		//当插入的数据长度不等于字段数目时引发异常
 		if (values.Length != fieldCount)
 		{
 			throw new SqliteException("values.Length != fieldCount");
 		}
+
 
 		StringBuilder queryString = new StringBuilder();
 
@@ -559,6 +562,47 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		return ExecuteQuery (queryString.ToString());
 	}
+
+	public IDataReader DeleteAllDataFromTable(string tableName){
+
+		string queryString = "DELETE FROM " + tableName;
+
+		return ExecuteQuery (queryString);
+	}
+
+
+	public void CheckFiledNames(string tableName,string[] fieldNameStrs){
+
+		string sqlString = "PRAGMA table_info(" + tableName + ")";
+
+		IDataReader reader = ExecuteQuery (sqlString);
+
+		List<string> fieldNamesInTable = new List<string> ();
+
+		while (reader.Read ()) {
+
+			string fieldName = reader.GetString (1);
+			fieldNamesInTable.Add (fieldName);
+
+		}
+
+		if (fieldNamesInTable.Count != fieldNameStrs.Length) {
+			throw new SqliteException ("字段数量不一致" + "table:" + fieldNamesInTable.Count.ToString() + "data:" + fieldNameStrs.Length.ToString());
+
+		}
+
+
+		for (int i = 0; i < fieldNameStrs.Length; i++) {
+			Debug.Log (fieldNameStrs [i]);
+			if (!fieldNamesInTable [i].Equals(fieldNameStrs [i])) {
+				throw new SqliteException ("字段名称不一致" + "/" + fieldNamesInTable[i] + "/" + fieldNameStrs [i] + "/");
+			}
+
+		}
+
+	}
+
+
 
 	#region 
 

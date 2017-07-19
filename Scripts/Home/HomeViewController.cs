@@ -7,9 +7,11 @@ public class HomeViewController : MonoBehaviour {
 	public HomeView homeView;
 
 
+
 	public void SetUpHomeView(){
 
 		homeView.SetUpHomeView ();
+
 
 	}
 
@@ -66,6 +68,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos[0].GetComponent<SkillsViewController>().SetUpSkillsView();
 
+			homeView.VotexPause();
 		});
 
 	}
@@ -76,6 +79,8 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
 
+			homeView.VotexPause();
+
 		});
 	}
 
@@ -85,6 +90,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos [0].GetComponent<SettingViewController> ().SetUpSettingView ();
 
+			homeView.VotexPause();
 		});
 	}
 

@@ -6,7 +6,7 @@ public class BagViewController : MonoBehaviour {
 
 	public BagView bagView;
 
-	private List<Sprite> mItemIcons = new List<Sprite>();
+//	private List<Sprite> mItemIcons = new List<Sprite>();
 
 //	private List<Item> allGameItems = new List<Item>();
 
@@ -17,31 +17,40 @@ public class BagViewController : MonoBehaviour {
 
 	private int currentSelectEquipIndex;
 
+	private int currentSelectItemIndex;
+
+	private int currentSelectItemIndexOfSpecificPlane;
+
 	public void SetUpBagView(){
 
-		if (Player.mainPlayer.allItems.Count == 0) {
-			Player.mainPlayer.allItems.AddRange(DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName));
-		}
+//		if (Player.mainPlayer.allItems.Count == 0) {
+//			Player.mainPlayer.allItems.AddRange(DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName));
+//		}
+
+	
+		bagView.SetUpBagView ();
 
 //		Player.mainPlayer.consumablesEquiped = Player.mainPlayer.allItems;
 		 
 
-		// 异步加载物品图片,完成后回调初始化背包界面
-		if (mItemIcons.Count == 0) {
-			ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
-				
-				foreach (Sprite s in ResourceManager.Instance.sprites) {
-					mItemIcons.Add (s);
-				}
-
-				bagView.SetUpBagView (mItemIcons);
-
-			}, false);
-		}
+//		// 异步加载物品图片,完成后回调初始化背包界面
+//		if (mItemIcons.Count == 0) {
+//			ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
+//				
+//				foreach (Sprite s in ResourceManager.Instance.sprites) {
+//					mItemIcons.Add (s);
+//				}
+//
+//				bagView.SetUpBagView (mItemIcons);
+//
+//			}, false);
+//		}
 
 
 	}
+		
 
+	// 已装备界面上按钮点击响应
 	public void OnEquipedItemButtonsClick(int index){
 
 		allItemsOfCurrentSelcetType.Clear ();
@@ -85,25 +94,65 @@ public class BagViewController : MonoBehaviour {
 
 	}
 
+	#warning 明天这里继续，点击物品后弹出物品比较栏
 	public void OnItemButtonOfSpecificItemPlaneClick(int index){
+
+		currentSelectItemIndexOfSpecificPlane = index;
 
 		Item item = allItemsOfCurrentSelcetType [index];
 
-		Player.mainPlayer.allEquipedItems [currentSelectEquipIndex] = item;
-
-		Player.mainPlayer.ResetPropertiesByEquipment (item);
-
 		bagView.OnItemButtonOfSpecificItemPlaneClick (item, currentSelectEquipIndex);
-
-
-
 
 	}
 
 	public void OnItemButtonClick(int index){
 
+		currentSelectItemIndex = index;
+
 		bagView.OnItemButtonClick (index);
+
 	}
+
+	public void EquipItem(){
+
+		Player player = Player.mainPlayer;
+
+		player.allEquipedItems [currentSelectEquipIndex].equiped = false;
+
+		Item item = allItemsOfCurrentSelcetType [currentSelectItemIndexOfSpecificPlane];
+
+		item.equiped = true;
+
+		player.allEquipedItems [currentSelectEquipIndex] = item;
+
+		player.ResetBattleAgentProperties (false,false);
+
+		bagView.OnCreateButtonOfDetailHUDClick ();
+
+	}
+
+	public void ResolveItem(){
+		
+		Player player = Player.mainPlayer;
+
+		Item item = player.allItems [currentSelectItemIndex];
+
+		List<char> charactersReturn =  player.ResolveItem (item);
+
+		// 返回的有字母，相应处理
+		if (charactersReturn.Count > 0) {
+
+			foreach (char c in charactersReturn) {
+				Debug.Log (c.ToString ());
+			}
+
+		}
+
+		bagView.OnResolveButtonOfDetailHUDClick ();
+
+	}
+
+
 
 
 	// 退出物品详细页HUD
@@ -126,6 +175,12 @@ public class BagViewController : MonoBehaviour {
 
 		bagView.OnQuitBagPlane (DestroyInstances);
 
+		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+		if (homeCanvas != null) {
+			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+		}
+
 	}
 
 	// 退出背包界面时清理内存
@@ -133,5 +188,8 @@ public class BagViewController : MonoBehaviour {
 
 		TransformManager.DestroyTransform (gameObject.transform);
 		TransformManager.DestroyTransfromWithName ("PropertyText", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("ItemButton", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("ItemButtonPool", TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("PropertyTextPool", TransformRoot.PoolContainer);
 	}
 }

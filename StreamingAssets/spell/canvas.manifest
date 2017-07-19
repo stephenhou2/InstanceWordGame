@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1027529872
+CRC: 1271104867
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9388f015320ba195878b212706017bea
+    Hash: af81ac21a40900988e33ac20f6c81970
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e8342b3f8aaf09f5dee7fd616da687cd
+    Hash: 5246af1ef54167fa7df44f4b618b00b1
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -22,13 +22,25 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -2095666955, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 63b9353f32e704a94beda829ffa6102a, type: 3}
 - Class: 114
@@ -47,4 +59,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Spell/SpellCanvas.prefab
+- Assets/Prefabs/Spell/Item.prefab
 Dependencies: []

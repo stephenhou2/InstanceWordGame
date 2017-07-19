@@ -1,0 +1,13 @@
+itemId,itemName,itemDescription,spriteName,itemType,itemNameInEnglish,attackGain,powerGain,magicGain,critGain,amourGain,magicResistGain,agilityGain,healthGain,strengthGain
+0,铁剑,村东头的一把破剑,sword,0,sword,10,0,0,5,0,0,0,0,0
+1,匕首,一把精致的水果刀,knife,0,knife,5,0,0,5,0,0,5,0,0
+2,狂战斧,平时劈柴的斧头,axe,0,axe,15,0,0,0,0,0,0,0,0
+3,法杖,梧桐树上掉下来的一根树枝,staff,0,staff,5,0,10,0,0,0,0,0,0
+4,圆盾,村西头的一个破木板,shield,1,shield,0,0,0,0,10,10,0,0,0
+5,布衣,平时穿的衣服,cloth,1,cloth,0,0,0,0,10,0,10,0,0
+6,皮甲,一张牛皮,leather,1,leather,0,0,0,0,0,10,10,0,0
+7,长袍,一件长袍,cloak,1,cloak,0,0,10,0,0,10,0,0,0
+8,草鞋,刘备编的鞋,sandal,2,sandal,0,0,0,10,0,0,10,0,0
+9,回力鞋,回力牌鞋,huili,2,huili,10,0,0,0,10,0,0,0,0
+10,治疗药剂,小红瓶,good1,3,red,0,0,0,0,0,0,0,20,0
+11,气力药剂,小黄瓶,good2,3,yellow,0,0,0,0,0,0,0,0,5

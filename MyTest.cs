@@ -33,7 +33,7 @@ public class MyTest : MonoBehaviour
 		sql.GetConnectionWith ("test2.db");
 
 
-		sql.CreatTable ("test", new string[]{ "age","name" }, new string[]{ "INTEGER","TEXT" });
+//		sql.CreatTable ("test", new string[]{ "age","name" }, new string[]{ "INTEGER","TEXT" });
 
 		sql.InsertValues("test",new string[] {"18","'haha'"});
 

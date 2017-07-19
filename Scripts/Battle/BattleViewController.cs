@@ -177,10 +177,6 @@ public class BattleViewController : MonoBehaviour {
 		monsterControlPlane.gameObject.SetActive (false);
 	}
 
-	public void OnPlayerSelectItem(Item item){
-
-	}
-
 	// 如果技能需要选择作用对象，则技能效果由该方法触发
 	public void OnPlayerSelectMonster(int monsterId){
 
@@ -300,7 +296,7 @@ public class BattleViewController : MonoBehaviour {
 		player.UpdateValidActionType ();
 
 		// 更新按钮是否可以交互
-		bpController.baView.UpdateUIStatus(player);
+		bpController.baView.UpdateSkillButtonsStatus(player);
 
 		// 如果玩家本轮无法行动，则直接进入怪物行动轮
 		if (player.validActionType == ValidActionType.None) {
@@ -412,6 +408,18 @@ public class BattleViewController : MonoBehaviour {
 	}
 	// 用户点击物品按钮响应
 	public void OnItem(int itemIndex){
+
+		Item item = player.allEquipedItems [itemIndex + 3];
+
+		bpController.OnPlayerUseItem (itemIndex);
+
+		UpdatePropertiesByStates ();
+
+		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
+
+		if (!battleEnd) {
+			StartCoroutine ("OnMonsterAction");
+		}
 
 	}
 

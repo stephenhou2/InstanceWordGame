@@ -8,7 +8,7 @@ public class InstancePool: MonoBehaviour{
 
 	private List<GameObject> mInstancePool = new List<GameObject>();
 
-	public static InstancePool GetOrCreatInstancePool(string poolName){
+	public static InstancePool GetOrCreateInstancePool(string poolName){
 
 		Transform trans = TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName);
 
@@ -31,13 +31,15 @@ public class InstancePool: MonoBehaviour{
 			mInstance.transform.SetParent (instanceParent);
 		} else {
 			mInstance = Instantiate (instanceModel,instanceParent);	
+			mInstance.name = instanceModel.name;
 		}
 
 		return mInstance.GetComponent<T>();
 	}
 
 	public void AddInstanceToPool(GameObject instance,string poolName){
-		instance.transform.SetParent(TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName));
+//		instance.transform.SetParent(TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName));
+		instance.transform.SetParent(GetComponent<Transform>());
 		mInstancePool.Add (instance);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿{"Items":
 [
 		{	"itemName":"治疗药剂",
+			"itemNameInEnglish":"hurb",
 			"itemDescription":"用于治疗的小红瓶",
 			"spriteName":"good1",
 			"itemCount":5,
@@ -16,6 +17,7 @@
 			"strengGain":0
 		},
 		{	"itemName":"气力药剂",
+			"itemNameInEnglish":"strengthhurb",
 			"itemDescription":"补充气力小黄瓶",
 			"spriteName":"good2",
 			"itemCount":5,
@@ -31,6 +33,7 @@
 			"strengGain":10
 		},
 		{	"itemName":"铁剑",
+			"itemNameInEnglish":"sword",
 			"itemDescription":"村东头铁匠打的一把剑",
 			"spriteName":"knife",
 			"itemCount":2,
@@ -46,6 +49,7 @@
 			"strengGain":0
 		},
 		{	"itemName":"木盾",
+			"itemNameInEnglish":"shield",
 			"itemDescription":"村西头捡的一块破木板",
 			"spriteName":"shield",
 			"itemCount":1,

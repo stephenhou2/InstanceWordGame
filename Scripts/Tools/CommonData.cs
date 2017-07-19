@@ -43,6 +43,11 @@ public struct CommonData{
 	public static string settingCanvas = "SettingCanvas";
 	public static string spellCanvas = "SpellCanvas";
 
+	public static string dataBaseName = "MyGameDB.db";
+	public static string itemsTable = "ItemsTable";
+//	public static string 
+
+	public static int aInASCII = (int)('a');
 
 }
 
@@ -51,6 +56,13 @@ public enum TransformRoot{
 	InstanceContainer,
 	PoolContainer,
 	Plain
+}
+
+public enum ItemQuality{
+	C,
+	B,
+	A,
+	S
 }
 
 public enum ItemType{

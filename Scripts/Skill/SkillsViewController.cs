@@ -213,6 +213,13 @@ public class SkillsViewController : MonoBehaviour {
 
 		skillsView.OnQuitSkillsPlane ();
 
+		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+		if (homeCanvas != null) {
+			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+		}
+
+
 	}
 
 	// 技能按照id排序方法

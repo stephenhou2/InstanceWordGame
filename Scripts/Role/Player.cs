@@ -10,7 +10,24 @@ public class Player : BattleAgent {
 
 	private static object objectLock = new object();
 
-	[HideInInspector]public int[] charactersCount = new int[26];
+//	[HideInInspector]public int[] charactersCount = new int[26];
+
+	private int[] mCharactersCount;
+
+	[HideInInspector]public int[] charactersCount{
+
+		get{
+			if (mCharactersCount == null) {
+				mCharactersCount = new int[26];
+				for(int i = 0;i<mCharactersCount.Length;i++){
+					mCharactersCount[i] = 10;
+				}
+			}
+			return mCharactersCount;
+		}
+
+	}
+
 
 	// 玩家角色单例
 	public static Player mainPlayer{
@@ -116,5 +133,60 @@ public class Player : BattleAgent {
 		return s;
 	}
 
+	/// <summary>
+	/// 分解物品
+	/// </summary>
+	/// <returns>分解后获得的字母碎片</returns>
+	/// <param name="item">Item.</param>
+	public List<char> ResolveItem(Item item){
+
+		List<char> charactersReturn = new List<char> ();
+
+		int charactersReturnCount = item.itemNameInEnglish.Length / 2;
+
+		char[] charArray = item.itemNameInEnglish.ToCharArray ();
+
+		List<char> charList = new List<char> ();
+
+		for (int i = 0; i < charArray.Length; i++) {
+			charList.Add (charArray [i]);
+		}
+
+		for (int i = 0; i < charactersReturnCount; i++) {
+
+			char character = ReturnRandomCharacters (ref charList);
+
+			int charIndex = (int)character - CommonData.aInASCII;
+
+			charactersCount [charIndex]++;
+
+			charactersReturn.Add (character);
+		}
+
+		allItems.Remove (item);
+
+		if (item.equiped) {
+			allEquipedItems.Remove (item);
+		}
+
+		return charactersReturn;
+
+	}
+
+	/// <summary>
+	/// 从单词的字母组成中随机返回一个字母
+	/// </summary>
+	/// <returns>The random characters.</returns>
+	private char ReturnRandomCharacters(ref List<char> charList){
+
+		int charIndex = (int)Random.Range (0, charList.Count - float.Epsilon);
+
+		char character = charList [charIndex];
+
+		charList.RemoveAt (charIndex);
+
+		return character;
+
+	}
 
 }

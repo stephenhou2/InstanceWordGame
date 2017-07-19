@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 372646709
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 7c8d428891d77041f8e69c7c86ca3a40
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/ItemIcon/good1.png
+- Assets/Resources/Sprites/ItemIcon/knife.jpeg
+- Assets/Resources/Sprites/ItemIcon/shield.jpeg
+- Assets/Resources/Sprites/ItemIcon/good2.png
+Dependencies: []

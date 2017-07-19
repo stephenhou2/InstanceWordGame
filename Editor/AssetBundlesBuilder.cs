@@ -11,7 +11,6 @@ public class AssetBundlesBuilder {
 
 		BuildPipeline.BuildAssetBundles (targetPath, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.iOS);
 
-//		BuildPipeline.buildass
 
 	}
 }

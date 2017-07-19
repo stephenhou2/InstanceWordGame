@@ -23,23 +23,29 @@ public class BattlePlayerView : BattleAgentView {
 
 	private Image selectedButtonBackImg;
 
-	private List<Sprite> icons = new List<Sprite> ();
+	private List<Sprite> skillSprites = new List<Sprite> ();
+
+	private List<Sprite> itemSprites;
 
 
-	public void SetUpUI(Player player,List<Sprite> sprites){
+
+
+	public void SetUpUI(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
 		
-		if (icons.Count == 0) {
-			foreach (Sprite s in sprites) {
-				icons.Add (s);
+		if (this.skillSprites.Count == 0) {
+			foreach (Sprite s in skillSprites) {
+				this.skillSprites.Add (s);
 			}
 		}
+
+		this.itemSprites = itemSprites;
 
 		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 
 			Button skillButton = skillButtons [i];
 
 			Image skillIcon = skillButton.GetComponent<Image> ();
-			skillIcon.sprite = icons.Find (delegate(Sprite obj) {
+			skillIcon.sprite = skillSprites.Find (delegate(Sprite obj) {
 				return obj.name == player.skillsEquiped[i].skillIconName;
 			});
 			skillIcon.enabled = true;
@@ -48,34 +54,52 @@ public class BattlePlayerView : BattleAgentView {
 			skillButton.transform.GetComponentInChildren<Text> ().text = "";
 		}
 
-		List<Item> consumables = new List<Item> ();
+		UpdateItemButtonsStatus (player);
 
-		foreach (Item i in player.allEquipedItems) {
-			if (i.itemType == ItemType.Consumables) {
-				consumables.Add (i);
-			}
-		}
+	}
 
-		for (int i = 0; i < consumables.Count; i++) {
-			Debug.Log (i);
-			Button itemButton = itemButtons [i];
-			Item consumable = consumables [i];
+	public void UpdateItemButtonsStatus(Player player){
+
+		for (int i = 3; i < player.allEquipedItems.Count; i++) {
+			
+			Item consumable = player.allEquipedItems [i];
+
+			Button itemButton = itemButtons [i - 3];
+
 			Image itemIcon = itemButton.GetComponent<Image> ();
-			itemIcon.sprite = icons.Find (delegate(Sprite obj) {
+
+			Text itemCount = itemButton.transform.FindChild ("Text").GetComponent<Text> ();
+
+			if (consumable.itemName == null) {
+				
+				itemButton.interactable = false;
+				itemIcon.enabled = false;
+
+				itemIcon.sprite = null;
+				itemCount.text = string.Empty;
+
+				continue;
+			}
+				
+			itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
 				return obj.name == consumable.spriteName;
 			});
 			if (itemIcon.sprite != null) {
 				itemIcon.enabled = true;
 				itemButton.interactable = true;
-				itemButton.transform.FindChild ("Text").GetComponent<Text> ().text = consumable.itemCount.ToString ();
+				itemCount.text = consumable.itemCount.ToString ();
 			}
+
+			itemButton.interactable = (consumable.itemCount > 0) && player.isItemEnable;
 		}
 
 
 	}
 
+
 	// 更新战斗中玩家UI的状态
-	public void UpdateUIStatus(Player player){
+	public void UpdateSkillButtonsStatus(Player player){
+		
 		for (int i = 0;i < player.skillsEquiped.Count;i++) {
 
 			Skill s = player.skillsEquiped [i];
@@ -92,9 +116,7 @@ public class BattlePlayerView : BattleAgentView {
 		attackButton.interactable = player.isAttackEnable && player.strength >= player.attackSkill.strengthConsume;
 		defenceButton.interactable = player.isDefenceEnable && player.strength >= player.defenceSkill.strengthConsume;
 
-		foreach (Button btn in itemButtons) {
-			btn.interactable = player.isItemEnable;
-		}
+
 	}
 
 	// 选择技能后的动画

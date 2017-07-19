@@ -23,7 +23,7 @@ public static class DataInitializer{
 	}
 
 	// 加载指定路径的文件数据
-	private static string LoadDataString(string filePath,string fileName){
+	public static string LoadDataString(string filePath,string fileName){
 		
 		StreamReader sr = null;
 

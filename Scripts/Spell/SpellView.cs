@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using System.Text;
-using System.Data;
+
 
 public class SpellView: MonoBehaviour {
 
@@ -12,60 +12,136 @@ public class SpellView: MonoBehaviour {
 
 	public Text[] characterTexts;
 
-	private StringBuilder enteredCharacters = new StringBuilder();
+	public GameObject ItemDetailHUD;
 
-	public void SetUpSpellView(){
+	public GameObject createCountHUD;
 
-	}
+	public Text createCount;
 
-	public void OnEnterCharacter(string character){
-		
-		if (enteredCharacters.Length < characterTexts.Length) {
-			enteredCharacters.Append (character);
-			characterTexts [enteredCharacters.Length - 1].text = character;
+	public Slider createSlider;
+
+	public Transform contentTrans;
+
+	private InstancePool itemPool;
+
+//	public void SetUpSpellView(){
+//
+//	}
+
+
+	public void ClearEnteredCharactersPlane(){
+
+		foreach (Text t in characterTexts) {
+			t.text = string.Empty;
 		}
 
 	}
 
-	public void OnBackspace(){
+	public void OnEnterCharacter(StringBuilder enteredCharacters,string character){
 		
-		if (enteredCharacters.Length >= 1) {
-			enteredCharacters.Remove (enteredCharacters.Length - 1, 1);
-		}
+		characterTexts [enteredCharacters.Length - 1].text = character;
+
+	}
+
+	public void OnBackspace(int enteredStringLength){
+		
+		characterTexts [enteredStringLength].text = string.Empty;
+
+	}
+		
+
+
+	public void SetUpCreateCountHUD(int minValue,int maxValue){
+
+		createCountHUD.SetActive (true);
+
+		createSlider.minValue = minValue;
+		createSlider.maxValue = maxValue;
+
+		createSlider.value = minValue;
+	
+		createCount.text = "制作1个";
+
+	}
+
+	public void UpdateCreateCountHUD(int count){
+
+		createSlider.value = count;
+
+		createCount.text = "制作" + count.ToString() + "个";
+	}
+
+	public void SetUpCreateItemDetailHUD(List<Item> createItems){
+
+		Debug.Log (createItems.Count);
+
+		itemPool =  InstancePool.GetOrCreateInstancePool ("ItemPool");
+
+		GameObject itemModel = GameObject.Find (CommonData.instanceContainerName + "/Item");
+
+		foreach (Item item in createItems) {
 			
-		characterTexts [enteredCharacters.Length].text = string.Empty;
+			Transform itemTrans = itemPool.GetInstance<Transform> (itemModel, contentTrans);
+
+			Image itemIcon = itemTrans.FindChild ("ItemIcon").GetComponent<Image> ();
+
+			Text itemName = itemTrans.FindChild ("ItemName").GetComponent<Text> ();
+
+			Text itemCount = itemTrans.FindChild ("ItemCount").GetComponent<Text> ();
+
+			Text itemDesciption = itemTrans.FindChild ("ItemDescription").GetComponent<Text> ();
+
+			itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;	
+			});
+
+			itemIcon.enabled = true;
+
+			itemName.text = item.itemName;
+
+			itemCount.text = item.itemCount.ToString ();
+
+			itemDesciption.text = item.itemDescription;
+
+		}
+
+		QuitCreateCountHUD ();
+
+		ItemDetailHUD.SetActive (true);
+
+		ClearEnteredCharactersPlane ();
+
 
 	}
 
-	public void OnGenerate(){
+	public void QuitCreateCountHUD(){
 
-		MySQLiteHelper sql = MySQLiteHelper.Instance;
+		createCountHUD.SetActive (false);
 
-		sql.GetConnectionWith ("test2.db");
 
-		sql.InsertValues ("test", new string[]{"10","'sword'"});
+	}
 
-		string condition = "name='" + enteredCharacters.ToString() + "'";
 
-		IDataReader reader = sql.ReadSpecificRowsAndColsOfTable ("test", null, new string[]{ condition },true);
 
-		while (reader.Read ()) {
-			if(reader.GetString(1) != null){
-				Item newItem = new Item ();
-				newItem.itemName = enteredCharacters.ToString ();
-				newItem.attackGain = reader.GetInt32 (0);
+	public void OnQuitCreateDetailHUD(){
 
-				Debug.Log (newItem);
-			}
+		ItemDetailHUD.SetActive (false);
+
+		while(contentTrans.childCount>0){
+
+			Transform trans = contentTrans.GetChild(0);
+
+			itemPool.AddInstanceToPool (trans.gameObject, "ItemPool");
+
 		}
 
 
-		sql.CloseConnection ("test2.db");
 	}
+
 
 	public void OnQuitSpellPlane(){
 		spellPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
-			Destroy (GameObject.Find ("SpellCanvas"));
+//			Destroy (GameObject.Find ("SpellCanvas"));
 		});
 	}
 

@@ -12,7 +12,9 @@ public class ProduceViewController : MonoBehaviour {
 	private List<Item> allConsumables = new List<Item>() ;
 	private List<Item> allTaskItems = new List<Item>();
 
-	private List<Item> currentItems;
+	private List<Item> itemsOfCurrentType;
+
+	private List<Sprite> itemSprites = new List<Sprite>();
 
 	private Item itemToGenerate;
 
@@ -24,54 +26,66 @@ public class ProduceViewController : MonoBehaviour {
 
 		LoadAllItems ();
 
-		#warning 这里资源还没有做
-		ResourceManager.Instance.LoadSpritesAssetWithFileName ("produce/icons", () => {
+		ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
 
 			// 获取所有游戏物品的图片
 			for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 
-				produceView.itemSprites.Add(ResourceManager.Instance.sprites[i]);
+				itemSprites.Add(ResourceManager.Instance.sprites[i]);
 
 			}
 
-			produceView.SetUpProduceView (allWeapons);
+			produceView.SetUpProduceView (itemSprites);
+
+			OnItemTypeButtonClick(0);
+
+			GetComponent<Canvas>().enabled = true; 
+
 		});
 
 	}
 
-	public void OnItemTypeButtonClick(int index){
+	public void UpdateProduceView(){
+		produceView.SetUpCharactersPlane ();
+	}
 
-		switch (index) {
+	public void OnItemTypeButtonClick(int buttonIndex){
+
+		switch (buttonIndex) {
 		case 0:
-			produceView.SetUpItemIcons (allWeapons);
-			currentItems = allWeapons;
+			itemsOfCurrentType = allWeapons;
 			break;
 		case 1:
-			produceView.SetUpItemIcons (allAmours);
-			currentItems = allAmours;
+			itemsOfCurrentType = allAmours;;
 			break;
 		case 2:
-			produceView.SetUpItemIcons (allConsumables);
-			currentItems = allConsumables;
+			itemsOfCurrentType = allConsumables;
 			break;
 		case 3:
-			produceView.SetUpItemIcons (allTaskItems);
-			currentItems = allTaskItems;
+			itemsOfCurrentType = allTaskItems;
 			break;
 		default:
 			break;
 		}
 
+		if (itemsOfCurrentType == null) {
+			Debug.Log ("未找到制定类型的物品");
+			return;
+		}
+
+		produceView.OnItemTypeButtonClick (itemsOfCurrentType,buttonIndex);	
+
+		OnItemButtonClick (0);
 	}
 
 	public void OnItemButtonClick(int index){
 
-		itemToGenerate = currentItems [index];
+		itemToGenerate = itemsOfCurrentType[index];
 
-		produceView.SetUpItemDetailPlane (itemToGenerate);
+		produceView.OnItemButtonClick (index,itemToGenerate);
 	}
 
-	public void OnGenerateItem(){
+	public void OnGenerateItemButtonClick(){
 
 		string itemNameInEnglish = itemToGenerate.itemNameInEnglish;
 
@@ -96,12 +110,20 @@ public class ProduceViewController : MonoBehaviour {
 			}
 
 		}
+
+		for (int i = 0; i < charactersNeed.Length; i++) {
+			charactersNeed [i] = 0;
+		}
+
 		// 如果玩家字母碎片足够，则进入拼写界面
 		GameObject spellCanvas = null;
+
 		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
-			spellCanvas = ResourceManager.Instance.gos [0];
-			spellCanvas.GetComponent<SpellViewController> ().SetUpSpellView ();
+			spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
+			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(itemNameInEnglish);
+			GetComponent<Canvas>().enabled = false;
 		});
+
 
 //		for (int i = 0; i<charactersNeed.Length; i++) {
 //
@@ -111,12 +133,28 @@ public class ProduceViewController : MonoBehaviour {
 
 	}
 
+	public void OnQuitButtonClick(){
+
+		produceView.QuitProduceView ();
+
+		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+		if (homeCanvas != null) {
+			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+		}
+
+
+	}
+
 
 	private void LoadAllItems(){
 
-		Item[] allItems = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName);
+//		Item[] allItems = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName);
 
-		for (int i = 0; i < allItems.Length; i++) {
+		List<Item> allItems = GameManager.Instance.allItems;
+
+
+		for (int i = 0; i < allItems.Count; i++) {
 
 			Item item = allItems [i];
 
