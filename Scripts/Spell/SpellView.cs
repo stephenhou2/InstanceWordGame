@@ -127,14 +127,7 @@ public class SpellView: MonoBehaviour {
 
 		ItemDetailHUD.SetActive (false);
 
-		while(contentTrans.childCount>0){
-
-			Transform trans = contentTrans.GetChild(0);
-
-			itemPool.AddInstanceToPool (trans.gameObject, "ItemPool");
-
-		}
-
+		itemPool.AddChildInstancesToPool (contentTrans);
 
 	}
 

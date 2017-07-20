@@ -37,9 +37,25 @@ public class InstancePool: MonoBehaviour{
 		return mInstance.GetComponent<T>();
 	}
 
-	public void AddInstanceToPool(GameObject instance,string poolName){
-//		instance.transform.SetParent(TransformManager.FindTransform (CommonData.poolContainerName + "/" + poolName));
-		instance.transform.SetParent(GetComponent<Transform>());
-		mInstancePool.Add (instance);
+	public void AddChildInstancesToPool(Transform originalParent){
+
+		while (originalParent.childCount > 0) {
+			
+			GameObject instance = originalParent.GetChild (0).gameObject;
+
+			instance.transform.SetParent(GetComponent<Transform>());
+
+			mInstancePool.Add (instance);
+		}
+
 	}
+
+	public void AddInstanceToPool(GameObject instance){
+
+		instance.transform.SetParent (GetComponent<Transform>());
+		mInstancePool.Add (instance);
+
+	}
+
+
 }

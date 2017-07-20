@@ -38,8 +38,6 @@ public class Item {
 
 	public Item(Item originalItem){
 
-//		Item item = new Item ();
-
 		itemId = originalItem.itemId;
 		itemName = originalItem.itemName;
 		itemDescription = originalItem.itemDescription;

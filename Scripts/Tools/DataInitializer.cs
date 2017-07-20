@@ -22,6 +22,23 @@ public static class DataInitializer{
 		return dataArray;
 	}
 
+	public static T LoadDataToSingleModelWithPath<T>(string filePath,string fileName){
+
+		string jsonStr = LoadDataString (filePath, fileName);
+
+		T instance = default (T);
+
+		//模型转换
+		try{
+			instance = JsonUtility.FromJson<T> (jsonStr);
+		}catch(System.Exception e){
+			Debug.Log (e.Message);
+		}
+		return instance;
+
+	}
+
+
 	// 加载指定路径的文件数据
 	public static string LoadDataString(string filePath,string fileName){
 		

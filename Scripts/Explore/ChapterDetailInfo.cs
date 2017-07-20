@@ -15,17 +15,34 @@ public class ChapterDetailInfo {
 
 	public MonsterGroup[] monsterGroups;
 
-	public Item[] items;
+	public int[] itemIds;
 
 	public NPC[] npcs;
 
+
+	public Item[] GetItems(){
+
+		Item[] items = new Item[itemIds.Length];
+
+		for (int i = 0; i < itemIds.Length; i++) {
+
+			int orgItemIndex = itemIds [i];
+
+			Item originalItem = GameManager.Instance.allItems [orgItemIndex];
+
+			items [i] = new Item (originalItem);
+
+		}
+
+		return items;
+	}
+
+
+
 	public override string ToString ()
 	{
-		return string.Format ("[chapterIndex:]" + chapterIndex + 
-			"[\nTotalSteps]:" + totalSteps + 
-			"[\nchapterLocation:]" + chapterLocation + 
-			"[\nmonsterGroupsCount:]" + monsterGroups.Length + 
-			"[\nitems:]" + items.Length + 
-			"[\nnpcs:]" + npcs.Length);
+		return string.Format ("[chapterIndex:]" + chapterIndex +
+		"[\nTotalSteps]:" + totalSteps +
+		"[\nchapterLocation:]" + chapterLocation);
 	}
 }

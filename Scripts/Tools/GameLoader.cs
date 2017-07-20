@@ -7,9 +7,9 @@ public class GameLoader : MonoBehaviour {
 
 	void Awake(){
 		
-		ResourceManager.Instance.MaxCachingSpace (200);
 
-		GameManager.Instance.SetUpHomeView (Player.mainPlayer);
+
+//		GameManager.Instance.SetUpHomeView (Player.mainPlayer);
 
 		DontDestroyOnLoad (Player.mainPlayer);
 

@@ -1,43 +1,43 @@
 ManifestFileVersion: 0
-CRC: 1004722388
+CRC: 2088373490
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: player
       Dependencies: {}
     Info_1:
-      Name: explore/dialog_and_item_view
-      Dependencies: {}
-    Info_2:
       Name: explore/icons
       Dependencies: {}
-    Info_3:
+    Info_2:
       Name: skills/skills
       Dependencies: {}
-    Info_4:
+    Info_3:
       Name: skills/canvas
       Dependencies: {}
-    Info_5:
+    Info_4:
       Name: bag/canvas
       Dependencies: {}
-    Info_6:
+    Info_5:
       Name: item/icons
       Dependencies: {}
-    Info_7:
+    Info_6:
       Name: spell/canvas
       Dependencies: {}
-    Info_8:
+    Info_7:
       Name: produce/canvas
       Dependencies: {}
-    Info_9:
+    Info_8:
       Name: home/canvas
       Dependencies: {}
-    Info_10:
+    Info_9:
       Name: explore/explore_list_canvas
       Dependencies: {}
-    Info_11:
+    Info_10:
       Name: battle/canvas
       Dependencies: {}
-    Info_12:
+    Info_11:
       Name: explore/canvas
+      Dependencies: {}
+    Info_12:
+      Name: setting/canvas
       Dependencies: {}

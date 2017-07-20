@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class ExploreManager : MonoBehaviour {
 
-	private ExploreMainViewController expMainViewController;
-
-	private ChapterList[] chapterLists;
+//	private ExploreMainViewController expMainViewController;
+//
+//	private ChapterList[] chapterLists;
 
 //	public void Awake(){
 //		

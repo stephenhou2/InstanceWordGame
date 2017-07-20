@@ -192,5 +192,13 @@ public class ResourceManager:SingletonMono<ResourceManager>
 		gos.Clear ();
 		sprites.Clear ();
 	}
+
+
+
+	public void WriteStringDataToFile(string stringData,string filePath){
+
+		File.WriteAllText (filePath, stringData);
+
+	}
 		
 }

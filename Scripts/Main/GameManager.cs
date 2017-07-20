@@ -7,6 +7,33 @@ using System.Data;
 public class GameManager : SingletonMono<GameManager> {
 
 
+	private GameSettings mGameSettings;
+
+	private AudioSource pronunciationAs;
+
+	private AudioSource effectAs;
+
+	private AudioSource bgmAs;
+
+
+	public GameSettings gameSettings{
+
+		get{
+			
+			if (mGameSettings == null) {
+				mGameSettings = new GameSettings ();
+			}
+			return mGameSettings;
+
+		}
+		set{
+			mGameSettings = value;
+
+//			OnSettingsChanged ();
+
+		}
+	}
+
 	public int unlockedMaxChapterIndex = 1;
 
 	private List<Item> mAllItems = new List<Item> ();
@@ -46,8 +73,50 @@ public class GameManager : SingletonMono<GameManager> {
 
 	}
 
+	void Awake(){
 
-	public void SetUpHomeView(Player player){
+		#warning 加载本地游戏数据,后面需要写一下
+		mGameSettings = DataInitializer.LoadDataToSingleModelWithPath<GameSettings> (Application.persistentDataPath, CommonData.settingsFileName);
+
+		ResourceManager.Instance.MaxCachingSpace (200);
+
+		SetUpHomeView (Player.mainPlayer);
+
+	}
+
+	void Start(){
+		SetUpAudioSources ();
+	}
+
+	private void SetUpAudioSources(){
+
+		pronunciationAs = Instance.gameObject.AddComponent<AudioSource> ();
+		effectAs = Instance.gameObject.AddComponent<AudioSource> ();
+		bgmAs = Instance.gameObject.AddComponent<AudioSource> ();
+
+		pronunciationAs.playOnAwake = false;
+		effectAs.playOnAwake = false;
+
+	}
+
+	// 系统设置更改后更新相关设置
+	private void OnSettingsChanged(){
+
+//		effectAs.volume = gameSettings.systemVolume;
+//		bgmAs.volume = gameSettings.systemVolume;
+//
+//		pronunciationAs.enabled = gameSettings.isPronunciationEnable;
+
+
+		#warning 离线下载和更改词库的代码后续补充
+
+
+
+		SaveGameSettings ();
+
+	}
+
+	private void SetUpHomeView(Player player){
 
 		ResourceManager.Instance.LoadAssetWithFileName ("home/canvas", () => {
 
@@ -92,7 +161,27 @@ public class GameManager : SingletonMono<GameManager> {
 
 		}
 
+		for (int i = 0; i < mAllItems.Count; i++) {
+			
+			Item item = mAllItems [i];
+
+			if (item.itemId != i) {
+				throw new System.Exception ("物品id不对" + item.itemName);
+			}
+
+		}
+
 		sql.CloseConnection (CommonData.dataBaseName);
+
+	}
+
+	public void SaveGameSettings(){
+
+		string settingsString = JsonUtility.ToJson (gameSettings);
+
+		ResourceManager.Instance.WriteStringDataToFile (settingsString, Application.persistentDataPath + "/" + CommonData.settingsFileName);
+
+		Debug.Log (Application.persistentDataPath + "/" + CommonData.settingsFileName);
 
 	}
 

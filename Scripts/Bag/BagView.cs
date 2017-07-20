@@ -393,10 +393,8 @@ public class BagView : MonoBehaviour {
 		resolveButton.gameObject.SetActive (false);
 
 
-		while (itemPropertiesPlane.transform.childCount > 0) {
-			Transform trans = itemPropertiesPlane.transform.GetChild (0);
-			propertyTextPool.AddInstanceToPool (trans.gameObject,"PropertyTextPool");
-		}
+		propertyTextPool.AddChildInstancesToPool (itemPropertiesPlane);
+
 	}
 
 	// 关闭更换物品的界面
@@ -406,10 +404,8 @@ public class BagView : MonoBehaviour {
 
 		specificTypeItemPlane.SetActive (false);
 
-		while (specificTypeItemsGridPlane.transform.childCount > 0) {
-			Transform trans = specificTypeItemsGridPlane.transform.GetChild (0);
-			itemButtonPool.AddInstanceToPool (trans.gameObject, "ItemButtonPool");
-		}
+		itemButtonPool.AddChildInstancesToPool (specificTypeItemsGridPlane.transform);
+
 	}
 
 	// 关闭背包界面

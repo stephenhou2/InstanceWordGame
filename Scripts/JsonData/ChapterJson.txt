@@ -5,14 +5,7 @@
 			"totalSteps": 50,
 			"stepsLeft":50,
 			"chapterLocation": "黑暗之森",
-			"items": [
-				{
-					"itemName": "123",
-					"itemDescription": "1234567",
-					"spriteName": "people1"
-
-				}
-			],
+			"itemIds": [0,5],
 			"npcs": [
 				{
 					"npcName": "老头",
@@ -20,17 +13,26 @@
 					"spriteName": "people1",
 					"dialogs":[
 					{"dialog":"不要有bug",
-					"choiceIds":[0,1]
-					}],
+					"choiceIds":[0]
+					},
+					{"dialog":"测试123",
+					"choiceIds":[1,2]
+					}
+					],
 					"choices":[
 					{
 					"choice":"好的",
-					"dialogId":0
+					"dialogId":1
+					},
+					{
+					"choice":"好的",
+					"dialogId":-1
 					},
 					{
 					"choice":"不好",
 					"dialogId":0
-					}]
+					}
+					]
 				}
 			],
 			"monsterGroups": [{

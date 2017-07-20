@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 31f1f1e81ead24ab788ceed502e8d1ed
-timeCreated: 1498570858
+guid: f0e86da8014a34f26b23fe87a5b18174
+timeCreated: 1500544384
 licenseType: Free
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: explore/dialog_and_item_view
+  assetBundleName: setting/canvas
   assetBundleVariant: 

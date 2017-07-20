@@ -16,20 +16,7 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 
-	public GameObject dialogAndItemPlane{
-		get{
-			if (mDialogAndItemPlane == null) {
-				ResourceManager.Instance.LoadAssetWithFileName ("explore/dialog_and_item_view", ()=>{
-					mDialogAndItemPlane = ResourceManager.Instance.gos.Find(delegate(GameObject go) {
-						return go.name == "DialogAndItemPlane";
-					});
-				}, true);
-				mDialogAndItemPlane.transform.SetParent (GetComponent<Transform> (),false);
-			}
-			return mDialogAndItemPlane;
-		}
-
-	}
+	public GameObject dialogAndItemPlane;
 
 
 	public void SetUpExploreMainView(ChapterDetailInfo chapterDetail){
@@ -71,13 +58,11 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 	// 初始化与npc交谈界面
-	public void OnEnterNPC(NPC npc,GameObject chapterEventView){
+	public void OnEnterNPC(NPC npc,GameObject chapterEventView,Sprite npcSprite){
 		
 		currentSelectedEventView = chapterEventView;
 
-		dialogAndItemPlane.gameObject.SetActive (true);
-
-		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpDialogPlane(npc);
+		dialogAndItemPlane.GetComponent<DialogAndItemViewController> ().SetUpDialogAndItemView (npc,npcSprite,null,null);
 
 		Debug.Log (npc);
 	}
@@ -87,9 +72,7 @@ public class ExploreMainViewController:MonoBehaviour {
 		
 		currentSelectedEventView = chapterEventView;
 
-		dialogAndItemPlane.gameObject.SetActive (true);
-
-		dialogAndItemPlane.GetComponent<DialogAndItemView> ().SetUpItemPlane(item,itemSprite);
+		dialogAndItemPlane.GetComponent<DialogAndItemViewController> ().SetUpDialogAndItemView (null, null, item, itemSprite);
 
 		Debug.Log (item);
 	}
@@ -144,7 +127,5 @@ public class ExploreMainViewController:MonoBehaviour {
 		Destroy(GameObject.Find (CommonData.exploreMainCanvas).gameObject);
 
 	}
-
-
-
+		
 }

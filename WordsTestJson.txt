@@ -1,7 +1,0 @@
-﻿{"Items":[
-	{
-		"word":"apple",
-		"description":"苹果"
-	}
-	]
-}

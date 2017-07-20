@@ -50,9 +50,12 @@ public class ExploreMainView: MonoBehaviour {
 
 	// 初始化事件面板
 	public void InitChapterEventsPlane(){
+		
 		foreach (Sprite s in ResourceManager.Instance.sprites) {
 			sprites.Add (s);
 		}
+
+
 		for (int i = 0; i < maxEventCountForOnce; i++) {
 			AddNewChapterEvent (i);
 		}
@@ -129,7 +132,6 @@ public class ExploreMainView: MonoBehaviour {
 	// 初始化单个事件控件
 	private void AddNewChapterEvent(int eventIndex){
 
-//		bool newChapterEventView;
 
 		GameObject mChapterEventView = GetChapterEventView ();
 
@@ -143,12 +145,6 @@ public class ExploreMainView: MonoBehaviour {
 
 		ExploreMainViewController exploreMainViewController = GetComponent<ExploreMainViewController> ();
 
-
-//		Image eventIcon = mChapterEventView.transform.Find ("ChapterEventView/EventIcon").GetComponent<Image>();
-//		Text eventTitle = mChapterEventView.transform.Find ("ChapterEventView/EventTitle").GetComponent<Text>();
-//		Text eventDescription = mChapterEventView.transform.Find ("ChapterEventView/EventDescription").GetComponent<Text>();
-//		Image eventConfirmIcon = mChapterEventView.transform.Find("ChapterEventView/EventSelectButton/EventConfirmIcon").GetComponent<Image>();
-//		Button eventSelectButton = mChapterEventView.transform.Find ("ChapterEventView/EventSelectButton").GetComponent<Button> ();
 
 		switch (RandomEvent ()) {
 		case EventType.Monster:
@@ -179,11 +175,14 @@ public class ExploreMainView: MonoBehaviour {
 			});
 			mChapterEventViewScript.eventSelectButton.onClick.RemoveAllListeners ();
 			mChapterEventViewScript.eventSelectButton.onClick.AddListener (delegate{
-				exploreMainViewController.OnEnterNPC(npc,mChapterEventView);
+				exploreMainViewController.OnEnterNPC(npc,mChapterEventView,npcSprite);
 			});
 			break;
 		case EventType.Item:
-			Item item = RandomReturn<Item> (detailInfo.items);
+
+
+
+			Item item = RandomReturn<Item> (detailInfo.GetItems());
 			mChapterEventViewScript.eventTitle.text = "木箱";
 			mChapterEventViewScript.eventDescription.text = "一个被人遗弃的箱子";
 			mChapterEventViewScript.eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
@@ -192,7 +191,7 @@ public class ExploreMainView: MonoBehaviour {
 			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == "watchIcon";
 			});
-			Sprite itemSprite = sprites.Find (delegate(Sprite obj) {
+			Sprite itemSprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
 			});
 			mChapterEventViewScript.eventSelectButton.onClick.RemoveAllListeners ();
@@ -242,6 +241,7 @@ public class ExploreMainView: MonoBehaviour {
 				return EventType.Item;
 			}
 		}
+
 		// 随机返回当前事件中的npc／怪物组／物品
 		private T RandomReturn<T>(T[] array){
 			int randomIndex = (int)(Random.Range (0, array.Length - float.Epsilon));

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class DialogAndItemView : MonoBehaviour {
 
 	public Transform dialogPlane;
-	public Transform choicePlane;
-
 	public Transform itemPlane;
+
+	public Transform choicePlane;
 
 	public Text dialogText;
 
@@ -16,68 +16,55 @@ public class DialogAndItemView : MonoBehaviour {
 
 	public Text itemDescription;
 
-	public GameObject choiceButton;
+	public GameObject choiceButtonModel;
 
-	private GameObject GetChoiceButton(){
-
-		GameObject btn = null;
-		if (buttonPool.Count != 0) {
-			btn = buttonPool [0];
-			buttonPool.RemoveAt (0);
-			return btn;
-		} 
-		btn = Instantiate (choiceButton);
-		btn.GetComponent<Button> ().onClick.AddListener (delegate {
-			foreach (Transform trans in choicePlane.transform) {
-				buttonPool.Add (trans.gameObject);
-			}
+	private InstancePool choiceButtonPool;
 
 
-			while(choicePlane.transform.childCount > 0){
-				Transform trans = choicePlane.transform.GetChild(0);
-				trans.SetParent(TransformManager.FindTransform(CommonData.poolContainerName));
+	public void SetUpDialogPlane(NPC npc,Sprite npcSprite,int dialogId){
 
-			}
-
-			dialogPlane.gameObject.SetActive(false);
-			gameObject.SetActive (false);
-			GameObject.Find("ExploreMainCanvas").GetComponent<ExploreMainViewController> ().OnNextEvent ();
-		});
-
-		return btn;
-
-	}
-
-
-	private List<GameObject> buttonPool = new List<GameObject> ();
-
-
-
-	public void SetUpDialogPlane(NPC npc){
+		gameObject.SetActive (true);
 
 		dialogPlane.gameObject.SetActive (true);
 
-		Dialog firstDialog = npc.dialogs [0];
-		 
-		dialogText.text = firstDialog.dialog;
+		choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
 
-		int[] choicesIds = firstDialog.choiceIds; 
+		Dialog dialog = npc.dialogs [dialogId];
+		 
+		dialogText.text = dialog.dialog;
+
+		int[] choicesIds = dialog.choiceIds; 
 
 		for (int i = 0; i < choicesIds.Length; i++) {
+
+			int choiceId = choicesIds [i];
 	
-			Choice choice = npc.choices [i];
-			GameObject btn = GetChoiceButton();
-			btn.transform.SetParent (choicePlane);
-			Text choiceText = btn.transform.FindChild ("Text").GetComponent<Text> ();
+			Choice choice = npc.choices [choiceId];
+
+			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
+
+			Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
+
+			choiceButton.onClick.RemoveAllListeners ();
+
+			choiceButton.onClick.AddListener (delegate {
+				GetComponent<DialogAndItemViewController>().OnChoiceButtonOfDialogPlaneClick(choice);
+			});
+
 			choiceText.text = choice.choice;
 		}
 
 
 	}
 
+
 	public void SetUpItemPlane(Item item,Sprite itemSprite){
-		
+
+		gameObject.SetActive (true);
+
 		itemPlane.gameObject.SetActive (true);
+
+		choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
 
 		itemIcon.sprite = itemSprite;
 
@@ -85,25 +72,40 @@ public class DialogAndItemView : MonoBehaviour {
 
 
 		#warning 选择按钮代码后面再写
-//		for (int i = 0; i < 2; i++) {
-//			
-//			GameObject btn = GetChoiceButton();
-//
-//			Text choiceText = btn.transform.FindChild ("Text").GetComponent<Text> ();
-//
-//
-//			btn.GetComponent<Button> ().onClick.AddListener (delegate {
-//				foreach (Transform trans in choicePlane.transform) {
-//					buttonPool.Add (trans.gameObject);
-//				}
-//				choicePlane.DetachChildren();
-//				dialogPlane.gameObject.SetActive(false);
-//				gameObject.SetActive (false);
-//				GameObject.Find("ExploreCanvas").GetComponent<ExploreMainViewController> ().OnResetExploreChapterView ();
-//			});
-//
-//		}
+		for (int i = 0; i < 2; i++) {
+			
+			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
+
+			Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
+
+			choiceButton.onClick.RemoveAllListeners ();
+
+			choiceButton.onClick.AddListener (delegate {
+				GetComponent<DialogAndItemViewController>().OnChoiceButtonOfItemPlaneClick(null);
+			});
+
+			choiceText.text = "hello";
+
+		}
 
 	}
+
+
+	public void OnChoiceButtonClick(){
+
+		choiceButtonPool.AddChildInstancesToPool(choicePlane);
+
+	}
+
+
+	public void OnQuitDialogAndItemPlane(){
+
+		gameObject.SetActive (false);
+		dialogPlane.gameObject.SetActive (false);
+		itemPlane.gameObject.SetActive (false);
+
+
+	}
+
 
 }
