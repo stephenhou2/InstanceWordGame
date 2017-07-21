@@ -135,7 +135,7 @@ public class ProduceViewController : MonoBehaviour {
 
 	public void OnQuitButtonClick(){
 
-		produceView.QuitProduceView ();
+		produceView.QuitProduceView (DestroyInstances);
 
 		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
 
@@ -143,6 +143,13 @@ public class ProduceViewController : MonoBehaviour {
 			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
 		}
 
+
+	}
+
+
+	private void DestroyInstances(){
+
+		TransformManager.DestroyTransform (gameObject.transform);
 
 	}
 

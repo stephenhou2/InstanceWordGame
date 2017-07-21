@@ -9,13 +9,6 @@ public class GameManager : SingletonMono<GameManager> {
 
 	private GameSettings mGameSettings;
 
-	private AudioSource pronunciationAs;
-
-	private AudioSource effectAs;
-
-	private AudioSource bgmAs;
-
-
 	public GameSettings gameSettings{
 
 		get{
@@ -29,10 +22,31 @@ public class GameManager : SingletonMono<GameManager> {
 		set{
 			mGameSettings = value;
 
-//			OnSettingsChanged ();
+			OnSettingsChanged ();
 
 		}
 	}
+
+	private LearningInfo mLearnInfo;
+
+	public LearningInfo learnInfo{
+		get{
+			if (mLearnInfo == null) {
+				mLearnInfo = LearningInfo.Instance;
+			}
+			mLearnInfo.SetUpWords ();
+			return mLearnInfo;
+		}
+		set{
+			mLearnInfo = value;
+		}
+	}
+
+	private AudioSource pronunciationAs;
+
+	private AudioSource effectAs;
+
+	private AudioSource bgmAs;
 
 	public int unlockedMaxChapterIndex = 1;
 
@@ -78,6 +92,8 @@ public class GameManager : SingletonMono<GameManager> {
 		#warning 加载本地游戏数据,后面需要写一下
 		mGameSettings = DataInitializer.LoadDataToSingleModelWithPath<GameSettings> (Application.persistentDataPath, CommonData.settingsFileName);
 
+		mLearnInfo = DataInitializer.LoadDataToSingleModelWithPath<LearningInfo> (Application.persistentDataPath, CommonData.learningInfoFileName);
+
 		ResourceManager.Instance.MaxCachingSpace (200);
 
 		SetUpHomeView (Player.mainPlayer);
@@ -102,19 +118,20 @@ public class GameManager : SingletonMono<GameManager> {
 	// 系统设置更改后更新相关设置
 	private void OnSettingsChanged(){
 
-//		effectAs.volume = gameSettings.systemVolume;
-//		bgmAs.volume = gameSettings.systemVolume;
-//
-//		pronunciationAs.enabled = gameSettings.isPronunciationEnable;
+		effectAs.volume = gameSettings.systemVolume;
+		bgmAs.volume = gameSettings.systemVolume;
+
+		pronunciationAs.enabled = gameSettings.isPronunciationEnable;
 
 
 		#warning 离线下载和更改词库的代码后续补充
 
-
-
 		SaveGameSettings ();
 
 	}
+
+
+
 
 	private void SetUpHomeView(Player player){
 
@@ -182,6 +199,16 @@ public class GameManager : SingletonMono<GameManager> {
 		ResourceManager.Instance.WriteStringDataToFile (settingsString, Application.persistentDataPath + "/" + CommonData.settingsFileName);
 
 		Debug.Log (Application.persistentDataPath + "/" + CommonData.settingsFileName);
+
+	}
+
+	public void SaveLearnInfo(){
+
+		string learnInfoStr = JsonUtility.ToJson (learnInfo);
+
+		ResourceManager.Instance.WriteStringDataToFile (learnInfoStr, Application.persistentDataPath + "/" + CommonData.learningInfoFileName);
+
+		Debug.Log (Application.persistentDataPath + "/" + CommonData.learningInfoFileName);
 
 	}
 

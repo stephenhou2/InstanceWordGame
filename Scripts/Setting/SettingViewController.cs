@@ -97,7 +97,7 @@ public class SettingViewController : MonoBehaviour {
 
 	private void DestroyInstances(){
 
-		Destroy (gameObject);
+		TransformManager.DestroyTransform (gameObject.transform);
 
 	}
 

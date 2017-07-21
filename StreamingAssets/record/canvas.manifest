@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1176807185
+CRC: 2361082089
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 04b1409d5a50abe269d362005b20a107
+    Hash: 2ee8ffda40062a3893c3ce0ef5032b2c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a741683013744b1423bd9ca1fb16a308
+    Hash: ae4a4c7d00bd13f9adcfee75606fdc19
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -18,23 +18,27 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 11500000, guid: 04661f507a670446aab9f49775fc2862, type: 3}
+- Class: 114
   Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: -2095666955, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 5a90bbcae1e4b411a87b3d7d523bc79b, type: 3}
+  Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 01c70eccef70544598bbb74850bfa3d7, type: 3}
+  Script: {fileID: 11500000, guid: 199e7147f4f82459a9c2aaa576f260d7, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -48,5 +52,6 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Produce/ProduceCanvas.prefab
+- Assets/Prefabs/Record/RecordCanvas.prefab
+- Assets/Prefabs/Record/WordItem.prefab
 Dependencies: []

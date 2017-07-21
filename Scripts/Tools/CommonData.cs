@@ -45,9 +45,9 @@ public struct CommonData{
 
 	public static string dataBaseName = "MyGameDB.db";
 	public static string itemsTable = "ItemsTable";
-//	public static string 
 
 	public static string settingsFileName = "Settings.txt";
+	public static string learningInfoFileName = "LearningInfo.txt";
 
 	public static int aInASCII = (int)('a');
 
@@ -73,7 +73,7 @@ public enum ItemType{
 	Shoes,
 	Consumables,
 	Task,
-	None
+	FuseStone
 }
 
 public enum PropertyType{

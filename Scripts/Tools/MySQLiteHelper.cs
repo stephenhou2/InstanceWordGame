@@ -394,7 +394,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 			return false;
 		}
 
-		string queryString = "DROP TABLE" + tableName;
+		string queryString = "DROP TABLE " + tableName;
 
 		ExecuteQuery (queryString);
 
@@ -593,7 +593,6 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 
 		for (int i = 0; i < fieldNameStrs.Length; i++) {
-			Debug.Log (fieldNameStrs [i]);
 			if (!fieldNamesInTable [i].Equals(fieldNameStrs [i])) {
 				throw new SqliteException ("字段名称不一致" + "/" + fieldNamesInTable[i] + "/" + fieldNameStrs [i] + "/");
 			}

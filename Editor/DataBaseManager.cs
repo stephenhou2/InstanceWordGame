@@ -10,6 +10,7 @@ public class DataBaseManager {
 
 
 	private static string[] fieldNames;
+
 	private static List<string[]> itemsProperties = new List<string[]> ();
 
 	[MenuItem("Assets/BuildItemsDataBase")]
@@ -21,31 +22,61 @@ public class DataBaseManager {
 
 		sql.GetConnectionWith (CommonData.dataBaseName);
 
-		sql.CreatTable (CommonData.itemsTable,
-			new string[] {"itemId","itemName","itemDescription","spriteName","itemType","itemNameInEnglish",
-				"attackGain","powerGain","magicGain","critGain","amourGain","magicResistGain",
-				"agilityGain","healthGain","strengthGain"},
-			new string[] {"PRIMARY Key","UNIQUE","NOT NULL","NOT NULL","","UNIQUE","","","","","","","","",""},
-			new string[] {"INTEGER","TEXT","TEXT","TEXT","INTEGER","TEXT","INTEGER","INTEGER","INTEGER",
-				"INTEGER","INTEGER","INTEGER","INTEGER","INTEGER","INTEGER" });
+//		sql.CreatTable (CommonData.itemsTable,
+//			new string[] {"itemId","itemName","itemDescription","spriteName","itemType","itemNameInEnglish",
+//				"attackGain","powerGain","magicGain","critGain","amourGain","magicResistGain",
+//				"agilityGain","healthGain","strengthGain"},
+//			new string[] {"PRIMARY Key","UNIQUE NOT NULL","NOT NULL","NOT NULL","","UNIQUE","","","","","","","","",""},
+//			new string[] {"INTEGER","TEXT","TEXT","TEXT","INTEGER","TEXT","INTEGER","INTEGER","INTEGER",
+//				"INTEGER","INTEGER","INTEGER","INTEGER","INTEGER","INTEGER" });
+//
+//		int[] stringTypeCols = new int[]{ 1, 2, 3, 5 };
+//
+//		itemsProperties.Clear ();
+//
+//		LoadItemsData ("itemsData.csv");
+//
+//		sql.CheckFiledNames (CommonData.itemsTable,fieldNames);
+//
+//		sql.DeleteAllDataFromTable (CommonData.itemsTable);
+//
+//		for(int i = 0;i<itemsProperties.Count;i++){
+//			string[] values = itemsProperties [i];
+//
+//			foreach (int j in stringTypeCols) {
+//				values [j] = "'" + values[j] + "'";
+//
+//			}
+//
+//			sql.InsertValues (CommonData.itemsTable, values);
+//		}
+//
 
-		int[] stringTypeCols = new int[]{ 1, 2, 3, 5 };
+		sql.DeleteTable ("CET4");
 
-		LoadItemsData ();
+		sql.CreatTable ("CET4",
+			new string[]{ "wordId", "spell", "explaination", "example","learned" },
+			new string[]{ "PRIMARY Key", "UNIQUE NOT NULL", "NOT NULL", "","" },
+			new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT","INTEGER" });
 
-		sql.CheckFiledNames (CommonData.itemsTable,fieldNames);
+		int[] stringTypeCols = new int[]{ 1, 2, 3 };
 
-		sql.DeleteAllDataFromTable (CommonData.itemsTable);
+		itemsProperties.Clear ();
+
+		LoadItemsData ("wordTest.csv");
+
+		sql.CheckFiledNames ("CET4", fieldNames);
 
 		for(int i = 0;i<itemsProperties.Count;i++){
+
 			string[] values = itemsProperties [i];
 
 			foreach (int j in stringTypeCols) {
 				values [j] = "'" + values[j] + "'";
 
 			}
-
-			sql.InsertValues (CommonData.itemsTable, values);
+				 
+			sql.InsertValues ("CET4", values);
 		}
 
 		sql.CloseConnection (CommonData.dataBaseName);
@@ -53,9 +84,9 @@ public class DataBaseManager {
 
 	}
 
-	private static void LoadItemsData(){
+	private static void LoadItemsData(string dataFileName){
 
-		string itemsString = DataInitializer.LoadDataString (CommonData.jsonFileDirectoryPath, "itemsData.csv");
+		string itemsString = DataInitializer.LoadDataString (CommonData.jsonFileDirectoryPath, dataFileName);
 
 		string[] stringsByLine = itemsString.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

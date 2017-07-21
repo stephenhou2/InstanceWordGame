@@ -134,11 +134,11 @@ public class ProduceView : MonoBehaviour {
 	}
 
 
-	public void QuitProduceView(){
+	public void QuitProduceView(CallBack cb){
 
 		producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 			
-			Destroy(gameObject);
+			cb();
 
 		});
 

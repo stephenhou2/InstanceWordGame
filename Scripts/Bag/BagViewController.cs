@@ -55,7 +55,7 @@ public class BagViewController : MonoBehaviour {
 
 		allItemsOfCurrentSelcetType.Clear ();
 
-		ItemType type = ItemType.None;
+		ItemType type = ItemType.Task;
 
 		currentSelectEquipIndex = index;
 
@@ -77,8 +77,6 @@ public class BagViewController : MonoBehaviour {
 			break;
 		case 5:
 			type = ItemType.Consumables;
-			break;
-		default:
 			break;
 		}
 			
