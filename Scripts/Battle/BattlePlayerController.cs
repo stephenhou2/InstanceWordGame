@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 
 public class BattlePlayerController : MonoBehaviour {
 
 	[HideInInspector]public Player player;
 
 	private BattlePlayerView mBaPlayerView;
+
+
 
 	private List<Sprite> skillIcons = new List<Sprite>();
 
@@ -40,16 +44,25 @@ public class BattlePlayerController : MonoBehaviour {
 		}
 
 		ResourceManager.Instance.LoadSpritesAssetWithFileName("skills/skills", () => {
-			skillIcons = ResourceManager.Instance.sprites;
+
+			foreach(Sprite s in ResourceManager.Instance.sprites){
+				skillIcons.Add(s);
+			}
 			baView.SetUpUI (player,skillIcons,allItemSprites);
-//			baView.update
 		},true);
 
 	}
 
+	public void OnPlayerSelectSkill(int skillIndex){
+
+
+		baView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
+			player.currentSkill == player.defenceSkill,
+			skillIndex);
+
+	}
 
 	public void OnPlayerUseItem(int itemIndex){
-
 
 
 		Item item = player.allEquipedItems[itemIndex + 3];
@@ -60,7 +73,7 @@ public class BattlePlayerController : MonoBehaviour {
 		if (item.itemCount <= 0) {
 			player.allEquipedItems [itemIndex + 3] = new Item ();
 			player.allItems.Remove (item);
-			baView.UpdateItemButtonsStatus (player);
+			baView.SetUpItemButtonsStatus (player);
 		}
 
 
@@ -89,8 +102,76 @@ public class BattlePlayerController : MonoBehaviour {
 			baView.PlayHurtHUDAnim(hurtText);
 		}
 
-		baView.UpdateItemButtonsStatus (player);
+		baView.SetUpItemButtonsStatus (player);
 
 	}
+
+	public void OnSkillLongPress(int index){
+		Skill s = player.skillsEquiped [index];
+		baView.ShowSkillDetail (index, s);
+	}
+
+	public void OnSkillButtonUp(){
+
+		baView.QuitDetailPlane ();
+	}
+
+	public void OnItemLongPress(int index){
+		Item i = player.allEquipedItems [3 + index];
+		baView.ShowItemDetail (index, i);
+	}
+
+	public void OnItemButtonUp(){
+
+		baView.QuitDetailPlane ();
+	}
+
+	public Skill DefaultSelectedSkill(){
+
+		// 如果气力大于普通攻击所需的气力值，则默认选中普通攻击
+		if (player.strength >= player.attackSkill.strengthConsume && player.validActionType != ValidActionType.PhysicalExcption) {
+			player.currentSkill = player.attackSkill;
+			baView.SelectedSkillAnim (true, false, -1);
+			return player.attackSkill;
+
+		}
+
+		// 如果玩家没有被沉默，默认选中可以第一个可以使用的技能
+		if (player.validActionType != ValidActionType.MagicException) {
+			foreach (Skill s in player.skillsEquiped) {
+				if (s.isAvalible && player.strength >= s.strengthConsume) {
+					player.currentSkill = s;
+					baView.SelectedSkillAnim (false, false, s.skillId);
+					return s;
+				}
+			}
+		}
+
+
+		// 如果其他技能都无法使用，则默认选中防御
+		player.currentSkill = player.defenceSkill;
+		baView.SelectedSkillAnim(false,true,-1);
+		return player.defenceSkill;
+
+	}
+
+
+
+
+
+
+//	private void ShowSkillDetail(int index){
+//
+//
+//
+//	}
+
+//	private IEnumerator ShowItemDetails(){
+//
+//	}
+//	public void OnItemButtonPressed(int index){
+//
+//
+//	}
 
 }

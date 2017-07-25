@@ -5,7 +5,6 @@ using UnityEngine;
 
 public delegate void CallBack ();
 
-
 //public interface GameFlow{
 //
 //
@@ -21,6 +20,7 @@ public delegate void CallBack ();
 
 
 public struct CommonData{
+
 	
 	public static string jsonFileDirectoryPath = "Assets/Scripts/JsonData";
 //	public static string effectsFileName = "SkillEffectData.txt";
@@ -109,7 +109,8 @@ public enum SkillEffectTarget{
 	SpecificEnemy,
 	AllFriends,
 	AllEnemies,
-	BothSides
+	BothSides,
+	None
 }
 
 public enum EffectType{
@@ -154,13 +155,18 @@ public enum ChoiceTriggerType{
 
 
 public enum WordType{
-	CET6,
 	CET4,
+	CET6,
 	Daily,
 	Bussiness
 }
 
-
+public enum PressType
+{
+	Click,
+	LongPress,
+	Cancel
+}
 
 
 

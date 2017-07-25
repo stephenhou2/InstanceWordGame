@@ -21,9 +21,6 @@ public class GameManager : SingletonMono<GameManager> {
 		}
 		set{
 			mGameSettings = value;
-
-			OnSettingsChanged ();
-
 		}
 	}
 
@@ -87,6 +84,28 @@ public class GameManager : SingletonMono<GameManager> {
 
 	}
 
+	private List<Sprite> mAllEffectsSprites = new List<Sprite>();
+	public List<Sprite> allEffectsSprites{
+
+		get{
+			if (mAllEffectsSprites.Count == 0) {
+				ResourceManager.Instance.LoadAssetWithFileName ("battle/effect_icons", () => {
+					// 获取所有游戏物品的图片
+					for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
+						mAllEffectsSprites.Add(ResourceManager.Instance.sprites[i]);
+					}
+				},true);
+			}
+
+			return mAllEffectsSprites;
+		}
+
+		set{
+			mAllEffectsSprites = value;
+		}
+
+	}
+
 	void Awake(){
 
 		#warning 加载本地游戏数据,后面需要写一下
@@ -116,7 +135,7 @@ public class GameManager : SingletonMono<GameManager> {
 	}
 
 	// 系统设置更改后更新相关设置
-	private void OnSettingsChanged(){
+	public void OnSettingsChanged(){
 
 		effectAs.volume = gameSettings.systemVolume;
 		bgmAs.volume = gameSettings.systemVolume;

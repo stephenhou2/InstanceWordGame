@@ -1,34 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using DG.Tweening;
 
 
 public class BattleViewController : MonoBehaviour {
 
-//	private Player player;
-//
-//	public Monster monsterModel;
-//
-//	private Monster monster;
-
-	// ********for test use**********//
+	// 玩家控制器
 	public BattlePlayerController bpController;
 
+	// 玩家角色信息
 	private Player player;
 
+	// 玩家英雄角色数组
 	private List<BattleAgent> players = new List<BattleAgent>();
 
+	// 怪物数组
 	public List<BattleAgent> monsters = new List<BattleAgent>();
 
+	// 怪物缓存池
 	private List<GameObject> monsterViewPool = new List<GameObject> ();
 
-//	public List<BattleAgent> monstersModel;
-
-	// ********for test use**********//
-
+	// 判断当前动画是否播放完毕
 	private bool allAnimationEnd{
 		get{
 
@@ -45,37 +38,41 @@ public class BattleViewController : MonoBehaviour {
 
 	}// 玩家和怪物的动画是否结束
 
-	private bool battleEnd;// 战斗是否结束
+	// 战斗是否结束
+	private bool battleEnd;
 
-
+	// 游戏进度
 	public int gameProcess;
 
-	public Text description;
+	// 技能和物品按钮的点击类型（点击／长按／取消）
+	private PressType mPressType;
 
+	// 当前点击的按钮类型（true－技能按钮，false－物品按钮）
+	private bool isSkillButton;
+
+	// 当前点击的按钮transform组件
+	private Transform currentClickButtonTrans;
+
+	// 底部界面控制遮罩
 	public Transform playerControlPlane;
 
+	// 上部界面控制遮罩
 	public Transform monsterControlPlane;
 
 	public Transform upperPlane;
 
-	/************ for test *************/
-	public GameObject battleEndHUD;
 
-	public Text battleEndResult;
-
-	public Button quit;
-
-	public Button reset;
-
+	// 初始化战斗界面
 	public void SetUpBattleView(MonsterGroup monsterGroup){
 		SetUpPlayer ();
 		SetUpMonsters (monsterGroup);
-		OnResetGame ();
+		OnResetBattle ();
 	}
 
 
-	// 进入战斗场景时初始化玩家数据
+	// 进入战斗场景时初始化玩家数据，初始化底部界面
 	private void SetUpPlayer(){
+		players.Clear ();
 		player = bpController.GetComponent<Player> ();
 		player.CopyAgentStatus (Player.mainPlayer);
 		bpController.player = player;
@@ -83,6 +80,8 @@ public class BattleViewController : MonoBehaviour {
 		bpController.SetUpBattlePlayerView ();
 	}
 
+	#warning modify later
+	// 从缓存池中获取怪物view
 	private GameObject GetMonsterView(){
 		GameObject monsterView = null;
 		if (monsterViewPool.Count != 0) {
@@ -90,17 +89,19 @@ public class BattleViewController : MonoBehaviour {
 			monsterView.SetActive (true);
 			monsterViewPool.RemoveAt (0);
 		} else {
-			ResourceManager.Instance.LoadAssetWithFileName ("battle/monster_view", ()=>{
+			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas", ()=>{
 				monsterView = ResourceManager.Instance.gos [0];
-			}, true);
+			}, true,"MonsterView");
 		}
 
 		return monsterView;
 	}
 
 
-	// 进入战斗场景时初始化怪物数据
+	// 进入战斗场景时初始化怪物数据，初始化怪物界面
 	private void SetUpMonsters(MonsterGroup monsterGroup){
+
+		monsters.Clear ();
 
 		float screenWidth = Screen.width;
 		int monsterNum = monsterGroup.monsters.Length;
@@ -137,18 +138,12 @@ public class BattleViewController : MonoBehaviour {
 
 
 		
-	// 玩家选择技能后的响应方法
+	// 玩家选择指定技能后的响应方法
+	/// <param name="playerSkill">Player skill.</param>
+	/// <param name="buttonIndex">Button index.</param>
 	public void OnPlayerSelectSkill(Skill playerSkill,int buttonIndex){
 
 		monsterControlPlane.gameObject.SetActive (true);
-
-		player.currentSkill = playerSkill;
-
-		bpController.baView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
-			player.currentSkill == player.defenceSkill,
-			buttonIndex);
-
-
 
 		Debug.Log("player 选择了" + playerSkill.skillName);
 
@@ -181,7 +176,7 @@ public class BattleViewController : MonoBehaviour {
 	public void OnPlayerSelectMonster(int monsterId){
 
 		if (player.currentSkill == null) {
-			player.currentSkill = DefaultSelectedSkill ();
+			player.currentSkill = bpController.DefaultSelectedSkill ();
 		}
 
 		if (!player.currentSkill.needSelectEnemy) {
@@ -217,7 +212,9 @@ public class BattleViewController : MonoBehaviour {
 		}
 	}
 
-
+	/// <summary>
+	/// 怪物行动轮
+	/// </summary>
 	private IEnumerator OnMonsterAction(){
 
 		monsterControlPlane.gameObject.SetActive(true);
@@ -280,6 +277,9 @@ public class BattleViewController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// 进入下一回合
+	/// </summary>
 	public IEnumerator OnEnterNextTurn(){
 
 		yield return new WaitUntil (() => allAnimationEnd);
@@ -306,48 +306,23 @@ public class BattleViewController : MonoBehaviour {
 			monsterControlPlane.gameObject.SetActive(false);
 			playerControlPlane.gameObject.SetActive (false);
 		}
-		DefaultSelectedSkill ();
+		bpController.DefaultSelectedSkill ();
 	}
 
 		
 
-	private Skill DefaultSelectedSkill(){
-
-		// 如果气力大于普通攻击所需的气力值，则默认选中普通攻击
-		if (player.strength >= player.attackSkill.strengthConsume && player.validActionType != ValidActionType.PhysicalExcption) {
-			player.currentSkill = player.attackSkill;
-			bpController.baView.SelectedSkillAnim (true, false, -1);
-			return player.attackSkill;
-
-		}
-
-		// 如果玩家没有被沉默，默认选中可以第一个可以使用的技能
-		if (player.validActionType != ValidActionType.MagicException) {
-			foreach (Skill s in player.skillsEquiped) {
-				if (s.isAvalible && player.strength >= s.strengthConsume) {
-					player.currentSkill = s;
-					bpController.baView.SelectedSkillAnim (false, false, s.skillId);
-					return s;
-				}
-			}
-		}
-
-
-		// 如果其他技能都无法使用，则默认选中防御
-		player.currentSkill = player.defenceSkill;
-		bpController.baView.SelectedSkillAnim(false,true,-1);
-		return player.defenceSkill;
-
-	}
-
-
-
-
+	/// <summary>
+	/// 根据角色身上的现有状态更新角色属性
+	/// </summary>
 	private void UpdatePropertiesByStates(){
 		ExcuteEffectToBattleAgents (players);
 		ExcuteEffectToBattleAgents (monsters);
 	}
 
+	/// <summary>
+	/// 根据角色身上的状态，触发状态所对应的效果
+	/// </summary>
+	/// <param name="bas">Bas.</param>
 	private void ExcuteEffectToBattleAgents(List<BattleAgent> bas){
 		for (int i = 0; i < bas.Count; i++) {
 			BattleAgent ba = bas [i];
@@ -359,14 +334,18 @@ public class BattleViewController : MonoBehaviour {
 	}
 
 
+	/// <summary>
+	/// 更新UI，检查角色是否被击败
+	/// </summary>
 	private void UpdateUIAndCheckAgentAlive(){
 
 		#warning picturs of states toAdd
 
 		if (players[0].health <= 0) {
-			battleEndHUD.gameObject.SetActive (true);
+//			battleEndHUD.gameObject.SetActive (true);
 			battleEnd = true;
-			battleEndResult.text = "You Lose!";
+			StartCoroutine("OnQuitBattle");
+//			battleEndResult.text = "You Lose!";
 			return;
 		} 
 
@@ -378,9 +357,10 @@ public class BattleViewController : MonoBehaviour {
 				monsters.Remove (monster);
 
 				if (monsters.Count == 0) {
-					battleEndHUD.gameObject.SetActive (true);
+//					battleEndHUD.gameObject.SetActive (true);
 					battleEnd = true;
-					battleEndResult.text = "you win";
+					StartCoroutine("OnQuitBattle");
+//					battleEndResult.text = "you win";
 					return;
 				}
 				battleEnd = false;
@@ -396,18 +376,41 @@ public class BattleViewController : MonoBehaviour {
 
 	// 用户点击攻击按钮响应
 	public void OnAttack(){
+
+		player.currentSkill = player.attackSkill;
+
+		bpController.OnPlayerSelectSkill (-1);
+
 		OnPlayerSelectSkill(player.attackSkill,-1);
 	}
 	// 用户点击防御按钮响应
 	public void OnDenfence(){
+
+		player.currentSkill = player.defenceSkill;
+
+		bpController.OnPlayerSelectSkill (-1);
+
 		OnPlayerSelectSkill(player.defenceSkill,-1);
 	}
+
 	// 用户点击技能按钮响应
-	public void OnSkill(int buttonIndex){
+	private void OnSkillClick(int buttonIndex){
+
+		player.currentSkill = player.skillsEquiped [buttonIndex];
+
+		bpController.OnPlayerSelectSkill (buttonIndex);
+
 		OnPlayerSelectSkill(player.skillsEquiped [buttonIndex],buttonIndex);
 	}
+
+	// 用户长按技能按钮响应
+	private void OnSkillPress(int buttonIndex){
+		bpController.OnSkillLongPress (buttonIndex);
+	}
+
+
 	// 用户点击物品按钮响应
-	public void OnItem(int itemIndex){
+	private void OnItemClick(int itemIndex){
 
 		Item item = player.allEquipedItems [itemIndex + 3];
 
@@ -423,16 +426,212 @@ public class BattleViewController : MonoBehaviour {
 
 	}
 
-	//*********** for skill test use **************//
-	public void OnResetGame(){
-		
+	// 用户长按物品按钮响应
+	private void OnItemPress(int buttonIndex){
+		bpController.OnItemLongPress (buttonIndex);
+	}
 
-		/****************测试用，重置所有怪物****************/
+	/// <summary>
+	/// 技能按钮按下后开始判断本次点击类型
+	/// </summary>
+	/// <param name="index"> 按钮序号 </param>
+	public void OnSkillButtonDown(int index){
+
+		isSkillButton = true;
+
+		if (!bpController.baView.skillButtons [index].interactable) {
+			return;
+		}
+			
+		currentClickButtonTrans = bpController.baView.skillButtons [index].transform;
+
+		StartCoroutine ("CheckButtonClickType", index);
+
+	}
+
+	/// <summary>
+	/// 技能按钮点击结束时判断当前点击位置是否在按钮内部，如果不在则视为取消本次点击事件
+	/// </summary>
+	/// <param name="index">Index.</param>
+	public void OnSkillButtonUp(int index){
+
+		Vector2 mousePos;
+
+		#if UNITY_WINDOWS || UNITY_EDITOR
+		mousePos = Input.mousePosition;
+		#elif UNITY_IOS || UNITY_ANDROID
+		mousePos = Input.GetTouch(0).position;
+		#endif
+
+		RectTransform rt = currentClickButtonTrans as RectTransform;
+
+		Vector3[] corners = new Vector3[4];
+		rt.GetWorldCorners (corners);
+
+		if (mousePos.x < corners[0].x || mousePos.y < corners[0].y || mousePos.x > corners[2].x || mousePos.y > corners[2].y){
+			mPressType = PressType.Cancel;
+		}
+		bpController.OnSkillButtonUp ();
+
+	}
+
+
+	/// <summary>
+	/// 物品按钮按下后开始判断本次点击类型
+	/// </summary>
+	/// <param name="index"> 按钮序号 </param>
+	public void OnItemButtonDown(int index){
+
+		isSkillButton = false;
+
+		if (!bpController.baView.itemButtons [index].interactable) {
+			return;
+		}
+
+		currentClickButtonTrans = bpController.baView.itemButtons [index].transform;
+
+		StartCoroutine ("CheckButtonClickType", index);
+
+	}
+
+
+	/// <summary>
+	/// 物品按钮点击结束时判断当前点击位置是否在按钮内部，如果不在则视为取消本次点击事件
+	/// </summary>
+	/// <param name="index">Index.</param>
+	public void OnItemButtonUp(int index){
+
+		Vector2 mousePos;
+
+		#if UNITY_WINDOWS || UNITY_EDITOR
+		mousePos = Input.mousePosition;
+		#elif UNITY_IOS || UNITY_ANDROID
+		mousePos = Input.GetTouch(0).position;
+		#endif
+
+		RectTransform rt = currentClickButtonTrans as RectTransform;
+
+		Vector3[] corners = new Vector3[4];
+		rt.GetWorldCorners (corners);
+
+		if (mousePos.x < corners[0].x || mousePos.y < corners[0].y || mousePos.x > corners[2].x || mousePos.y > corners[2].y){
+			mPressType = PressType.Cancel;
+		}
+		bpController.OnItemButtonUp ();
+
+	}
+
+		
+	/// <summary>
+	/// 根据本次点击按下的时间判断点击类型
+	/// </summary>
+	/// <param name="index">Index.</param>
+	private IEnumerator CheckButtonClickType(int index){
+
+		float pressDurationReq = 1.0f;
+		float timeLast = pressDurationReq;
+
+		float t1 = Time.time;
+
+		float t2;
+
+		while (timeLast > 0) {
+			timeLast -= Time.deltaTime;
+
+			#if UNITY_WINDOWS || UNITY_EDITOR
+			if (Input.GetMouseButtonUp (0)) {
+				timeLast = 0;
+			}
+			#elif UNITY_IOS || UNITY_ANDROID
+			if(Input.touchCount == 0){
+				timeLast = 0;
+			}
+			#endif
+			yield return null;
+
+		}
+
+		t2 = Time.time;
+
+		if (t2 - t1 >= pressDurationReq) {
+			mPressType = PressType.LongPress;
+		} else {
+			mPressType = PressType.Click;
+		}
+
+		Vector2 mousePos;
+
+		#if UNITY_WINDOWS || UNITY_EDITOR
+		mousePos = Input.mousePosition;
+		#elif UNITY_IOS || UNITY_ANDROID
+		mousePos = Input.GetTouch(0).position;
+		#endif
+
+
+		RectTransform rt = currentClickButtonTrans as RectTransform;
+
+		Vector3[] corners = new Vector3[4];
+		rt.GetWorldCorners (corners);
+
+		if (mousePos.x < corners[0].x || mousePos.y < corners[0].y || mousePos.x > corners[2].x || mousePos.y > corners[2].y){
+			mPressType = PressType.Cancel;
+		}
+
+		if (isSkillButton) {
+			OnPlayerSelectSkill (mPressType, index);
+		} else {
+			OnPlayerSelectItem (mPressType, index);
+		}
+
+	}
+
+	/// <summary>
+	/// 根据点击类型执行相应点击类型对应的响应方法
+	/// </summary>
+	/// <param name="pressType">Press type.</param>
+	/// <param name="index">Index.</param>
+	private void OnPlayerSelectSkill(PressType pressType,int index){
+
+		switch (pressType) {
+		case PressType.Click:
+			OnSkillClick (index);
+			break;
+		case PressType.LongPress:
+			OnSkillPress (index);
+			break;
+		case PressType.Cancel:
+			break;
+		}
+	}
+
+	/// <summary>
+	/// 根据点击类型执行相应点击类型对应的响应方法
+	/// </summary>
+	/// <param name="pressType">Press type.</param>
+	/// <param name="index">Index.</param>
+	private void OnPlayerSelectItem(PressType pressType,int index){
+		switch (pressType) {
+		case PressType.Click:
+			OnItemClick (index);
+			break;
+		case PressType.LongPress:
+			OnItemPress (index);
+			break;
+		case PressType.Cancel:
+			break;
+		}
+	}
+
+	/// <summary>
+	/// 战斗开始前重置战斗
+	/// </summary>
+	public void OnResetBattle(){
+
+		//重置所有怪物
 		foreach (Monster m in monsters) {
 			m.ResetBattleAgentProperties (true,true);
 			m.baView.agentIcon.color = Color.white;
 			m.gameObject.SetActive (true);
-//			monsters.Add (m);
 		}
 
 		for (int i = 0; i < players.Count; i++) {
@@ -444,7 +643,7 @@ public class BattleViewController : MonoBehaviour {
 			monsters [i].enabled = true;
 		}
 
-		OnReset ();
+		ResetAgentsProperties ();
 
 		playerControlPlane.gameObject.SetActive (false);
 		monsterControlPlane.gameObject.SetActive (false);
@@ -452,18 +651,22 @@ public class BattleViewController : MonoBehaviour {
 		battleEnd = false;
 		StartCoroutine ("OnEnterNextTurn");
 
-		/****************测试用，重置所有怪物****************/
 	}
 
-	public void OnQuitBattle(){
+	/// <summary>
+	/// 退出战斗场景
+	/// </summary>
+	public IEnumerator OnQuitBattle(){
 
 		player.ResetBattleAgentProperties (false, true);
 
 		Player.mainPlayer.CopyAgentStatus (player);
 
+		yield return new WaitUntil (() => allAnimationEnd);
+
 		Debug.Log ("quit to main screen");
 
-		battleEndHUD.gameObject.SetActive (false);
+//		battleEndHUD.gameObject.SetActive (false);
 
 		GameObject exploreCanvas = GameObject.Find (CommonData.exploreMainCanvas);
 
@@ -471,13 +674,14 @@ public class BattleViewController : MonoBehaviour {
 
 		GameObject.Find (CommonData.battleCanvas).GetComponent<Canvas>().enabled = false;
 
-		battleEndHUD.SetActive (false);
+//		battleEndHUD.SetActive (false);
 
 		exploreCanvas.GetComponent<ExploreMainViewController> ().OnNextEvent ();
 
 	}
 
-	private void OnReset(){
+	// 重置所有战斗角色的属性
+	private void ResetAgentsProperties(){
 		for (int i = 0; i < players.Count; i++) {
 			players[i].ResetBattleAgentProperties (false,true);
 		}

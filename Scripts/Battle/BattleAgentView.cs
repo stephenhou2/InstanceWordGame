@@ -15,7 +15,7 @@ public abstract class BattleAgentView : MonoBehaviour {
 	public Text strengthText;//气力值
 
 	public Text hurtHUD;//血量提示文字
-	public GameObject statesPlane;//状态图片容器
+	public Transform statesPlane;//状态图片容器
 	public Image[] stateImages; // 状态图片
 
 	public Image agentIcon; //角色头像
@@ -44,11 +44,32 @@ public abstract class BattleAgentView : MonoBehaviour {
 		}
 	}
 
-	public void OnTriggerAnim(TriggerType triggerType){
-		if (triggerType == TriggerType.BePhysicalHit) {
-			agentIcon.transform.DOShakeRotation (0.5f,20f);
-			effectMaskImg.DOFillAmount (1.0f, 0.2f).OnComplete(()=>{effectMaskImg.fillAmount = 0f;});
-		}
+	public void PlayEffectAnim(BaseSkillEffect bse){
+
+		effectMaskImg.fillMethod = bse.fillMethod;
+
+		effectMaskImg.fillOrigin = bse.fillOrigin;
+
+		effectMaskImg.sprite = GameManager.Instance.allEffectsSprites.Find (delegate(Sprite obj) {
+			return obj.name == bse.spriteName;
+		});
+
+		effectMaskImg.enabled = true;
+
+		Tweener effectAnim = effectMaskImg.DOFillAmount (1.0f, 0.5f);
+
+		ManageAnimations(effectAnim,() => {
+			effectMaskImg.fillAmount = 0f;
+			effectMaskImg.enabled = false;
+		});
+
+
+	}
+
+	// 角色头像抖动动画
+	public void PlayShakeAnim(){
+		Tweener shakeAnim = agentIcon.transform.DOShakeRotation (0.5f, 10f);
+		ManageAnimations(shakeAnim,null);
 	}
 
 	// 更新血量槽的动画（首次进入设置血量不播放动画，在ResetBattleAgentProperties（BattleAgent）后开启动画）
@@ -127,10 +148,13 @@ public abstract class BattleAgentView : MonoBehaviour {
 		allTweeners.Add (newTweener);
 
 		newTweener.OnComplete (
-			() => {allTweeners.Remove (newTweener);
+			() => {
+				allTweeners.Remove (newTweener);
 				if (tc != null) {
 					tc ();
-				}});
+				}
+			});
+
 	}
 
 }

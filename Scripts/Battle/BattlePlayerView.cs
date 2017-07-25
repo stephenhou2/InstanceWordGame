@@ -14,6 +14,18 @@ public class BattlePlayerView : BattleAgentView {
 
 	public Button[] itemButtons;
 
+	private Transform mDetailPlane;
+	public Transform detailPlane{
+		get{
+			if (mDetailPlane == null) {
+				mDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/DetailPlane").transform;
+			}
+			return mDetailPlane;
+		}
+
+	}
+
+
 	private Sequence mSequence;
 
 	public Sprite skillNormalBackImg; // 技能框默认背景图片
@@ -23,7 +35,7 @@ public class BattlePlayerView : BattleAgentView {
 
 	private Image selectedButtonBackImg;
 
-	private List<Sprite> skillSprites = new List<Sprite> ();
+	private List<Sprite> skillSprites;
 
 	private List<Sprite> itemSprites;
 
@@ -32,33 +44,43 @@ public class BattlePlayerView : BattleAgentView {
 
 	public void SetUpUI(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
 		
-		if (this.skillSprites.Count == 0) {
-			foreach (Sprite s in skillSprites) {
-				this.skillSprites.Add (s);
-			}
-		}
-
+		this.skillSprites = skillSprites;
 		this.itemSprites = itemSprites;
 
-		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 
-			Button skillButton = skillButtons [i];
-
-			Image skillIcon = skillButton.GetComponent<Image> ();
-			skillIcon.sprite = skillSprites.Find (delegate(Sprite obj) {
-				return obj.name == player.skillsEquiped[i].skillIconName;
-			});
-			skillIcon.enabled = true;
-			skillButton.interactable = true;
-			skillButton.transform.parent.FindChild("StrengthConsumeText").GetComponent<Text>().text = player.skillsEquiped [i].strengthConsume.ToString();
-			skillButton.transform.GetComponentInChildren<Text> ().text = "";
-		}
-
-		UpdateItemButtonsStatus (player);
+		SetUpSkillButtonsStatus (player);
+		SetUpItemButtonsStatus (player);
 
 	}
 
-	public void UpdateItemButtonsStatus(Player player){
+	private void SetUpSkillButtonsStatus(Player player){
+		for (int i = 0; i < player.skillsEquiped.Count; i++) {
+
+			Button skillButton = skillButtons [i];
+			Skill skill = player.skillsEquiped [i];
+
+			Image skillIcon = skillButton.GetComponent<Image> ();
+
+			Text strengthConsumeText = skillButton.transform.parent.FindChild ("StrengthConsumeText").GetComponent<Text>();
+
+			Text skillNameText = skillButton.transform.FindChild ("SkillName").GetComponent<Text> ();
+
+			skillIcon.sprite = skillSprites.Find (delegate(Sprite obj) {
+				return obj.name == skill.skillIconName;
+			});
+			skillIcon.enabled = true;
+			skillButton.interactable = true;
+			strengthConsumeText.text = skill.strengthConsume.ToString();
+			skillNameText.text = skill.skillName;
+			skillButton.transform.GetComponentInChildren<Text> ().text = "";
+		}
+
+		for (int i = player.skillsEquiped.Count; i < skillButtons.Length; i++) {
+			skillButtons [i].interactable = false;
+		}
+	}
+
+	public void SetUpItemButtonsStatus(Player player){
 
 		for (int i = 3; i < player.allEquipedItems.Count; i++) {
 			
@@ -92,7 +114,9 @@ public class BattlePlayerView : BattleAgentView {
 
 			itemButton.interactable = (consumable.itemCount > 0) && player.isItemEnable;
 		}
-
+		for (int i = player.allEquipedItems.Count; i < itemButtons.Length; i++) {
+			itemButtons [i].interactable = false;
+		}
 
 	}
 
@@ -162,6 +186,40 @@ public class BattlePlayerView : BattleAgentView {
 		selectedButtonBackImg = null;
 
 	}
+
+	public void ShowSkillDetail(int index,Skill skill){
+
+		detailPlane.SetParent (skillButtons [index].transform,false);
+
+		detailPlane.FindChild ("Name").GetComponent<Text> ().text = skill.skillName;
+
+		detailPlane.FindChild ("Description").GetComponent<Text> ().text = skill.skillDescription;
+
+		detailPlane.FindChild("Detail").GetComponent<Text> ().text = string.Format ("气力消耗:{0}\n冷却回合{1}", skill.strengthConsume, skill.actionConsume);
+
+		detailPlane.gameObject.SetActive (true);
+	}
+
+	public void QuitDetailPlane(){
+
+		detailPlane.gameObject.SetActive (false);
+
+	}
+
+
+	public void ShowItemDetail(int index,Item item){
+		
+		detailPlane.SetParent (itemButtons [index].transform,false);
+
+		detailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
+
+		detailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
+
+//		detailPlane.FindChild("Detail").GetComponent<Text> ().text = string.Format ("气力消耗:{0}\n冷却回合{1}", skill.strengthConsume, skill.actionConsume);
+
+		detailPlane.gameObject.SetActive (true);
+	}
+		
 
 	public void OnQuitBattle(){
 

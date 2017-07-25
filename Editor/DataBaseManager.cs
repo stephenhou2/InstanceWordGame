@@ -7,14 +7,13 @@ using UnityEditor;
  
 public class DataBaseManager {
 
-
-
 	private static string[] fieldNames;
 
 	private static List<string[]> itemsProperties = new List<string[]> ();
 
 	[MenuItem("Assets/BuildItemsDataBase")]
 	public static void BuildItemsDataBase(){
+
 
 		MySQLiteHelper sql = MySQLiteHelper.Instance;
 

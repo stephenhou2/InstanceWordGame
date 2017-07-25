@@ -14,7 +14,7 @@ public class ProduceViewController : MonoBehaviour {
 
 	private List<Item> itemsOfCurrentType;
 
-	private List<Sprite> itemSprites = new List<Sprite>();
+	private List<Sprite> itemSprites;
 
 	private Item itemToGenerate;
 
@@ -29,11 +29,7 @@ public class ProduceViewController : MonoBehaviour {
 		ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
 
 			// 获取所有游戏物品的图片
-			for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-
-				itemSprites.Add(ResourceManager.Instance.sprites[i]);
-
-			}
+			itemSprites = GameManager.Instance.allItemSprites;
 
 			produceView.SetUpProduceView (itemSprites);
 
@@ -121,7 +117,6 @@ public class ProduceViewController : MonoBehaviour {
 		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 			spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(itemNameInEnglish);
-			GetComponent<Canvas>().enabled = false;
 		});
 
 

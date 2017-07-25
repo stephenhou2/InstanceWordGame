@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2684523452
+CRC: 1047804419
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e39b80339e680bb32c91f057cb438ac6
+    Hash: b93ad829f3d11d980f1c68dd945438e4
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 744d8d48da417d4f0116d5d858222341
+    Hash: f2e06419cde0f0d45848dd1ef92bd947
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -19,6 +19,10 @@ ClassTypes:
   Script: {fileID: 11500000, guid: c541f611133a64546bc497a395ff3f36, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: efe860c1c5c2f4dffa0473b50c840ea7, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7bb24e7513b324e94a40c1d025670888, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 676468b5126ab400e86227db8cd3f718, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 2684c8460829d4298aa185d25b3050eb, type: 3}
 - Class: 114
@@ -41,8 +45,10 @@ Assets:
 - Assets/Resources/Sprites/Skills/skillIcon7.png
 - Assets/Resources/Sprites/Skills/skillIcon3.png
 - Assets/Resources/Sprites/Skills/skillIcon5.png
+- Assets/Prefabs/Skill/Skills/Attack.prefab
 - Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
 - Assets/Prefabs/Skill/Skills/FireBlade.prefab
+- Assets/Prefabs/Skill/Skills/Defence.prefab
 - Assets/Resources/Sprites/Skills/skillIcon1.png
 - Assets/Resources/Sprites/Skills/skillIcon2.png
 - Assets/Resources/Sprites/Skills/skillIcon8.png

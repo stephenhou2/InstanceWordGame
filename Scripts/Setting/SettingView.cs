@@ -29,8 +29,6 @@ public class SettingView : MonoBehaviour {
 
 	public void SetUpSettingView(GameSettings settings){
 
-		Debug.Log (volumeControl);
-
 		volumeControl.value = settings.systemVolume;
 
 		pronounceOnImage.enabled = !settings.isPronunciationEnable;

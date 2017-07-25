@@ -1,30 +1,23 @@
 ManifestFileVersion: 0
-CRC: 4100528924
+CRC: 198762042
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: bbeb4c3f516bc401d9db42d625b03e63
+    Hash: 58af9a8d100dd19df9f41c1300ee6829
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f90b79e1d7e26a2763ba9215521d891c
+    Hash: 3b9bf6a7cee254fc1cd54ef134eccc96
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
-- Class: 4
-  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 2c6104151625d4f0b9f95550663627d0, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 7bb24e7513b324e94a40c1d025670888, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 676468b5126ab400e86227db8cd3f718, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 224
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Player.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/skills/skills

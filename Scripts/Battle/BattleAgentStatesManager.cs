@@ -84,6 +84,7 @@ public class BattleAgentStatesManager:MonoBehaviour {
 					Destroy (sse);
 					j--;//删除sse后状态数组的长度-1，由于从前向后遍历，j--
 				}
+
 			}
 		}
 

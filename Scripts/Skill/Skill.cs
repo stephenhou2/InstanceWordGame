@@ -38,17 +38,89 @@ public class Skill:MonoBehaviour {
 
 	public int associatedSkillUnlockLevel;
 
+
+
+
 	public bool unlocked;
 
 	public void AffectAgents(BattleAgent self, List<BattleAgent> friends,BattleAgent targetEnemy, List<BattleAgent> enemies,int skillLevel){
-		foreach (BaseSkillEffect bse in skillEffects) {
+
+		SkillEffectTarget selfSideTarget = SkillEffectTarget.None;
+		SkillEffectTarget enemySideTarget = SkillEffectTarget.None;
+
+		BaseSkillEffect selfSideAnimEffect = null;
+		BaseSkillEffect enemySideAnimEffect = null;
+
+		for (int i = 0; i < skillEffects.Length; i++) {
+
+			BaseSkillEffect bse = skillEffects [i];
+
 
 			if (!bse.isStateEffect) {
-				bse.AffectAgents (self,friends,targetEnemy,enemies, skillLevel, TriggerType.None, 0);
+				bse.AffectAgents (self, friends, targetEnemy, enemies, skillLevel, TriggerType.None, 0);
 			} else {
 				BattleAgentStatesManager.AddStateCopyToBattleAgents (self, friends, targetEnemy, enemies, bse as StateSkillEffect, skillLevel);
 			}
+
+			switch (bse.effectTarget) {
+			case SkillEffectTarget.Self:
+				if (selfSideTarget == SkillEffectTarget.None) {
+					selfSideTarget = SkillEffectTarget.Self;
+					selfSideAnimEffect = bse;
+				}
+				break;
+			case SkillEffectTarget.AllFriends:
+				selfSideTarget = SkillEffectTarget.AllFriends;
+				selfSideAnimEffect = bse;
+				break;
+			case SkillEffectTarget.SpecificEnemy:
+				if (enemySideTarget == SkillEffectTarget.None) {
+					enemySideTarget = SkillEffectTarget.SpecificEnemy;
+					enemySideAnimEffect = bse;
+				}
+				break;
+			case SkillEffectTarget.AllEnemies:
+				enemySideTarget = SkillEffectTarget.AllEnemies;
+				enemySideAnimEffect = bse;
+				break;
+			case SkillEffectTarget.BothSides:
+				Debug.Log ("暂时没有这种技能，后续如果有的话需要在补充代码");
+				break;
+			}
+
 		}
+			
+		if (selfSideTarget != SkillEffectTarget.None && selfSideAnimEffect != null) {
+			switch (selfSideTarget) {
+			case SkillEffectTarget.Self:
+				self.baView.PlayEffectAnim (selfSideAnimEffect);
+				break;
+			case SkillEffectTarget.AllFriends:
+				foreach (BattleAgent ba in friends) {
+					ba.baView.PlayEffectAnim (selfSideAnimEffect);
+				}
+				break;
+//		default:
+//			break;
+			}
+		}
+		if (enemySideTarget != SkillEffectTarget.None && enemySideAnimEffect != null) {
+			switch (enemySideTarget) {
+			case SkillEffectTarget.SpecificEnemy:
+				targetEnemy.baView.PlayEffectAnim (enemySideAnimEffect);
+				break;
+			case SkillEffectTarget.AllEnemies:
+				foreach (BattleAgent ba in enemies) {
+					ba.baView.PlayEffectAnim (enemySideAnimEffect);
+				}
+				break;
+//		default:
+//			break;
+			}
+		}
+
+
+		
 //		if (isCopiedSkill) {
 //			copiedSkillAvalibleTime--;
 //			if (copiedSkillAvalibleTime <= 0) {
@@ -78,4 +150,5 @@ public class Skill:MonoBehaviour {
 	}
 
 }
+	
 

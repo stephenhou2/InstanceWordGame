@@ -14,7 +14,10 @@ public class GameSettings {
 
 	public WordType wordType = WordType.CET4;
 
-
+	public override string ToString ()
+	{
+		return string.Format ("[GameSettings]-isPronunciationEnable{0},isDownloadEnable{1},systemVolume{3},wordType{4}",isPronunciationEnable,isDownloadEnable,systemVolume,wordType);
+	}
 
 
 }

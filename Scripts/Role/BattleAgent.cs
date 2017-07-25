@@ -10,9 +10,38 @@ public abstract class BattleAgent : MonoBehaviour {
 	public string agentIconName;
 	public bool isActive = true;
 
+	private Skill mAttackSkill;
+	public Skill attackSkill{
+		get{
+			if (mAttackSkill == null) {
+				ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
+					mAttackSkill = ResourceManager.Instance.gos[0].GetComponent<Skill>();
+				}, true,"Attack");
+			}
+			return mAttackSkill;
+		}
+		set{
+			mAttackSkill = value;
+		}
 
-	public Skill attackSkill;
-	public Skill defenceSkill;
+	}
+
+	private Skill mDefenceSkill;
+	public Skill defenceSkill{
+
+		get{
+			if (mDefenceSkill == null) {
+				ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
+					mDefenceSkill = ResourceManager.Instance.gos[0].GetComponent<Skill>();
+				}, true,"Defence");
+			}
+			return mDefenceSkill;
+		}
+		set{
+			mDefenceSkill = value;
+		}
+
+	}
 
 	public int agentLevel;
 
@@ -61,6 +90,9 @@ public abstract class BattleAgent : MonoBehaviour {
 	public int health{
 		get{return mHealth;}
 		set{
+			if (value < mHealth && baView != null) {
+				baView.PlayShakeAnim ();
+			}
 			if (value <= maxHealth) {
 				mHealth = value;
 			} else {
@@ -165,6 +197,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 		this.attackSkill = ba.attackSkill;
 		this.defenceSkill = ba.defenceSkill;
+
 		this.skillsEquiped = ba.skillsEquiped;
 
 		this.allEquipedItems = ba.allEquipedItems;
@@ -239,8 +272,6 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	// 状态效果触发执行的方法
 	public void OnTrigger(List<BattleAgent> friends,BattleAgent triggerAgent,List<BattleAgent> enemies, TriggerType triggerType,int arg){
-
-		baView.OnTriggerAnim (triggerType);
 			
 		foreach(StateSkillEffect sse in states){
 			sse.AffectAgents (this,friends,triggerAgent,enemies, sse.skillLevel, triggerType, arg);

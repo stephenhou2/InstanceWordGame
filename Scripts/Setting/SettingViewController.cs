@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettingViewController : MonoBehaviour {
+public class SettingViewController : MonoBehaviour{
 
 	public SettingView settingView;
+
+	private bool isPointerUp;
 
 
 	public void SetUpSettingView(){
@@ -14,8 +16,7 @@ public class SettingViewController : MonoBehaviour {
 		settingView.SetUpSettingView (settings);
 
 	}
-
-
+		
 
 	public void ChangeVolume(){
 
@@ -25,16 +26,13 @@ public class SettingViewController : MonoBehaviour {
 
 	public void SetPronunciationEnable(bool enable){
 
-		Debug.Log (enable);
-
 		GameManager.Instance.gameSettings.isPronunciationEnable = enable;
 
 		settingView.UpdatePronounceControl (enable);
+
 	}
 
 	public void SetDownloadEnable(bool enable){
-
-		Debug.Log (enable);
 
 		GameManager.Instance.gameSettings.isDownloadEnable = enable;
 
@@ -67,10 +65,14 @@ public class SettingViewController : MonoBehaviour {
 
 		}
 
+		GameManager.Instance.OnSettingsChanged ();
+
 		Debug.Log (GameManager.Instance.gameSettings.wordType);
 	}
 
 	public void QuitSettingPlane(){
+
+		GameManager.Instance.OnSettingsChanged ();
 
 		settingView.QuitSettingView (DestroyInstances);
 

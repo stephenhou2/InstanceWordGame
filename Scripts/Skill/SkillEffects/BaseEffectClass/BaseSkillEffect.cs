@@ -39,6 +39,15 @@ public abstract class BaseSkillEffect:MonoBehaviour {
 
 	public bool needSelectEnemy;
 
+	// 技能特效对应的效果图名称
+	public string spriteName;
+
+	// 技能效果图的填充方式
+	public UnityEngine.UI.Image.FillMethod fillMethod;
+
+	// 技能效果图的填充起点
+	public int fillOrigin;
+
 //	public TriggerType triggerType;//触发效果的trigger类型
 
 	 
