@@ -33,42 +33,39 @@ public class BagView : MonoBehaviour {
 	public Button[] allItemsBtns;
 
 
-
-	public GameObject propertyText;
-	public GameObject itemButton;
-
-
 	private Player player;
 
 	private List<Sprite> sprites = new List<Sprite> ();
 
 	public GameObject bagPlane;
-	public GameObject specificTypeItemPlane;
 
-	public GameObject itemDetailHUD;
 
-	public Transform itemPropertiesPlane;
+	public Transform itemDetailHUD;
+
 	public Image itemIcon;
 	public Text itemName;
-	public Button equipButton;
-	public Button resolveButton;
+	public Text itemTypeText;
+	public Text itemPropertiesText;
 
-	public Transform specificTypeItemsGridPlane;
-
-
-//	public InstancePool instancePool;
-
-	private InstancePool propertyTextPool;
-
-	private InstancePool itemButtonPool;
+	public Transform choicePanelWithOneBtn;
+	public Transform choicePanelWithTwoBtns;
 
 
+	public Transform specificTypeItemHUD;
+	public Transform itemDetailContainer;
+	public GameObject itemDetailModel;
 
+	private InstancePool itemDetailsPool;
 
+	/// <summary>
+	/// 初始化背包界面
+	/// </summary>
 	public void SetUpBagView(){
 
 		this.sprites = GameManager.Instance.allItemSprites;
 		this.player = Player.mainPlayer;
+
+		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
 
 		SetUpPlayerStatusPlane ();
 
@@ -80,7 +77,9 @@ public class BagView : MonoBehaviour {
 
 	}
 
-
+	/// <summary>
+	/// 初始化玩家属性界面
+	/// </summary>
 	private void SetUpPlayerStatusPlane(){
 
 		healthBar.maxValue = player.maxHealth;
@@ -113,8 +112,10 @@ public class BagView : MonoBehaviour {
 		}
 
 	}
-
-	// 初始化背包物品界面
+		
+	/// <summary>
+	/// 初始化背包物品界面
+	/// </summary>
 	#warning 现在用所有物品做测试，后面按照类型进行分
 	public void SetUpAllItemsPlane(){
 		
@@ -139,45 +140,96 @@ public class BagView : MonoBehaviour {
 					extraInfo.text = string.Empty;
 				}
 			} else {
-
+				
 				SetUpItemButton (null, itemBtn);
+
+				Image selectedBorder = itemBtn.transform.FindChild ("SelectedBorder").GetComponent<Image> ();
+				selectedBorder.enabled = false;
 
 				extraInfo.text = string.Empty;
 
 			}
 		}
 
-
 	}
+		
+	/// <summary>
+	/// 初始化物品详细介绍页面
+	/// </summary>
+	/// <param name="item">Item.</param>
+	private void SetUpItemDetailHUD(Item item){
 
-	private void SetUpItemDetailHUD(Item item,bool isEquipButton,bool isResolveButton){
+		bool canStrengthen = item.CheckCanStrengthen ();
 
-		itemDetailHUD.SetActive (true);
+		itemDetailHUD.gameObject.SetActive (true);
 
-		if (isEquipButton) {
-			equipButton.gameObject.SetActive (true);
-		} else if(isResolveButton){
-			resolveButton.gameObject.SetActive (true);
+		if (canStrengthen) {
+			choicePanelWithTwoBtns.gameObject.SetActive (true);
+		} else{
+			choicePanelWithOneBtn.gameObject.SetActive (true);
 		}
 
 		itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
 			return obj.name == item.spriteName;
 		});
-		itemIcon.GetComponent<Image> ().enabled = true;
+		itemIcon.enabled = true;
 
 		itemName.text = item.itemName;
 
-		CompareWithCurrentEquipedItem (item);
+		itemTypeText.text = item.GetItemTypeString ();
+
+
+		Item equipedItemOfCurrentType = null;
+
+		string itemPropertiesString = string.Empty;
+
+
+		if (item.itemType == ItemType.Consumables || item.itemType == ItemType.FuseStone || item.itemType == ItemType.Task) {
+
+			itemPropertiesText.text = item.GetItemPropertiesString ();
+
+			return;
+
+		}
+
+		switch (item.itemType) {
+		case ItemType.Weapon:
+			equipedItemOfCurrentType = player.allEquipedItems [0];
+			break;
+		case ItemType.Amour:
+			equipedItemOfCurrentType = player.allEquipedItems [1];
+			break;
+		case ItemType.Shoes:
+			equipedItemOfCurrentType = player.allEquipedItems [2];
+			break;
+		}
+
+		if (equipedItemOfCurrentType != null) {
+			itemPropertiesString = item.GetComparePropertiesStringWithItem (equipedItemOfCurrentType);
+		} else {
+			itemPropertiesString = item.GetItemPropertiesString ();
+		}
+
+		itemPropertiesText.text = itemPropertiesString;
+	
 
 	}
 
+	/// <summary>
+	/// 背包中单个物品按钮的初始化方法
+	/// </summary>
+	/// <param name="item">Item.</param>
+	/// <param name="btn">Button.</param>
 	private void SetUpItemButton(Item item,Button btn){
 
 		if (item == null || item.itemName == null) {
-			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
-			image.enabled = false;
-			image.sprite = null;
+			btn.interactable = (item != null);
+			Image itemIcon = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+			itemIcon.enabled = false;
+			itemIcon.sprite = null;
+
 		}else if (item != null && item.itemName != null) {
+			btn.interactable = (item != null);
 			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
 			image.enabled = true;
 			image.sprite = sprites.Find (delegate(Sprite obj) {
@@ -186,46 +238,30 @@ public class BagView : MonoBehaviour {
 		}
 	}
 
-	// 更换装备／物品的方法
+
+	/// <summary>
+	/// 更换装备／物品的方法
+	/// </summary>
+	/// <param name="type">Type.</param>
+	/// <param name="allItemsOfCurrentSelectType">All items of current select type.</param>
 	public void OnEquipedItemButtonsClick(ItemType type,List<Item> allItemsOfCurrentSelectType){
-
-		itemButtonPool = InstancePool.GetOrCreateInstancePool ("ItemButtonPool");
-
-		List<Button> allCurrentTypeItemBtns = new List<Button> ();
 
 		for(int i =0;i<allItemsOfCurrentSelectType.Count;i++){
 			
 			Item item = allItemsOfCurrentSelectType[i];
 
-			Button itemBtn = itemButtonPool.GetInstance<Button> (itemButton, specificTypeItemsGridPlane);
+			Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailModel,itemDetailContainer);
 
-			itemBtn.transform.SetParent (specificTypeItemsGridPlane);
-
-			allCurrentTypeItemBtns.Add (itemBtn);
-
-			SetUpItemButton (item, itemBtn);
+			itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(item,GetComponent<BagViewController> ());
 		}
 
-		BagViewController bagViewCtr = GetComponent<BagViewController> ();
-
-		for(int i = 0;i < allCurrentTypeItemBtns.Count;i++){
-			int btnIndex = i;
-			Button itemBtn = allCurrentTypeItemBtns [i];
-			itemBtn.onClick.RemoveAllListeners ();
-			itemBtn.onClick.AddListener (delegate {
-				bagViewCtr.OnItemButtonOfSpecificItemPlaneClick(btnIndex);
-			});
-				
-
-		}
-
-		specificTypeItemPlane.SetActive (true);
+		specificTypeItemHUD.gameObject.SetActive (true);
 
 	}
 
 	public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
 
-		SetUpItemDetailHUD (item,true,false);
+		SetUpItemDetailHUD (item);
 
 	}
 
@@ -266,145 +302,33 @@ public class BagView : MonoBehaviour {
 
 		Item item = player.allItems [index];
 
-		bool canResolve = item.itemType != ItemType.Consumables;
-
-		SetUpItemDetailHUD (item,false,canResolve);
+		SetUpItemDetailHUD (item);
 
 	}
-
-	private void CompareWithCurrentEquipedItem(Item item){
-
-		Item currentEquipedWAS = null;
-
-		switch (item.itemType) {
-		case ItemType.Weapon:
-			currentEquipedWAS = player.allEquipedItems [0];
-			break;
-		case ItemType.Amour:
-			currentEquipedWAS = player.allEquipedItems [1];
-			break;
-		case ItemType.Shoes:
-			currentEquipedWAS = player.allEquipedItems [2];
-			break;
-		default:
-			break;
-		}
-		if (currentEquipedWAS == null) {
-
-
-			if (item.healthGain != 0) {
-				AddPropertyText (item.healthGain, PropertyType.Health);
-			}
-			if (item.strengthGain != 0) {
-				AddPropertyText (item.strengthGain, PropertyType.Strength);
-			}
-
-			return;
-
-		}
-
-
-		if (item.attackGain != 0 || currentEquipedWAS.attackGain != 0) {
-			int compare = item.attackGain - currentEquipedWAS.attackGain;
-			AddPropertyText (compare, PropertyType.Attack);
-		}
-		if (item.magicGain != 0 || currentEquipedWAS.magicGain != 0) {
-			int compare = item.magicGain - currentEquipedWAS.magicGain;
-			AddPropertyText (compare, PropertyType.Magic);
-		}
-		if (item.amourGain != 0 || currentEquipedWAS.amourGain != 0) {
-			int compare = item.amourGain - currentEquipedWAS.amourGain;
-			AddPropertyText (compare, PropertyType.Amour);
-		}
-		if (item.magicResistGain != 0 || currentEquipedWAS.magicResistGain != 0) {
-			int compare = item.magicResistGain - currentEquipedWAS.magicResistGain;
-			AddPropertyText (compare, PropertyType.MagicResist);
-		}
-		if (item.critGain != 0 || currentEquipedWAS.critGain != 0) {
-			int compare = item.critGain - currentEquipedWAS.critGain;
-			AddPropertyText (compare, PropertyType.Crit);
-		}
-		if (item.agilityGain != 0 || currentEquipedWAS.agilityGain != 0) {
-			int compare = item.agilityGain - currentEquipedWAS.agilityGain;
-			AddPropertyText (compare, PropertyType.Agility);
-		}
-
-
-
-	}
-		
-
-	private void AddPropertyText(int gain,PropertyType type){
-
-		propertyTextPool = InstancePool.GetOrCreateInstancePool ("PropertyTextPool");
-
-		Text newPropertyText = propertyTextPool.GetInstance<Text> (propertyText, itemPropertiesPlane);
-
-		string preText = null;
-
-		string linkSymbol = gain < 0 ? "-" : "+";
-
-		string colorText = gain < 0 ? "<color=red>" : "<color=green>";
-
-		switch (type) {
-		case PropertyType.Attack:
-			preText = "攻击";
-			break;
-		case PropertyType.Magic:
-			preText = "魔法";
-			break;
-		case PropertyType.Amour:
-			preText = "护甲";
-			break;
-		case PropertyType.MagicResist:
-			preText = "抗性";
-			break;
-		case PropertyType.Crit:
-			preText = "暴击";
-			break;
-		case PropertyType.Agility:
-			preText = "闪避";
-			break;
-		case PropertyType.Health:
-			preText = "血量";
-			break;
-		case PropertyType.Strength:
-			preText = "气力";
-			break;
-		default:
-			break;
-		}
-
-
-
-		newPropertyText.text = preText + colorText + linkSymbol + Mathf.Abs(gain).ToString() + "</color>";
-
-	}
-
 
 
 
 	// 关闭物品详细说明HUD
 	public void OnQuitItemDetailHUD(){
 		
-		itemDetailHUD.SetActive (false);
+		itemDetailHUD.gameObject.SetActive (false);
 
-		equipButton.gameObject.SetActive (false);
-		resolveButton.gameObject.SetActive (false);
-
-
-		propertyTextPool.AddChildInstancesToPool (itemPropertiesPlane);
+		choicePanelWithOneBtn.gameObject.SetActive (false);
+		choicePanelWithTwoBtns.gameObject.SetActive (false);
 
 	}
 
 	// 关闭更换物品的界面
 	public void OnQuitSpecificTypePlane(){
 
-		itemDetailHUD.SetActive (false);
+		specificTypeItemHUD.gameObject.SetActive (false);
 
-		specificTypeItemPlane.SetActive (false);
+		for (int i = 0; i < itemDetailContainer.childCount; i++) {
+			Transform trans = itemDetailContainer.GetChild (i);
+			trans.GetComponent<ItemDetailView> ().ResetItemDetail ();
+		}
 
-		itemButtonPool.AddChildInstancesToPool (specificTypeItemsGridPlane.transform);
+		itemDetailsPool.AddChildInstancesToPool (itemDetailContainer);
 
 	}
 

@@ -68,6 +68,10 @@ public class DialogAndItemView : MonoBehaviour {
 
 		itemIcon.sprite = itemSprite;
 
+		if (itemSprite != null) {
+			itemIcon.enabled = true;
+		}
+
 		itemDescription.text = item.itemDescription;
 
 
@@ -93,17 +97,44 @@ public class DialogAndItemView : MonoBehaviour {
 
 	public void OnChoiceButtonClick(){
 
+		ResetChoiceButton ();
+
 		choiceButtonPool.AddChildInstancesToPool(choicePlane);
+
+	}
+
+	private void ResetChoiceButton(){
+
+		for (int i = 0; i < choicePlane.childCount; i++) {
+
+			Transform trans = choicePlane.GetChild (i);
+
+			trans.GetComponentInChildren<Text> ().text = string.Empty;
+		}
 
 	}
 
 
 	public void OnQuitDialogAndItemPlane(){
 
+		ResetDialogAndItemPlane ();
+
 		gameObject.SetActive (false);
 		dialogPlane.gameObject.SetActive (false);
 		itemPlane.gameObject.SetActive (false);
 
+
+	}
+
+	private void ResetDialogAndItemPlane(){
+
+		dialogText.text = string.Empty;
+
+		itemIcon.sprite = null;
+
+		itemIcon.enabled = false;
+
+		itemDescription.text = string.Empty;
 
 	}
 

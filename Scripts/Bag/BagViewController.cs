@@ -92,7 +92,6 @@ public class BagViewController : MonoBehaviour {
 
 	}
 
-	#warning 明天这里继续，点击物品后弹出物品比较栏
 	public void OnItemButtonOfSpecificItemPlaneClick(int index){
 
 		currentSelectItemIndexOfSpecificPlane = index;
@@ -111,13 +110,11 @@ public class BagViewController : MonoBehaviour {
 
 	}
 
-	public void EquipItem(){
+	public void EquipItem(Item item){
 
 		Player player = Player.mainPlayer;
 
 		player.allEquipedItems [currentSelectEquipIndex].equiped = false;
-
-		Item item = allItemsOfCurrentSelcetType [currentSelectItemIndexOfSpecificPlane];
 
 		item.equiped = true;
 
@@ -162,7 +159,7 @@ public class BagViewController : MonoBehaviour {
 
 
 	// 退出更换物品页面
-	public void OnSpecificTypePlaneQuitButtonClick(){
+	public void OnQuitSpecificTypeHUD(){
 
 		bagView.OnQuitSpecificTypePlane ();
 
@@ -185,9 +182,7 @@ public class BagViewController : MonoBehaviour {
 	private void DestroyInstances(){
 
 		TransformManager.DestroyTransform (gameObject.transform);
-		TransformManager.DestroyTransfromWithName ("PropertyText", TransformRoot.InstanceContainer);
 		TransformManager.DestroyTransfromWithName ("ItemButton", TransformRoot.InstanceContainer);
 		TransformManager.DestroyTransfromWithName ("ItemButtonPool", TransformRoot.PoolContainer);
-		TransformManager.DestroyTransfromWithName ("PropertyTextPool", TransformRoot.PoolContainer);
 	}
 }

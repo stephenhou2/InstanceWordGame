@@ -7,15 +7,26 @@ using DG.Tweening;
 
 public class ExploreMainView: MonoBehaviour {
 
+	public Transform chapterListsPlane;
+
+	public Transform chapterListsContainer;
+
+//	private InstancePool chapterItemsPool;
+
+	public GameObject chapterItemModel;
 
 
-	public GameObject chapterEventView;
 
-	public GameObject chapterEventsPlane;
+	public Transform exploreMainViewPlane;
 
-	private List<GameObject> chapterEventViewsVisible = new List<GameObject> (); // 可见的eventView
+	private InstancePool chapterEventsPool;
 
-	private List<GameObject> chapterEventViewPool = new List<GameObject> (); // eventView 缓存池
+	public GameObject chapterEventModel;
+
+	public Transform chapterEventsPlane;
+
+	private List<Transform> chapterEventsVisible = new List<Transform> (); // 可见的eventView
+
 
 	public int maxEventCountForOnce = 4; // 一次显示的事件数 
 
@@ -25,24 +36,98 @@ public class ExploreMainView: MonoBehaviour {
 	public Slider playerHealthBar;
 
 
-	private List<Sprite> sprites = new List<Sprite>();
+	private List<Sprite> exploreIcons;
 
-	private ChapterDetailInfo detailInfo;
+	private ChapterDetailInfo chapterDetailInfo;
 
 
 	float chapterEventViewHeight = 270.0f;
 
 	float padding = 65.0f;
 
+	/// <summary>
+	/// 初始化章节列表界面
+	/// </summary>
+	/// <param name="chapterLists">章节信息数组</param>
+	/// <param name="unlockedMaxChapter">已解锁的最大章节数</param>
+	public void SetUpChapterListPlane(ChapterList[] chapterLists,ChapterDetailInfo[] chapterDetails,int unlockedMaxChapter){
+
+//		chapterItemsPool = InstancePool.GetOrCreateInstancePool ("ChapterItemsPool");
+
+		for (int i = 0; i < unlockedMaxChapter; i++) {
+
+//			Transform chapterItem = chapterItemsPool.GetInstance (chapterItemModel, chapterListsContainer);
+
+			Transform chapterItem = Instantiate (chapterItemModel, chapterListsContainer).transform;
+
+			ChapterList chapterList = chapterLists [i];
+
+			#warning章节列表目前只显示章节名称，没有加入地点，进入条件等，后续细化
+
+			Image chapterIcon = chapterItem.FindChild ("ChapterIcon").GetComponent<Image> ();
+
+			Text chapterName = chapterItem.FindChild ("ChapterName").GetComponent<Text> ();
+
+			Text chapterDesc = chapterItem.FindChild ("ChapterDesc").GetComponent<Text> ();
+
+			Text chapterStatus = chapterItem.FindChild ("ChapterStatus").GetComponent<Text> ();
+
+			Text chapterUnlockReq = chapterItem.FindChild ("UnlockRequirement").GetComponent<Text> ();
+
+			chapterIcon.sprite = null;
+
+			chapterIcon.enabled = true;
+
+			chapterName.text = chapterList.chapterName;
+
+			chapterDesc.text = chapterList.chapterDescription;
+
+			ChapterDetailInfo chapterDetail = chapterDetails [i];
+
+			int finishStatus = chapterDetail.stepsLeft * 100 / chapterDetail.totalSteps;
+
+			chapterStatus.text = "完成度: " + finishStatus.ToString() + "%";
+
+			if (Player.mainPlayer.agentLevel < chapterList.unlockLevel) {
+				
+				chapterUnlockReq.text = "等级≧" + chapterList.unlockLevel.ToString() + "解锁";
+				chapterUnlockReq.gameObject.SetActive (true);
+
+			}
 
 
-	public void SetUpExploreMainView(ChapterDetailInfo chapterDetail){
 
-		detailInfo = chapterDetail;
+			int chapterIndex = i;
+
+			chapterItem.GetComponent<Button> ().onClick.RemoveAllListeners ();
+
+			chapterItem.GetComponent<Button> ().onClick.AddListener (delegate {
+				GetComponent<ExploreMainViewController>().OnChapterListClick(chapterIndex);
+			});
+
+		}
+
+		chapterListsPlane.gameObject.SetActive (true);
+		exploreMainViewPlane.gameObject.SetActive (false);
+
+	}
+		
+
+	public void SetUpExploreMainViewPlane(ChapterDetailInfo chapterDetail,List<Sprite> exploreIcons){
+
+
+		chapterDetailInfo = chapterDetail;
+
+		this.exploreIcons = exploreIcons;
+
+		chapterEventsPool = InstancePool.GetOrCreateInstancePool ("ChapterEventsPool");
 
 		InitChapterEventsPlane ();
 
 		SetUpTopBar ();
+
+		exploreMainViewPlane.gameObject.SetActive (true);
+		chapterListsPlane.gameObject.SetActive (false);
 
 
 	}
@@ -51,11 +136,6 @@ public class ExploreMainView: MonoBehaviour {
 	// 初始化事件面板
 	public void InitChapterEventsPlane(){
 		
-		foreach (Sprite s in ResourceManager.Instance.sprites) {
-			sprites.Add (s);
-		}
-
-
 		for (int i = 0; i < maxEventCountForOnce; i++) {
 			AddNewChapterEvent (i);
 		}
@@ -68,8 +148,8 @@ public class ExploreMainView: MonoBehaviour {
 		Player player = Player.mainPlayer;
 
 		playerLevelText.text = player.agentLevel.ToString();
-		stepsLeftText.text = detailInfo.totalSteps.ToString();
-		chapterLocationText.text = detailInfo.chapterLocation;
+		stepsLeftText.text = chapterDetailInfo.totalSteps.ToString();
+		chapterLocationText.text = chapterDetailInfo.chapterLocation;
 		playerHealthBar.maxValue = player.maxHealth;
 		playerHealthBar.value = player.health;
 		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
@@ -77,7 +157,7 @@ public class ExploreMainView: MonoBehaviour {
 	}
 
 
-	public void SetUpNextStepChapterEventPlane(GameObject currentSelectedEventView,int stepsLeft){
+	public void SetUpNextStepChapterEventPlane(Transform currentSelectedEventView,int stepsLeft){
 
 		stepsLeftText.text = stepsLeft.ToString();
 		Player player = Player.mainPlayer;
@@ -89,7 +169,7 @@ public class ExploreMainView: MonoBehaviour {
 
 		Sequence mSequence = DOTween.Sequence ();
 
-		mSequence.Append (currentSelectedEventView.transform.DOLocalMoveX (Screen.width, 0.5f, false).
+		mSequence.Append (currentSelectedEventView.DOLocalMoveX (Screen.width, 0.5f, false).
 			OnComplete(()=>{
 
 				AddNewChapterEvent(maxEventCountForOnce);
@@ -97,12 +177,12 @@ public class ExploreMainView: MonoBehaviour {
 				float currentSelectedEventViewY = currentSelectedEventView.transform.localPosition.y;
 
 				currentSelectedEventView.gameObject.SetActive(false);
-				chapterEventViewsVisible.Remove(currentSelectedEventView);
-				chapterEventViewPool.Add(currentSelectedEventView);
+				chapterEventsVisible.Remove(currentSelectedEventView);
+				chapterEventsPool.AddInstanceToPool(currentSelectedEventView.gameObject);
 
-				for(int i = 0;i<chapterEventViewsVisible.Count;i++)
+				for(int i = 0;i<chapterEventsVisible.Count;i++)
 				{
-					GameObject eventView = chapterEventViewsVisible[i];
+					Transform eventView = chapterEventsVisible[i];
 					if (eventView.transform.localPosition.y < currentSelectedEventViewY){
 
 						eventView.transform.DOLocalMoveY((chapterEventViewHeight + padding) * (-i),1.0f);
@@ -133,28 +213,26 @@ public class ExploreMainView: MonoBehaviour {
 	private void AddNewChapterEvent(int eventIndex){
 
 
-		GameObject mChapterEventView = GetChapterEventView ();
+		Transform mChapterEventView = GetChapterEvent ();
 
 		ChapterEventView mChapterEventViewScript = mChapterEventView.GetComponent<ChapterEventView> ();
 
-		mChapterEventView.transform.SetParent(chapterEventsPlane.transform);
+		mChapterEventView.localPosition = new Vector3 (0, -(chapterEventViewHeight + padding) * eventIndex, 0);
 
-		mChapterEventView.transform.localPosition = new Vector3 (0, -(chapterEventViewHeight + padding) * eventIndex, 0);
-
-		chapterEventViewsVisible.Add (mChapterEventView);
+		chapterEventsVisible.Add (mChapterEventView);
 
 		ExploreMainViewController exploreMainViewController = GetComponent<ExploreMainViewController> ();
 
 
 		switch (RandomEvent ()) {
 		case EventType.Monster:
-			MonsterGroup monsterGroup = RandomReturn<MonsterGroup> (detailInfo.monsterGroups);
+			MonsterGroup monsterGroup = RandomReturn<MonsterGroup> (chapterDetailInfo.monsterGroups);
 			mChapterEventViewScript.eventTitle.text = monsterGroup.monsterGroupName;
 			mChapterEventViewScript.eventDescription.text = monsterGroup.monsterGroupDescription;
-			mChapterEventViewScript.eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			mChapterEventViewScript.eventIcon.sprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == monsterGroup.spriteName; 
 			});
-			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			mChapterEventViewScript.eventConfirmIcon.sprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == "battleIcon"; 
 			});
 			mChapterEventViewScript.eventSelectButton.onClick.RemoveAllListeners ();
@@ -163,14 +241,14 @@ public class ExploreMainView: MonoBehaviour {
 			});
 			break;
 		case EventType.NPC:
-			NPC npc = RandomReturn<NPC> (detailInfo.npcs);
+			NPC npc = RandomReturn<NPC> (chapterDetailInfo.npcs);
 			mChapterEventViewScript.eventTitle.text = npc.npcName;
 			mChapterEventViewScript.eventDescription.text = npc.npcDescription;
-			Sprite npcSprite = sprites.Find (delegate(Sprite obj) {
+			Sprite npcSprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == npc.spriteName;
 			});
 			mChapterEventViewScript.eventIcon.sprite = npcSprite;
-			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			mChapterEventViewScript.eventConfirmIcon.sprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == "chatIcon";
 			});
 			mChapterEventViewScript.eventSelectButton.onClick.RemoveAllListeners ();
@@ -179,16 +257,14 @@ public class ExploreMainView: MonoBehaviour {
 			});
 			break;
 		case EventType.Item:
-
-
-
-			Item item = RandomReturn<Item> (detailInfo.GetItems());
+			
+			Item item = RandomReturn<Item> (chapterDetailInfo.GetItems());
 			mChapterEventViewScript.eventTitle.text = "木箱";
 			mChapterEventViewScript.eventDescription.text = "一个被人遗弃的箱子";
-			mChapterEventViewScript.eventIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			mChapterEventViewScript.eventIcon.sprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == "boxIcon";
 			});
-			mChapterEventViewScript.eventConfirmIcon.sprite = sprites.Find (delegate(Sprite obj) {
+			mChapterEventViewScript.eventConfirmIcon.sprite = exploreIcons.Find (delegate(Sprite obj) {
 				return obj.name == "watchIcon";
 			});
 			Sprite itemSprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
@@ -202,28 +278,25 @@ public class ExploreMainView: MonoBehaviour {
 		default:
 			break;
 		}
+
+		mChapterEventView.gameObject.SetActive (true);
 	}
 
 
 
 
-	private GameObject GetChapterEventView(){
-		GameObject mChapterEventView = null;
-		if (chapterEventViewPool.Count != 0) {
-			mChapterEventView = chapterEventViewPool [0];
-			mChapterEventView.SetActive (true);
-			chapterEventViewPool.RemoveAt (0);
-		} else {
-			mChapterEventView = Instantiate (chapterEventView);
+	private Transform GetChapterEvent(){
+		
+		Transform mChapterEventView = chapterEventsPool.GetInstance<Transform> (chapterEventModel, chapterEventsPlane);
 
-			ChapterEventView mChapterEventViewScript = mChapterEventView.GetComponent<ChapterEventView> ();
+		ChapterEventView mChapterEventViewScript = mChapterEventView.GetComponent<ChapterEventView> ();
 
-			mChapterEventViewScript.eventIcon = mChapterEventView.transform.Find ("ChapterEventView/EventIcon").GetComponent<Image>();
-			mChapterEventViewScript.eventTitle = mChapterEventView.transform.Find ("ChapterEventView/EventTitle").GetComponent<Text>();
-			mChapterEventViewScript.eventDescription = mChapterEventView.transform.Find ("ChapterEventView/EventDescription").GetComponent<Text>();
-			mChapterEventViewScript.eventConfirmIcon = mChapterEventView.transform.Find("ChapterEventView/EventSelectButton/EventConfirmIcon").GetComponent<Image>();
-			mChapterEventViewScript.eventSelectButton = mChapterEventView.transform.Find ("ChapterEventView/EventSelectButton").GetComponent<Button> ();
-		}
+		mChapterEventViewScript.eventIcon = mChapterEventView.transform.Find ("ChapterEventView/EventIcon").GetComponent<Image>();
+		mChapterEventViewScript.eventTitle = mChapterEventView.transform.Find ("ChapterEventView/EventTitle").GetComponent<Text>();
+		mChapterEventViewScript.eventDescription = mChapterEventView.transform.Find ("ChapterEventView/EventDescription").GetComponent<Text>();
+		mChapterEventViewScript.eventConfirmIcon = mChapterEventView.transform.Find("ChapterEventView/EventSelectButton/EventConfirmIcon").GetComponent<Image>();
+		mChapterEventViewScript.eventSelectButton = mChapterEventView.transform.Find ("ChapterEventView/EventSelectButton").GetComponent<Button> ();
+
 		return mChapterEventView;
 	}
 

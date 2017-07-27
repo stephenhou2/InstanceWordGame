@@ -17,9 +17,9 @@ public class HomeViewController : MonoBehaviour {
 
 	public void OnExploreButtonClick(){
 
-		ResourceManager.Instance.LoadAssetWithFileName ("explore/explore_list_canvas", () => {
+		ResourceManager.Instance.LoadAssetWithFileName ("explore/canvas", () => {
 
-			GameObject.Find("ExploreListCanvas").GetComponent<ExploreListViewController> ().SetUpExploreListView();
+			GameObject.Find("ExploreMainCanvas").GetComponent<ExploreMainViewController> ().SetUpExploreListPlane();
 
 			DestroyInstances();
 			// 探索场景加载完成后后台加载战斗场景
@@ -54,7 +54,7 @@ public class HomeViewController : MonoBehaviour {
 
 		ResourceManager.Instance.LoadAssetWithFileName ("produce/canvas", () => {
 
-			ResourceManager.Instance.gos[0].GetComponent<ProduceViewController> ().SetUpProduceView();
+			GameObject.Find(CommonData.instanceContainerName + "/ProduceCanvas").GetComponent<ProduceViewController> ().SetUpProduceView();
 
 		});
 

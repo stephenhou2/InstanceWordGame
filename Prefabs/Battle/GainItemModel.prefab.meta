@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 25fb3ced978dc4d2eb7396a793b15ab5
-timeCreated: 1499584624
+guid: 043ce10676bc84273acb677f60a2e02e
+timeCreated: 1501170013
 licenseType: Free
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: bag/canvas
+  assetBundleName: battle/canvas
   assetBundleVariant: 

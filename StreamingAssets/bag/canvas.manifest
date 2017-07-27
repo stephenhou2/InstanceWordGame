@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 802054274
+CRC: 3921268364
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3951da3dcf92266af108954f511e8fb0
+    Hash: 2a28d2e35c9342073ba327fba1e95449
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4a1b207c7e40c8c2c8d1698528770b59
+    Hash: 5864c1bf005eaf155eaccbcfdc2ad7f7
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -34,11 +34,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: df8dcc92c4282487eb98d7f066796e45, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d814ceb2d00c94cb289f2705ef9c0c6d, type: 3}
 - Class: 114
@@ -56,7 +62,6 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
+- Assets/Prefabs/Bag/ItemDetail.prefab
 - Assets/Prefabs/Bag/BagCanvas.prefab
-- Assets/Prefabs/Bag/PropertyText.prefab
-- Assets/Prefabs/Bag/ItemButton.prefab
 Dependencies: []

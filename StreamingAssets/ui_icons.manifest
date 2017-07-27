@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 2277566378
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6a964a0f805e3e6b8583d427c03e1092
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Button/typeNormal.png
+- Assets/Resources/Sprites/Icon/arrowIcon.png
+- Assets/Resources/Sprites/Button/typeSelected.png
+Dependencies: []

@@ -56,9 +56,9 @@ public class GameManager : SingletonMono<GameManager> {
 			return mAllItems;
 		}
 
-		set{
-			mAllItems = value;
-		}
+//		set{
+//			mAllItems = value;
+//		}
 
 	}
 
@@ -78,9 +78,9 @@ public class GameManager : SingletonMono<GameManager> {
 			return mAllItemsSprites;
 		}
 
-		set{
-			mAllItemsSprites = value;
-		}
+//		set{
+//			mAllItemsSprites = value;
+//		}
 
 	}
 
@@ -100,9 +100,44 @@ public class GameManager : SingletonMono<GameManager> {
 			return mAllEffectsSprites;
 		}
 
-		set{
-			mAllEffectsSprites = value;
+//		set{
+//			mAllEffectsSprites = value;
+//		}
+
+	}
+
+	private List<Sprite> mAllUIIcons = new List<Sprite> ();
+	public List<Sprite> allUIIcons{
+
+		get{
+			if (mAllUIIcons.Count == 0) {
+				ResourceManager.Instance.LoadAssetWithFileName("ui_icons",()=>{
+					for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
+						mAllUIIcons.Add(ResourceManager.Instance.sprites[i]);
+					}
+				},true);
+			}
+			return mAllUIIcons;
 		}
+
+
+	}
+
+
+	private List<Sprite> mAllExploreIcons = new List<Sprite> ();
+	public List<Sprite> allExploreIcons{
+
+		get{
+			if (mAllExploreIcons.Count == 0) {
+				ResourceManager.Instance.LoadAssetWithFileName("explore/icons",()=>{
+					for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
+						mAllExploreIcons.Add(ResourceManager.Instance.sprites[i]);
+					}
+				},true);
+			}
+			return mAllExploreIcons;
+		}
+
 
 	}
 

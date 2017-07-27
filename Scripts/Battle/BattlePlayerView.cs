@@ -40,9 +40,18 @@ public class BattlePlayerView : BattleAgentView {
 	private List<Sprite> itemSprites;
 
 
+	public Transform battleGainsHUD;
+
+	public Transform battleGainsContainer;
+
+	public GameObject gainItemModel;
+
+	private InstancePool battleGainsPool;
 
 
 	public void SetUpUI(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
+
+		battleGainsPool = InstancePool.GetOrCreateInstancePool ("BattleGainsPool");
 		
 		this.skillSprites = skillSprites;
 		this.itemSprites = itemSprites;
@@ -220,6 +229,51 @@ public class BattlePlayerView : BattleAgentView {
 		detailPlane.gameObject.SetActive (true);
 	}
 		
+
+	public void SetUpBattleGainsHUD(List<Item> battleGains){
+
+		for (int i = 0; i < battleGains.Count; i++) {
+
+			Item item = battleGains [i];
+
+			Transform gainItem = battleGainsPool.GetInstance<Transform> (gainItemModel, battleGainsContainer);
+
+			Image itemIcon = gainItem.FindChild ("ItemIcon").GetComponent<Image> ();
+
+			Text itemCount = gainItem.FindChild ("ItemCount").GetComponent<Text> ();
+
+			itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
+			});
+
+			if (itemIcon.sprite != null) {
+				itemIcon.enabled = true;
+			}
+
+			itemCount.text = item.itemCount.ToString ();
+		}
+
+	}
+
+	public void QuitBattleGainsHUD (){
+
+		foreach (Transform trans in battleGainsContainer) {
+
+			Image itemIcon = trans.FindChild ("ItemIcon").GetComponent<Image> ();
+
+			Text itemCount = trans.FindChild ("ItemCount").GetComponent<Text> ();
+
+			itemIcon.sprite = null;
+			itemIcon.enabled = false;
+			itemCount.text = string.Empty;
+
+		}
+
+		battleGainsPool.AddChildInstancesToPool (battleGainsContainer);
+
+		battleGainsHUD.gameObject.SetActive (false);
+
+	}
 
 	public void OnQuitBattle(){
 

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3740937760
+CRC: 2650023585
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b104b24f9ffe2c719a8774a65d1fe02d
+    Hash: dd90d0993a2dd9b456a1c5b6c5ee9dba
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c49e4d7a660adaa210d507032ccffdb0
+    Hash: 6463b46e0604d58257a4c86f241e79a6
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -61,6 +61,7 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Battle/MonsterView.prefab
-- Assets/Prefabs/Battle/DetailPlane.prefab
+- Assets/Prefabs/Bag/ItemDetailHUD.prefab
+- Assets/Prefabs/Battle/GainItemModel.prefab
 - Assets/Prefabs/Battle/BattleCanvas.prefab
 Dependencies: []

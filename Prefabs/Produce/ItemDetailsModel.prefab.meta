@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: a8a133954fe754ffcad3224ee02a3507
-timeCreated: 1499940653
+guid: 97d8a218b9ec44412b4b220601d4f787
+timeCreated: 1500998333
 licenseType: Free
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: explore/explore_list_canvas
+  assetBundleName: produce/canvas
   assetBundleVariant: 

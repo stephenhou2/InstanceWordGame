@@ -4,28 +4,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
 public class ProduceView : MonoBehaviour {
 
 	public Button[] itemTypeButtons;
 
-	public Button[] itembuttons;
+	public GameObject itemDetailsModel;
 
-	public Image itemDetailIcon;
+	public Transform allItemsContainer;
 
-	public Text itemName;
+	public Transform produceContainer;
 
-	public Text itemTypeText;
+	private InstancePool itemDetailsPool;
 
 	public Transform[] charactersOwned;
 
 	public Transform producePlane;
 
 	private List<Sprite> itemSprites;
-//	private List<Item> itemsOfCurrentType;
 
-
-	public Sprite itemTypeButtonNormalIcon;
-	public Sprite itemTypeButtonSelectedIcon;
+	public Transform charactersContainer;
 
 	private int currentSelectItemIndex;
 //	private 
@@ -35,52 +33,69 @@ public class ProduceView : MonoBehaviour {
 
 		this.itemSprites = itemSprites;
 
-//		this.itemsOfCurrentType = items;
-
-		SetUpCharactersPlane ();
+		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailPool");
 
 	}
 
 	// 初始化物品图鉴
-	public void OnItemTypeButtonClick(List<Item> itemsOfCurrentType, int buttonIndex){
+	public void SetUpItemDetailsPlane(List<Item> itemsOfCurrentType, int buttonIndex){
 
-//		this.itemsOfCurrentType = itemsOfCurrentType;
+		itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
 
+		Sprite itemTypeButtonNormalIcon = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeNormal";
+		});
+		Sprite itemTypeButtonSelectedIcon= GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeSelected";
+		});
 		for (int i = 0; i < itemTypeButtons.Length; i++) {
 
-			Button itemTypeBtn = itemTypeButtons [i];
-			if (i == buttonIndex) {
-				itemTypeBtn.GetComponent<Image> ().sprite = itemTypeButtonSelectedIcon;
-			} else {
-				itemTypeBtn.GetComponent<Image> ().sprite = itemTypeButtonNormalIcon;
-			}
-
+			Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();
+			buttonImage.sprite = i == buttonIndex ? itemTypeButtonSelectedIcon : itemTypeButtonNormalIcon;
 		}
 
-		for(int i = 0;i<itemsOfCurrentType.Count;i++){
 
-			Button itemButton = itembuttons [i];
+		for (int i = 0; i < itemsOfCurrentType.Count; i++) {
 
-//			itemButton.transform.FindChild ("SelectedBorder").GetComponent<Image> ().enabled = (i==0);
+			Item item = itemsOfCurrentType [i];
 
-			Image itemIcon = itemButton.transform.FindChild ("ItemIcon").GetComponent<Image> ();
+			Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
 
-			itemIcon.sprite = itemSprites.Find (delegate (Sprite obj){
-				return obj.name == itemsOfCurrentType[i].spriteName;
+			Image itemIcon = itemDetails.FindChild ("ItemIcon").GetComponent<Image>();
+
+			Text itemName = itemDetails.FindChild ("ItemName").GetComponent<Text> ();
+
+			Text itemDescText = itemDetails.FindChild ("ItemDescText").GetComponent<Text> ();
+
+			Text itemPropertiesText = itemDetails.FindChild ("ItemPropertiesText").GetComponent<Text> ();
+
+			Button produceButton = itemDetails.FindChild ("ProduceButton").GetComponent<Button> ();
+
+			itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
 			});
 
-			itemIcon.enabled = true;
+			if (itemIcon.sprite != null) {
+				itemIcon.enabled = true;
+			}
 
-		}
+			itemName.text = item.itemName;
 
-		for (int i = itemsOfCurrentType.Count; i < itembuttons.Length; i++) {
-			Button itemButton = itembuttons [i];
+			itemDescText.text = item.itemDescription;
 
-			itemButton.transform.FindChild ("ItemIcon").GetComponent<Image> ().enabled = false;
+			itemPropertiesText.text = item.GetItemPotentialPropertiesString ();
+
+			produceButton.onClick.RemoveAllListeners ();
+
+			produceButton.onClick.AddListener (delegate() {
+				GetComponent<ProduceViewController>().OnGenerateButtonClick(item);
+			});
 
 		}
 
 	}
+
+
 
 	public void SetUpCharactersPlane(){
 
@@ -94,47 +109,27 @@ public class ProduceView : MonoBehaviour {
 
 		}
 
+		charactersContainer.gameObject.SetActive (true);
+
 	}
 
-	public void OnItemButtonClick(int index,Item itemToGenerate){
+	public void OnQuitCharactersPlane(){
 
-		itembuttons [currentSelectItemIndex].transform.FindChild ("SelectedBorder").GetComponent<Image> ().enabled = false;
+		for (int i = 0; i < charactersOwned.Length; i++) {
 
-		currentSelectItemIndex = index;
+			Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
 
-		itembuttons [currentSelectItemIndex].transform.FindChild ("SelectedBorder").GetComponent<Image> ().enabled = true;
+			characterCount.text = string.Empty;
 
-		itemDetailIcon.sprite = itemSprites.Find (delegate (Sprite obj){
-			return obj.name == itemToGenerate.spriteName;
-		});
-
-		itemDetailIcon.enabled = true;
-
-		itemName.text = itemToGenerate.itemName;
-
-		switch (itemToGenerate.itemType) {
-		case ItemType.Weapon:
-			itemTypeText.text = "类型: 武器";
-			break;
-		case ItemType.Amour:
-			itemTypeText.text = "类型: 防具";
-			break;
-		case ItemType.Shoes:
-			itemTypeText.text = "类型: 鞋履";
-			break;
-		case ItemType.Consumables:
-			itemTypeText.text = "类型: 消耗品";
-			break;
-		case ItemType.Task:
-			itemTypeText.text = "类型: 任务物品";
-			break;
-		default:
-			break;
 		}
-	}
+			
+		charactersContainer.gameObject.SetActive (false);
 
+	}
 
 	public void QuitProduceView(CallBack cb){
+
+		produceContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 		producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 			

@@ -62,9 +62,11 @@ public class SpellViewController : MonoBehaviour {
 	/// <summary>
 	/// 初始化拼写界面
 	/// </summary>
-	public void SetUpSpellView(string itemNameInEnglish){
+	public void SetUpSpellView(string itemName,string itemNameInEnglish){
 
 		this.itemNameInEnglish = itemNameInEnglish;
+
+		spellView.SetUpSpellView (itemName,itemNameInEnglish);
 
 		GetComponent<Canvas>().enabled = true;
 
@@ -365,12 +367,15 @@ public class SpellViewController : MonoBehaviour {
 	/// </summary>
 	public void CreatSliderDrag(){
 
-		createCount = (int)spellView.createSlider.value;
+		createCount = (int)spellView.countSlider.value;
 
 		spellView.UpdateCreateCountHUD (createCount);
 	}
 		
 	public void QuitCreatCountHUD(){
+
+		createCount = 1;
+
 		spellView.QuitCreateCountHUD ();
 	}
 
@@ -398,7 +403,7 @@ public class SpellViewController : MonoBehaviour {
 			
 			GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
 
-			produceCanvas.GetComponent<ProduceViewController> ().UpdateProduceView ();
+//			produceCanvas.GetComponent<ProduceViewController> ().UpdateProduceView ();
 
 			produceCanvas.GetComponent<Canvas> ().enabled = true;
 

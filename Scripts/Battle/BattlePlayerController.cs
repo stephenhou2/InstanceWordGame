@@ -156,9 +156,15 @@ public class BattlePlayerController : MonoBehaviour {
 	}
 
 
+	public void SetUpBattleGainsHUD(List<Item> battleGains){
 
+		baView.SetUpBattleGainsHUD (battleGains);
 
+	}
 
+	public void QuitBattleGainsHUD (){
+		baView.QuitBattleGainsHUD ();
+	}
 
 //	private void ShowSkillDetail(int index){
 //

@@ -173,6 +173,37 @@ public class Player : BattleAgent {
 
 	}
 
+	public void ArrangeAllItems(){
+
+		for (int i = 0; i < allItems.Count - 1; i++) {
+
+			Item item = allItems [i];
+
+			if (item.itemType == ItemType.Consumables) {
+
+				for (int j = i + 1; j < allItems.Count; j++) {
+
+					Item itemBackwords = allItems [j];
+
+					if (item.itemId == itemBackwords.itemId) {
+
+						item.itemCount += itemBackwords.itemCount;
+
+						allItems.Remove (itemBackwords);
+
+						j--;
+
+					}
+
+				}
+
+			}
+
+		}
+
+
+	}
+
 	/// <summary>
 	/// 从单词的字母组成中随机返回一个字母
 	/// </summary>

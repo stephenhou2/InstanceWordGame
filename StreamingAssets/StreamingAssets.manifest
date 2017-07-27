@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2508883794
+CRC: 733863335
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -23,7 +23,8 @@ AssetBundleManifest:
       Dependencies: {}
     Info_6:
       Name: spell/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui_icons
     Info_7:
       Name: produce/canvas
       Dependencies: {}
@@ -31,20 +32,21 @@ AssetBundleManifest:
       Name: home/canvas
       Dependencies: {}
     Info_9:
-      Name: explore/explore_list_canvas
-      Dependencies: {}
-    Info_10:
       Name: battle/canvas
       Dependencies: {}
-    Info_11:
+    Info_10:
       Name: explore/canvas
       Dependencies: {}
-    Info_12:
+    Info_11:
       Name: setting/canvas
       Dependencies: {}
-    Info_13:
+    Info_12:
       Name: record/canvas
+      Dependencies:
+        Dependency_0: ui_icons
+    Info_13:
+      Name: battle/effect_icons
       Dependencies: {}
     Info_14:
-      Name: battle/effect_icons
+      Name: ui_icons
       Dependencies: {}

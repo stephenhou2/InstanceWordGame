@@ -21,6 +21,8 @@ public class BattleViewController : MonoBehaviour {
 	// 怪物缓存池
 	private List<GameObject> monsterViewPool = new List<GameObject> ();
 
+	private List<Item> battleGains = new List<Item>();
+
 	// 判断当前动画是否播放完毕
 	private bool allAnimationEnd{
 		get{
@@ -643,6 +645,8 @@ public class BattleViewController : MonoBehaviour {
 			monsters [i].enabled = true;
 		}
 
+		ResetBattleGains ();
+
 		ResetAgentsProperties ();
 
 		playerControlPlane.gameObject.SetActive (false);
@@ -650,6 +654,27 @@ public class BattleViewController : MonoBehaviour {
 
 		battleEnd = false;
 		StartCoroutine ("OnEnterNextTurn");
+
+	}
+
+
+	public void DiscardAllGains(){
+
+		bpController.QuitBattleGainsHUD ();
+
+		BackToExploreView ();
+
+	}
+
+	public void PickUpAllGains(){
+
+		player.allItems.AddRange (battleGains);
+
+		player.ArrangeAllItems ();
+
+		bpController.QuitBattleGainsHUD ();
+
+		BackToExploreView ();
 
 	}
 
@@ -666,18 +691,75 @@ public class BattleViewController : MonoBehaviour {
 
 		Debug.Log ("quit to main screen");
 
-//		battleEndHUD.gameObject.SetActive (false);
+		if (battleGains.Count > 0) {
 
+			bpController.SetUpBattleGainsHUD (battleGains);
+
+		} else {
+			BackToExploreView ();
+		}
+
+	}
+
+	private void BackToExploreView(){
+		
 		GameObject exploreCanvas = GameObject.Find (CommonData.exploreMainCanvas);
 
 		exploreCanvas.GetComponent<Canvas>().enabled = true;
 
 		GameObject.Find (CommonData.battleCanvas).GetComponent<Canvas>().enabled = false;
 
-//		battleEndHUD.SetActive (false);
-
 		exploreCanvas.GetComponent<ExploreMainViewController> ().OnNextEvent ();
 
+	}
+
+	private void ResetBattleGains(){
+
+		battleGains.Clear ();
+
+		for (int i = 0; i < monsters.Count; i++) {
+
+			Monster m = monsters [i] as Monster;
+
+			for (int j = 0; j < m.allItems.Count; i++) {
+
+				Item item = m.allItems [j];
+
+				int itemCount = RandomCount (item);
+
+				if (itemCount > 0) {
+					item.itemCount = itemCount;
+					battleGains.Add (item);
+				}
+
+			}
+
+		}
+
+	}
+
+	private int RandomCount(Item item){
+
+		float i = 0f;
+		i = Random.Range (0f, 10f);
+
+		if (item.itemType == ItemType.Consumables) {
+			
+			if (i >= 0f && i < 5f) {
+				return 0;
+			} else if (i >= 5f && i < 9f) {
+				return 1;
+			} else {
+				return 2;
+			}
+
+		} else {
+			if (i >= 0f && i < 5f) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
 	}
 
 	// 重置所有战斗角色的属性

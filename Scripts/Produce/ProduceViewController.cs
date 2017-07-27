@@ -16,8 +16,6 @@ public class ProduceViewController : MonoBehaviour {
 
 	private List<Sprite> itemSprites;
 
-	private Item itemToGenerate;
-
 	private int[] charactersNeed = new int[26];
 
 	private int aInAscii = (int)('a');
@@ -39,10 +37,6 @@ public class ProduceViewController : MonoBehaviour {
 
 		});
 
-	}
-
-	public void UpdateProduceView(){
-		produceView.SetUpCharactersPlane ();
 	}
 
 	public void OnItemTypeButtonClick(int buttonIndex){
@@ -69,21 +63,34 @@ public class ProduceViewController : MonoBehaviour {
 			return;
 		}
 
-		produceView.OnItemTypeButtonClick (itemsOfCurrentType,buttonIndex);	
+		produceView.SetUpItemDetailsPlane (itemsOfCurrentType,buttonIndex);	
 
-		OnItemButtonClick (0);
 	}
 
-	public void OnItemButtonClick(int index){
+	public void OnCharactersButtonClick(){
 
-		itemToGenerate = itemsOfCurrentType[index];
-
-		produceView.OnItemButtonClick (index,itemToGenerate);
+		produceView.SetUpCharactersPlane ();
 	}
 
-	public void OnGenerateItemButtonClick(){
+	public void QuitCharactersPlane(){
 
-		string itemNameInEnglish = itemToGenerate.itemNameInEnglish;
+		produceView.OnQuitCharactersPlane();
+	}
+
+	public void OnGenerateButtonClick(Item item){
+
+		GameObject spellCanvas = null;
+
+		if (item == null) {
+			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
+				spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(null,null);
+			});
+			return;
+		}
+
+
+		string itemNameInEnglish = item.itemNameInEnglish;
 
 		char[] charactersArray = itemNameInEnglish.ToCharArray ();
 
@@ -112,19 +119,16 @@ public class ProduceViewController : MonoBehaviour {
 		}
 
 		// 如果玩家字母碎片足够，则进入拼写界面
-		GameObject spellCanvas = null;
-
 		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 			spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(itemNameInEnglish);
+			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item.itemName,item.itemNameInEnglish);
 		});
 
+	}
 
-//		for (int i = 0; i<charactersNeed.Length; i++) {
-//
-//			Player.mainPlayer.charactersCount [i] -= charactersNeed [i];
-//
-//		}
+	public void GenerateAnyItem(){
+
+		OnGenerateButtonClick (null);
 
 	}
 
@@ -145,6 +149,8 @@ public class ProduceViewController : MonoBehaviour {
 	private void DestroyInstances(){
 
 		TransformManager.DestroyTransform (gameObject.transform);
+		TransformManager.DestroyTransfromWithName ("ItemDetailsPool",TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("ItemDetailsModel", TransformRoot.InstanceContainer);
 
 	}
 

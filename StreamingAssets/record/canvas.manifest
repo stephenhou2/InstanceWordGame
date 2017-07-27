@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2361082089
+CRC: 2478969163
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2ee8ffda40062a3893c3ce0ef5032b2c
+    Hash: 2f8c618d393a154746566bc010765f44
   TypeTreeHash:
     serializedVersion: 2
     Hash: ae4a4c7d00bd13f9adcfee75606fdc19
@@ -54,4 +54,5 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/Record/RecordCanvas.prefab
 - Assets/Prefabs/Record/WordItem.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui_icons

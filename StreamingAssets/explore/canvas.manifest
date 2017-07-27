@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2788990418
+CRC: 2825120377
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a6c07e521a2400e3607ecbdab139de81
+    Hash: da6dbd6eff8ed8dbb33a7d9e994683a3
   TypeTreeHash:
     serializedVersion: 2
-    Hash: ede1dc674c37dc903f52fae6c81ca6ef
+    Hash: 62b09eab7b7e146477dcad7341c8eeee
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -30,7 +30,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
@@ -62,5 +66,6 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/Explore/ChoiceButton.prefab
 - Assets/Prefabs/Explore/ExploreMainCanvas.prefab
-- Assets/Prefabs/Explore/ChapterEvent.prefab
+- Assets/Prefabs/Explore/ChapterEventModel.prefab
+- Assets/Prefabs/Explore/ChapterItemModel.prefab
 Dependencies: []

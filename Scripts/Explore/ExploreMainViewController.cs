@@ -6,35 +6,58 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	public ExploreMainView exploreMainView;
 
-	private GameObject mDialogAndItemPlane;
+	private Transform mDialogAndItemPlane;
 
-	private GameObject currentSelectedEventView;
+	private Transform currentSelectedEventView;
 
 	private int stepsLeft;
 
 	private ChapterDetailInfo detailInfo;
 
-
-
 	public GameObject dialogAndItemPlane;
 
 
-	public void SetUpExploreMainView(ChapterDetailInfo chapterDetail){
+	private ChapterList[] chapterLists;
+
+	private ChapterDetailInfo[] chapterDetails;
+
+
+	public void SetUpExploreListPlane(){
+
+
+		chapterLists = DataInitializer.LoadDataToModelWithPath<ChapterList> (CommonData.jsonFileDirectoryPath, CommonData.chaptersDataFileName);
+
+		chapterDetails = DataInitializer.LoadDataToModelWithPath <ChapterDetailInfo>(CommonData.jsonFileDirectoryPath,CommonData.chapterDataFileName);
+
+		int unlockedMaxChapterIndex = GameManager.Instance.unlockedMaxChapterIndex;
+
+		exploreMainView.SetUpChapterListPlane (chapterLists,chapterDetails, unlockedMaxChapterIndex);
+
+	}
+
+
+	public void OnChapterListClick(int index){
+
+
+		ChapterDetailInfo chapterDetail = chapterDetails [index];
+
+		SetUpExploreMainViewContainerPlane(chapterDetail);
+
+
+	}
+
+
+	public void SetUpExploreMainViewContainerPlane(ChapterDetailInfo chapterDetail){
 
 		detailInfo = chapterDetail;
 
 		stepsLeft = chapterDetail.stepsLeft;
 
-		Debug.Log (stepsLeft);
-
-		ResourceManager.Instance.LoadAssetWithFileName ("explore/icons",()=>{
-			exploreMainView.SetUpExploreMainView(detailInfo);
-		});
-
+		exploreMainView.SetUpExploreMainViewPlane(detailInfo,GameManager.Instance.allExploreIcons);
 	}
 
 	// 进入战斗场景
-	public void OnEnterBattle(MonsterGroup monsterGroup,GameObject chapterEventView){
+	public void OnEnterBattle(MonsterGroup monsterGroup,Transform chapterEventView){
 
 		currentSelectedEventView = chapterEventView;
 
@@ -58,7 +81,7 @@ public class ExploreMainViewController:MonoBehaviour {
 
 
 	// 初始化与npc交谈界面
-	public void OnEnterNPC(NPC npc,GameObject chapterEventView,Sprite npcSprite){
+	public void OnEnterNPC(NPC npc,Transform chapterEventView,Sprite npcSprite){
 		
 		currentSelectedEventView = chapterEventView;
 
@@ -68,7 +91,7 @@ public class ExploreMainViewController:MonoBehaviour {
 	}
 
 	// 初始化物品展示界面
-	public void OnEnterItem(Item item,GameObject chapterEventView,Sprite itemSprite){
+	public void OnEnterItem(Item item,Transform chapterEventView,Sprite itemSprite){
 		
 		currentSelectedEventView = chapterEventView;
 

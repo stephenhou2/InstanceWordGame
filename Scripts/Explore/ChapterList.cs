@@ -10,8 +10,10 @@ public class ChapterList {
 
 	public string chapterName;
 
+	public string chapterDescription;
+
 	public string[] chapterLocations;
 
-	public int requiredLevel;
+	public int unlockLevel;
 
 }
