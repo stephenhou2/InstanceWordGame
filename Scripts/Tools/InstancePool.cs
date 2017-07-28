@@ -28,7 +28,7 @@ public class InstancePool: MonoBehaviour{
 		if (mInstancePool.Count != 0) {
 			mInstance = mInstancePool [0];
 			mInstancePool.RemoveAt (0);
-			mInstance.transform.SetParent (instanceParent);
+			mInstance.transform.SetParent (instanceParent,false);
 		} else {
 			mInstance = Instantiate (instanceModel,instanceParent);	
 			mInstance.name = instanceModel.name;

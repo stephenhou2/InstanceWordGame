@@ -28,8 +28,8 @@ public class RecordView : MonoBehaviour {
 
 	public Text unlearnedCount;
 
-	public Sprite buttonNormalSprite;
-	public Sprite buttonSelectedSprite;
+	private Sprite typeBtnNormalSprite;
+	private Sprite typeBtnSelectedSprite;
 
 	public GameObject wordItemModel;
 
@@ -39,6 +39,14 @@ public class RecordView : MonoBehaviour {
 	public void SetUpRecordView(){
 
 		wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
+
+		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonNormal";
+		});
+
+		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonSelected";
+		});
 
 	}
 
@@ -50,7 +58,7 @@ public class RecordView : MonoBehaviour {
 
 		for (int i = 0; i < titleButtons.Length; i++) {
 
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? buttonSelectedSprite : buttonNormalSprite);
+			titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
 		}
 
@@ -88,6 +96,8 @@ public class RecordView : MonoBehaviour {
 	}
 
 	public void OnLearnedButtonClick(LearningInfo learnInfo){
+
+
 		
 		generalRecordPlane.gameObject.SetActive (false);
 
@@ -95,7 +105,7 @@ public class RecordView : MonoBehaviour {
 
 		for (int i = 0; i < titleButtons.Length; i++) {
 
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? buttonSelectedSprite : buttonNormalSprite);
+			titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
 		}
 			
@@ -128,7 +138,7 @@ public class RecordView : MonoBehaviour {
 
 		for (int i = 0; i < titleButtons.Length; i++) {
 
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? buttonSelectedSprite : buttonNormalSprite);
+			titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
 		}
 
@@ -159,7 +169,7 @@ public class RecordView : MonoBehaviour {
 
 		for (int i = 0; i < titleButtons.Length; i++) {
 			Button titleButton = titleButtons [i];
-			titleButton.GetComponent<Image> ().sprite = (i == index ? buttonSelectedSprite : buttonNormalSprite);
+			titleButton.GetComponent<Image> ().sprite = (i == index ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
 		}
 

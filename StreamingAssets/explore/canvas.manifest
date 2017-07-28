@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2825120377
+CRC: 2978520346
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: da6dbd6eff8ed8dbb33a7d9e994683a3
+    Hash: 36f2c3c6b2e323d68673f72de6ac62b8
   TypeTreeHash:
     serializedVersion: 2
     Hash: 62b09eab7b7e146477dcad7341c8eeee
@@ -64,7 +64,7 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Explore/ChoiceButton.prefab
+- Assets/Prefabs/Explore/ChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/ExploreMainCanvas.prefab
 - Assets/Prefabs/Explore/ChapterEventModel.prefab
 - Assets/Prefabs/Explore/ChapterItemModel.prefab

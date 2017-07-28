@@ -6,12 +6,6 @@ public class BagViewController : MonoBehaviour {
 
 	public BagView bagView;
 
-//	private List<Sprite> mItemIcons = new List<Sprite>();
-
-//	private List<Item> allGameItems = new List<Item>();
-
-
-
 
 	private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
 
@@ -19,33 +13,16 @@ public class BagViewController : MonoBehaviour {
 
 	private int currentSelectItemIndex;
 
-	private int currentSelectItemIndexOfSpecificPlane;
+	private int resolveCount;
+
+	private int minResolveCount;
+	private int maxResolveCount;
 
 	public void SetUpBagView(){
 
-//		if (Player.mainPlayer.allItems.Count == 0) {
-//			Player.mainPlayer.allItems.AddRange(DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName));
-//		}
-
-	
 		bagView.SetUpBagView ();
 
-//		Player.mainPlayer.consumablesEquiped = Player.mainPlayer.allItems;
-		 
-
-//		// 异步加载物品图片,完成后回调初始化背包界面
-//		if (mItemIcons.Count == 0) {
-//			ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
-//				
-//				foreach (Sprite s in ResourceManager.Instance.sprites) {
-//					mItemIcons.Add (s);
-//				}
-//
-//				bagView.SetUpBagView (mItemIcons);
-//
-//			}, false);
-//		}
-
+		GetComponent<Canvas>().enabled = true; 
 
 	}
 		
@@ -94,8 +71,6 @@ public class BagViewController : MonoBehaviour {
 
 	public void OnItemButtonOfSpecificItemPlaneClick(int index){
 
-		currentSelectItemIndexOfSpecificPlane = index;
-
 		Item item = allItemsOfCurrentSelcetType [index];
 
 		bagView.OnItemButtonOfSpecificItemPlaneClick (item, currentSelectEquipIndex);
@@ -122,7 +97,7 @@ public class BagViewController : MonoBehaviour {
 
 		player.ResetBattleAgentProperties (false,false);
 
-		bagView.OnCreateButtonOfDetailHUDClick ();
+		bagView.OnEquipButtonOfDetailHUDClick ();
 
 	}
 
@@ -132,7 +107,16 @@ public class BagViewController : MonoBehaviour {
 
 		Item item = player.allItems [currentSelectItemIndex];
 
-		List<char> charactersReturn =  player.ResolveItem (item);
+		maxResolveCount = item.itemCount;
+		minResolveCount = 1;
+
+		if (item.itemType == ItemType.Consumables && item.itemCount > 1) {
+
+			bagView.SetUpResolveCountHUD (1, item.itemCount);
+			return;
+		}
+
+		List<char> charactersReturn =  player.ResolveItem (item,1);
 
 		// 返回的有字母，相应处理
 		if (charactersReturn.Count > 0) {
@@ -147,11 +131,65 @@ public class BagViewController : MonoBehaviour {
 
 	}
 
+	public void OnConfirmResolveCount(){
 
+		Player player = Player.mainPlayer;
+
+		Item item = player.allItems [currentSelectItemIndex];
+
+		int resolveCount = (int)bagView.resolveCountSlider.value;
+
+		List<char> charactersReturn =  player.ResolveItem (item,resolveCount);
+
+		// 返回的有字母，相应处理
+		if (charactersReturn.Count > 0) {
+
+			foreach (char c in charactersReturn) {
+				Debug.Log (c.ToString ());
+			}
+
+		}
+
+		bagView.OnResolveButtonOfDetailHUDClick ();
+
+	}
+
+	// 数量加减按钮点击响应
+	public void ResolveCountPlus(int plus){
+
+		int targetCount = resolveCount + plus;
+
+		// 最大或最小值直接返回
+		if (targetCount > maxResolveCount || targetCount < minResolveCount) {
+			return;
+		}
+
+		bagView.UpdateResolveCountHUD (targetCount);
+
+		resolveCount = targetCount;
+
+	}
+
+	/// <summary>
+	/// 选择数量的slider拖动时响应方法
+	/// </summary>
+	public void ResolveCountSliderDrag(){
+
+		resolveCount = (int)bagView.resolveCountSlider.value;
+
+		bagView.UpdateResolveCountHUD (resolveCount);
+	}
+
+	public void QuitResolveCountHUD(){
+
+		resolveCount = 1;
+
+		bagView.OnQuitResolveCountHUD ();
+	}
 
 
 	// 退出物品详细页HUD
-	public void OnItemDetailHUDClick(){
+	public void OnQuitItemDetailHUD(){
 
 		bagView.OnQuitItemDetailHUD ();
 
@@ -182,7 +220,7 @@ public class BagViewController : MonoBehaviour {
 	private void DestroyInstances(){
 
 		TransformManager.DestroyTransform (gameObject.transform);
-		TransformManager.DestroyTransfromWithName ("ItemButton", TransformRoot.InstanceContainer);
-		TransformManager.DestroyTransfromWithName ("ItemButtonPool", TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("ItemDetailModel", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("ItemDetailsPool", TransformRoot.PoolContainer);
 	}
 }

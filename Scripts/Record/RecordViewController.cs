@@ -20,6 +20,8 @@ public class RecordViewController : MonoBehaviour {
 		OnTitleButtonClick (0);
 
 		currentSelectTitleIndex = 0;
+
+		GetComponent<Canvas>().enabled = true; 
 	}
 
 	public void OnTitleButtonClick(int index){

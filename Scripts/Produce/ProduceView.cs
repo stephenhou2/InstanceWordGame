@@ -15,7 +15,7 @@ public class ProduceView : MonoBehaviour {
 
 	public Transform produceContainer;
 
-	private InstancePool itemDetailsPool;
+	public InstancePool itemDetailsPool;
 
 	public Transform[] charactersOwned;
 
@@ -26,14 +26,24 @@ public class ProduceView : MonoBehaviour {
 	public Transform charactersContainer;
 
 	private int currentSelectItemIndex;
-//	private 
+
+	private Sprite typeBtnNormalSprite;
+	private Sprite typeBtnSelectedSprite;
 
 	// 初始化制造界面
 	public void SetUpProduceView(List<Sprite> itemSprites){
 
 		this.itemSprites = itemSprites;
 
-		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailPool");
+		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
+
+		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonNormal";
+		});
+
+		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonSelected";
+		});
 
 	}
 
@@ -42,12 +52,10 @@ public class ProduceView : MonoBehaviour {
 
 		itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
 
-		Sprite itemTypeButtonNormalIcon = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeNormal";
-		});
-		Sprite itemTypeButtonSelectedIcon= GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeSelected";
-		});
+		Sprite itemTypeButtonNormalIcon = typeBtnNormalSprite;
+
+		Sprite itemTypeButtonSelectedIcon = typeBtnSelectedSprite;
+
 		for (int i = 0; i < itemTypeButtons.Length; i++) {
 
 			Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();

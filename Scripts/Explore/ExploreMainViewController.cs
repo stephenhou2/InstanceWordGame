@@ -33,6 +33,8 @@ public class ExploreMainViewController:MonoBehaviour {
 
 		exploreMainView.SetUpChapterListPlane (chapterLists,chapterDetails, unlockedMaxChapterIndex);
 
+		GetComponent<Canvas>().enabled = true; 
+
 	}
 
 
@@ -147,7 +149,27 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	public void OnQuitExploreChapterView(){
 
-		Destroy(GameObject.Find (CommonData.exploreMainCanvas).gameObject);
+		gameObject.SetActive (false);
+
+		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+		if (homeCanvas != null) {
+			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+		}
+
+		DestroyInstances ();
+
+
+	}
+
+	private void DestroyInstances(){
+		
+		TransformManager.DestroyTransform (gameObject.transform);
+		TransformManager.DestroyTransfromWithName ("ChapterItemModel", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("ChapterEventModel", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("ChapterEventsPool", TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("ChoiceButtonsPool", TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("ChoiceButtonModel", TransformRoot.InstanceContainer);
 
 	}
 		

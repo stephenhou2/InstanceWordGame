@@ -341,7 +341,7 @@ public class SpellViewController : MonoBehaviour {
 
 		createItems.Clear ();
 
-		createCount = 0;
+		createCount = 1;
 
 		itemToCreate = null;
 	}
@@ -427,8 +427,8 @@ public class SpellViewController : MonoBehaviour {
 	/// </summary>
 	private void DestroyInstances(){
 		TransformManager.DestroyTransform (gameObject.transform);
-		TransformManager.DestroyTransfromWithName ("Item", TransformRoot.InstanceContainer);
-		TransformManager.DestroyTransfromWithName ("ItemPool", TransformRoot.PoolContainer);
+		TransformManager.DestroyTransfromWithName ("SpellItemDetailModel", TransformRoot.InstanceContainer);
+		TransformManager.DestroyTransfromWithName ("SpellItemDetailPool", TransformRoot.PoolContainer);
 	}
 
 }

@@ -84,7 +84,7 @@ public class ExploreMainView: MonoBehaviour {
 
 			ChapterDetailInfo chapterDetail = chapterDetails [i];
 
-			int finishStatus = chapterDetail.stepsLeft * 100 / chapterDetail.totalSteps;
+			int finishStatus = 100 - chapterDetail.stepsLeft * 100 / chapterDetail.totalSteps;
 
 			chapterStatus.text = "完成度: " + finishStatus.ToString() + "%";
 

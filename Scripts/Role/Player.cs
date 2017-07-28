@@ -138,7 +138,7 @@ public class Player : BattleAgent {
 	/// </summary>
 	/// <returns>分解后获得的字母碎片</returns>
 	/// <param name="item">Item.</param>
-	public List<char> ResolveItem(Item item){
+	public List<char> ResolveItem(Item item,int resolveCount){
 
 		List<char> charactersReturn = new List<char> ();
 
@@ -152,18 +152,25 @@ public class Player : BattleAgent {
 			charList.Add (charArray [i]);
 		}
 
-		for (int i = 0; i < charactersReturnCount; i++) {
+		for (int j = 0; j < resolveCount; j++) {
+			
+			for (int i = 0; i < charactersReturnCount; i++) {
 
-			char character = ReturnRandomCharacters (ref charList);
+				char character = ReturnRandomCharacters (ref charList);
 
-			int charIndex = (int)character - CommonData.aInASCII;
+				int charIndex = (int)character - CommonData.aInASCII;
 
-			charactersCount [charIndex]++;
+				charactersCount [charIndex]++;
 
-			charactersReturn.Add (character);
+				charactersReturn.Add (character);
+			}
 		}
 
-		allItems.Remove (item);
+		item.itemCount -= resolveCount;
+
+		if (item.itemCount <= 0) {
+			allItems.Remove (item);
+		}
 
 		if (item.equiped) {
 			allEquipedItems.Remove (item);

@@ -36,8 +36,8 @@ public class SkillsView : MonoBehaviour{
 
 	public Button quitSkillsPlaneButton;
 
-	public Sprite skillTypeButtonNormalIcon;
-	public Sprite skillTypeButtonSelectedIcon;
+	private Sprite typeBtnNormalSprite;
+	private Sprite typeBtnSelectedSprite;
 
 	public Transform skillPlane;
 
@@ -73,6 +73,14 @@ public class SkillsView : MonoBehaviour{
 
 		skillPointsLeft.text = player.skillPointsLeft.ToString();
 
+		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonNormal";
+		});
+
+		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonSelected";
+		});
+
 		for (int i = 0; i < player.skillsEquiped.Count; i++) {
 			
 			Image skillIcon = equipedSkillButtons [i].transform.FindChild ("SkillIcon").GetComponent<Image> ();
@@ -82,20 +90,21 @@ public class SkillsView : MonoBehaviour{
 			});
 			skillIcon.enabled = true;
 		}
-			
-		GetComponent<Canvas> ().enabled = true;
 
 	}
 
 	// 技能类型按钮点击响应
 	public void OnSkillTypeButtonClick(List<Skill> skillsOfCurrentType,List<Sprite> spritesOfCurrentType,int typeIndex){
 
+		skillPointsTotal.text = Player.mainPlayer.agentLevel.ToString ();
+		skillPointsLeft.text = Player.mainPlayer.skillPointsLeft.ToString ();
+
 		for (int i = 0; i < skillTypeButtons.Length; i++) {
 			Button skillTypeBtn = skillTypeButtons [i];
 			if (i == typeIndex) {
-				skillTypeBtn.GetComponent<Image> ().sprite = skillTypeButtonSelectedIcon;
+				skillTypeBtn.GetComponent<Image> ().sprite = typeBtnSelectedSprite;
 			} else {
-				skillTypeBtn.GetComponent<Image> ().sprite = skillTypeButtonNormalIcon;
+				skillTypeBtn.GetComponent<Image> ().sprite = typeBtnNormalSprite;
 			}
 		}
 
@@ -171,8 +180,8 @@ public class SkillsView : MonoBehaviour{
 		skillLevelOnBigIcon.text = "Lv." + skill.skillLevel.ToString ();
 		skillName.text = skill.skillName;
 		skillDesc.text = skill.skillDescription;
-		skillCosume.text = "气力消耗： " + skill.strengthConsume.ToString ();
-		skillCoolen.text = "冷却：" + skill.actionConsume.ToString () + "回合";
+		skillCosume.text = "气力消耗： " + skill.strengthConsume.ToString () + "点";
+		skillCoolen.text = "冷却回合： " + skill.actionConsume.ToString () + "回合";
 
 		Image mask = skillTreeButtons [buttonIndex].transform.FindChild ("SkillMask").GetComponent<Image> ();
 
@@ -259,8 +268,6 @@ public class SkillsView : MonoBehaviour{
 	// 装备按钮点击响应
 	public void OnEquipButtonClick(Skill playerSkill,List<Sprite> spritesOfCurrentType,int currentSelectSkillIndex){
 
-
-
 		if (playerSkill != null) {
 
 			for (int i = 0; i < equipedSkillButtons.Length; i++) {
@@ -286,7 +293,12 @@ public class SkillsView : MonoBehaviour{
 				
 				Image equipedSkillIconOfHUD = equipedSkillButtonsOfHUD [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
 				Image equipedSkillIcon = equipedSkillButtons [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
+
 				equipedSkillIconOfHUD.sprite = equipedSkillIcon.sprite;
+
+				if (equipedSkillIconOfHUD.sprite != null) {
+					equipedSkillIconOfHUD.enabled = true;
+				}
 
 				Text equipedSkillNameOfHUD = equipedSkillButtonsOfHUD [i].GetComponentInChildren<Text> ();
 				equipedSkillNameOfHUD.text = Player.mainPlayer.skillsEquiped [i].skillName;
@@ -306,26 +318,26 @@ public class SkillsView : MonoBehaviour{
 		Skill s = Player.mainPlayer.skillsEquiped [index];
 		skillNameOnHUD.text = s.skillName;
 		skillDescOnHUD.text = s.skillDescription;
-		skillCosumeOnHUD.text = "气力消耗： " + s.strengthConsume.ToString ();
-		skillCoolenOnHUD.text = "冷却：" + s.actionConsume.ToString () + "回合"; 
+		skillCosumeOnHUD.text = "气力消耗： " + s.strengthConsume.ToString () + "点";
+		skillCoolenOnHUD.text = "冷却回合：" + s.actionConsume.ToString () + "回合"; 
 	}
 
 
-	// 关闭已装备技能详细介绍弹窗
+	// 点击已装备技能详细介绍弹窗
 	public void OnSkillButtonOnEquipedSkillHUDClick(List<Sprite> spritesOfCurrentType, int currentSelectSkillIndex,int btnIndex){
 
 		Image SkillIcon = equipedSkillButtons [btnIndex].transform.FindChild ("SkillIcon").GetComponent<Image> ();
 		SkillIcon.sprite = spritesOfCurrentType [currentSelectSkillIndex];
+
 		QuitTintHUD ();
 
 	}
 
 	// 退出按钮点击响应
-	public void OnQuitSkillsPlane(){
+	public void OnQuitSkillsPlane(CallBack cb){
 
 		skillPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
-			Destroy (GameObject.Find ("SkillsCanvas"));
-			Destroy (GameObject.Find (CommonData.instanceContainerName + "/Skills").gameObject);
+			cb();
 		});
 
 	}
@@ -333,8 +345,25 @@ public class SkillsView : MonoBehaviour{
 	public void QuitTintHUD(){
 		tintHUD.SetActive (false);
 	}
+
+
 	// 已装备技能弹窗点击响应
 	public void QuitEquipedSkillsHUD(){
+
+
+		for (int i = 0; i < equipedSkillButtonsOfHUD.Length; i++) {
+
+			Image equipedSkillIconOfHUD = equipedSkillButtonsOfHUD [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
+			Image equipedSkillIcon = equipedSkillButtons [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
+			Text equipedSkillNameOfHUD = equipedSkillButtonsOfHUD [i].GetComponentInChildren<Text> ();
+
+			equipedSkillIconOfHUD.sprite = null;
+			equipedSkillIconOfHUD.enabled = false;
+
+			equipedSkillNameOfHUD.text = string.Empty;
+
+		}
+
 		equipedSkillsHUD.SetActive (false);
 	}
 	// 已装备技能详细信息弹窗点击响应

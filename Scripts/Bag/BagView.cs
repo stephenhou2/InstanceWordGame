@@ -57,6 +57,15 @@ public class BagView : MonoBehaviour {
 
 	private InstancePool itemDetailsPool;
 
+	public Transform resolveCountHUD;
+	public Button minusBtn;
+	public Button plusBtn;
+	public Slider resolveCountSlider;
+	public Text resolveCount;
+
+	private Sprite typeBtnNormalSprite;
+	private Sprite typeBtnSelectedSprite;
+
 	/// <summary>
 	/// 初始化背包界面
 	/// </summary>
@@ -64,6 +73,14 @@ public class BagView : MonoBehaviour {
 
 		this.sprites = GameManager.Instance.allItemSprites;
 		this.player = Player.mainPlayer;
+
+		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonNormal";
+		});
+
+		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+			return obj.name == "typeButtonSelected";
+		});
 
 		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
 
@@ -216,6 +233,38 @@ public class BagView : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// 初始化选择分解数量界面
+	/// </summary>
+	public void SetUpResolveCountHUD(int minValue,int maxValue){
+
+		resolveCountHUD.gameObject.SetActive (true);
+
+		if (minusBtn.GetComponent<Image> ().sprite == null 
+			|| plusBtn.GetComponent<Image>().sprite == null) 
+		{
+			Sprite arrowSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				return obj.name == "arrowIcon";
+			});
+
+			minusBtn.GetComponent<Image> ().sprite = arrowSprite;
+			plusBtn.GetComponent<Image> ().sprite = arrowSprite;
+		}
+
+		resolveCountSlider.minValue = minValue;
+		resolveCountSlider.maxValue = maxValue;
+
+		resolveCountSlider.value = minValue;
+
+	}
+
+	public void UpdateResolveCountHUD(int count){
+
+		resolveCountSlider.value = count;
+
+		resolveCount.text = "分解" + count.ToString() + "个";
+	}
+
+	/// <summary>
 	/// 背包中单个物品按钮的初始化方法
 	/// </summary>
 	/// <param name="item">Item.</param>
@@ -265,9 +314,23 @@ public class BagView : MonoBehaviour {
 
 	}
 
-	public void OnCreateButtonOfDetailHUDClick(){
+
+	public void OnEquipButtonOfDetailHUDClick(){
 
 		OnQuitSpecificTypePlane ();
+
+		SetUpPlayerStatusPlane ();
+
+		SetUpEquipedItemPlane ();
+
+		SetUpAllItemsPlane ();
+
+	}
+
+
+	public void OnResolveButtonOfDetailHUDClick(){
+
+		OnQuitResolveCountHUD ();
 
 		OnQuitItemDetailHUD ();
 
@@ -279,15 +342,9 @@ public class BagView : MonoBehaviour {
 
 	}
 
-	public void OnResolveButtonOfDetailHUDClick(){
+	public void OnQuitResolveCountHUD(){
 
-		OnQuitItemDetailHUD ();
-
-		SetUpPlayerStatusPlane ();
-
-		SetUpEquipedItemPlane ();
-
-		SetUpAllItemsPlane ();
+		resolveCountHUD.gameObject.SetActive (false);
 
 	}
 

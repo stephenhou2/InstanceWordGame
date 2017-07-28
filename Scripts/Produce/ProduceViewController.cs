@@ -148,9 +148,10 @@ public class ProduceViewController : MonoBehaviour {
 
 	private void DestroyInstances(){
 
-		TransformManager.DestroyTransform (gameObject.transform);
 		TransformManager.DestroyTransfromWithName ("ItemDetailsPool",TransformRoot.PoolContainer);
 		TransformManager.DestroyTransfromWithName ("ItemDetailsModel", TransformRoot.InstanceContainer);
+
+		TransformManager.DestroyTransform (gameObject.transform);
 
 	}
 

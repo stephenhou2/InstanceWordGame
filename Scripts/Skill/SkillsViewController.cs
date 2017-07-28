@@ -37,6 +37,8 @@ public class SkillsViewController : MonoBehaviour {
 
 			OnSkillTypeButtonClick (0);
 			OnSkillTreeButtonClick (0);
+
+			GetComponent<Canvas>().enabled = true; 
 		});
 
 	}
@@ -126,7 +128,7 @@ public class SkillsViewController : MonoBehaviour {
 			
 			// 想要升级的技能达到了解锁要求（关联的解锁技能等级满足解锁要求）
 			if (skillsOfCurrentType [currentSelectSkillIndex].unlocked || (skillAssociatedInLearnedSkills != null &&
-				skillAssociatedInLearnedSkills.skillLevel >= skillsOfCurrentType [currentSelectSkillIndex].associatedSkillUnlockLevel)) {
+			    skillAssociatedInLearnedSkills.skillLevel >= skillsOfCurrentType [currentSelectSkillIndex].associatedSkillUnlockLevel)) {
 
 				// 生成技能
 				skillToUpgradeInLearnedSkills = Instantiate (skillsOfCurrentType [currentSelectSkillIndex]);
@@ -148,10 +150,9 @@ public class SkillsViewController : MonoBehaviour {
 				// 更新技能界面
 				OnSkillTypeButtonClick (currentSelectSkillTypeIndex);
 
-//				skillsView.OnUpgradeSkillButtonClicked ( currentSelectSkillIndex,);
-			} 
-
-			Debug.Log ("关联技能等级不够");
+			} else {
+				Debug.Log ("关联技能等级不够");
+			}
 		} 
 		// 想要升级的技能已经学习过（说明一定已经解锁了该技能）
 		else {
@@ -190,6 +191,7 @@ public class SkillsViewController : MonoBehaviour {
 		Skill playerSkill = Player.mainPlayer.allLearnedSkills.Find (delegate(Skill obj) {
 			return obj.skillId == skillsOfCurrentType [currentSelectSkillIndex].skillId;
 		});
+
 		Player.mainPlayer.skillsEquiped.Insert (index, playerSkill);
 
 		skillsView.OnSkillButtonOnEquipedSkillHUDClick (spritesOfCurrentType, currentSelectSkillIndex, index);
@@ -211,14 +213,20 @@ public class SkillsViewController : MonoBehaviour {
 
 	public void OnQuitButtonClick(){
 
-		skillsView.OnQuitSkillsPlane ();
+		skillsView.OnQuitSkillsPlane (DestroyInstances);
 
 		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
 
 		if (homeCanvas != null) {
 			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
 		}
+	}
 
+	private void DestroyInstances(){
+
+		TransformManager.DestroyTransform (gameObject.transform);
+
+		TransformManager.DestroyTransfromWithName ("Skills", TransformRoot.InstanceContainer);
 
 	}
 
