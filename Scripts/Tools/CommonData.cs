@@ -53,6 +53,12 @@ public struct CommonData{
 
 }
 
+public enum SpellPurpose{
+	Create,
+	Strengthen,
+	Task
+}
+
 
 public enum TransformRoot{
 	InstanceContainer,

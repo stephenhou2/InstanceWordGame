@@ -30,7 +30,7 @@ public class ChapterDetailInfo {
 
 			Item originalItem = GameManager.Instance.allItems [orgItemIndex];
 
-			items [i] = new Item (originalItem);
+			items [i] = new Item (originalItem,true);
 
 		}
 

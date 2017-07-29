@@ -45,6 +45,8 @@ public class BagView : MonoBehaviour {
 	public Image itemIcon;
 	public Text itemName;
 	public Text itemTypeText;
+	public Text itemQualityText;
+	public Text itemStrengthenTimesText;
 	public Text itemPropertiesText;
 
 	public Transform choicePanelWithOneBtn;
@@ -194,6 +196,10 @@ public class BagView : MonoBehaviour {
 		itemName.text = item.itemName;
 
 		itemTypeText.text = item.GetItemTypeString ();
+
+		itemQualityText.text = item.GetItemQualityString ();
+
+		itemStrengthenTimesText.text = "已强化次数:" + item.strengthenTimes.ToString () + "次";
 
 
 		Item equipedItemOfCurrentType = null;
@@ -396,8 +402,6 @@ public class BagView : MonoBehaviour {
 		});
 
 	}
-
-
 
 
 }

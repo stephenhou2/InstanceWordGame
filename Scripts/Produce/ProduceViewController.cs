@@ -16,7 +16,6 @@ public class ProduceViewController : MonoBehaviour {
 
 	private List<Sprite> itemSprites;
 
-	private int[] charactersNeed = new int[26];
 
 	private int aInAscii = (int)('a');
 
@@ -84,44 +83,25 @@ public class ProduceViewController : MonoBehaviour {
 		if (item == null) {
 			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-				spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(null,null);
+				spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(null,SpellPurpose.Create);
 			});
 			return;
 		}
 
 
-		string itemNameInEnglish = item.itemNameInEnglish;
+		List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (item.itemNameInEnglish);
 
-		char[] charactersArray = itemNameInEnglish.ToCharArray ();
-
-		foreach (char c in charactersArray) {
-			int index = (int)c - aInAscii;
-			charactersNeed [index]++;
-		}
-
-		// 判断玩家字母碎片是否足够
-		for(int i = 0;i<charactersNeed.Length;i++){
-
-			if (charactersNeed [i] > Player.mainPlayer.charactersCount[i]) {
-
-				char c = (char)(i + aInAscii);
-
-				Debug.Log(string.Format("字母{0}数量不足",c.ToString()));
-
-				return;
-
+		if (unsufficientCharacters.Count > 0) {
+			foreach (char c in unsufficientCharacters) {
+				Debug.Log (string.Format ("字母{0}数量不足", c.ToString ()));
 			}
-
+			return;
 		}
-
-		for (int i = 0; i < charactersNeed.Length; i++) {
-			charactersNeed [i] = 0;
-		}
-
+			
 		// 如果玩家字母碎片足够，则进入拼写界面
 		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 			spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item.itemName,item.itemNameInEnglish);
+			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item,SpellPurpose.Create);
 		});
 
 	}

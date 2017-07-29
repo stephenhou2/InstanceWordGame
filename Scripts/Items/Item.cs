@@ -18,6 +18,8 @@ public class Item {
 
 	public ItemQuality itemQuality;
 
+	public int strengthenTimes;
+
 	public int attackGain;//攻击力增益
 	public int powerGain;//力量增益
 	public int magicGain;//魔法增益
@@ -36,11 +38,13 @@ public class Item {
 	private int minGain = -3;
 	private int maxGain = 8;
 
+	private int[] propertiesArray;
+
 	public Item(){
 
 	}
 
-	public Item(Item originalItem){
+	public Item(Item originalItem,bool completeCopy){
 
 		itemId = originalItem.itemId;
 		itemName = originalItem.itemName;
@@ -58,9 +62,13 @@ public class Item {
 		healthGain = originalItem.healthGain;
 		strengthGain = originalItem.strengthGain;
 
-		RandomQuility ();
 
-		ResetPropertiesByQuality ();
+		if (!completeCopy) {
+			
+			RandomQuility ();
+
+			ResetBasePropertiesByQuality ();
+		}
 
 	}
 
@@ -184,7 +192,7 @@ public class Item {
 		if (itemQuality == ItemQuality.S) {
 			itemQualityStr = "<color=orange>品级: " + itemQuality.ToString () + "</color>";
 		} else {
-			itemQualityStr = "品级: " + itemQuality.ToString ();
+			itemQualityStr = "品级: " + itemQuality.ToString () + "级";
 		}
 
 		return itemQualityStr;
@@ -347,8 +355,104 @@ public class Item {
 
 	}
 
+	public string StrengthenItem(){
 
-	public void ResetPropertiesByQuality(){
+		float[] chanceArray = null;
+
+		switch (itemQuality) {
+		case ItemQuality.C:
+			chanceArray = new float[]{ 80f, 15f, 4f, 1f };
+			break;
+		case ItemQuality.B:
+			chanceArray = new float[]{ 60f, 25f, 12f, 3f };
+			break;
+		case ItemQuality.A:
+			chanceArray = new float[]{ 50f, 30f, 15f, 5f };
+			break;
+		case ItemQuality.S:
+			chanceArray = new float[]{ 30f, 30f, 30f, 10f };
+			break;
+		}
+
+		return StrengthenPropertyByQuality (chanceArray);
+
+
+	}
+
+	private string StrengthenPropertyByQuality(float[] chanceArray){
+
+		int propertyGain = 0;
+		string strengthenGainStr = string.Empty;
+
+		if (chanceOfGain(chanceArray,4) != 100f) {
+			Debug.Log("概率和不等于1");
+			propertyGain = 0;
+		}
+
+		int seed = Random.Range (0, 100);
+		if (seed >= 0 && seed < chanceOfGain(chanceArray,1)) {
+			propertyGain = 1;
+		} else if (seed >= chanceOfGain(chanceArray,1) && seed < chanceOfGain(chanceArray,2)) {
+			propertyGain = 2;
+		} else if (seed >= chanceOfGain(chanceArray,2) && seed < chanceOfGain(chanceArray,3)) {
+			propertyGain = 3;
+		} else {
+			propertyGain = 4;
+		}
+
+		if (propertiesArray == null) {
+			
+			propertiesArray = new int[]{ attackGain, magicGain, amourGain, magicResistGain, critGain, agilityGain };
+
+		}
+
+		int propertyIndex = Random.Range(0,propertiesArray.Length);
+
+		while (propertiesArray [propertyIndex] <= 0) {
+			propertyIndex = Random.Range(0,propertiesArray.Length);
+		}
+
+		switch (propertyIndex) {
+		case 0:
+			attackGain += propertyGain;
+			strengthenGainStr = "攻击+" + propertyGain.ToString ();
+			break;
+		case 1:
+			magicGain += propertyGain;
+			strengthenGainStr = "魔法+" + propertyGain.ToString ();
+			break;
+		case 2:
+			amourGain += propertyGain;
+			strengthenGainStr = "护甲+" + propertyGain.ToString ();
+			break;
+		case 3:
+			magicResistGain += propertyGain;
+			strengthenGainStr = "抗性+" + propertyGain.ToString ();
+			break;
+		case 4:
+			critGain += propertyGain;
+			strengthenGainStr = "暴击+" + propertyGain.ToString ();
+			break;
+		case 5:
+			agilityGain += propertyGain;
+			strengthenGainStr = "闪避+" + propertyGain.ToString ();
+			break;
+		}
+
+		strengthenTimes++;
+
+		return strengthenGainStr;
+	}
+
+	private float chanceOfGain(float[] chanceArray,int gain){
+		float totalChance = 0f;
+		for (int i = 0; i < gain; i++) {
+			totalChance += chanceArray [i];
+		}
+		return totalChance;
+	}
+
+	private void ResetBasePropertiesByQuality(){
 
 		switch (itemQuality) {
 		case ItemQuality.C:

@@ -180,6 +180,39 @@ public class BagViewController : MonoBehaviour {
 		bagView.UpdateResolveCountHUD (resolveCount);
 	}
 
+
+	public void StrengthenItem(){
+
+		Item item = Player.mainPlayer.allItems [currentSelectItemIndex];
+
+		List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (item.itemNameInEnglish);
+
+		if (unsufficientCharacters.Count > 0) {
+
+			foreach (char c in unsufficientCharacters) {
+				Debug.Log (string.Format ("字母{0}数量不足", c.ToString ()));
+			}
+			return;
+
+		}
+			
+
+		// 玩家的字母碎片数量足够，进入强化界面
+		ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+			
+			GameObject spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
+			spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item,SpellPurpose.Strengthen);
+
+			OnQuitItemDetailHUD ();
+
+		});
+
+
+
+	}
+
+
+
 	public void QuitResolveCountHUD(){
 
 		resolveCount = 1;

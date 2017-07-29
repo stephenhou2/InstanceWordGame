@@ -211,6 +211,36 @@ public class Player : BattleAgent {
 
 	}
 
+	public List<char> CheckUnsufficientCharacters(string itemNameInEnglish){
+
+		char[] charactersArray = itemNameInEnglish.ToCharArray ();
+
+		int[] charactersNeed = new int[26];
+
+		List<char> unsufficientCharacters = new List<char> ();
+
+		foreach (char c in charactersArray) {
+			int index = (int)c - CommonData.aInASCII;
+			charactersNeed [index]++;
+		}
+
+		// 判断玩家字母碎片是否足够
+		for(int i = 0;i<charactersNeed.Length;i++){
+
+			if (charactersNeed [i] > Player.mainPlayer.charactersCount[i]) {
+
+				char c = (char)(i + CommonData.aInASCII);
+
+				unsufficientCharacters.Add (c);
+
+			}
+
+		}
+
+		return unsufficientCharacters;
+
+	}
+
 	/// <summary>
 	/// 从单词的字母组成中随机返回一个字母
 	/// </summary>
