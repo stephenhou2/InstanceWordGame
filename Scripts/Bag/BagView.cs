@@ -197,9 +197,12 @@ public class BagView : MonoBehaviour {
 
 		itemTypeText.text = item.GetItemTypeString ();
 
-		itemQualityText.text = item.GetItemQualityString ();
+		if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Amour || item.itemType == ItemType.Shoes) {
 
-		itemStrengthenTimesText.text = "已强化次数:" + item.strengthenTimes.ToString () + "次";
+			itemQualityText.text = item.GetItemQualityString ();
+
+			itemStrengthenTimesText.text = "已强化次数:" + item.strengthenTimes.ToString () + "次";
+		}
 
 
 		Item equipedItemOfCurrentType = null;
@@ -277,14 +280,30 @@ public class BagView : MonoBehaviour {
 	/// <param name="btn">Button.</param>
 	private void SetUpItemButton(Item item,Button btn){
 
-		if (item == null || item.itemName == null) {
-			btn.interactable = (item != null);
+//		if (item == null || item.itemName == null) {
+//			btn.interactable = (item != null);
+//			Image itemIcon = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+//			itemIcon.enabled = false;
+//			itemIcon.sprite = null;
+//
+//		}else if (item != null && item.itemName != null) {
+//			btn.interactable = (item != null);
+//			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+//			image.enabled = true;
+//			image.sprite = sprites.Find (delegate(Sprite obj) {
+//				return obj.name == item.spriteName;
+//			});
+//		}
+
+		if (item == null) {
+//			btn.interactable = (item != null);
 			Image itemIcon = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
 			itemIcon.enabled = false;
 			itemIcon.sprite = null;
 
-		}else if (item != null && item.itemName != null) {
-			btn.interactable = (item != null);
+		}
+		else if (item != null && item.itemName != null) {
+//			btn.interactable = (item != null);
 			Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
 			image.enabled = true;
 			image.sprite = sprites.Find (delegate(Sprite obj) {
@@ -356,6 +375,11 @@ public class BagView : MonoBehaviour {
 
 	public void OnItemButtonClick(int index){
 
+		if (index >= player.allItems.Count) {
+			return;
+		}
+
+		Item item = player.allItems [index];
 
 		for(int i = 0;i<allItemsBtns.Length;i++){
 			Button btn = allItemsBtns [i];
@@ -363,7 +387,7 @@ public class BagView : MonoBehaviour {
 		}
 			
 
-		Item item = player.allItems [index];
+
 
 		SetUpItemDetailHUD (item);
 

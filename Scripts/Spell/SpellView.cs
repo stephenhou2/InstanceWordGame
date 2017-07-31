@@ -138,7 +138,7 @@ public class SpellView: MonoBehaviour {
 
 	public void SetUpCreateItemDetailHUD(List<Item> createItems){
 
-		createdItemDetailPool =  InstancePool.GetOrCreateInstancePool ("SpellItemDetailPool");
+		createdItemDetailPool =  InstancePool.GetOrCreateInstancePool ("CreatedItemDetailPool");
 
 
 		foreach (Item item in createItems) {

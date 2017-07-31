@@ -89,7 +89,25 @@ public class BagViewController : MonoBehaviour {
 
 		Player player = Player.mainPlayer;
 
-		player.allEquipedItems [currentSelectEquipIndex].equiped = false;
+		if (player.allEquipedItems [currentSelectEquipIndex] != null) {
+			
+			player.allEquipedItems [currentSelectEquipIndex].equiped = false;
+
+		}
+
+		for (int i = 3; i < player.allEquipedItems.Count; i++) {
+
+			Item equipedConsumable = player.allEquipedItems [i];
+
+			if (equipedConsumable != null && equipedConsumable.itemId == item.itemId) {
+
+				equipedConsumable.equiped = false;
+
+				player.allEquipedItems [i] = null;
+
+			}
+
+		}
 
 		item.equiped = true;
 
@@ -113,6 +131,7 @@ public class BagViewController : MonoBehaviour {
 		if (item.itemType == ItemType.Consumables && item.itemCount > 1) {
 
 			bagView.SetUpResolveCountHUD (1, item.itemCount);
+
 			return;
 		}
 
@@ -213,7 +232,7 @@ public class BagViewController : MonoBehaviour {
 
 
 
-	public void QuitResolveCountHUD(){
+	public void OnQuitResolveCountHUD(){
 
 		resolveCount = 1;
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -19,7 +20,6 @@ public abstract class BattleAgentView : MonoBehaviour {
 	public Image[] stateImages; // 状态图片
 
 	public Image agentIcon; //角色头像
-	public Image effectMaskImg; // 攻击效果图片遮罩
 
 	[HideInInspector]public Transform skillsContainer;
 
@@ -28,6 +28,7 @@ public abstract class BattleAgentView : MonoBehaviour {
 	public bool firstSetHealthBar = true;
 	public bool firstSetStrengthBar = true;
 
+	public Animator effectAnimator;
 
 
 	public bool isAnimating{
@@ -45,26 +46,57 @@ public abstract class BattleAgentView : MonoBehaviour {
 	}
 
 	public void PlayEffectAnim(BaseSkillEffect bse){
+		
+		effectAnimator.gameObject.SetActive (true);
 
-		effectMaskImg.fillMethod = bse.fillMethod;
+		effectAnimator.SetTrigger ("CrossChopEffect");
 
-		effectMaskImg.fillOrigin = bse.fillOrigin;
-
-		effectMaskImg.sprite = GameManager.Instance.allEffectsSprites.Find (delegate(Sprite obj) {
-			return obj.name == bse.spriteName;
-		});
-
-		effectMaskImg.enabled = true;
-
-		Tweener effectAnim = effectMaskImg.DOFillAmount (1.0f, 0.5f);
-
-		ManageAnimations(effectAnim,() => {
-			effectMaskImg.fillAmount = 0f;
-			effectMaskImg.enabled = false;
-		});
-
-
+		Debug.Log ("特效开始");
 	}
+
+//	private IEnumerator PlayEffectAnimation(BaseSkillEffect bse){
+
+//		effectMaskImg.fillMethod = bse.fillMethod;
+//
+//		effectMaskImg.fillOrigin = bse.fillOrigin;
+//
+//		effectMaskImg.sprite = GameManager.Instance.allEffectsSprites.Find (delegate(Sprite obj) {
+//			return obj.name == bse.spriteName;
+//		});
+//
+//		effectMaskImg.enabled = true;
+//
+//		Tweener effectAnim = effectMaskImg.DOFillAmount (1.0f, 0.5f);
+//
+//		ManageAnimations(effectAnim,() => {
+//			effectMaskImg.fillAmount = 0f;
+//			effectMaskImg.enabled = false;
+//		});
+
+
+
+//		AnimatorStateInfo animInfo = effectAnimator.GetCurrentAnimatorStateInfo(0);
+//
+//		float normalizedTime = effectAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+//
+//		Debug.Log(normalizedTime);
+//
+//		while (normalizedTime < 1) {
+//			Debug.Log (normalizedTime);
+//			normalizedTime = effectAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+//			isEffectAnimating = true;
+//			yield return null;
+//		}
+//
+//		isEffectAnimating = false;
+//
+//		Debug.Log ("特效结束");
+
+//		effectAnimator.SetBool ("anim", false);
+//
+//		effectAnimator.gameObject.SetActive (false);
+
+//	}
 
 	// 角色头像抖动动画
 	public void PlayShakeAnim(){

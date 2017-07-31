@@ -170,11 +170,16 @@ public class Player : BattleAgent {
 
 		if (item.itemCount <= 0) {
 			allItems.Remove (item);
+
+			if (item.equiped) {
+
+				int itemIndex = allEquipedItems.IndexOf (item);
+
+				allEquipedItems [itemIndex] = null;
+			}
+
 		}
 
-		if (item.equiped) {
-			allEquipedItems.Remove (item);
-		}
 
 		return charactersReturn;
 

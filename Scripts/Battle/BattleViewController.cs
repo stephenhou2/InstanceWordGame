@@ -49,6 +49,9 @@ public class BattleViewController : MonoBehaviour {
 	// 技能和物品按钮的点击类型（点击／长按／取消）
 	private PressType mPressType;
 
+	// 当前点击的按钮序号
+	private int currentClickButtonIndex;
+
 	// 当前点击的按钮类型（true－技能按钮，false－物品按钮）
 	private bool isSkillButton;
 
@@ -69,6 +72,8 @@ public class BattleViewController : MonoBehaviour {
 		SetUpPlayer ();
 		SetUpMonsters (monsterGroup);
 		OnResetBattle ();
+
+		GetComponent<Canvas> ().worldCamera = Camera.main;
 	}
 
 
@@ -222,13 +227,13 @@ public class BattleViewController : MonoBehaviour {
 		monsterControlPlane.gameObject.SetActive(true);
 		playerControlPlane.gameObject.SetActive (true);
 
-		Debug.Log ("monsters action");
-
 		for(int i = 0;i < monsters.Count;i++){
 
 			Monster monster = monsters[i] as Monster;
 
 			yield return new WaitUntil (() => allAnimationEnd);
+
+			Debug.Log ("monsters action");
 
 			if (!monster.isActive) {
 				continue;
@@ -414,7 +419,7 @@ public class BattleViewController : MonoBehaviour {
 	// 用户点击物品按钮响应
 	private void OnItemClick(int itemIndex){
 
-		Item item = player.allEquipedItems [itemIndex + 3];
+//		Item item = player.allEquipedItems [itemIndex + 3];
 
 		bpController.OnPlayerUseItem (itemIndex);
 
@@ -440,14 +445,15 @@ public class BattleViewController : MonoBehaviour {
 	public void OnSkillButtonDown(int index){
 
 		isSkillButton = true;
+		currentClickButtonIndex = index;
 
-		if (!bpController.baView.skillButtons [index].interactable) {
-			return;
-		}
+//		if (!bpController.baView.skillButtons [index].interactable) {
+//			return;
+//		}
 			
 		currentClickButtonTrans = bpController.baView.skillButtons [index].transform;
 
-		StartCoroutine ("CheckButtonClickType", index);
+		StartCoroutine ("CheckButtonClickType", bpController.baView.skillButtons [index].interactable);
 
 	}
 
@@ -485,14 +491,15 @@ public class BattleViewController : MonoBehaviour {
 	public void OnItemButtonDown(int index){
 
 		isSkillButton = false;
+		currentClickButtonIndex = index;
 
-		if (!bpController.baView.itemButtons [index].interactable) {
-			return;
-		}
+//		if (!bpController.baView.itemButtons [index].interactable) {
+//			return;
+//		}
 
 		currentClickButtonTrans = bpController.baView.itemButtons [index].transform;
 
-		StartCoroutine ("CheckButtonClickType", index);
+		StartCoroutine ("CheckButtonClickType", bpController.baView.itemButtons [index].interactable);
 
 	}
 
@@ -528,7 +535,9 @@ public class BattleViewController : MonoBehaviour {
 	/// 根据本次点击按下的时间判断点击类型
 	/// </summary>
 	/// <param name="index">Index.</param>
-	private IEnumerator CheckButtonClickType(int index){
+	private IEnumerator CheckButtonClickType(bool btnInteractable){
+
+		int index = currentClickButtonIndex;
 
 		float pressDurationReq = 1.0f;
 		float timeLast = pressDurationReq;
@@ -557,8 +566,10 @@ public class BattleViewController : MonoBehaviour {
 
 		if (t2 - t1 >= pressDurationReq) {
 			mPressType = PressType.LongPress;
-		} else {
+		} else if (t2 - t1 < pressDurationReq && btnInteractable) {
 			mPressType = PressType.Click;
+		} else {
+			mPressType = PressType.Cancel;
 		}
 
 		Vector2 mousePos;

@@ -78,6 +78,9 @@ public class ItemDetailView : MonoBehaviour {
 			break;
 		}
 
+		if (compareItem == null) {
+			compareItem = new Item ();
+		}
 
 		itemProperties = new int[] {
 			item.attackGain,
@@ -87,17 +90,15 @@ public class ItemDetailView : MonoBehaviour {
 			item.critGain,
 			item.agilityGain
 		};
-
-		if (compareItem != null) {
-			itemPropertiesDif = new int[] {
-				item.attackGain - compareItem.attackGain,
-				item.magicGain - compareItem.magicGain,
-				item.amourGain - compareItem.amourGain,
-				item.magicResistGain - compareItem.magicResistGain,
-				item.critGain - compareItem.critGain,
-				item.agilityGain - compareItem.agilityGain
-			};
-		}
+			
+		itemPropertiesDif = new int[] {
+			item.attackGain - compareItem.attackGain,
+			item.magicGain - compareItem.magicGain,
+			item.amourGain - compareItem.amourGain,
+			item.magicResistGain - compareItem.magicResistGain,
+			item.critGain - compareItem.critGain,
+			item.agilityGain - compareItem.agilityGain
+		};
 
 
 

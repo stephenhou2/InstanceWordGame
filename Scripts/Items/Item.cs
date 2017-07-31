@@ -205,22 +205,22 @@ public class Item {
 
 		switch (itemType) {
 		case ItemType.Weapon:
-			itemTypeStr = "类型:\t武器";
+			itemTypeStr = "类型: 武器";
 			break;
 		case ItemType.Amour:
-			itemTypeStr = "类型:\t防具";
+			itemTypeStr = "类型: 防具";
 			break;
 		case ItemType.Shoes:
-			itemTypeStr = "类型:\t步履";
+			itemTypeStr = "类型: 步履";
 			break;
 		case ItemType.Consumables:
-			itemTypeStr = "类型:\t消耗品";
+			itemTypeStr = "类型: 消耗品";
 			break;
 		case ItemType.Task:
-			itemTypeStr = "类型:\t任务物品";
+			itemTypeStr = "类型: 任务物品";
 			break;
 		case ItemType.FuseStone:
-			itemTypeStr = "类型:\t融合石";
+			itemTypeStr = "类型: 融合石";
 			break;
 		}
 

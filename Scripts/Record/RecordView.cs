@@ -28,11 +28,15 @@ public class RecordView : MonoBehaviour {
 
 	public Text unlearnedCount;
 
+	// 选项卡选中图片
 	private Sprite typeBtnNormalSprite;
+	// 选项卡未选中图片
 	private Sprite typeBtnSelectedSprite;
 
+	// 单词cell模型
 	public GameObject wordItemModel;
 
+	// 复用缓存池
 	private InstancePool wordItemPool;
 
 
@@ -50,6 +54,10 @@ public class RecordView : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// 初始化学习记录页
+	/// </summary>
+	/// <param name="learnInfo">Learn info.</param>
 	public void OnGeneralInfoButtonClick(LearningInfo learnInfo){
 
 		generalRecordPlane.gameObject.SetActive (true);
@@ -95,6 +103,10 @@ public class RecordView : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// 初始化已学习页
+	/// </summary>
+	/// <param name="learnInfo">Learn info.</param>
 	public void OnLearnedButtonClick(LearningInfo learnInfo){
 
 
@@ -130,6 +142,10 @@ public class RecordView : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// 初始化未学习页
+	/// </summary>
+	/// <param name="learnInfo">Learn info.</param>
 	public void OnUnlearnedButtonClick(LearningInfo learnInfo){
 		
 		generalRecordPlane.gameObject.SetActive (false);
@@ -165,6 +181,10 @@ public class RecordView : MonoBehaviour {
 	}
 
 
+	/// <summary>
+	/// 选择选项卡后更新选项卡图片
+	/// </summary>
+	/// <param name="index">Index.</param>
 	public void OnSelectTitleButton(int index){
 
 		for (int i = 0; i < titleButtons.Length; i++) {
@@ -176,12 +196,19 @@ public class RecordView : MonoBehaviour {
 
 	}
 
+	/// <summary>
+	/// 退出已学习／未学习页时将cell放入缓存池
+	/// </summary>
 	public void OnQuitWordsRecordPlane(){
 
 		wordItemPool.AddChildInstancesToPool (wordItemsContainer);
 
 	}
 
+	/// <summary>
+	/// 退出整个单词记录几面
+	/// </summary>
+	/// <param name="cb">Cb.</param>
 	public void OnQuitRecordPlane(CallBack cb){
 
 		recordPlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete(()=>{

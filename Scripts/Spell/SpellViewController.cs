@@ -16,8 +16,10 @@ public class SpellViewController : MonoBehaviour {
 
 	private SpellPurpose spellPurpose;
 
-	// 容器，记录字母碎片不足的字母以及缺少的数量
-	private int[] unsufficientCharacters = new int[26];
+	// 容器，记录所有输入的字母及数量
+	private int[] enteredCharactersArray = new int[26];
+//	// 容器，记录字母碎片不足的字母以及缺少的数量
+//	private int[] unsufficientCharacters = new int[26];
 
 	// 最小制造数量
 	private int minCreateCount = 1;
@@ -88,8 +90,8 @@ public class SpellViewController : MonoBehaviour {
 	/// Clears the unsufficient characters.
 	/// </summary>
 	private void ClearUnsufficientCharacters(){
-		for(int i = 0; i<unsufficientCharacters.Length;i++){
-			unsufficientCharacters [i] = 0;
+		for(int i = 0; i<enteredCharactersArray.Length;i++){
+			enteredCharactersArray [i] = 0;
 		}
 	}
 
@@ -105,17 +107,15 @@ public class SpellViewController : MonoBehaviour {
 
 			enteredCharacters.Append (character);
 
+			enteredCharactersArray [characterIndex]++;
+
 			string characterWithColor = string.Empty;
 
 			// 字母碎片足够的字母使用绿色，不足的字母使用红色
-			if (Player.mainPlayer.charactersCount [characterIndex] > 0) {
+			if (Player.mainPlayer.charactersCount [characterIndex] >= enteredCharactersArray[characterIndex]) {
 				characterWithColor = "<color=green>" + character + "</color>";
 			} else {
 				characterWithColor = "<color=red>" + character + "</color>";
-
-				// 字母碎片不足，不足数组（unsufficientCharacters）相应字母位置不足数＋1
-				unsufficientCharacters [characterIndex]++;
-
 			}
 				
 			// 更新拼写界面已输入字母界面ui
@@ -127,7 +127,7 @@ public class SpellViewController : MonoBehaviour {
 					return;
 				}
 
-				if (!CheckCharactersSufficient ()) {
+				if (!CheckCharactersSufficient (1)) {
 					return;
 				}
 
@@ -152,10 +152,18 @@ public class SpellViewController : MonoBehaviour {
 			// 删除已输入字母数组的最后一位
 			enteredCharacters.Remove (enteredCharacters.Length - 1, 1);
 
+
 			// 如果删除的字母在不足数组中，对应字母的不足数－1
-			if (unsufficientCharacters [removedCharacterIndex] > 0) {
-				unsufficientCharacters [removedCharacterIndex]--;
+//			if (unsufficientCharacters [removedCharacterIndex] > 0) {
+//				unsufficientCharacters [removedCharacterIndex]--;
+//			}
+
+			enteredCharactersArray[removedCharacterIndex]--;
+			if (enteredCharactersArray [removedCharacterIndex] < 0) {
+				throw new System.Exception ("字母删除越界");
 			}
+
+
 			// 更新ui
 			spellView.OnBackspace (enteredCharacters.Length);
 		}
@@ -167,11 +175,11 @@ public class SpellViewController : MonoBehaviour {
 	/// </summary>
 	public void CreateOne(){
 
-		if (!CheckCharactersSufficient()) {
+		createCount = 1;
+
+		if (!CheckCharactersSufficient(createCount)) {
 			return;
 		}
-
-		createCount = 1;
 
 		itemToSpell = CheckEnteredWord ();
 
@@ -188,11 +196,6 @@ public class SpellViewController : MonoBehaviour {
 	/// </summary>
 	public void SelectCreateCount(){
 
-		if (!CheckCharactersSufficient()) {
-			return;
-		}
-
-
 		itemToSpell = CheckEnteredWord ();
 
 		if (itemToSpell == null) {
@@ -208,6 +211,10 @@ public class SpellViewController : MonoBehaviour {
 	/// 选择数量界面确认按钮点击响应方法
 	/// </summary>
 	public void ConfirmCreateCount(){
+
+		if (!CheckCharactersSufficient(createCount)) {
+			return;
+		}
 
 		CreateItem (itemToSpell);
 	
@@ -249,31 +256,32 @@ public class SpellViewController : MonoBehaviour {
 	/// 检查玩家字母碎片数量是否足够
 	/// </summary>
 	/// 数量足够返回true，不足返回false
-	private bool CheckCharactersSufficient(){
+	private bool CheckCharactersSufficient(int count){
 
 		bool sufficient = true;
 
 		StringBuilder unsufficientCharactesStr= new StringBuilder ();
 
-		for (int i = 0; i < unsufficientCharacters.Length; i++) {
+		for (int i = 0; i < enteredCharactersArray.Length; i++) {
 
-			if (unsufficientCharacters [i] != 0) {
-				
+			int numNeed = enteredCharactersArray [i] * count;
+
+			if (Player.mainPlayer.charactersCount [i] < numNeed) {
+
 				string unsufficientCharacter = ((char)(i + CommonData.aInASCII)).ToString ();
-				unsufficientCharactesStr.AppendFormat ("{0}、",unsufficientCharacter);
+				unsufficientCharactesStr.AppendFormat ("字母碎片{0}缺少{1}个、",unsufficientCharacter,numNeed - Player.mainPlayer.charactersCount[i] * count);
 
 				sufficient = false;
 
 			}
 
 		}
+			
 		if (!sufficient) {
 			
 			unsufficientCharactesStr.Remove (unsufficientCharactesStr.Length - 1, 1);
 
-			string unsufficientTint = "字母碎片" + unsufficientCharactesStr.ToString () + "数量不足";
-
-			Debug.Log (unsufficientTint);
+			Debug.Log (unsufficientCharactesStr);
 
 		}
 
@@ -368,11 +376,6 @@ public class SpellViewController : MonoBehaviour {
 
 	public void ConfirmStrengthenItem(){
 
-		if (!CheckCharactersSufficient ()) {
-			Debug.Log ("字母碎片不足");
-			return;
-		}
-
 		string strengthGainStr = itemToSpell.StrengthenItem ();
 
 		UpdateOwnedCharacters ();
@@ -387,6 +390,12 @@ public class SpellViewController : MonoBehaviour {
 	private void ClearSpellInfos(){
 
 		enteredCharacters = new StringBuilder ();
+
+		for (int i = 0; i < enteredCharactersArray.Length; i++) {
+
+			enteredCharactersArray [i] = 0;
+
+		}
 
 		createdItems.Clear ();
 

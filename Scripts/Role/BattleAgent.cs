@@ -148,7 +148,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		get{
 			if (mAllEquipedItems.Count == 0) {
 				for (int i = 0; i < 6; i++) {
-					mAllEquipedItems.Add (new Item ());
+					mAllEquipedItems.Add (null);
 				}
 			}
 			return mAllEquipedItems;
@@ -310,7 +310,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		// 根据装备更新属性
 
 		foreach (Item item in allEquipedItems) {
-			if (item.itemType != ItemType.Consumables) {
+			if (item != null && item.itemType != ItemType.Consumables) {
 				ResetPropertiesByEquipment (item);
 			}
 		}

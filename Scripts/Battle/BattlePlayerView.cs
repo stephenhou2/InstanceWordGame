@@ -14,13 +14,13 @@ public class BattlePlayerView : BattleAgentView {
 
 	public Button[] itemButtons;
 
-	private Transform mDetailPlane;
-	public Transform detailPlane{
+	private Transform mSkillAndItemDetailPlane;
+	public Transform skillAndItemDetailPlane{
 		get{
-			if (mDetailPlane == null) {
-				mDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/DetailPlane").transform;
+			if (mSkillAndItemDetailPlane == null) {
+				mSkillAndItemDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/SkillAndItemDetailPlane").transform;
 			}
-			return mDetailPlane;
+			return mSkillAndItemDetailPlane;
 		}
 
 	}
@@ -101,7 +101,7 @@ public class BattlePlayerView : BattleAgentView {
 
 			Text itemCount = itemButton.transform.FindChild ("Text").GetComponent<Text> ();
 
-			if (consumable.itemName == null) {
+			if (consumable == null) {
 				
 				itemButton.interactable = false;
 				itemIcon.enabled = false;
@@ -123,9 +123,10 @@ public class BattlePlayerView : BattleAgentView {
 
 			itemButton.interactable = (consumable.itemCount > 0) && player.isItemEnable;
 		}
-		for (int i = player.allEquipedItems.Count; i < itemButtons.Length; i++) {
-			itemButtons [i].interactable = false;
-		}
+
+//		for (int i = player.allEquipedItems.Count; i < itemButtons.Length; i++) {
+//			itemButtons [i].interactable = false;
+//		}
 
 	}
 
@@ -198,35 +199,35 @@ public class BattlePlayerView : BattleAgentView {
 
 	public void ShowSkillDetail(int index,Skill skill){
 
-		detailPlane.SetParent (skillButtons [index].transform,false);
+		skillAndItemDetailPlane.SetParent (skillButtons [index].transform,false);
 
-		detailPlane.FindChild ("Name").GetComponent<Text> ().text = skill.skillName;
+		skillAndItemDetailPlane.FindChild ("Name").GetComponent<Text> ().text = skill.skillName;
 
-		detailPlane.FindChild ("Description").GetComponent<Text> ().text = skill.skillDescription;
+		skillAndItemDetailPlane.FindChild ("Description").GetComponent<Text> ().text = skill.skillDescription;
 
-		detailPlane.FindChild("Detail").GetComponent<Text> ().text = string.Format ("气力消耗:{0}\n冷却回合{1}", skill.strengthConsume, skill.actionConsume);
+		skillAndItemDetailPlane.FindChild("Detail").GetComponent<Text> ().text = string.Format ("气力消耗:{0}\n冷却回合{1}", skill.strengthConsume, skill.actionConsume);
 
-		detailPlane.gameObject.SetActive (true);
+		skillAndItemDetailPlane.gameObject.SetActive (true);
 	}
 
 	public void QuitDetailPlane(){
 
-		detailPlane.gameObject.SetActive (false);
+		skillAndItemDetailPlane.gameObject.SetActive (false);
 
 	}
 
 
 	public void ShowItemDetail(int index,Item item){
 		
-		detailPlane.SetParent (itemButtons [index].transform,false);
+		skillAndItemDetailPlane.SetParent (itemButtons [index].transform,false);
 
-		detailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
+		skillAndItemDetailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
 
-		detailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
+		skillAndItemDetailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
 
-//		detailPlane.FindChild("Detail").GetComponent<Text> ().text = string.Format ("气力消耗:{0}\n冷却回合{1}", skill.strengthConsume, skill.actionConsume);
+		skillAndItemDetailPlane.FindChild ("Detail").GetComponent<Text> ().text = item.GetItemPropertiesString ();
 
-		detailPlane.gameObject.SetActive (true);
+		skillAndItemDetailPlane.gameObject.SetActive (true);
 	}
 		
 

@@ -50,7 +50,7 @@ public class BattlePlayerController : MonoBehaviour {
 			}
 			baView.SetUpUI (player,skillIcons,allItemSprites);
 		},true);
-
+			
 	}
 
 	public void OnPlayerSelectSkill(int skillIndex){
@@ -67,11 +67,15 @@ public class BattlePlayerController : MonoBehaviour {
 
 		Item item = player.allEquipedItems[itemIndex + 3];
 
+		if (item == null) {
+			return;
+		}
+
 		item.itemCount--;
 
 
 		if (item.itemCount <= 0) {
-			player.allEquipedItems [itemIndex + 3] = new Item ();
+			player.allEquipedItems [itemIndex + 3] = null;
 			player.allItems.Remove (item);
 			baView.SetUpItemButtonsStatus (player);
 		}
