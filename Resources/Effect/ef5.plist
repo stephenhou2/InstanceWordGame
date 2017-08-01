@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/attack/ef_knife/efkb00.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb01.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{303,1},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb02.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{605,1},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb03.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,203},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb04.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,505},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb05.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,807},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb06.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{203,203},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb07.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{203,505},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb08.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{303,807},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb09.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{605,203},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{405,405},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{605,707},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb12.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{607,405},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb13.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{807,707},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_knife/efkb14.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{809,405},{300,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{300,200}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>ef5.png</string>
+			<key>realTextureFileName</key>
+			<string>ef5.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

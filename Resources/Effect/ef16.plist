@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/attack/efo_magic/21.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{242,424},{239,416}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{239,416}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/22.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{481,640},{223,414}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{223,414}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/23.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{653,0},{228,403}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{228,403}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/24.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{420,0},{233,411}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{233,411}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/25.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{481,411},{229,407}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{229,407}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/26.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,424},{242,417}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{242,417}</string>
+			</dict>
+			<key>animation/res/attack/efo_magic/18.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{420,424}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{420,424}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>ef16.png</string>
+			<key>realTextureFileName</key>
+			<string>ef16.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

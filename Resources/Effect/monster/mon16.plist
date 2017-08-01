@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/monster/monLong/honglong/wing_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{447,796}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{447,796}</string>
+			</dict>
+			<key>animation/res/monster/monLong/heilong/wing_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,796},{217,348}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{217,348}</string>
+			</dict>
+			<key>animation/res/monster/monLong/heilong/head.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{650,0},{328,360}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{328,360}</string>
+			</dict>
+			<key>animation/res/monster/monLong/heilong/bozi.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{629,328},{326,301}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{326,301}</string>
+			</dict>
+			<key>animation/res/monster/monLong/binglong/leg_fr.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{447,0},{176,237}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{176,237}</string>
+			</dict>
+			<key>animation/res/monster/monLong/binglong/leg_fl.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{650,629},{237,359}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{237,359}</string>
+			</dict>
+			<key>animation/res/monster/monLong/binglong/leg_br.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{447,458},{96,183}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{96,183}</string>
+			</dict>
+			<key>animation/res/monster/monLong/binglong/leg_bl.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{447,237},{182,221}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{182,221}</string>
+			</dict>
+			<key>animation/res/monster/monLong/binglong/head.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{348,796},{174,302}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{174,302}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>mon16.png</string>
+			<key>realTextureFileName</key>
+			<string>mon16.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/attack/efo_magic/16.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{420,424}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{420,424}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{848,1},{251,171}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{251,171}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{423,1},{239,241}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{239,241}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/12.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{287,742},{257,263}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{257,263}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/13.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{546,726},{300,289}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,289}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/14.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{309,427},{318,297}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{318,297}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/15.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,742},{284,257}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{284,257}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/16.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,427},{313,306}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{313,306}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/17.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{805,254},{195,252}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{195,252}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/18.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{629,406},{174,172}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{174,172}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/19.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{664,1},{180,210}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{180,210}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/21.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{423,254},{150,189}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{150,189}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/22.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{614,254},{150,189}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{150,189}</string>
+			</dict>
+			<key>animation/res/attack/efo_snow/23.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{805,508},{150,189}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{150,189}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>ef18.png</string>
+			<key>realTextureFileName</key>
+			<string>ef18.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

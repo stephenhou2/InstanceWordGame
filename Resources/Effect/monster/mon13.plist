@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/monster/monLong/lvlong/arm_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{567,761},{234,282}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{234,282}</string>
+			</dict>
+			<key>animation/res/monster/monLong/lvlong/body.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{750,758}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{750,758}</string>
+			</dict>
+			<key>animation/res/monster/monLong/lvlong/bodyR.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{753,407},{221,239}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{221,239}</string>
+			</dict>
+			<key>animation/res/monster/monLong/lvlong/tongue.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{753,630},{63,216}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{63,216}</string>
+			</dict>
+			<key>animation/res/monster/monLong/honglong/treasure.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{851,1},{404,125}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{404,125}</string>
+			</dict>
+			<key>animation/res/monster/monLong/heilong/arm_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,761},{251,564}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{251,564}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>mon13.png</string>
+			<key>realTextureFileName</key>
+			<string>mon13.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

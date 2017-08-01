@@ -49,7 +49,7 @@ public abstract class BattleAgentView : MonoBehaviour {
 		
 		effectAnimator.gameObject.SetActive (true);
 
-		effectAnimator.SetTrigger ("CrossChopEffect");
+		effectAnimator.SetTrigger ("IceEffect");
 
 		Debug.Log ("特效开始");
 	}

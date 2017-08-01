@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/monster/monShenyuanjumang/head.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,420},{399,346}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{399,346}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/body.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{421,417}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{421,417}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/1.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{629,1},{441,300}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{441,300}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/2.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{424,1},{728,203}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{728,203}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/arm_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{402,731},{300,285}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{300,285}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/arm_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{704,696},{291,286}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{291,286}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/body.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{629,444},{209,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{209,250}</string>
+			</dict>
+			<key>animation/res/monster/monGushen/head.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,768},{246,324}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{246,324}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>mon8.png</string>
+			<key>realTextureFileName</key>
+			<string>mon8.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

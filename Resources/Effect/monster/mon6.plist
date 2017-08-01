@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/monster/monXiaolong/head.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{751,827},{233,188}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{233,188}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/jaw.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{548,465},{153,144}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{153,144}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/leg_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{375,286},{177,246}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{177,246}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/leg_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{894,237},{114,140}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{114,140}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/tail.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{375,1},{309,283}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{309,283}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/wing_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{372,758}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{372,758}</string>
+			</dict>
+			<key>animation/res/monster/monXiaolong/wing_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,761},{206,748}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{206,748}</string>
+			</dict>
+			<key>animation/res/monster/monLong/yinying.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{623,286},{163,87}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{163,87}</string>
+			</dict>
+			<key>animation/res/monster/shadow.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{894,1},{234,75}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{234,75}</string>
+			</dict>
+			<key>animation/res/monster/monShenyuanjumang/arm_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{751,513},{212,312}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{212,312}</string>
+			</dict>
+			<key>animation/res/monster/monShenyuanjumang/arm_r.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{375,465},{171,192}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{171,192}</string>
+			</dict>
+			<key>animation/res/monster/monHeipaoshushi/arm_l.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{751,1},{141,510}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{141,510}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>mon6.png</string>
+			<key>realTextureFileName</key>
+			<string>mon6.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

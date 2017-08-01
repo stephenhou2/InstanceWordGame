@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/attack/efo_sword/25.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{452,1},{432,248}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{432,248}</string>
+			</dict>
+			<key>animation/res/attack/efo_sword/26.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,1},{449,260}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{449,260}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/drop_02.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{452,251},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efdupenjian.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{443,503},{150,150}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{150,150}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efdusmke.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{505,857},{139,138}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{139,138}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efduxialiu.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{595,503},{150,150}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{150,150}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/eftishi_00.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{253,263},{188,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{188,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/eftishi_01.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{253,465},{188,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{188,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/eftishi_02.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{707,655},{188,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{188,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efwlsh_00.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{704,251},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efwlsh_02.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,263},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efwlsh_04.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,515},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efwlsh_06.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{1,767},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efwlsh_08.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{253,667},{250,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{250,250}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/EFZDAOE_00.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{505,655},{200,200}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,200}</string>
+			</dict>
+			<key>animation/res/attack/ef_equip/efzdaoesmke.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{645,857},{139,138}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<true />
+				<key>sourceSize</key>
+				<string>{139,138}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>ef20.png</string>
+			<key>realTextureFileName</key>
+			<string>ef20.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>

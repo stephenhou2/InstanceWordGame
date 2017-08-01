@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>animation/res/attack/efo_metero/3.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{684,418},{322,437}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{322,437}</string>
+			</dict>
+			<key>animation/res/attack/efo_metero/4.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{347,0},{335,452}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{335,452}</string>
+			</dict>
+			<key>animation/res/attack/efo_metero/5.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{347,452}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{347,452}</string>
+			</dict>
+			<key>animation/res/attack/efo_metero/6.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,452},{338,451}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{338,451}</string>
+			</dict>
+			<key>animation/res/attack/efo_metero/7.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{338,452},{346,438}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{346,438}</string>
+			</dict>
+			<key>animation/res/attack/efo_metero/8.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{682,0},{340,418}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{340,418}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>ef8.png</string>
+			<key>realTextureFileName</key>
+			<string>ef8.png</string>
+			<key>size</key>
+			<string>{1024,1024}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>1024</integer>
+			<key>height</key>
+			<integer>1024</integer>
+		</dict>
+	</dict>
+</plist>
