@@ -17,7 +17,7 @@ public class DataBaseManager {
 
 		MySQLiteHelper sql = MySQLiteHelper.Instance;
 
-		sql.CreatDatabase (CommonData.dataBaseName);
+		sql.CreateDatabase (CommonData.dataBaseName);
 
 		sql.GetConnectionWith (CommonData.dataBaseName);
 
@@ -53,9 +53,9 @@ public class DataBaseManager {
 
 		sql.DeleteTable ("CET4");
 
-		sql.CreatTable ("CET4",
+		sql.CreateTable ("CET4",
 			new string[]{ "wordId", "spell", "explaination", "example","learned" },
-			new string[]{ "PRIMARY Key", "UNIQUE NOT NULL", "NOT NULL", "","" },
+			new string[]{ "PRIMARY KEY", "UNIQUE NOT NULL", "NOT NULL", "","" },
 			new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT","INTEGER" });
 
 		int[] stringTypeCols = new int[]{ 1, 2, 3 };

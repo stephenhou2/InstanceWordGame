@@ -59,16 +59,13 @@ public class Player : BattleAgent {
 
 	public int skillPointsLeft;
 
-//	public void Awake(){
-//
-//		if (mainPlayer == null) {
-//			mainPlayer = this;
-//		} else if (mainPlayer != this) {
-//			Destroy (gameObject);
-//		}
-//
-//		DontDestroyOnLoad (gameObject);
-//	}
+
+	public override void Awake(){
+
+		base.Awake ();
+	
+		#warning 这里用来玩家信息初始化
+	}
 
 
 

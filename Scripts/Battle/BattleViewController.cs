@@ -19,7 +19,9 @@ public class BattleViewController : MonoBehaviour {
 	public List<BattleAgent> monsters = new List<BattleAgent>();
 
 	// 怪物缓存池
-	private List<GameObject> monsterViewPool = new List<GameObject> ();
+	private InstancePool monsterViewPool;
+
+	public GameObject monsterViewModel;
 
 	private List<Item> battleGains = new List<Item>();
 
@@ -66,6 +68,11 @@ public class BattleViewController : MonoBehaviour {
 
 	public Transform upperPlane;
 
+	public void Awake(){
+
+		monsterViewPool = InstancePool.GetOrCreateInstancePool ("MonsterViewPool");
+
+	}
 
 	// 初始化战斗界面
 	public void SetUpBattleView(MonsterGroup monsterGroup){
@@ -86,22 +93,13 @@ public class BattleViewController : MonoBehaviour {
 		players.Add (player);
 		bpController.SetUpBattlePlayerView ();
 	}
-
-	#warning modify later
+		
 	// 从缓存池中获取怪物view
 	private GameObject GetMonsterView(){
-		GameObject monsterView = null;
-		if (monsterViewPool.Count != 0) {
-			monsterView = monsterViewPool [0];
-			monsterView.SetActive (true);
-			monsterViewPool.RemoveAt (0);
-		} else {
-			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas", ()=>{
-				monsterView = ResourceManager.Instance.gos [0];
-			}, true,"MonsterView");
-		}
 
-		return monsterView;
+		Transform monsterView = monsterViewPool.GetInstance<Transform> (monsterViewModel, upperPlane);
+
+		return monsterView.gameObject;
 	}
 
 
@@ -116,8 +114,6 @@ public class BattleViewController : MonoBehaviour {
 		for(int i = 0;i<monsterNum;i++){
 
 			GameObject mMonsterView = GetMonsterView ();
-
-			mMonsterView.transform.SetParent (upperPlane, false);
 
 			Monster mMonster = mMonsterView.GetComponent<Monster> ();
 			mMonster.monsterId = i;
@@ -167,7 +163,9 @@ public class BattleViewController : MonoBehaviour {
 
 			UpdatePropertiesByStates ();
 
-			UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
+
+			StartCoroutine ("UpdateUIAndCheckAgentAlive");
+//			UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 			if (!battleEnd) {
 				StartCoroutine ("OnMonsterAction");
@@ -212,7 +210,8 @@ public class BattleViewController : MonoBehaviour {
 
 		UpdatePropertiesByStates ();
 
-		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
+		StartCoroutine ("UpdateUIAndCheckAgentAlive");
+//		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 		if (!battleEnd) {
 			StartCoroutine ("OnMonsterAction");
@@ -262,7 +261,8 @@ public class BattleViewController : MonoBehaviour {
 
 					UpdatePropertiesByStates ();
 
-					UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
+					StartCoroutine ("UpdateUIAndCheckAgentAlive");
+//					UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 					if (!battleEnd) {
 						if (monster.monsterId == (monsters[monsters.Count - 1] as Monster).monsterId) {
@@ -344,36 +344,37 @@ public class BattleViewController : MonoBehaviour {
 	/// <summary>
 	/// 更新UI，检查角色是否被击败
 	/// </summary>
-	private void UpdateUIAndCheckAgentAlive(){
+	private IEnumerator UpdateUIAndCheckAgentAlive(){
+
+
+		yield return new WaitUntil (() => allAnimationEnd);
 
 		#warning picturs of states toAdd
 
-		if (players[0].health <= 0) {
+		if (players [0].health <= 0) {
 //			battleEndHUD.gameObject.SetActive (true);
 			battleEnd = true;
-			StartCoroutine("OnQuitBattle");
+			StartCoroutine ("OnQuitBattle");
 //			battleEndResult.text = "You Lose!";
-			return;
-		} 
+		} else { 
+			for (int i = 0; i < monsters.Count; i++) {
+				Monster monster = monsters [i] as Monster;
+				CallBack cb = () => {
+					monsterViewPool.AddInstanceToPool(monster.baView.gameObject);
+					monsters.Remove (monster);
 
-		for (int i = 0; i < monsters.Count; i++) {
-			Monster monster = monsters [i] as Monster;
-			CallBack cb = () => {
-				monsterViewPool.Add(monster.baView.gameObject);
-				monster.baView.transform.SetParent(TransformManager.FindTransform(CommonData.poolContainerName));
-				monsters.Remove (monster);
-
-				if (monsters.Count == 0) {
+					if (monsters.Count == 0) {
 //					battleEndHUD.gameObject.SetActive (true);
-					battleEnd = true;
-					StartCoroutine("OnQuitBattle");
+						battleEnd = true;
+						StartCoroutine ("OnQuitBattle");
 //					battleEndResult.text = "you win";
-					return;
+						return;
+					}
+					battleEnd = false;
+				};
+				if (monster.health <= 0) {
+					monster.AgentDie (cb);
 				}
-				battleEnd = false;
-			};
-			if (monster.health <= 0) {
-				monster.AgentDie (cb);
 			}
 		}
 
@@ -425,7 +426,8 @@ public class BattleViewController : MonoBehaviour {
 
 		UpdatePropertiesByStates ();
 
-		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
+		StartCoroutine ("UpdateUIAndCheckAgentAlive");
+//		UpdateUIAndCheckAgentAlive ();//更新玩家和怪物状态,判断游戏是否结束
 
 		if (!battleEnd) {
 			StartCoroutine ("OnMonsterAction");
@@ -520,8 +522,11 @@ public class BattleViewController : MonoBehaviour {
 
 		RectTransform rt = currentClickButtonTrans as RectTransform;
 
+		mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+
 		Vector3[] corners = new Vector3[4];
 		rt.GetWorldCorners (corners);
+
 
 		if (mousePos.x < corners[0].x || mousePos.y < corners[0].y || mousePos.x > corners[2].x || mousePos.y > corners[2].y){
 			mPressType = PressType.Cancel;
@@ -564,7 +569,7 @@ public class BattleViewController : MonoBehaviour {
 
 		t2 = Time.time;
 
-		if (t2 - t1 >= pressDurationReq) {
+		if (t2 - t1 + 0.01f >= pressDurationReq) {
 			mPressType = PressType.LongPress;
 		} else if (t2 - t1 < pressDurationReq && btnInteractable) {
 			mPressType = PressType.Click;
@@ -582,6 +587,8 @@ public class BattleViewController : MonoBehaviour {
 
 
 		RectTransform rt = currentClickButtonTrans as RectTransform;
+
+		mousePos = Camera.main.ScreenToWorldPoint (mousePos);
 
 		Vector3[] corners = new Vector3[4];
 		rt.GetWorldCorners (corners);

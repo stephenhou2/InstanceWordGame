@@ -7,9 +7,11 @@ using DG.Tweening;
 
 public class ExploreMainView: MonoBehaviour {
 
+	public Transform chapterListsViewContainer;
+
 	public Transform chapterListsPlane;
 
-	public Transform chapterListsContainer;
+	public Transform chapterListsView;
 
 //	private InstancePool chapterItemsPool;
 
@@ -58,11 +60,9 @@ public class ExploreMainView: MonoBehaviour {
 
 //			Transform chapterItem = chapterItemsPool.GetInstance (chapterItemModel, chapterListsContainer);
 
-			Transform chapterItem = Instantiate (chapterItemModel, chapterListsContainer).transform;
+			Transform chapterItem = Instantiate (chapterItemModel, chapterListsView).transform;
 
 			ChapterList chapterList = chapterLists [i];
-
-			#warning章节列表目前只显示章节名称，没有加入地点，进入条件等，后续细化
 
 			Image chapterIcon = chapterItem.FindChild ("ChapterIcon").GetComponent<Image> ();
 
@@ -107,7 +107,7 @@ public class ExploreMainView: MonoBehaviour {
 
 		}
 
-		chapterListsPlane.gameObject.SetActive (true);
+		chapterListsViewContainer.gameObject.SetActive (true);
 		exploreMainViewPlane.gameObject.SetActive (false);
 
 	}
@@ -127,7 +127,7 @@ public class ExploreMainView: MonoBehaviour {
 		SetUpTopBar ();
 
 		exploreMainViewPlane.gameObject.SetActive (true);
-		chapterListsPlane.gameObject.SetActive (false);
+		chapterListsViewContainer.gameObject.SetActive (false);
 
 
 	}
@@ -300,6 +300,16 @@ public class ExploreMainView: MonoBehaviour {
 		return mChapterEventView;
 	}
 
+	public void OnQuitExploreChapterView(CallBack cb){
+
+		chapterListsViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+
+		chapterListsPlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
+
+			cb();
+
+		});
+	}
 
 
 		// 返回随机事件

@@ -8,7 +8,7 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public string agentName;
 	public string agentIconName;
-	public bool isActive = true;
+	public bool isActive;
 
 	private Skill mAttackSkill;
 	public Skill attackSkill{
@@ -18,6 +18,7 @@ public abstract class BattleAgent : MonoBehaviour {
 					mAttackSkill = ResourceManager.Instance.gos[0].GetComponent<Skill>();
 				}, true,"Attack");
 			}
+			mAttackSkill.transform.SetParent (transform.FindChild ("Skills"), false);
 			return mAttackSkill;
 		}
 		set{
@@ -35,6 +36,7 @@ public abstract class BattleAgent : MonoBehaviour {
 					mDefenceSkill = ResourceManager.Instance.gos[0].GetComponent<Skill>();
 				}, true,"Defence");
 			}
+			mDefenceSkill.transform.SetParent (transform.FindChild ("Skills"), false);
 			return mDefenceSkill;
 		}
 		set{
@@ -128,17 +130,17 @@ public abstract class BattleAgent : MonoBehaviour {
 	public int crit;//暴击
 
 
-	public int healthGainScaler = 1;//力量对最大血量的加成系数
+	public int healthGainScaler;//力量对最大血量的加成系数
 
-	public float strengthGainScaler = 0.05f; //力量对最大气力的加成系数
+	public float strengthGainScaler; //力量对最大气力的加成系数
 
 	public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
 
-	public float hurtScaler = 1.0f;//伤害系数
+	public float hurtScaler;//伤害系数
 
-	public float critScaler = 1.0f;//暴击伤害系数
+	public float critScaler;//暴击伤害系数
 
-	public float healthAbsorbScalser = 0f;//回血比例
+	public float healthAbsorbScalser;//回血比例
 
 	public List<Skill> skillsEquiped = new List<Skill>();//技能数组
 
@@ -162,9 +164,30 @@ public abstract class BattleAgent : MonoBehaviour {
 
 	public List<StateSkillEffect> states = new List<StateSkillEffect>();//状态数组
 
-	public int attackTime = 1;//攻击次数
+	public int attackTime;//攻击次数
 
 	public Skill currentSkill;
+
+	public virtual void Awake(){
+
+		isActive = true; // 角色初始化后默认可以行动
+
+		healthGainScaler = 1;//力量对最大血量的加成系数
+
+		strengthGainScaler = 0.05f; //力量对最大气力的加成系数
+
+		validActionType = ValidActionType.All;// 有效的行动类型
+
+		hurtScaler = 1.0f;//伤害系数
+
+		critScaler = 1.0f;//暴击伤害系数
+
+		healthAbsorbScalser = 0f;//回血比例
+
+		attackTime = 1;//攻击次数
+
+	}
+
 
 	public void CopyAgentStatus(BattleAgent ba){
 
@@ -286,7 +309,7 @@ public abstract class BattleAgent : MonoBehaviour {
 		}
 
 		attack += equipment.attackGain;
-		power += equipment.powerGain;
+//		power += equipment.powerGain;
 		magic += equipment.magicGain;
 		crit += equipment.critGain;
 		amour += equipment.amourGain;

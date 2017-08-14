@@ -9,6 +9,8 @@ public class RecordView : MonoBehaviour {
 
 	public Text wordType;
 
+	public Transform recordViewContainer;
+
 	public Transform recordPlane;
 
 	public Transform generalRecordPlane;
@@ -210,6 +212,8 @@ public class RecordView : MonoBehaviour {
 	/// </summary>
 	/// <param name="cb">Cb.</param>
 	public void OnQuitRecordPlane(CallBack cb){
+
+		recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 		recordPlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete(()=>{
 			cb();

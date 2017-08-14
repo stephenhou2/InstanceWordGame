@@ -16,6 +16,8 @@ public class HomeView : MonoBehaviour {
 
 	public void SetUpHomeView(){
 
+//		GetComponent<Canvas> ().enabled = true;
+
 		SetUpTopBar ();
 
 		VotexRotate ();
@@ -34,7 +36,9 @@ public class HomeView : MonoBehaviour {
 		votexRotate.SetEase (Ease.Linear);
 	}
 
-	public void VotexPause(){
+	public void OnQuitHomeView(){
+
+//		GetComponent<Canvas> ().enabled = false;
 
 		if (votexRotate != null) {
 			votexRotate.Pause ();

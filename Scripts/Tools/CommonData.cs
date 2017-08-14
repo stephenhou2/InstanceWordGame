@@ -79,7 +79,7 @@ public enum ItemType{
 	Shoes,
 	Consumables,
 	Task,
-	FuseStone
+	Inscription
 }
 
 public enum PropertyType{

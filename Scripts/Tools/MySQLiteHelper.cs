@@ -100,7 +100,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// </summary>
 	/// <returns>The database.</returns>
 	/// <param name="DbName">Db name.</param>
-	public IDbConnection CreatDatabase(string dbName,string password = null){
+	public IDbConnection CreateDatabase(string dbName,string password = null){
 
 		// 如果数据库连接字典中查询到指定名称的数据库连接，则直接返回该连接
 		foreach (KeyValuePair<string,IDbConnection> kv in connectionDic) {
@@ -229,6 +229,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 				m_command = null;
 			}
 				
+			connection.Dispose ();
 			connection.Close ();
 
 			connection = null;
@@ -292,6 +293,9 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <returns></returns>
 	public IDataReader ExecuteQuery(string queryString, IDataParameter para)
 	{
+
+//		Debug.Log (queryString);
+
 		try
 		{
 			m_command = m_connection.CreateCommand();
@@ -332,7 +336,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 	/// <param name="tableName">Table name.</param>
 	/// <param name="colNames">Col names.</param>
 	/// <param name="colTypes">Col types.</param>
-	public bool CreatTable(string tableName,string[] colNames,string[] constraints,string[] colTypes){
+	public bool CreateTable(string tableName,string[] colNames,string[] constraints,string[] colTypes){
 
 		if (colNames.Length != colTypes.Length || colNames.Length != constraints.Length || constraints.Length != colTypes.Length) {
 			throw new SqliteException ("类型数量错误");
@@ -373,6 +377,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 		while(reader.Read()){
 
 			if (reader.GetInt32(0) == 0) {
+				
 				return false;
 			}
 		}
@@ -389,7 +394,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		if (!CheckTableExist (tableName)) {
 
-			Debug.Log ("------表" + tableName + "不存在------");
+			Debug.Log (string.Format ("不存在名为{0}的表", tableName));
 
 			return false;
 		}
@@ -444,7 +449,7 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		}
 
-		Debug.Log (queryString);
+
 
 		return ExecuteQuery (queryString.ToString());
 	}
@@ -481,9 +486,30 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 		}
 		queryString.Append(" )");
 
-		Debug.Log (queryString);
-
 		return ExecuteQuery(queryString.ToString());
+	}
+
+	public IDataReader AddTableColumn(string tableName,string colName,string colType){
+
+		if (!CheckTableExist (tableName)) {
+			return null;
+		}
+
+		string queryString = string.Format ("ALERT TABLE {0} ADD COLUMN {1} {2}", tableName, colName, colType);
+
+		return ExecuteQuery (queryString);
+	}
+
+	public IDataReader RenameTable(string oriTableName,string newTableName){
+
+		if (!CheckTableExist (oriTableName)) {
+			return null;
+		}
+		
+		string queryString = string.Format ("ALERT TABLE {0} RENAME TO {1}", oriTableName, newTableName);
+
+		return ExecuteQuery (queryString);
+
 	}
 		
 	/// <summary>
@@ -523,9 +549,6 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 			queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
 
 		}
-			
-
-		Debug.Log (queryString);
 
 		return ExecuteQuery (queryString.ToString ());
 	}
@@ -558,7 +581,6 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 			queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
 
 		}
-		Debug.Log (queryString);
 
 		return ExecuteQuery (queryString.ToString());
 	}
@@ -570,7 +592,11 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 		return ExecuteQuery (queryString);
 	}
 
-
+	/// <summary>
+	/// 检查字段名是否一致
+	/// </summary>
+	/// <param name="tableName">Table name.</param>
+	/// <param name="fieldNameStrs">Field name strs.</param>
 	public void CheckFiledNames(string tableName,string[] fieldNameStrs){
 
 		string sqlString = "PRAGMA table_info(" + tableName + ")";
@@ -599,6 +625,38 @@ public class MySQLiteHelper : Singleton<MySQLiteHelper> {
 
 		}
 
+	}
+
+	/// <summary>
+	/// 开启查询事务
+	/// </summary>
+	public IDataReader BeginTransaction(){
+
+		string queryString = "BEGIN TRANSACTION";
+
+		return ExecuteQuery (queryString);
+
+	}
+
+	/// <summary>
+	/// 关闭查询事务
+	/// </summary>
+	public IDataReader EndTransaction(){
+		
+		string queryString = "END TRANSACTION";
+
+		return ExecuteQuery (queryString);
+
+	}
+
+	/// <summary>
+	/// 回滚到上次保存状态
+	/// </summary>
+	public IDataReader RollBack(){
+		
+		string queryString = "ROLLBACK";
+
+		return ExecuteQuery (queryString);
 	}
 
 

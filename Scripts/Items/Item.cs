@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
+using System.Data;
 
 [System.Serializable]
 public class Item {
@@ -21,7 +22,7 @@ public class Item {
 	public int strengthenTimes;
 
 	public int attackGain;//攻击力增益
-	public int powerGain;//力量增益
+//	public int powerGain;//力量增益
 	public int magicGain;//魔法增益
 	public int critGain;//暴击增益
 	public int amourGain;//护甲增益
@@ -40,6 +41,55 @@ public class Item {
 
 	private int[] propertiesArray;
 
+	public static Item CreateInscription(string englishName){
+
+		MySQLiteHelper sql = MySQLiteHelper.Instance;
+
+		sql.GetConnectionWith (CommonData.dataBaseName);
+
+		IDataReader reader =  sql.ReadSpecificRowsAndColsOfTable ("AllWordsData", "*",
+			new string[]{ string.Format ("Spell='{0}'", englishName)},
+			true);
+
+		if (!reader.Read ()) {
+			Debug.Log ("不存在");
+			return null;
+		}
+
+		bool valid = reader.GetBoolean (4);
+
+		if (!valid) {
+			Debug.Log ("已使用");
+			return null;
+		}
+
+		int id = reader.GetInt32 (0);
+
+		string explaination = reader.GetString (2);
+
+
+
+		Item inscription = new Item ();
+
+		inscription.itemType = ItemType.Inscription;
+
+		string inscriptionName = explaination.Split (new string[]{ ".", "，" }, System.StringSplitOptions.RemoveEmptyEntries)[1];
+
+		inscription.itemName = string.Format ("{0}之石", inscriptionName);
+
+		inscription.RandomProperties ();
+
+		sql.UpdateSpecificColsWithValues ("AllWordsData",
+			new string[]{ "Valid" },
+			new string[]{ "0" },
+			new string[]{ string.Format("Id={0}",id) },
+			true);
+
+		sql.CloseConnection (CommonData.dataBaseName);
+
+		return inscription;
+	}
+
 	public Item(){
 
 	}
@@ -53,7 +103,7 @@ public class Item {
 		itemType = originalItem.itemType;
 		itemNameInEnglish = originalItem.itemNameInEnglish;
 		attackGain = originalItem.attackGain;
-		powerGain = originalItem.powerGain;
+//		powerGain = originalItem.powerGain;
 		magicGain = originalItem.magicGain;
 		critGain = originalItem.critGain;
 		amourGain = originalItem.amourGain;
@@ -219,8 +269,8 @@ public class Item {
 		case ItemType.Task:
 			itemTypeStr = "类型: 任务物品";
 			break;
-		case ItemType.FuseStone:
-			itemTypeStr = "类型: 融合石";
+		case ItemType.Inscription:
+			itemTypeStr = "类型: 铭文";
 			break;
 		}
 
@@ -477,9 +527,9 @@ public class Item {
 		if (attackGain > 0) {
 			attackGain += Random.Range (minGain, maxGain);
 		}
-		if (powerGain > 0) {
-			powerGain += Random.Range (minGain, maxGain);
-		}
+//		if (powerGain > 0) {
+//			powerGain += Random.Range (minGain, maxGain);
+//		}
 		if (magicGain > 0) {
 			magicGain += Random.Range (minGain, maxGain);
 		}
@@ -499,8 +549,47 @@ public class Item {
 
 	}
 
+	private void RandomProperties(){
+
+		int seed1 = Random.Range (1, 8);
+		int seed2 = 0;
+		do {
+			seed2 = Random.Range (1, 8);
+		} while(seed2 == seed1);
+
+		foreach (int seed in new int[]{seed1,seed2}) {
+			switch (seed) {
+			case 0:
+				attackGain = Random.Range (1, 10);
+				break;
+			case 1:
+				magicGain = Random.Range (1, 10);
+				break;
+			case 2:
+				amourGain = Random.Range (1, 10);
+				break;
+			case 3:
+				magicResistGain = Random.Range (1, 10);
+				break;
+			case 4:
+				critGain = Random.Range (1, 10);
+				break;
+			case 5:
+				agilityGain = Random.Range (1, 10);
+				break;
+			case 6:
+				healthGain = Random.Range (10, 100);
+				break;
+			case 7:
+				strengthGain = Random.Range (1, 5);
+				break;
+			}
+		}
+
+	}
+
 	private void RandomQuility(){
-		int seed = Random.Range (0, 100);
+		float seed = Random.Range (0f, 100f);
 		if (seed >= 0 && seed < 50f) {
 			itemQuality = ItemQuality.C;
 		} else if (seed >= 50f && seed < 80f) {

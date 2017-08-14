@@ -37,6 +37,7 @@ public class BagView : MonoBehaviour {
 
 	private List<Sprite> sprites = new List<Sprite> ();
 
+	public Transform bagViewContainer;
 	public GameObject bagPlane;
 
 
@@ -210,7 +211,7 @@ public class BagView : MonoBehaviour {
 		string itemPropertiesString = string.Empty;
 
 
-		if (item.itemType == ItemType.Consumables || item.itemType == ItemType.FuseStone || item.itemType == ItemType.Task) {
+		if (item.itemType == ItemType.Consumables || item.itemType == ItemType.Inscription || item.itemType == ItemType.Task) {
 
 			itemPropertiesText.text = item.GetItemPropertiesString ();
 
@@ -421,6 +422,7 @@ public class BagView : MonoBehaviour {
 
 	// 关闭背包界面
 	public void OnQuitBagPlane(CallBack cb){
+		bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 		bagPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 			cb();
 		});

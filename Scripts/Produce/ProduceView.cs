@@ -13,9 +13,9 @@ public class ProduceView : MonoBehaviour {
 
 	public Transform allItemsContainer;
 
-	public Transform produceContainer;
+	public Transform produceViewContainer;
 
-	public InstancePool itemDetailsPool;
+	private InstancePool itemDetailsPool;
 
 	public Transform[] charactersOwned;
 
@@ -60,6 +60,9 @@ public class ProduceView : MonoBehaviour {
 
 			Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();
 			buttonImage.sprite = i == buttonIndex ? itemTypeButtonSelectedIcon : itemTypeButtonNormalIcon;
+
+			buttonImage.SetNativeSize ();
+
 		}
 
 
@@ -137,7 +140,7 @@ public class ProduceView : MonoBehaviour {
 
 	public void QuitProduceView(CallBack cb){
 
-		produceContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+		produceViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 		producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 			

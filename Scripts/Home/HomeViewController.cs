@@ -21,14 +21,14 @@ public class HomeViewController : MonoBehaviour {
 
 			GameObject.Find("ExploreMainCanvas").GetComponent<ExploreMainViewController> ().SetUpExploreListPlane();
 
-			DestroyInstances();
+			homeView.OnQuitHomeView();
+//			DestroyInstances();
 			// 探索场景加载完成后后台加载战斗场景
 //			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas",()=>{
 //
 //				ResourceManager.Instance.LoadAssetWithFileName("dialog"
 //
 //			});
-
 		});
 
 	}
@@ -39,6 +39,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos[0].GetComponent<RecordViewController> ().SetUpRecordView();
 
+			homeView.OnQuitHomeView();
 		});
 
 
@@ -56,6 +57,7 @@ public class HomeViewController : MonoBehaviour {
 
 			GameObject.Find(CommonData.instanceContainerName + "/ProduceCanvas").GetComponent<ProduceViewController> ().SetUpProduceView();
 
+			homeView.OnQuitHomeView();
 		});
 
 	}
@@ -68,7 +70,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos[0].GetComponent<SkillsViewController>().SetUpSkillsView();
 
-			homeView.VotexPause();
+			homeView.OnQuitHomeView();
 		});
 
 	}
@@ -79,7 +81,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
 
-			homeView.VotexPause();
+			homeView.OnQuitHomeView();
 
 		});
 	}
@@ -90,7 +92,7 @@ public class HomeViewController : MonoBehaviour {
 
 			ResourceManager.Instance.gos [0].GetComponent<SettingViewController> ().SetUpSettingView ();
 
-			homeView.VotexPause();
+			homeView.OnQuitHomeView();
 		});
 	}
 

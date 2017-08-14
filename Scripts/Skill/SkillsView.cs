@@ -39,6 +39,7 @@ public class SkillsView : MonoBehaviour{
 	private Sprite typeBtnNormalSprite;
 	private Sprite typeBtnSelectedSprite;
 
+	public Transform skillsViewContainer;
 	public Transform skillPlane;
 
 	/// <summary>
@@ -336,6 +337,8 @@ public class SkillsView : MonoBehaviour{
 	// 退出按钮点击响应
 	public void OnQuitSkillsPlane(CallBack cb){
 
+		skillsViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+
 		skillPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 			cb();
 		});
@@ -354,7 +357,7 @@ public class SkillsView : MonoBehaviour{
 		for (int i = 0; i < equipedSkillButtonsOfHUD.Length; i++) {
 
 			Image equipedSkillIconOfHUD = equipedSkillButtonsOfHUD [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
-			Image equipedSkillIcon = equipedSkillButtons [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
+//			Image equipedSkillIcon = equipedSkillButtons [i].transform.FindChild("SkillIcon").GetComponent<Image> ();
 			Text equipedSkillNameOfHUD = equipedSkillButtonsOfHUD [i].GetComponentInChildren<Text> ();
 
 			equipedSkillIconOfHUD.sprite = null;

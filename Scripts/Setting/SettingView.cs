@@ -19,6 +19,7 @@ public class SettingView : MonoBehaviour {
 
 	public ToggleGroup tg;
 
+	public Transform settingViewContainer;
 	public Transform settingPlane;
 
 	public Transform wordsPlane;
@@ -82,6 +83,8 @@ public class SettingView : MonoBehaviour {
 	}
 
 	public void QuitSettingView(CallBack cb){
+
+		settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
 
 		settingPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete(()=>{
 			cb();

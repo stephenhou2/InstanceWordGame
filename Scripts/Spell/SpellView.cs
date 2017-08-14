@@ -8,6 +8,7 @@ using System.Text;
 
 public class SpellView: MonoBehaviour {
 
+	public Transform spellViewContainer;
 	public GameObject spellPlane;
 
 	public Text spellRequestText;
@@ -261,6 +262,9 @@ public class SpellView: MonoBehaviour {
 
 
 	public void OnQuitSpellPlane(){
+
+		spellViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+
 		spellPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
 //			Destroy (GameObject.Find ("SpellCanvas"));
 		});

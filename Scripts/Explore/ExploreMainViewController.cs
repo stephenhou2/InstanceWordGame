@@ -66,14 +66,20 @@ public class ExploreMainViewController:MonoBehaviour {
 		// 进入战斗场景前将探索场景隐藏
 		GameObject battleCanvas = GameObject.Find (CommonData.battleCanvas);
 		GameObject exploreCanvas = GameObject.Find (CommonData.exploreMainCanvas);
+		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+
 
 		if (battleCanvas != null) {
 			exploreCanvas.GetComponent<Canvas> ().enabled = false;
+			homeCanvas.GetComponent<Canvas> ().enabled = false;
 			battleCanvas.GetComponent<Canvas> ().enabled = true;
+
 
 		} else {
 			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas", () => {
 				exploreCanvas.GetComponent<Canvas> ().enabled = false;
+				homeCanvas.GetComponent<Canvas> ().enabled = false;
 			},true);// 若当前场景中没有battleCanvas，从assetBundle中加载
 		}
 
@@ -149,16 +155,13 @@ public class ExploreMainViewController:MonoBehaviour {
 
 	public void OnQuitExploreChapterView(){
 
-		gameObject.SetActive (false);
+		exploreMainView.OnQuitExploreChapterView (DestroyInstances);
 
 		GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
 
 		if (homeCanvas != null) {
 			homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
 		}
-
-		DestroyInstances ();
-
 
 	}
 

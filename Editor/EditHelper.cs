@@ -8,18 +8,126 @@ using System.Linq;
 using System.Text;
 using CE.iPhone.PList;
 using System.IO;
+using System.Data;
 
 public class EditHelper {
-
-
-
-
-	[MenuItem("EditHelper/Execute")]
-	public static void Execute(){
+	
+	[MenuItem("EditHelper/Test")]
+	public static void Test(){
 
 
 
 	}
+
+
+	[MenuItem("EditHelper/Execute")]
+	public static void Execute(){
+		
+
+
+	}
+
+	private void ToLower(){
+		MySQLiteHelper sql = MySQLiteHelper.Instance;
+		sql.GetConnectionWith (CommonData.dataBaseName);
+
+		for (int i = 0; i < 37336; i++) {
+
+			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (
+				"AllWordsData",
+				"Spell",
+				new string[]{ string.Format ("Id={0}", i) },
+				true);
+			reader.Read ();
+
+			string spell = reader.GetString (0);
+
+			string lowerSpell = spell.ToLower ();
+
+			if (lowerSpell == spell) {
+				continue;
+			}
+
+			lowerSpell = lowerSpell.Replace("'","''");
+
+			sql.UpdateSpecificColsWithValues ("AllWordsData", 
+				new string[]{ "Spell" },
+				new string[]{ string.Format("'{0}'",lowerSpell) },
+				new string[]{string.Format("Id = {0}",i)},
+				true);
+
+			reader.Close ();
+
+		}
+
+
+
+		sql.CloseConnection (CommonData.dataBaseName);
+	}
+
+	private void MoveData(){
+		MySQLiteHelper sql = MySQLiteHelper.Instance;
+
+		sql.GetConnectionWith (CommonData.dataBaseName);
+
+		sql.CreateTable ("AllWordsData",
+			new string[]{ "Id", "Spell", "Explaination", "Type", "Valid" },
+			new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL" },
+			new string[]{ "INTEGER", "TEXT", "TEXT", "INTEGER", "INTEGER" });
+
+		sql.DeleteAllDataFromTable ("AllWordsData");
+
+		IDataReader reader = null;
+		int pad = 0;
+
+		for (int i = 0; i < 39286; i++) {
+
+			if (i == 34250) {
+				pad++;
+				continue;
+			}
+
+			reader = sql.ReadSpecificRowsAndColsOfTable ("AllWords", "*",
+				new string[]{ string.Format ("ID={0}", i) },
+				true);
+
+			reader.Read ();
+
+
+
+			int id = i - pad;
+			string spell = reader.GetString (1);
+			string explaination = reader.GetString (2);
+			int type = 0;
+			int valid = 1;
+
+			if (spell == string.Empty || explaination == string.Empty || spell == null || explaination == null) {
+				pad++;
+				continue;
+			}
+
+			spell = spell.Replace ("'", "''");
+			explaination = explaination.Replace ("'", "''");
+
+			sql.InsertValues ("AllWordsData",
+				new string[] {id.ToString (),
+					"'" + spell + "'",
+					"'" + explaination + "'",
+					type.ToString (),
+					valid.ToString ()
+				});
+
+			reader.Close ();
+		}
+
+
+		Debug.Log ("Finished");
+
+		sql.CloseConnection (CommonData.dataBaseName);
+
+	}
+
+
 
 	[MenuItem("EditHelper/SeperateAnimPics")]
 	public static void SeperateAnimPics(){
@@ -62,13 +170,24 @@ public class EditHelper {
 				int width = fs.width;
 				int	height = fs.height;
 
+				Texture2D myimage = null;
 
-				Texture2D myimage = new Texture2D (width, height);
+				if (!rotated) {
+					myimage = new Texture2D (width, height);
+				} else {
+					myimage = new Texture2D (height, width);
+				}
 
 
 				for (int x = lowerLeftCornerX; x < lowerLeftCornerX + width; x++) {
 					for (int y = lowerLeftCornerY; y < lowerLeftCornerY + height; y++) {
-						myimage.SetPixel (x - lowerLeftCornerX, y - lowerLeftCornerY, texture.GetPixel (x, y));
+
+						if (!rotated) {
+							myimage.SetPixel (x - lowerLeftCornerX, y - lowerLeftCornerY, texture.GetPixel (x, y));
+						} else {
+							myimage.SetPixel (height + y - lowerLeftCornerY, x - lowerLeftCornerX, texture.GetPixel (x, y));
+			
+						}
 					}
 				}  
 

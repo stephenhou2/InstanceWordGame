@@ -16,9 +16,6 @@ public class ProduceViewController : MonoBehaviour {
 
 	private List<Sprite> itemSprites;
 
-
-	private int aInAscii = (int)('a');
-
 	public void SetUpProduceView(){
 
 		LoadAllItems ();

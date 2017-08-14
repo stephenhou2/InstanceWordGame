@@ -376,12 +376,14 @@ public class SpellViewController : MonoBehaviour {
 
 	public void ConfirmStrengthenItem(){
 
-		string strengthGainStr = itemToSpell.StrengthenItem ();
+		if (CheckCharactersSufficient (1)) {
 
-		UpdateOwnedCharacters ();
+			string strengthenGainStr = itemToSpell.StrengthenItem ();
 
-		spellView.UpdateStrengthenItemDetailHUD (itemToSpell,strengthGainStr);
+			UpdateOwnedCharacters ();
 
+			spellView.UpdateStrengthenItemDetailHUD (itemToSpell, strengthenGainStr);
+		}
 	}
 
 	/// <summary>

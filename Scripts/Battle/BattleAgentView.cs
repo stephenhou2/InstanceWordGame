@@ -30,15 +30,18 @@ public abstract class BattleAgentView : MonoBehaviour {
 
 	public Animator effectAnimator;
 
-
+	private bool isEffectAnimating;
 	public bool isAnimating{
 
 		get{ 
+			if (isEffectAnimating) {
+				return true;
+			}
 			foreach (Tweener t in allTweeners) {
 				if (!t.IsComplete())
 					return true;
 			}
-			if (allTweeners.Count == 0) {
+			if (allTweeners.Count == 0 && !isEffectAnimating) {
 				return false;
 			}
 			return false;
@@ -49,54 +52,35 @@ public abstract class BattleAgentView : MonoBehaviour {
 		
 		effectAnimator.gameObject.SetActive (true);
 
-		effectAnimator.SetTrigger ("IceEffect");
+		isEffectAnimating = true;
 
 		Debug.Log ("特效开始");
+
+		StartCoroutine ("PlayEffectAnimation", bse);
+
+
 	}
 
-//	private IEnumerator PlayEffectAnimation(BaseSkillEffect bse){
+	private IEnumerator PlayEffectAnimation(BaseSkillEffect bse){
 
-//		effectMaskImg.fillMethod = bse.fillMethod;
-//
-//		effectMaskImg.fillOrigin = bse.fillOrigin;
-//
-//		effectMaskImg.sprite = GameManager.Instance.allEffectsSprites.Find (delegate(Sprite obj) {
-//			return obj.name == bse.spriteName;
-//		});
-//
-//		effectMaskImg.enabled = true;
-//
-//		Tweener effectAnim = effectMaskImg.DOFillAmount (1.0f, 0.5f);
-//
-//		ManageAnimations(effectAnim,() => {
-//			effectMaskImg.fillAmount = 0f;
-//			effectMaskImg.enabled = false;
-//		});
+		effectAnimator.SetTrigger ("Thunder");
 
+		float effectAnimTime = effectAnimator.GetCurrentAnimatorStateInfo (0).length + 0.5f;
 
+		while (effectAnimTime > 0) {
+			effectAnimTime -= Time.deltaTime;
+			yield return null;
+		}
 
-//		AnimatorStateInfo animInfo = effectAnimator.GetCurrentAnimatorStateInfo(0);
-//
-//		float normalizedTime = effectAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-//
-//		Debug.Log(normalizedTime);
-//
-//		while (normalizedTime < 1) {
-//			Debug.Log (normalizedTime);
-//			normalizedTime = effectAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-//			isEffectAnimating = true;
-//			yield return null;
-//		}
-//
-//		isEffectAnimating = false;
-//
-//		Debug.Log ("特效结束");
+		Debug.Log ("EffectAnimEnd");
 
-//		effectAnimator.SetBool ("anim", false);
-//
-//		effectAnimator.gameObject.SetActive (false);
+		effectAnimator.ResetTrigger ("Thunder");
 
-//	}
+		effectAnimator.gameObject.SetActive (false);
+
+		isEffectAnimating = false;
+
+	}
 
 	// 角色头像抖动动画
 	public void PlayShakeAnim(){
@@ -157,7 +141,7 @@ public abstract class BattleAgentView : MonoBehaviour {
 	}
 		
 	public void AgentDieAnim(CallBack cb){
-		ManageAnimations (agentIcon.DOFade (0f, 1.0f), () => {
+		ManageAnimations (agentIcon.DOFade (0f, 0.5f), () => {
 			this.gameObject.SetActive (false);
 //			this.enabled = false;
 			firstSetHealthBar = true;

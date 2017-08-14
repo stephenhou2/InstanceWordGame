@@ -28,7 +28,7 @@ public class MyTest : MonoBehaviour
 
 		MySQLiteHelper sql = MySQLiteHelper.Instance;
 
-		sql.CreatDatabase ("test2.db");
+		sql.CreateDatabase ("test2.db");
 
 		sql.GetConnectionWith ("test2.db");
 

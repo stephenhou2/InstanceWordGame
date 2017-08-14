@@ -200,15 +200,13 @@ public class GameManager : SingletonMono<GameManager> {
 
 		MySQLiteHelper sql = MySQLiteHelper.Instance;
 
-		sql.CreatDatabase (CommonData.dataBaseName);
+		sql.CreateDatabase (CommonData.dataBaseName);
 
 		sql.GetConnectionWith (CommonData.dataBaseName);
 
 		IDataReader reader = sql.ReadFullTable (CommonData.itemsTable);
 
 		while(reader.Read()) {
-
-			int fieldCount = reader.FieldCount;
 
 			Item item = new Item ();
 
@@ -219,7 +217,7 @@ public class GameManager : SingletonMono<GameManager> {
 			item.itemType = (ItemType)reader.GetInt16 (4);
 			item.itemNameInEnglish = reader.GetString (5);
 			item.attackGain = reader.GetInt32 (6);
-			item.powerGain = reader.GetInt32 (7);
+//			item.powerGain = reader.GetInt32 (7);
 			item.magicGain = reader.GetInt32 (8);
 			item.critGain = reader.GetInt32 (9);
 			item.amourGain = reader.GetInt32 (10);

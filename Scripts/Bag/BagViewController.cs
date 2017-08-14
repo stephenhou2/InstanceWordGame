@@ -213,7 +213,7 @@ public class BagViewController : MonoBehaviour {
 			}
 			return;
 
-		}
+		} 
 			
 
 		// 玩家的字母碎片数量足够，进入强化界面
