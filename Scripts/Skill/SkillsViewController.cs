@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class SkillsViewController : MonoBehaviour {
 
 	public SkillsView skillsView;
@@ -247,6 +250,6 @@ public class SkillsViewController : MonoBehaviour {
 		}
 	}
 
-
+	}
 
 }

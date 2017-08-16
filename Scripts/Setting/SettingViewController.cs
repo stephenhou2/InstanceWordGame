@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class SettingViewController : MonoBehaviour{
 
 	public SettingView settingView;
@@ -103,4 +106,5 @@ public class SettingViewController : MonoBehaviour{
 
 	}
 
+}
 }

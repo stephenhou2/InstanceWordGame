@@ -5,148 +5,152 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 
-public class ProduceView : MonoBehaviour {
 
-	public Button[] itemTypeButtons;
+namespace WordJourney
+{
+	public class ProduceView : MonoBehaviour {
 
-	public GameObject itemDetailsModel;
+		public Button[] itemTypeButtons;
 
-	public Transform allItemsContainer;
+		public GameObject itemDetailsModel;
 
-	public Transform produceViewContainer;
+		public Transform allItemsContainer;
 
-	private InstancePool itemDetailsPool;
+		public Transform produceViewContainer;
 
-	public Transform[] charactersOwned;
+		private InstancePool itemDetailsPool;
 
-	public Transform producePlane;
+		public Transform[] charactersOwned;
 
-	private List<Sprite> itemSprites;
+		public Transform producePlane;
 
-	public Transform charactersContainer;
+		private List<Sprite> itemSprites;
 
-	private int currentSelectItemIndex;
+		public Transform charactersContainer;
 
-	private Sprite typeBtnNormalSprite;
-	private Sprite typeBtnSelectedSprite;
+		private int currentSelectItemIndex;
 
-	// 初始化制造界面
-	public void SetUpProduceView(List<Sprite> itemSprites){
+		private Sprite typeBtnNormalSprite;
+		private Sprite typeBtnSelectedSprite;
 
-		this.itemSprites = itemSprites;
+		// 初始化制造界面
+		public void SetUpProduceView(List<Sprite> itemSprites){
 
-		itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
+			this.itemSprites = itemSprites;
 
-		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeButtonNormal";
-		});
+			itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
 
-		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeButtonSelected";
-		});
+			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				return obj.name == "typeButtonNormal";
+			});
 
-	}
-
-	// 初始化物品图鉴
-	public void SetUpItemDetailsPlane(List<Item> itemsOfCurrentType, int buttonIndex){
-
-		itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
-
-		Sprite itemTypeButtonNormalIcon = typeBtnNormalSprite;
-
-		Sprite itemTypeButtonSelectedIcon = typeBtnSelectedSprite;
-
-		for (int i = 0; i < itemTypeButtons.Length; i++) {
-
-			Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();
-			buttonImage.sprite = i == buttonIndex ? itemTypeButtonSelectedIcon : itemTypeButtonNormalIcon;
-
-			buttonImage.SetNativeSize ();
+			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				return obj.name == "typeButtonSelected";
+			});
 
 		}
 
+		// 初始化物品图鉴
+			public void SetUpItemDetailsPlane(List<Item> itemsOfCurrentType, int buttonIndex){
 
-		for (int i = 0; i < itemsOfCurrentType.Count; i++) {
+			itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
 
-			Item item = itemsOfCurrentType [i];
+			Sprite itemTypeButtonNormalIcon = typeBtnNormalSprite;
 
-			Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
+			Sprite itemTypeButtonSelectedIcon = typeBtnSelectedSprite;
 
-			Image itemIcon = itemDetails.FindChild ("ItemIcon").GetComponent<Image>();
+			for (int i = 0; i < itemTypeButtons.Length; i++) {
 
-			Text itemName = itemDetails.FindChild ("ItemName").GetComponent<Text> ();
+				Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();
+				buttonImage.sprite = i == buttonIndex ? itemTypeButtonSelectedIcon : itemTypeButtonNormalIcon;
 
-			Text itemDescText = itemDetails.FindChild ("ItemDescText").GetComponent<Text> ();
+				buttonImage.SetNativeSize ();
 
-			Text itemPropertiesText = itemDetails.FindChild ("ItemPropertiesText").GetComponent<Text> ();
-
-			Button produceButton = itemDetails.FindChild ("ProduceButton").GetComponent<Button> ();
-
-			itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
-			});
-
-			if (itemIcon.sprite != null) {
-				itemIcon.enabled = true;
 			}
 
-			itemName.text = item.itemName;
 
-			itemDescText.text = item.itemDescription;
+			for (int i = 0; i < itemsOfCurrentType.Count; i++) {
 
-			itemPropertiesText.text = item.GetItemPotentialPropertiesString ();
+				Item item = itemsOfCurrentType [i];
 
-			produceButton.onClick.RemoveAllListeners ();
+				Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
 
-			produceButton.onClick.AddListener (delegate() {
-				GetComponent<ProduceViewController>().OnGenerateButtonClick(item);
+				Image itemIcon = itemDetails.FindChild ("ItemIcon").GetComponent<Image>();
+
+				Text itemName = itemDetails.FindChild ("ItemName").GetComponent<Text> ();
+
+				Text itemDescText = itemDetails.FindChild ("ItemDescText").GetComponent<Text> ();
+
+				Text itemPropertiesText = itemDetails.FindChild ("ItemPropertiesText").GetComponent<Text> ();
+
+				Button produceButton = itemDetails.FindChild ("ProduceButton").GetComponent<Button> ();
+
+				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
+
+				if (itemIcon.sprite != null) {
+					itemIcon.enabled = true;
+				}
+
+				itemName.text = item.itemName;
+
+				itemDescText.text = item.itemDescription;
+
+				itemPropertiesText.text = item.GetItemPotentialPropertiesString ();
+
+				produceButton.onClick.RemoveAllListeners ();
+
+				produceButton.onClick.AddListener (delegate() {
+					GetComponent<ProduceViewController>().OnGenerateButtonClick(item);
+				});
+
+			}
+
+		}
+
+
+
+		public void SetUpCharactersPlane(){
+
+			Player player = Player.mainPlayer;
+
+			for (int i = 0; i < charactersOwned.Length; i++) {
+
+				Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
+
+				characterCount.text = player.charactersCount [i].ToString ();
+
+			}
+
+			charactersContainer.gameObject.SetActive (true);
+
+		}
+
+		public void OnQuitCharactersPlane(){
+
+			for (int i = 0; i < charactersOwned.Length; i++) {
+
+				Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
+
+				characterCount.text = string.Empty;
+
+			}
+				
+			charactersContainer.gameObject.SetActive (false);
+
+		}
+
+		public void QuitProduceView(CallBack cb){
+
+			produceViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+
+			producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
+				
+				cb();
+
 			});
 
 		}
-
-	}
-
-
-
-	public void SetUpCharactersPlane(){
-
-		Player player = Player.mainPlayer;
-
-		for (int i = 0; i < charactersOwned.Length; i++) {
-
-			Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
-
-			characterCount.text = player.charactersCount [i].ToString ();
-
-		}
-
-		charactersContainer.gameObject.SetActive (true);
-
-	}
-
-	public void OnQuitCharactersPlane(){
-
-		for (int i = 0; i < charactersOwned.Length; i++) {
-
-			Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
-
-			characterCount.text = string.Empty;
-
-		}
-			
-		charactersContainer.gameObject.SetActive (false);
-
-	}
-
-	public void QuitProduceView(CallBack cb){
-
-		produceViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
-
-		producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
-			
-			cb();
-
-		});
-
 	}
 }

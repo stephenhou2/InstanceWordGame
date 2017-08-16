@@ -2,92 +2,19 @@
 	"Items": [
 		{
 			"chapterIndex":0,
-			"totalSteps": 50,
-			"stepsLeft":50,
 			"chapterLocation": "黑暗之森",
 			"itemIds": [0,5],
-			"npcs": [
-				{
-					"npcName": "老头",
-					"npcDescription": "一个老头",
-					"spriteName": "people1",
-					"dialogs":[
-					{"dialog":"不要有bug",
-					"choiceIds":[0]
-					},
-					{"dialog":"测试123",
-					"choiceIds":[1,2]
-					}
-					],
-					"choices":[
-					{
-					"choice":"好的",
-					"dialogId":1
-					},
-					{
-					"choice":"好的",
-					"dialogId":-1
-					},
-					{
-					"choice":"不好",
-					"dialogId":0
-					}
-					]
-				}
-			],
-			"monsterGroups": [{
-				"monsterGroupName": "兽人",
-				"monsterGroupDescription": "嗜血的半兽人",
-				"spriteName": "monster1",
-				"monsters":[
-				{
-				"agentIconName":"monster1",
-				"agentName":"兽人战士",
-				"agentLevel":1,
-				"originalMaxHealth":50,
-				"originalMaxStrength":10,
-				"originalHealth":50,
-				"originalStrength":10,
-				"originalAttack":5,
-				"originalPower":5,
-				"originalMagic":5,
-				"originalCrit":5,
-				"originalAgility":5,
-				"originalAmour":5,
-				"originalMagicResist":5,
-				"attack":5,
-				"power":5,
-				"magic":5,
-				"agility":5,
-				"amour":5,
-				"magicResist":5,
-				"crit":5
-				},
-				{
-				"agentIconName":"monster2",
-				"agentName":"兽人祭祀",
-				"agentLevel":1,
-				"originalMaxHealth":50,
-				"originalMaxStrength":10,
-				"originalHealth":50,
-				"originalStrength":10,
-				"originalAttack":5,
-				"originalPower":5,
-				"originalMagic":10,
-				"originalCrit":5,
-				"originalAgility":5,
-				"originalAmour":5,
-				"originalMagicResist":5,
-				"attack":5,
-				"power":5,
-				"magic":10,
-				"agility":5,
-				"amour":5,
-				"magicResist":5,
-				"crit":5
-				}]
+			"npcIds": [0,1],
+			"monsterIds": [0,1],
+			"monsterScaler":1.0,
+			"itemCount":{
+			"minimum":1,
+			"maximum":2
+			},
+			"monsterCount":{
+			"minimum":5,
+			"maximum":10
 			}
-			]
 		}
 	]
 }

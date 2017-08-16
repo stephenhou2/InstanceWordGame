@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class BagViewController : MonoBehaviour {
 
 	public BagView bagView;
 
 
-	private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
+		private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
 
 	private int currentSelectEquipIndex;
 
@@ -59,7 +62,7 @@ public class BagViewController : MonoBehaviour {
 			
 
 
-		foreach (Item i in Player.mainPlayer.allItems) {
+			foreach (Item i in Player.mainPlayer.allItems) {
 			if (i.itemType == type) {
 				allItemsOfCurrentSelcetType.Add (i);
 			}
@@ -71,7 +74,7 @@ public class BagViewController : MonoBehaviour {
 
 	public void OnItemButtonOfSpecificItemPlaneClick(int index){
 
-		Item item = allItemsOfCurrentSelcetType [index];
+			Item item = allItemsOfCurrentSelcetType [index];
 
 		bagView.OnItemButtonOfSpecificItemPlaneClick (item, currentSelectEquipIndex);
 
@@ -85,7 +88,7 @@ public class BagViewController : MonoBehaviour {
 
 	}
 
-	public void EquipItem(Item item){
+		public void EquipItem(Item item){
 
 		Player player = Player.mainPlayer;
 
@@ -97,7 +100,7 @@ public class BagViewController : MonoBehaviour {
 
 		for (int i = 3; i < player.allEquipedItems.Count; i++) {
 
-			Item equipedConsumable = player.allEquipedItems [i];
+				Item equipedConsumable = player.allEquipedItems [i];
 
 			if (equipedConsumable != null && equipedConsumable.itemId == item.itemId) {
 
@@ -123,7 +126,7 @@ public class BagViewController : MonoBehaviour {
 		
 		Player player = Player.mainPlayer;
 
-		Item item = player.allItems [currentSelectItemIndex];
+			Item item = player.allItems [currentSelectItemIndex];
 
 		maxResolveCount = item.itemCount;
 		minResolveCount = 1;
@@ -154,7 +157,7 @@ public class BagViewController : MonoBehaviour {
 
 		Player player = Player.mainPlayer;
 
-		Item item = player.allItems [currentSelectItemIndex];
+			Item item = player.allItems [currentSelectItemIndex];
 
 		int resolveCount = (int)bagView.resolveCountSlider.value;
 
@@ -202,7 +205,7 @@ public class BagViewController : MonoBehaviour {
 
 	public void StrengthenItem(){
 
-		Item item = Player.mainPlayer.allItems [currentSelectItemIndex];
+			Item item = Player.mainPlayer.allItems [currentSelectItemIndex];
 
 		List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (item.itemNameInEnglish);
 
@@ -275,4 +278,5 @@ public class BagViewController : MonoBehaviour {
 		TransformManager.DestroyTransfromWithName ("ItemDetailModel", TransformRoot.InstanceContainer);
 		TransformManager.DestroyTransfromWithName ("ItemDetailsPool", TransformRoot.PoolContainer);
 	}
+}
 }

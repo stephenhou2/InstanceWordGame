@@ -10,6 +10,8 @@ using CE.iPhone.PList;
 using System.IO;
 using System.Data;
 
+using WordJourney;
+
 public class EditHelper {
 	
 	[MenuItem("EditHelper/Test")]
@@ -24,8 +26,73 @@ public class EditHelper {
 	public static void Execute(){
 		
 
+	}
+
+	// 将物品csv数据转化为json文件并存储直接使用这个方法
+	private void ConvertItemToJson(){
+		
+		Item[] allItem = ItemsToJson ();
+
+		AllItemsJson aij = new AllItemsJson ();
+
+		aij.Items = allItem;
+
+		string allItemsJsonStr = JsonUtility.ToJson (aij);
+
+		File.WriteAllText (CommonData.jsonFileDirectoryPath + "/AllItemsJson.txt", allItemsJsonStr);
 
 	}
+
+	static private Item[] ItemsToJson(){
+
+		string csv = DataInitializer.LoadDataString (CommonData.jsonFileDirectoryPath, "itemsData.csv");
+
+		string[] dataArray = csv.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+
+		List <Item> allItem = new List<Item> ();
+
+		for (int i = 1; i < dataArray.Length; i++) {
+
+			string[] ItemStr = dataArray [i].Split (',');
+				
+			Item Item = new Item ();
+
+			Item.itemId = System.Convert.ToInt32 (ItemStr [0]);
+			Item.itemName = ItemStr[1];
+			Item.itemDescription = ItemStr[2];
+			Item.spriteName = ItemStr[3];
+			Item.itemType = (ItemType)System.Convert.ToInt16(ItemStr[4]);
+			Item.itemNameInEnglish = ItemStr[5];
+			Item.attackGain = System.Convert.ToInt16(ItemStr[6]);
+			Item.magicGain = System.Convert.ToInt16(ItemStr[7]);
+			Item.critGain = System.Convert.ToInt16(ItemStr[8]);
+			Item.amourGain = System.Convert.ToInt16(ItemStr[9]);
+			Item.magicResistGain = System.Convert.ToInt16(ItemStr[10]);
+			Item.agilityGain = System.Convert.ToInt16(ItemStr[11]);
+			Item.healthGain = System.Convert.ToInt16(ItemStr[12]);
+
+			allItem.Add (Item);
+
+		}
+
+		Item[] ItemArray = new Item[allItem.Count];
+
+		allItem.CopyTo(ItemArray);
+
+
+		return ItemArray;
+
+	}
+
+	public class AllItemsJson{
+
+		public Item[] Items;
+
+
+
+	}
+
+
 
 	private void ToLower(){
 		MySQLiteHelper sql = MySQLiteHelper.Instance;

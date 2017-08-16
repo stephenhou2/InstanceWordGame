@@ -3,140 +3,146 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogAndItemView : MonoBehaviour {
 
-	public Transform dialogPlane;
-	public Transform itemPlane;
+namespace WordJourney
+{
+	public class DialogAndItemView : MonoBehaviour {
 
-	public Transform choicePlane;
+		public Transform dialogPlane;
+		public Transform itemPlane;
 
-	public Text dialogText;
+		public Transform choicePlane;
 
-	public Image itemIcon;
+		public Text dialogText;
 
-	public Text itemDescription;
+		public Image itemIcon;
 
-	public GameObject choiceButtonModel;
+		public Text itemDescription;
 
-	private InstancePool choiceButtonPool;
+		public GameObject choiceButtonModel;
+
+		private InstancePool choiceButtonPool;
 
 
-	public void SetUpDialogPlane(NPC npc,Sprite npcSprite,int dialogId){
+		public void SetUpDialogPlane(NPC npc,Sprite npcSprite,int dialogId){
 
-		gameObject.SetActive (true);
+			gameObject.SetActive (true);
 
-		dialogPlane.gameObject.SetActive (true);
+			dialogPlane.gameObject.SetActive (true);
 
-		choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
+			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
 
-		Dialog dialog = npc.dialogs [dialogId];
-		 
-		dialogText.text = dialog.dialog;
+			DialogGroup dialogGroup = npc.dialogGroups [GameManager.Instance.unlockedMaxChapterIndex];
 
-		int[] choicesIds = dialog.choiceIds; 
+			Dialog dialog = dialogGroup.dialogs[dialogId];
+			 
+			dialogText.text = dialog.dialog;
 
-		for (int i = 0; i < choicesIds.Length; i++) {
+			int[] choicesIds = dialog.choiceIds; 
 
-			int choiceId = choicesIds [i];
-	
-			Choice choice = npc.choices [choiceId];
+			for (int i = 0; i < choicesIds.Length; i++) {
 
-			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
+				int choiceId = choicesIds [i];
+		
+				Choice choice = npc.choices [choiceId];
 
-			Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
+				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
 
-			choiceButton.onClick.RemoveAllListeners ();
+				Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
 
-			choiceButton.onClick.AddListener (delegate {
-				GetComponent<DialogAndItemViewController>().OnChoiceButtonOfDialogPlaneClick(choice);
-			});
+				choiceButton.onClick.RemoveAllListeners ();
 
-			choiceText.text = choice.choice;
+				choiceButton.onClick.AddListener (delegate {
+					GetComponent<DialogAndItemViewController>().OnChoiceButtonOfDialogPlaneClick(choice);
+				});
+
+				choiceText.text = choice.choice;
+			}
+
+
+		}
+
+
+			public void SetUpItemPlane(Item item,Sprite itemSprite){
+
+			gameObject.SetActive (true);
+
+			itemPlane.gameObject.SetActive (true);
+
+			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
+
+			itemIcon.sprite = itemSprite;
+
+			if (itemSprite != null) {
+				itemIcon.enabled = true;
+			}
+
+			itemDescription.text = item.itemDescription;
+
+
+			#warning 选择按钮代码后面再写
+			for (int i = 0; i < 2; i++) {
+				
+				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
+
+				Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
+
+				choiceButton.onClick.RemoveAllListeners ();
+
+				choiceButton.onClick.AddListener (delegate {
+					GetComponent<DialogAndItemViewController>().OnChoiceButtonOfItemPlaneClick(null);
+				});
+
+				choiceText.text = "hello";
+
+			}
+
+		}
+
+
+		public void OnChoiceButtonClick(){
+
+			ResetChoiceButton ();
+
+			choiceButtonPool.AddChildInstancesToPool(choicePlane);
+
+		}
+
+		private void ResetChoiceButton(){
+
+			for (int i = 0; i < choicePlane.childCount; i++) {
+
+				Transform trans = choicePlane.GetChild (i);
+
+				trans.GetComponentInChildren<Text> ().text = string.Empty;
+			}
+
+		}
+
+
+		public void OnQuitDialogAndItemPlane(){
+
+			ResetDialogAndItemPlane ();
+
+			gameObject.SetActive (false);
+			dialogPlane.gameObject.SetActive (false);
+			itemPlane.gameObject.SetActive (false);
+
+
+		}
+
+		private void ResetDialogAndItemPlane(){
+
+			dialogText.text = string.Empty;
+
+			itemIcon.sprite = null;
+
+			itemIcon.enabled = false;
+
+			itemDescription.text = string.Empty;
+
 		}
 
 
 	}
-
-
-	public void SetUpItemPlane(Item item,Sprite itemSprite){
-
-		gameObject.SetActive (true);
-
-		itemPlane.gameObject.SetActive (true);
-
-		choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
-
-		itemIcon.sprite = itemSprite;
-
-		if (itemSprite != null) {
-			itemIcon.enabled = true;
-		}
-
-		itemDescription.text = item.itemDescription;
-
-
-		#warning 选择按钮代码后面再写
-		for (int i = 0; i < 2; i++) {
-			
-			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choicePlane);
-
-			Text choiceText = choiceButton.transform.FindChild ("Text").GetComponent<Text> ();
-
-			choiceButton.onClick.RemoveAllListeners ();
-
-			choiceButton.onClick.AddListener (delegate {
-				GetComponent<DialogAndItemViewController>().OnChoiceButtonOfItemPlaneClick(null);
-			});
-
-			choiceText.text = "hello";
-
-		}
-
-	}
-
-
-	public void OnChoiceButtonClick(){
-
-		ResetChoiceButton ();
-
-		choiceButtonPool.AddChildInstancesToPool(choicePlane);
-
-	}
-
-	private void ResetChoiceButton(){
-
-		for (int i = 0; i < choicePlane.childCount; i++) {
-
-			Transform trans = choicePlane.GetChild (i);
-
-			trans.GetComponentInChildren<Text> ().text = string.Empty;
-		}
-
-	}
-
-
-	public void OnQuitDialogAndItemPlane(){
-
-		ResetDialogAndItemPlane ();
-
-		gameObject.SetActive (false);
-		dialogPlane.gameObject.SetActive (false);
-		itemPlane.gameObject.SetActive (false);
-
-
-	}
-
-	private void ResetDialogAndItemPlane(){
-
-		dialogText.text = string.Empty;
-
-		itemIcon.sprite = null;
-
-		itemIcon.enabled = false;
-
-		itemDescription.text = string.Empty;
-
-	}
-
-
 }

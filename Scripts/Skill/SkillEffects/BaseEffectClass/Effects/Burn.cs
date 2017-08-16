@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class Burn : StateSkillEffect {
 
-	public override void AffectAgents (BattleAgent self, List<BattleAgent> friends, BattleAgent targetEnemy, List<BattleAgent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
+	public override void AffectAgents (Agent self, List<Agent> friends, Agent targetEnemy, List<Agent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
 	{
 		if (triggerType == TriggerType.BeDisorderHit && targetEnemy.currentSkill.skillName == "FireBlade") {
 			//原始魔法伤害值
@@ -34,4 +37,5 @@ public class Burn : StateSkillEffect {
 
 		}
 	}
+}
 }

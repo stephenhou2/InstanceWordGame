@@ -4,6 +4,10 @@ using UnityEngine;
 using System.Data;
 
 
+
+namespace WordJourney
+{
+	
 [System.Serializable]
 public class LearningInfo:Singleton<LearningInfo> {
 
@@ -133,4 +137,5 @@ public class Word{
 		this.example = example;
 	}
 
+}
 }

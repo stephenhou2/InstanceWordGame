@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
+namespace WordJourney
+{
 public class SkillsView : MonoBehaviour{
 
 	public Text skillPointsTotal;
@@ -374,4 +377,5 @@ public class SkillsView : MonoBehaviour{
 		skillDetailHUD.SetActive (false);
 	}
 
+}
 }

@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
+
+namespace WordJourney
+{
+
 public class BagView : MonoBehaviour {
 
 
@@ -127,7 +132,7 @@ public class BagView : MonoBehaviour {
 	private void SetUpEquipedItemPlane(){
 
 		for(int i = 0;i<player.allEquipedItems.Count;i++){
-			Item item = player.allEquipedItems[i];
+				Item item = player.allEquipedItems[i];
 			SetUpItemButton (item, allEquipedItemBtns [i]);
 		}
 
@@ -147,7 +152,7 @@ public class BagView : MonoBehaviour {
 
 			if (i < player.allItems.Count) {
 
-				Item item = player.allItems [i];
+					Item item = player.allItems [i];
 
 				SetUpItemButton (player.allItems [i], itemBtn);
 
@@ -177,7 +182,7 @@ public class BagView : MonoBehaviour {
 	/// 初始化物品详细介绍页面
 	/// </summary>
 	/// <param name="item">Item.</param>
-	private void SetUpItemDetailHUD(Item item){
+		private void SetUpItemDetailHUD(Item item){
 
 		bool canStrengthen = item.CheckCanStrengthen ();
 
@@ -206,7 +211,7 @@ public class BagView : MonoBehaviour {
 		}
 
 
-		Item equipedItemOfCurrentType = null;
+			Item equipedItemOfCurrentType = null;
 
 		string itemPropertiesString = string.Empty;
 
@@ -279,7 +284,7 @@ public class BagView : MonoBehaviour {
 	/// </summary>
 	/// <param name="item">Item.</param>
 	/// <param name="btn">Button.</param>
-	private void SetUpItemButton(Item item,Button btn){
+		private void SetUpItemButton(Item item,Button btn){
 
 //		if (item == null || item.itemName == null) {
 //			btn.interactable = (item != null);
@@ -319,11 +324,11 @@ public class BagView : MonoBehaviour {
 	/// </summary>
 	/// <param name="type">Type.</param>
 	/// <param name="allItemsOfCurrentSelectType">All items of current select type.</param>
-	public void OnEquipedItemButtonsClick(ItemType type,List<Item> allItemsOfCurrentSelectType){
+		public void OnEquipedItemButtonsClick(ItemType type,List<Item> allItemsOfCurrentSelectType){
 
 		for(int i =0;i<allItemsOfCurrentSelectType.Count;i++){
 			
-			Item item = allItemsOfCurrentSelectType[i];
+				Item item = allItemsOfCurrentSelectType[i];
 
 			Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailModel,itemDetailContainer);
 
@@ -334,7 +339,7 @@ public class BagView : MonoBehaviour {
 
 	}
 
-	public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
+		public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
 
 		SetUpItemDetailHUD (item);
 
@@ -380,7 +385,7 @@ public class BagView : MonoBehaviour {
 			return;
 		}
 
-		Item item = player.allItems [index];
+			Item item = player.allItems [index];
 
 		for(int i = 0;i<allItemsBtns.Length;i++){
 			Button btn = allItemsBtns [i];
@@ -429,5 +434,5 @@ public class BagView : MonoBehaviour {
 
 	}
 
-
+	}
 }

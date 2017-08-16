@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using System.Text;
 
 
+
+namespace WordJourney
+{
 public class SpellView: MonoBehaviour {
 
 	public Transform spellViewContainer;
@@ -63,7 +66,7 @@ public class SpellView: MonoBehaviour {
 //	public void SetUpSpellView(){
 //
 //	}
-	public void SetUpSpellView(Item item,SpellPurpose spellPurpose){
+		public void SetUpSpellView(Item item,SpellPurpose spellPurpose){
 
 		if (item != null && item.itemNameInEnglish != null) {
 			spellRequestText.text = string.Format ("请正确拼写 <color=orange>{0}</color>", item.itemName);
@@ -137,12 +140,12 @@ public class SpellView: MonoBehaviour {
 
 	}
 
-	public void SetUpCreateItemDetailHUD(List<Item> createItems){
+		public void SetUpCreateItemDetailHUD(List<Item> createItems){
 
 		createdItemDetailPool =  InstancePool.GetOrCreateInstancePool ("CreatedItemDetailPool");
 
 
-		foreach (Item item in createItems) {
+			foreach (Item item in createItems) {
 			
 			Transform itemTrans = createdItemDetailPool.GetInstance<Transform> (createdItemDetailModel, itemDetailContainer);
 
@@ -183,7 +186,7 @@ public class SpellView: MonoBehaviour {
 
 	}
 
-	public void SetUpStrengthenItemDetailHUD(Item item){
+		public void SetUpStrengthenItemDetailHUD(Item item){
 
 		strengthenItemName.text = item.itemName;
 		strengthenItemType.text = item.GetItemTypeString ();
@@ -205,7 +208,7 @@ public class SpellView: MonoBehaviour {
 
 	}
 
-	public void UpdateStrengthenItemDetailHUD(Item item,string strengthenGainStr){
+		public void UpdateStrengthenItemDetailHUD(Item item,string strengthenGainStr){
 
 		strengthenTimes.text = "强化次数: " + item.strengthenTimes.ToString() + "次";
 		strengthenItemProperties.text = item.GetItemPropertiesString ();
@@ -271,4 +274,5 @@ public class SpellView: MonoBehaviour {
 	}
 
 
+}
 }

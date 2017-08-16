@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Completed
+namespace WordJourney
 {
 	public class Wall : MonoBehaviour
 	{

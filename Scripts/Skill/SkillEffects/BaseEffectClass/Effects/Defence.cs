@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class Defence : StateSkillEffect {
-	public override void AffectAgents (BattleAgent self, List<BattleAgent> friends, BattleAgent targetEnemy, List<BattleAgent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
+	public override void AffectAgents (Agent self, List<Agent> friends, Agent targetEnemy, List<Agent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
 	{
 		self.hurtScaler = this.scaler;
 		self.strength += 3;
@@ -11,4 +14,5 @@ public class Defence : StateSkillEffect {
 			self.strength = self.maxStrength;
 		}
 	}
+}
 }

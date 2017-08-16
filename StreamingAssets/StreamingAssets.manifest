@@ -1,11 +1,10 @@
 ManifestFileVersion: 0
-CRC: 4264895010
+CRC: 3257739709
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: player
-      Dependencies:
-        Dependency_0: skills/skills
+      Dependencies: {}
     Info_1:
       Name: explore/icons
       Dependencies: {}
@@ -15,11 +14,12 @@ AssetBundleManifest:
     Info_3:
       Name: skills/canvas
       Dependencies:
-        Dependency_0: ui_icons
+        Dependency_0: button
     Info_4:
       Name: bag/canvas
       Dependencies:
         Dependency_0: ui_icons
+        Dependency_1: button
     Info_5:
       Name: item/icons
       Dependencies: {}
@@ -45,10 +45,22 @@ AssetBundleManifest:
     Info_12:
       Name: record/canvas
       Dependencies:
-        Dependency_0: ui_icons
+        Dependency_0: button
     Info_13:
       Name: battle/effect_icons
       Dependencies: {}
     Info_14:
       Name: ui_icons
+      Dependencies: {}
+    Info_15:
+      Name: button
+      Dependencies: {}
+    Info_16:
+      Name: explore/scene
+      Dependencies: {}
+    Info_17:
+      Name: monsters
+      Dependencies: {}
+    Info_18:
+      Name: mapicons
       Dependencies: {}

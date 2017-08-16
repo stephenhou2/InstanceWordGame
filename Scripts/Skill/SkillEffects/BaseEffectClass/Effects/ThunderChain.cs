@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class ThunderChain : BaseSkillEffect {
 
-	public override void AffectAgents (BattleAgent self, List<BattleAgent> friends, BattleAgent targetEnemy, List<BattleAgent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
+	public override void AffectAgents (Agent self, List<Agent> friends, Agent targetEnemy, List<Agent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
 	{
 		Debug.Log (self.agentName +  "使用了雷霆锁链");
 
@@ -80,4 +83,5 @@ public class ThunderChain : BaseSkillEffect {
 
 		}
 	}
+}
 }

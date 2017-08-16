@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class PhysicalAttack : BaseSkillEffect {
-	public override void AffectAgents (BattleAgent self, List<BattleAgent> friends, BattleAgent targetEnemy, List<BattleAgent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
+	public override void AffectAgents (Agent self, List<Agent> friends, Agent targetEnemy, List<Agent> enemies, int skillLevel, TriggerType triggerType, int attachedInfo)
 	{
 
 		int attackCount = 0;
@@ -19,7 +22,7 @@ public class PhysicalAttack : BaseSkillEffect {
 				Debug.Log (targetEnemy.agentName + "成功躲避了攻击");
 				//目标触发闪避成功效果
 				targetEnemy.OnTrigger (enemies,self,friends,TriggerType.Dodge, 0);
-				targetEnemy.baView.PlayHurtHUDAnim ("<color=gray>miss</color>");
+					targetEnemy.baController.PlayHurtHUDAnim ("<color=gray>miss</color>");
 				return;
 			}
 
@@ -45,9 +48,9 @@ public class PhysicalAttack : BaseSkillEffect {
 			targetEnemy.OnTrigger (enemies,self,friends,TriggerType.BePhysicalHit, DamageOffset);
 
 			if (self.critScaler == 2.0f) {
-				targetEnemy.baView.PlayHurtHUDAnim ("<color=red>暴击 -" + actualDamage + "</color>");
+					targetEnemy.baController.PlayHurtHUDAnim ("<color=red>暴击 -" + actualDamage + "</color>");
 			} else {
-				targetEnemy.baView.PlayHurtHUDAnim ("<color=red>-" + actualDamage + "</color>");
+					targetEnemy.baController.PlayHurtHUDAnim ("<color=red>-" + actualDamage + "</color>");
 			}
 
 			targetEnemy.health -= actualDamage;
@@ -69,4 +72,5 @@ public class PhysicalAttack : BaseSkillEffect {
 
 
 	}
+}
 }

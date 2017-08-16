@@ -4,6 +4,9 @@ using UnityEngine;
 using System;
 
 
+
+namespace WordJourney
+{
 public class Skill:MonoBehaviour {
 
 	public string skillName;// 技能名称
@@ -43,7 +46,7 @@ public class Skill:MonoBehaviour {
 
 	public bool unlocked;
 
-	public void AffectAgents(BattleAgent self, List<BattleAgent> friends,BattleAgent targetEnemy, List<BattleAgent> enemies,int skillLevel){
+	public void AffectAgents(Agent self, List<Agent> friends,Agent targetEnemy, List<Agent> enemies,int skillLevel){
 
 		SkillEffectTarget selfSideTarget = SkillEffectTarget.None;
 		SkillEffectTarget enemySideTarget = SkillEffectTarget.None;
@@ -93,11 +96,11 @@ public class Skill:MonoBehaviour {
 		if (selfSideTarget != SkillEffectTarget.None && selfSideAnimEffect != null) {
 			switch (selfSideTarget) {
 			case SkillEffectTarget.Self:
-				self.baView.PlayEffectAnim (selfSideAnimEffect);
+					self.baController.PlayEffectAnim (selfSideAnimEffect);
 				break;
 			case SkillEffectTarget.AllFriends:
-				foreach (BattleAgent ba in friends) {
-					ba.baView.PlayEffectAnim (selfSideAnimEffect);
+				foreach (Agent ba in friends) {
+					ba.baController.PlayEffectAnim (selfSideAnimEffect);
 				}
 				break;
 //		default:
@@ -107,11 +110,11 @@ public class Skill:MonoBehaviour {
 		if (enemySideTarget != SkillEffectTarget.None && enemySideAnimEffect != null) {
 			switch (enemySideTarget) {
 			case SkillEffectTarget.SpecificEnemy:
-				targetEnemy.baView.PlayEffectAnim (enemySideAnimEffect);
+					targetEnemy.baController.PlayEffectAnim (enemySideAnimEffect);
 				break;
 			case SkillEffectTarget.AllEnemies:
-				foreach (BattleAgent ba in enemies) {
-					ba.baView.PlayEffectAnim (enemySideAnimEffect);
+				foreach (Agent ba in enemies) {
+						ba.baController.PlayEffectAnim (enemySideAnimEffect);
 				}
 				break;
 //		default:
@@ -149,6 +152,7 @@ public class Skill:MonoBehaviour {
 		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[StrengthConsume]:" + strengthConsume + "\n[ActionConsume]:" + actionConsume);
 	}
 
+}
 }
 	
 

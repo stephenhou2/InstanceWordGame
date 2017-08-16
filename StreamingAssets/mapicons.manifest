@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 2038147881
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: fed664b9b7d53af2551c0666449783a4
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Npc/npc_monster.png
+- Assets/Resources/Sprites/ItemIcon/item_box_origin.jpg
+- Assets/Resources/Sprites/Npc/npc_older.png
+- Assets/Resources/Sprites/Npc/npc_gMonster.png
+- Assets/Resources/Sprites/ItemIcon/item_box_destroyed.jpeg
+Dependencies: []

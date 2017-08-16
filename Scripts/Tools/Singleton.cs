@@ -49,21 +49,18 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
 			{  
 				lock (objectLock)  
 				{  
-					if (instance == null)  
+					T[] instances = FindObjectsOfType<T>();  
+					if (instances != null)  
 					{  
-						T[] instances = FindObjectsOfType<T>();  
-						if (instances != null)  
+						for (var i = 0; i < instances.Length; i++)  
 						{  
-							for (var i = 0; i < instances.Length; i++)  
-							{  
-								Destroy(instances[i].gameObject);  
-							}  
+							Destroy(instances[i].gameObject);  
 						}  
-						GameObject go = new GameObject();  
-						go.name = typeof(T).Name;  
-						instance = go.AddComponent<T>();  
-						DontDestroyOnLoad(go);  
 					}  
+					GameObject go = new GameObject();  
+					go.name = typeof(T).Name;  
+					instance = go.AddComponent<T>();  
+					DontDestroyOnLoad(go);   
 				}  
 			}  
 			return instance;  

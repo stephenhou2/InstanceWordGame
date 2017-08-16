@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
+namespace WordJourney
+{
 public abstract class StateSkillEffect : BaseSkillEffect {
 
 	public bool hasBeenExcuted;
 
-	public BattleAgent[] enemies;
+	public Agent[] enemies;
 
 //	// 状态管理方法，提供状态类效果的等级信息和作用的单位信息
 //	public void AddStateCopyToEffectTarget (BattleAgent self, BattleAgent enemy, int skillLevel,TriggerType triggerType,int attachedInfo)
@@ -61,8 +64,8 @@ public abstract class StateSkillEffect : BaseSkillEffect {
 //
 //	}
 
-	public void ExcuteEffect(BattleAgent self,List<BattleAgent> friends, BattleAgent targetEnemy,
-		List<BattleAgent> enemies, int skillLevel,TriggerType triggerType,int attachedInfo){
+	public void ExcuteEffect(Agent self,List<Agent> friends, Agent targetEnemy,
+		List<Agent> enemies, int skillLevel,TriggerType triggerType,int attachedInfo){
 		if (hasBeenExcuted && !canOverlay) {
 			return;
 		}
@@ -70,4 +73,5 @@ public abstract class StateSkillEffect : BaseSkillEffect {
 		hasBeenExcuted = true;
 	}
 
+}
 }

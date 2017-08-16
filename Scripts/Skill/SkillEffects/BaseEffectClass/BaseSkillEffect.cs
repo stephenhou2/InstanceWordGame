@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
+namespace WordJourney
+{
 public abstract class BaseSkillEffect:MonoBehaviour {
 
 	//*************需要从本地读取的技能效果数据属性***************//
@@ -52,8 +55,8 @@ public abstract class BaseSkillEffect:MonoBehaviour {
 
 	 
 	//技能实际效果
-	public abstract void AffectAgents (BattleAgent self,List<BattleAgent> friends, BattleAgent targetEnemy,
-		List<BattleAgent> enemies,
+	public abstract void AffectAgents (Agent self,List<Agent> friends, Agent targetEnemy,
+		List<Agent> enemies,
 		int skillLevel,
 		TriggerType triggerType,
 		int attachedInfo);
@@ -98,4 +101,5 @@ public class EffectData{
 		return string.Format ("[EffectDataInitializer]" + "\n[effectName]:" + effectName + "\n[description]:" + description + "\n[id]:" + id);
 	}
 
+}
 }

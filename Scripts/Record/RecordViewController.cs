@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+namespace WordJourney
+{
 public class RecordViewController : MonoBehaviour {
 
 
@@ -115,4 +118,5 @@ public class RecordViewController : MonoBehaviour {
 
 
 	}
+}
 }

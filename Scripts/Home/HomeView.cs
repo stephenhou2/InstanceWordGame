@@ -4,60 +4,64 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class HomeView : MonoBehaviour {
+
+namespace WordJourney
+{
+	public class HomeView : MonoBehaviour {
 
 
-	public Text playerLevelText;
-	public Slider playerHealthBar;
+		public Text playerLevelText;
+		public Slider playerHealthBar;
 
-	public Transform votexImage;
+		public Transform votexImage;
 
-	private Tweener votexRotate;
+		private Tweener votexRotate;
 
-	public void SetUpHomeView(){
+		public void SetUpHomeView(){
 
-//		GetComponent<Canvas> ().enabled = true;
+	//		GetComponent<Canvas> ().enabled = true;
 
-		SetUpTopBar ();
+			SetUpTopBar ();
 
-		VotexRotate ();
+			VotexRotate ();
 
-	}
-
-	public void VotexRotate(){
-
-		if (votexRotate != null) {
-			votexRotate.Play ();
-			return;
 		}
 
-		votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
-		votexRotate.SetLoops(-1);
-		votexRotate.SetEase (Ease.Linear);
-	}
+		public void VotexRotate(){
 
-	public void OnQuitHomeView(){
+			if (votexRotate != null) {
+				votexRotate.Play ();
+				return;
+			}
 
-//		GetComponent<Canvas> ().enabled = false;
-
-		if (votexRotate != null) {
-			votexRotate.Pause ();
+			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
+			votexRotate.SetLoops(-1);
+			votexRotate.SetEase (Ease.Linear);
 		}
 
+		public void OnQuitHomeView(){
 
+	//		GetComponent<Canvas> ().enabled = false;
 
-	}
+			if (votexRotate != null) {
+				votexRotate.Pause ();
+			}
 
-	// 初始化顶部bar
-	private void SetUpTopBar(){
+			gameObject.SetActive (false);
 
-		Player player = Player.mainPlayer;
+		}
 
-		playerLevelText.text = player.agentLevel.ToString();
+		// 初始化顶部bar
+		private void SetUpTopBar(){
 
-		playerHealthBar.maxValue = player.maxHealth;
-		playerHealthBar.value = player.health;
-		playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+			Player player = Player.mainPlayer;
 
+			playerLevelText.text = player.agentLevel.ToString();
+
+			playerHealthBar.maxValue = player.maxHealth;
+			playerHealthBar.value = player.health;
+			playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+
+		}
 	}
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 
 
+
+namespace WordJourney
+{
 public class EffectGenerator : MonoBehaviour {
 
 	public List<BaseSkillEffect> skillEffectsList = new List<BaseSkillEffect>();
@@ -184,4 +187,5 @@ public class EffectGenerator : MonoBehaviour {
 //			return null; 
 //		}
 //	}
+}
 }

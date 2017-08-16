@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
+namespace WordJourney
+{
 public class RecordView : MonoBehaviour {
 
 
@@ -224,4 +227,5 @@ public class RecordView : MonoBehaviour {
 
 
 
+}
 }

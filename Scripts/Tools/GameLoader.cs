@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+namespace WordJourney
+{
 public class GameLoader : MonoBehaviour {
 
 
 	void Awake(){
-		
 
-
-//		GameManager.Instance.SetUpHomeView (Player.mainPlayer);
 
 		DontDestroyOnLoad (Player.mainPlayer);
 
@@ -18,4 +19,5 @@ public class GameLoader : MonoBehaviour {
 	}
 
 
+}
 }

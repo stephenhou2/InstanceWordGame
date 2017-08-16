@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
+namespace WordJourney
+{
 public class ItemDetailView : MonoBehaviour {
 
 	public Text itemName;
@@ -18,7 +22,7 @@ public class ItemDetailView : MonoBehaviour {
 	public Transform propertiesPlane;
 	public Transform detailDescText;
 
-	public void SetUpItemDetailView(Item item,BagViewController bagViewCtr){
+		public void SetUpItemDetailView(Item item,BagViewController bagViewCtr){
 
 		if (item.itemType == ItemType.Consumables) {
 			
@@ -59,7 +63,7 @@ public class ItemDetailView : MonoBehaviour {
 			return obj.name == "arrowIcon";
 		});
 
-		Item compareItem = null;
+			Item compareItem = null;
 		int[] itemProperties = null;
 		int[] itemPropertiesDif = null;
 
@@ -79,7 +83,7 @@ public class ItemDetailView : MonoBehaviour {
 		}
 
 		if (compareItem == null) {
-			compareItem = new Item ();
+				compareItem = new Item ();
 		}
 
 		itemProperties = new int[] {
@@ -171,4 +175,5 @@ public class ItemDetailView : MonoBehaviour {
 
 	}
 
+}
 }

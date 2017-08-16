@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+namespace WordJourney
+{
 public class SkillGenerator : MonoBehaviour {
 
 	public Skill skill;
@@ -52,9 +55,9 @@ public class SkillGenerator : MonoBehaviour {
 	}
 
 	// 根据所选技能效果创造技能
-	public Skill GenerateSkillWithIds(int id_1,int id_2,BattleAgent ba){
+	public Skill GenerateSkillWithIds(int id_1,int id_2,Agent ba){
 
-		Skill mySkill = Instantiate(skill,ba.baView.skillsContainer);
+			Skill mySkill = Instantiate(skill,ba.baController.skillsContainer);
 
 		BaseSkillEffect skillEffect_1 = effectGenerator.skillEffectsList [id_1];
 		effectGenerator.skillEffectsList.RemoveAt (id_1);
@@ -114,4 +117,5 @@ public class SkillGenerator : MonoBehaviour {
 
 	}
 
+}
 }

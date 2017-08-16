@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+namespace WordJourney
+{
 public class EffectText : MonoBehaviour {
 
 	public int effectIndex = 0;
@@ -18,4 +21,5 @@ public class EffectText : MonoBehaviour {
 		sg.AddEffectIndex (effectIndex);
 
 	}
+}
 }
