@@ -10,8 +10,8 @@ namespace WordJourney
 	public class MapGenerator : SingletonMono<MapGenerator>
 	{
 		
-		public int columns = 32; 										//Number of columns in our game board.
-		public int rows = 32;											//Number of rows in our game board.
+		public int columns = 8; 										//Number of columns in our game board.
+		public int rows = 8;											//Number of rows in our game board.
 
 
 		public Transform exit;	
@@ -39,10 +39,20 @@ namespace WordJourney
 
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
-		
+		public int[,] mapWalkableInfoArray;
+
+
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
+
+			mapWalkableInfoArray = new int[rows, columns];
+
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < columns; j++) {
+					mapWalkableInfoArray [i, j] = 1;
+				}
+			}
 
 			ResetGridList ();
 
@@ -62,6 +72,8 @@ namespace WordJourney
 
 				Vector3 pos = RandomPosition ();
 
+				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
+
 				MapItem mapItem = Instantiate (mapItemModel, pos, Quaternion.identity);
 
 				mapItem.transform.SetParent(itemsContainer,true);
@@ -79,6 +91,8 @@ namespace WordJourney
 				NPC npc = currentChapterNpcs [i];
 
 				Vector3 pos = RandomPosition ();
+
+				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
 				MapNPC mapNpc = Instantiate (mapNpcModel, pos, Quaternion.identity);
 
@@ -133,24 +147,32 @@ namespace WordJourney
 		{
 
 			//Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
-			for(int x = -1; x < columns + 1; x++)
+			for(int x = 0; x < columns; x++)
 			{
 				//Loop along y axis, starting from -1 to place floor or outerwall tiles.
-				for(int y = -1; y < rows + 1; y++)
+				for(int y = 0; y < rows; y++)
 				{
 
 					GameObject toInstantiate = null;
 					GameObject instance = null;
 
 					//Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
-					if (x == -1 || x == columns || y == -1 || y == rows) {
+					if (x == 0 || x == columns - 1 || y == 0 || y == rows - 1) {
 						toInstantiate = outerWallTiles [Random.Range (0, outerWallTiles.Count)].gameObject;
 						instance = Instantiate (toInstantiate, new Vector3 (x, y, 0f), Quaternion.identity) as GameObject;
 						instance.transform.SetParent (outerWallsContainer, true);
+
+
+						mapWalkableInfoArray [x, y] = 0;
+
 					} else {
+						
 						toInstantiate = floorTiles[Random.Range (0,floorTiles.Count)].gameObject;
 						instance = Instantiate (toInstantiate, new Vector3 (x, y, 0f), Quaternion.identity) as GameObject;
 						instance.transform.SetParent (floorsContainer, true);
+
+						mapWalkableInfoArray [x, y] = 1;
+
 					}
 
 					instance.name = toInstantiate.name;
@@ -228,6 +250,10 @@ namespace WordJourney
 				go.name = tileChoice.name;
 
 				go.transform.SetParent (container, true);
+
+
+				mapWalkableInfoArray [(int)randomPosition.x, (int)randomPosition.y] = 0;
+
 			}
 		}
 	}

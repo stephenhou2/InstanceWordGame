@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.AI;
 
 
 namespace WordJourney
@@ -46,6 +46,12 @@ namespace WordJourney
 
 		// 图片遮罩
 		public Image maskImage;
+
+		private NavigationHelper navHelper;
+
+		private List<Vector3> pathPosList;
+
+		public GameObject cube;
 		
 		//Awake is always called before any Start functions
 		void Awake()
@@ -56,12 +62,14 @@ namespace WordJourney
 			//Assign enemies to a new List of Enemy objects.
 			battleMonsters = new List<BattleMonsterController>();
 
-
+			navHelper = GetComponent<NavigationHelper> ();
 
 
 
 		}
 			
+
+		 
 
 		private void Update(){
 
@@ -69,13 +77,13 @@ namespace WordJourney
 			{
 				if(Input.GetMouseButtonDown(0)){
 
-					Vector3 mousePos = Input.mousePosition;
+					Vector3 mousePosInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-					Vector3 startPos = Camera.main.ScreenToWorldPoint(new Vector3((int)mousePos.x,(int)mousePos.y,0));
+					Vector3 targetPos = new Vector3((int)(mousePosInWorld.x + 0.5f),(int)(mousePosInWorld.y + 0.5f),0);
 
-					Vector3 endPos = startPos + new Vector3(0,0,15);
+					Vector3 endPos = targetPos + new Vector3(0,0,15);
 
-					RaycastHit2D r2d = Physics2D.Linecast(startPos,endPos,battlePlayer.blockingLayer);
+					RaycastHit2D r2d = Physics2D.Linecast(targetPos,endPos,battlePlayer.blockingLayer);
 
 					if(r2d.transform != null){
 						
@@ -83,15 +91,25 @@ namespace WordJourney
 
 						if(battlePlayer != null){
 
-							battlePlayer.transform.position = r2d.transform.position;
+							pathPosList = navHelper.FindPath(battlePlayer.transform.position,targetPos,battleMap.mapWalkableInfoArray);
 
+							if(pathPosList.Count == 0){
+								Debug.Log("something wrong");
+							}else{
+
+								for(int i = 0;i<pathPosList.Count;i++){
+
+									Debug.Log(pathPosList[i]);
+
+									Instantiate(cube,pathPosList[i],Quaternion.identity);
+
+								}
+
+							}
 						}
 
 
 					}
-
-
-
 
 				}
 
@@ -99,9 +117,38 @@ namespace WordJourney
 			}
 			#elif UNITY_ANDROID || UNITY_IOS
 			{
+				if (Input.touchCount != 0) {
 
+					Touch t = Input.GetTouch (0);
+
+					Vector3 touchPos = t.position;
+
+					Vector3 startPos = Camera.main.ScreenToWorldPoint(new Vector3((int)touchPos.x,(int)touchPos.y,0));
+
+					Vector3 endPos = startPos + new Vector3(0,0,15);
+
+					RaycastHit2D r2d = Physics2D.Linecast(startPos,endPos,battlePlayer.blockingLayer);
+
+					if(r2d.transform != null){
+
+						Debug.Log(r2d.transform.gameObject);
+
+						if(battlePlayer != null){
+
+							battlePlayer.transform.position = r2d.transform.position;
+
+						}
+					}
+				}
 			}
 			#endif
+		}
+
+
+		private void test(){
+
+
+
 		}
 
 		//Initializes the game for each level.
