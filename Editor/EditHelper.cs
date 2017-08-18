@@ -17,7 +17,7 @@ public class EditHelper {
 	[MenuItem("EditHelper/Test")]
 	public static void Test(){
 
-
+		Debug.Log ((int)-0.99f);
 
 	}
 

@@ -37,6 +37,8 @@ namespace WordJourney
 		public Transform monstersContainer;
 
 
+		public Animator destinationAnimator;
+
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
 		public int[,] mapWalkableInfoArray;
@@ -123,6 +125,8 @@ namespace WordJourney
 
 			player.position = playerOriginPos;
 
+			player.GetComponent<BattlePlayerController> ().predicatePos = playerOriginPos;
+
 			player.rotation = Quaternion.identity;
 
 			player.SetParent (null,true);
@@ -163,7 +167,7 @@ namespace WordJourney
 						instance.transform.SetParent (outerWallsContainer, true);
 
 
-						mapWalkableInfoArray [x, y] = 0;
+						mapWalkableInfoArray [x, y] = -1;
 
 					} else {
 						
@@ -182,6 +186,25 @@ namespace WordJourney
 			}
 
 		}
+
+
+		public void PlayDestinationAnim(Vector3 targetPos,bool arrivable){
+
+			destinationAnimator.transform.position = targetPos;
+
+			destinationAnimator.ResetTrigger ("PlayArrivable");
+			destinationAnimator.ResetTrigger ("PlayUnarrivable");
+
+			if (arrivable) {
+				destinationAnimator.SetTrigger ("PlayArrivable");
+			} else {
+				destinationAnimator.SetTrigger ("PlayUnarrivable");
+			}
+
+
+		}
+
+
 
 
 		//Clears our list gridPositions and prepares it to generate a new board.

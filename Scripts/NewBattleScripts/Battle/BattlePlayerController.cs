@@ -3,11 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using UnityEngine.EventSystems;
 
 namespace WordJourney
 {
-	public class BattlePlayerController : BattleAgentController,IPointerClickHandler {
+	public class BattlePlayerController : BattleAgentController {
 
 		// 战斗中的玩家UI
 
@@ -48,14 +47,24 @@ namespace WordJourney
 		private InstancePool battleGainsPool;
 
 		// 移动速度
-		public float moveSpeed = 1f;			
+		public float moveDuration = 0.5f;			
+
+		// 当前的单步移动动画对象
+		private Tweener moveTweener;
+
+		// 标记是否在单步移动中
+		private bool inSingleMoving;
+
+		// 移动路径点集
+		private List<Vector3> pathPosList;
+
+		// 正在前往的节点位置
+		public Vector3 predicatePos;
+
+		// 移动的终点位置
+		private Vector3 endPos;
 
 
-		public void OnPointerClick(PointerEventData data){
-
-			Debug.Log (data.position);
-
-		}
 
 		protected override void Awake ()
 		{
@@ -63,71 +72,151 @@ namespace WordJourney
 			
 			animator = GetComponent<Animator> ();
 
-//			moveSpeed = 1f;
-
 			base.Awake ();
 		}
 
 
+		/// <summary>
+		/// 按照指定路径 pathPosList 移动到终点 endPos
+		/// </summary>
+		/// <param name="pathPosList">Path position list.</param>
+		/// <param name="endPos">End position.</param>
+		public void MoveToEndByPath(List<Vector3> pathPosList,Vector3 endPos){
+
+			this.pathPosList = pathPosList;
+
+			this.endPos = endPos;
+		
+			StartCoroutine ("MoveWithNewPath");
+
+		}
+
+		/// <summary>
+		/// 按照新路径移动
+		/// </summary>
+		/// <returns>The with new path.</returns>
+		private IEnumerator MoveWithNewPath(){
+
+			// 如果移动动画不为空，则等待当前移动结束
+			if (moveTweener != null) {
+				// 动画结束时标记isSingleMoving为false（单步行动结束），不删除路径点（因为该单步行动是旧路径上的行动点）
+				moveTweener.OnComplete (() => {
+					inSingleMoving = false;
+				});
+
+				// 等待单步行动结束
+				while (inSingleMoving) {
+					yield return null;
+				}
+			} 
+
+			// 移动到新路径上的下一个节点
+			MoveToNextPosition ();
+
+		}
 
 
-		//Move returns true if it is able to move and false if not. 
-		//Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
-		protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
-		{
-			//Store start position to move from, based on objects current transform position.
-			Vector2 start = transform.position;
+		/// <summary>
+		/// 匀速移动到指定节点位置
+		/// </summary>
+		/// <param name="targetPos">Target position.</param>
+		private void MoveToPosition(Vector3 targetPos){
 
-			// Calculate end position based on the direction parameters passed in when calling Move.
-			Vector2 end = start + new Vector2 (xDir, yDir);
+//			Debug.Log (string.Format ("Player pos:[{0},{1}],target pos:[{2},{3}]", transform.position.x, transform.position.y,targetPos.x,targetPos.y));
 
-			//Disable the boxCollider so that linecast doesn't hit this object's own collider.
-			boxCollider.enabled = false;
+			moveTweener =  transform.DOMove (targetPos, moveDuration).OnComplete (() => {
 
-			//Cast a line from start point to end point checking collision on blockingLayer.
-			hit = Physics2D.Linecast (start, end, blockingLayer);
+				// 动画结束时已经移动到指定节点位置，标记单步行动结束
+				inSingleMoving = false;
 
-			//Re-enable boxCollider after linecast
-			boxCollider.enabled = true;
+				// 将当前节点从路径点中删除
+				pathPosList.RemoveAt(0);
 
-			//Check if anything was hit
-			if(hit.transform == null)
-			{
-				//If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
-				StartCoroutine (SmoothMovement (end));
+				// 移动到下一个节点位置
+				MoveToNextPosition();
+			});
 
-				//Return true to say that Move was successful
+			// 设置匀速移动
+			moveTweener.SetEase (Ease.Linear);
+
+		}
+
+		/// <summary>
+		/// 移动到下一个节点
+		/// </summary>
+		private void MoveToNextPosition(){
+
+			// 路径中没有节点，有以下两种情况 
+			// 1.原始路径中就没有节点，即没有有效的行动路径
+			// 2.按照行动路径已经将所有的节点走完
+			if (pathPosList.Count == 0) {
+
+				// 走到了终点
+				if (ArriveEndPoint ()) {
+					Debug.Log ("到达终点");
+				}
+				return;
+			}
+
+			// 如果还没有走到终点
+			if (!ArriveEndPoint ()) {
+				
+				Vector3 nextPos = pathPosList [0];
+
+				// 记录下一节点位置
+				predicatePos = nextPos;
+
+				// 向下一节点移动
+				MoveToPosition (nextPos);
+
+				// 标记单步移动中
+				inSingleMoving = true;
+
+				return;
+
+			}
+
+
+
+		}
+
+		/// <summary>
+		/// 判断当前是否已经走到了终点位置，位置度容差0.05
+		/// </summary>
+		/// <returns><c>true</c>, if end point was arrived, <c>false</c> otherwise.</returns>
+		private bool ArriveEndPoint(){
+
+			if(Mathf.Abs(transform.position.x - endPos.x) <= 0.05f &&
+				Mathf.Abs(transform.position.y - endPos.y) <= 0.05f){
 				return true;
-			}
+				}
 
-			//If something was hit, return false, Move was unsuccesful.
 			return false;
+
 		}
+			
 
-
-		//Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
-		private IEnumerator SmoothMovement (Vector3 end)
-		{
-			//Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
-			//Square magnitude is used instead of magnitude because it's computationally cheaper.
-			float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-
-			//While that distance is greater than a very small amount (Epsilon, almost zero):
-			while(sqrRemainingDistance > float.Epsilon)
-			{
-				//Find a new position proportionally closer to the end, based on the moveTime
-				Vector3 newPostion = Vector3.MoveTowards(rb2D.position, end, moveSpeed * Time.deltaTime);
-
-				//Call MovePosition on attached Rigidbody2D and move it to the calculated position.
-				rb2D.MovePosition (newPostion);
-
-				//Recalculate the remaining distance after moving.
-				sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-
-				//Return and loop until sqrRemainingDistance is close enough to zero to end the function
-				yield return null;
-			}
-		}
+//		private IEnumerator SmoothMovement (Vector3 end,CallBack cb)
+//		{
+//			inSingleMoving = true;
+//
+//			float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+//
+//			while(sqrRemainingDistance > float.Epsilon)
+//			{
+//				Vector3 newPostion = Vector3.MoveTowards(rb2D.position, end, 1f / moveDuration * Time.deltaTime);
+//
+//				rb2D.MovePosition (newPostion);
+//
+//				sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+//
+//				yield return null;
+//			}
+//
+//			inSingleMoving = false;
+//
+//			cb ();
+//		}
 
 
 		public void SetUpUI(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
@@ -485,131 +574,56 @@ namespace WordJourney
 
 
 		}
-
-
-
-
-		private void Update ()
-		{
-			int horizontal = 0;  	//Used to store the horizontal move direction.
-			int vertical = 0;		//Used to store the vertical move direction.
-
-			//Check if we are running either in the Unity editor or in a standalone build.
-			#if UNITY_STANDALONE || UNITY_EDITOR
-
-			//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-			horizontal = (int) (Input.GetAxisRaw ("Horizontal"));
-
-			//Get input from the input manager, round it to an integer and store in vertical to set y axis move direction
-			vertical = (int) (Input.GetAxisRaw ("Vertical"));
-
-			//Check if moving horizontally, if so set vertical to zero.
-			if(horizontal != 0)
-			{
-				vertical = 0;
-			}
-			//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-			#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-
-			//Check if Input has registered more than zero touches
-			if (Input.touchCount > 0)
-			{
-			//Store the first touch detected.
-			Touch myTouch = Input.touches[0];
-
-			//Check if the phase of that touch equals Began
-			if (myTouch.phase == TouchPhase.Began)
-			{
-			//If so, set touchOrigin to the position of that touch
-			touchOrigin = myTouch.position;
-			}
-
-			//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
-			else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
-			{
-			//Set touchEnd to equal the position of this touch
-			Vector2 touchEnd = myTouch.position;
-
-			//Calculate the difference between the beginning and end of the touch on the x axis.
-			float x = touchEnd.x - touchOrigin.x;
-
-			//Calculate the difference between the beginning and end of the touch on the y axis.
-			float y = touchEnd.y - touchOrigin.y;
-
-			//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
-			touchOrigin.x = -1;
-
-			//Check if the difference along the x axis is greater than the difference along the y axis.
-			if (Mathf.Abs(x) > Mathf.Abs(y))
-			//If x is greater than zero, set horizontal to 1, otherwise set it to -1
-			horizontal = x > 0 ? 1 : -1;
-			else
-			//If y is greater than zero, set horizontal to 1, otherwise set it to -1
-			vertical = y > 0 ? 1 : -1;
-			}
-			}
-
-			#endif //End of mobile platform dependendent compilation section started above with #elif
-			//Check if we have a non-zero value for horizontal or vertical
-			if(horizontal != 0 || vertical != 0)
-			{
-				//Call AttemptMove passing in the generic parameter Wall, since that is what Player may interact with if they encounter one (by attacking it)
-				//Pass in horizontal and vertical as parameters to specify the direction to move Player in.
-				AttemptMove<Wall> (horizontal, vertical);
-			}
-		}
-
-
-
+			
 		//AttemptMove overrides the AttemptMove function in the base class MovingObject
 		//AttemptMove takes a generic parameter T which for Player will be of the type Wall, it also takes integers for x and y direction to move in.
-		protected void AttemptMove <T> (int xDir, int yDir)
-		{
-
-			//Hit will store whatever our linecast hits when Move is called.
-			RaycastHit2D hit;
-
-			//Set canMove to true if Move was successful, false if failed.
-			bool canMove = Move (xDir, yDir, out hit);
-
-			//Check if nothing was hit by linecast
-			if(hit.transform == null)
-				//If nothing was hit, return and don't execute further code.
-				return;
-
-			//Get a component reference to the component of type T attached to the object that was hit
-			T hitComponent = hit.transform.GetComponent <T> ();
-
-			//If canMove is false and hitComponent is not equal to null, meaning MovingObject is blocked and has hit something it can interact with.
-			if(!canMove && hitComponent != null)
-
-				//Call the OnCantMove function and pass it hitComponent as a parameter.
-				OnCantMove (hitComponent);
-
-			//If Move returns true, meaning Player was able to move into an empty space.
-			if (Move (xDir, yDir, out hit)) 
-			{
-				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
-				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
-			}
-
-			//Since the player has moved and lost food points, check if the game has ended.
-			CheckIfGameOver ();
-
-		}
-
+//		protected void AttemptMove <T> (int xDir, int yDir)
+//		{
+//
+//			//Hit will store whatever our linecast hits when Move is called.
+//			RaycastHit2D hit;
+//
+//			//Set canMove to true if Move was successful, false if failed.
+//			bool canMove = Move (xDir, yDir, out hit);
+//
+//			//Check if nothing was hit by linecast
+//			if(hit.transform == null)
+//				//If nothing was hit, return and don't execute further code.
+//				return;
+//
+//			//Get a component reference to the component of type T attached to the object that was hit
+//			T hitComponent = hit.transform.GetComponent <T> ();
+//
+//			//If canMove is false and hitComponent is not equal to null, meaning MovingObject is blocked and has hit something it can interact with.
+//			if(!canMove && hitComponent != null)
+//
+//				//Call the OnCantMove function and pass it hitComponent as a parameter.
+//				OnCantMove (hitComponent);
+//
+//			//If Move returns true, meaning Player was able to move into an empty space.
+//			if (Move (xDir, yDir, out hit)) 
+//			{
+//				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
+//				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
+//			}
+//
+//			//Since the player has moved and lost food points, check if the game has ended.
+//			CheckIfGameOver ();
+//
+//		}
+//
 
 		//OnCantMove overrides the abstract function OnCantMove in MovingObject.
 		//It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
-		protected void OnCantMove <T> (T component)
-		{
-			//Set hitWall to equal the component passed in as a parameter.
-			Wall hitWall = component as Wall;
-
-			//Set the attack trigger of the player's animation controller in order to play the player's attack animation.
-			animator.SetTrigger ("playerChop");
-		}
-
+//		protected void OnCantMove <T> (T component)
+//		{
+//			//Set hitWall to equal the component passed in as a parameter.
+//			Wall hitWall = component as Wall;
+//
+//			//Set the attack trigger of the player's animation controller in order to play the player's attack animation.
+//			animator.SetTrigger ("playerChop");
+//		}
+//
 
 		//OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
 //		private void OnTriggerEnter2D (Collider2D other)
@@ -647,38 +661,5 @@ namespace WordJourney
 //			}
 //		}
 			
-
-
-		//LoseFood is called when an enemy attacks the player.
-		//It takes a parameter loss which specifies how many points to lose.
-		public void LoseFood (int loss)
-		{
-			//Set the trigger for the player animator to transition to the playerHit animation.
-			animator.SetTrigger ("playerHit");
-
-
-			//Check to see if game has ended.
-			CheckIfGameOver ();
-		}
-
-
-		//CheckIfGameOver checks if the player is out of food points and if so, ends the game.
-		private void CheckIfGameOver ()
-		{
-			//Check if food point total is less than or equal to zero.
-//			if (food <= 0) 
-//			{
-//				//Call the PlaySingle function of SoundManager and pass it the gameOverSound as the audio clip to play.
-//				SoundManager.instance.PlaySingle (gameOverSound);
-//
-//				//Stop the background music.
-//				SoundManager.instance.musicSource.Stop();
-//
-//				//Call the GameOver function of GameManager.
-//				ExploreManager.Instance.GameOver ();
-//			}
-		}
-
-
 	}
 }

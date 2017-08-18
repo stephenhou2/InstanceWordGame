@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 
 namespace WordJourney
@@ -51,9 +52,6 @@ namespace WordJourney
 
 		private List<Vector3> pathPosList;
 
-		public GameObject cube;
-		
-		//Awake is always called before any Start functions
 		void Awake()
 		{
 //			TransitionDelay = 0.5f;
@@ -65,7 +63,6 @@ namespace WordJourney
 			navHelper = GetComponent<NavigationHelper> ();
 
 
-
 		}
 			
 
@@ -73,83 +70,83 @@ namespace WordJourney
 
 		private void Update(){
 
-			#if UNITY_STANDALONE || UNITY_EDITOR
-			{
-				if(Input.GetMouseButtonDown(0)){
 
-					Vector3 mousePosInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Vector3 clickPos = Vector3.zero;
 
-					Vector3 targetPos = new Vector3((int)(mousePosInWorld.x + 0.5f),(int)(mousePosInWorld.y + 0.5f),0);
+#if UNITY_STANDALONE || UNITY_EDITOR
 
-					Vector3 endPos = targetPos + new Vector3(0,0,15);
+			if(Input.GetMouseButtonDown(0)){
 
-					RaycastHit2D r2d = Physics2D.Linecast(targetPos,endPos,battlePlayer.blockingLayer);
-
-					if(r2d.transform != null){
-						
-						Debug.Log(r2d.transform.gameObject);
-
-						if(battlePlayer != null){
-
-							pathPosList = navHelper.FindPath(battlePlayer.transform.position,targetPos,battleMap.mapWalkableInfoArray);
-
-							if(pathPosList.Count == 0){
-								Debug.Log("something wrong");
-							}else{
-
-								for(int i = 0;i<pathPosList.Count;i++){
-
-									Debug.Log(pathPosList[i]);
-
-									Instantiate(cube,pathPosList[i],Quaternion.identity);
-
-								}
-
-							}
-						}
-
-
-					}
-
+				if(EventSystem.current.IsPointerOverGameObject()){
+					Debug.Log("点击在UI上");
+					return;
 				}
 
+				clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
 			}
-			#elif UNITY_ANDROID || UNITY_IOS
-			{
-				if (Input.touchCount != 0) {
 
-					Touch t = Input.GetTouch (0);
+#elif UNITY_ANDROID || UNITY_IOS
+			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended){
 
-					Vector3 touchPos = t.position;
-
-					Vector3 startPos = Camera.main.ScreenToWorldPoint(new Vector3((int)touchPos.x,(int)touchPos.y,0));
-
-					Vector3 endPos = startPos + new Vector3(0,0,15);
-
-					RaycastHit2D r2d = Physics2D.Linecast(startPos,endPos,battlePlayer.blockingLayer);
-
-					if(r2d.transform != null){
-
-						Debug.Log(r2d.transform.gameObject);
-
-						if(battlePlayer != null){
-
-							battlePlayer.transform.position = r2d.transform.position;
-
-						}
+				if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
+						Debug.Log("点击在UI上");
+						return;
 					}
-				}
+
+				clickPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
 			}
-			#endif
-		}
+#endif
+			// 未检测到点击位置
+			//（初始设置点击位置在世界坐标原点，如果检测到点击点并初始化点击点之后，z一定会和camera的z保持一致，为－10，如果为0表示没有重设点击点）
+			if (clickPos.z == 0) {
+				return;
+			}
+
+			// 点击位置在地图有效区之外，直接返回
+			if(clickPos.x + 0.5f >= battleMap.rows 
+				|| clickPos.y + 0.5f >= battleMap.columns 
+				|| clickPos.x + 0.5f < 0 
+				|| clickPos.y + 0.5f < 0){
+				Debug.Log ("点击在地图有效区外部");
+				return;
+			}
 
 
-		private void test(){
+			// 由于地图贴图 tile时是以中心点为参考，宽高为1，所以如果以实际拼出的地图左下角为坐标原点，则点击位置需要进行如下坐标转换
+			int targetX = (int)(clickPos.x + 0.5f);
+
+			int targetY = (int)(clickPos.y + 0.5f);
+
+			// 以地图左下角为坐标原点时的点击位置
+			Vector3 targetPos = new Vector3(targetX, targetY, 0);
+
+			Vector3 rayEndPos = targetPos + new Vector3(0,0,15);
+
+			// 检测点击到的碰撞体
+			RaycastHit2D r2d = Physics2D.Linecast(targetPos,rayEndPos,battlePlayer.blockingLayer);
 
 
+			if(r2d.transform != null){
 
-		}
+				if(battlePlayer != null){
+
+					// 计算自动寻路路径
+					pathPosList = navHelper.FindPath(battlePlayer.predicatePos,targetPos,battleMap.mapWalkableInfoArray);
+
+				}
+			}else{
+				// 点击位置没有有效碰撞体（不在地图有效范围内），则清空寻路路径
+				pathPosList.Clear();
+			}
+
+			// 地图上点击位置生成提示动画
+			battleMap.PlayDestinationAnim(targetPos,pathPosList.Count > 0);
+
+			// 游戏角色按照自动寻路路径移动到点击位置
+			battlePlayer.MoveToEndByPath (pathPosList, targetPos);
+
+	}
 
 		//Initializes the game for each level.
 		public void SetupExploreView(int chapterIndex)
