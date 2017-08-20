@@ -31,16 +31,6 @@ namespace WordJourney
 		}
 			
 
-		//OnCantMove is called if Enemy attempts to move into a space occupied by a Player, it overrides the OnCantMove function of MovingObject 
-		//and takes a generic parameter T which we use to pass in the component we expect to encounter, in this case Player
-		protected void OnCantMove <T> (T component)
-		{
-			//Set the attack trigger of animator to trigger Enemy attack animation.
-			animator.SetTrigger ("enemyAttack");
-
-			//Call the RandomizeSfx function of SoundManager passing in the two audio clips to choose randomly between.
-			SoundManager.instance.RandomizeSfx (attackSound1, attackSound2);
-		}
 
 		public void SetUpMonsterView(Monster monster){
 			// 加载怪物头像图片
@@ -49,5 +39,8 @@ namespace WordJourney
 			}, true, monster.agentIconName);
 
 		}
+
+
+
 	}
 }

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2038147881
+CRC: 3601490153
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: fed664b9b7d53af2551c0666449783a4
+    Hash: c6eea5f0f73a36b561b5fda1903c780e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 4774d6da9b606debf00b5a5d61c4487c
@@ -14,6 +14,7 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
+- Assets/Resources/NewBattleSprites/map1.png
 - Assets/Resources/Sprites/Npc/npc_monster.png
 - Assets/Resources/Sprites/ItemIcon/item_box_origin.jpg
 - Assets/Resources/Sprites/Npc/npc_older.png

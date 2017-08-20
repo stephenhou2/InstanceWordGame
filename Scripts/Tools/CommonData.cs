@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace WordJourney{
+	
 	public delegate void CallBack ();
+
+	public delegate void ExploreEventHandler (Transform colliderTrans);
 
 
 	public struct CommonData{
@@ -177,4 +180,36 @@ namespace WordJourney{
 			maximum = max;
 		}
 	}
+
+	[System.Serializable]
+	public class MapInfo
+	{
+		public int width;
+		public int height;
+		public int tilewidth;
+		public int tileheight;
+		public Layer[] layers;
+
+
+
+	}
+
+	[System.Serializable]
+	public class Layer
+	{
+		public int[] data;
+		public int height;
+		public int width;
+		public int x;
+		public int y;
+
+	}
+
+	[System.Serializable]
+	public class TileInfo
+	{
+		public int[] walkableInfoArray;
+
+	}
+		
 }

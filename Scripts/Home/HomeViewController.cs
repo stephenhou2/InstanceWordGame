@@ -24,7 +24,7 @@ namespace WordJourney
 
 			ResourceManager.Instance.LoadAssetWithFileName ("explore/scene", () => {
 
-				GameObject.Find("ExploreCanvas").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
+				GameObject.Find("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
 				homeView.OnQuitHomeView();
 

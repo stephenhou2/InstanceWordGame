@@ -1,0 +1,17 @@
+{ "columns":2,
+ "image":"..\/Downloads\/tanlanMap\/map1.png",
+ "imageheight":1982,
+ "imagewidth":256,
+ "margin":4,
+ "name":"map1",
+ "spacing":4,
+ "tilecount":46,
+ "tileheight":82,
+ "walkableInfoArray":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+				   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+				   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+   				   -1,-1,-1,-1,-1,-1,-1,-1,-1,1,
+				   -1,-1,-1,-1,-1,-1,-1],
+ "tilewidth":82,
+ "type":"tileset"
+}

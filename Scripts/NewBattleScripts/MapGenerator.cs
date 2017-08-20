@@ -6,21 +6,30 @@ using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine rand
 
 namespace WordJourney	
 {
-	
+
+
+
 	public class MapGenerator : SingletonMono<MapGenerator>
 	{
-		
-		public int columns = 8; 										//Number of columns in our game board.
-		public int rows = 8;											//Number of rows in our game board.
 
+
+
+		[HideInInspector]public int columns; 										//Number of columns in our game board.
+		[HideInInspector]public int rows;											//Number of rows in our game board.
+
+
+		private MapInfo mapInfo;
+		private TileInfo tileInfo;
 
 		public Transform exit;	
 
 		public Transform player;
 
-		public List<Transform> floorTiles;
-		public List<Transform> outerWallTiles;
+//		public List<Transform> floorTiles;
+//		public List<Transform> outerWallTiles;
 
+		public GameObject wallModel;
+		public GameObject floorModel;
 		public MapItem mapItemModel;
 		public MapNPC mapNpcModel;
 
@@ -48,19 +57,20 @@ namespace WordJourney
 		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
 
-			mapWalkableInfoArray = new int[rows, columns];
+			mapInfo = DataInitializer.LoadDataToSingleModelWithPath<MapInfo> (CommonData.jsonFileDirectoryPath, "MapJson.json");
 
-			for (int i = 0; i < rows; i++) {
-				for (int j = 0; j < columns; j++) {
-					mapWalkableInfoArray [i, j] = 1;
-				}
-			}
+			rows = mapInfo.height;
+			columns = mapInfo.width;
+
+			tileInfo = DataInitializer.LoadDataToSingleModelWithPath<TileInfo> (CommonData.jsonFileDirectoryPath, "TileJson.json");
+
+			mapWalkableInfoArray = new int[rows, columns];
 
 			ResetGridList ();
 
-			SetUpPlayer ();
+			SetUpWallAndFloor ();
 
-			SetUpOuterWallAndFloor ();
+			SetUpPlayer ();
 
 			List<Item> currentChapterItems = chapterDetail.GetCurrentChapterItems ();
 
@@ -147,43 +157,63 @@ namespace WordJourney
 		}
 
 		//Sets up the outer walls and floor (background) of the game board.
-		void SetUpOuterWallAndFloor ()
+		void SetUpWallAndFloor ()
 		{
 
-			//Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
-			for(int x = 0; x < columns; x++)
+			for(int y = 0; y < columns; y++)
 			{
-				//Loop along y axis, starting from -1 to place floor or outerwall tiles.
-				for(int y = 0; y < rows; y++)
+				for(int x = 0; x < rows; x++)
 				{
 
-					GameObject toInstantiate = null;
-					GameObject instance = null;
+					int tileIndexInMap = columns * y + x;
 
-					//Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
-					if (x == 0 || x == columns - 1 || y == 0 || y == rows - 1) {
-						toInstantiate = outerWallTiles [Random.Range (0, outerWallTiles.Count)].gameObject;
-						instance = Instantiate (toInstantiate, new Vector3 (x, y, 0f), Quaternion.identity) as GameObject;
-						instance.transform.SetParent (outerWallsContainer, true);
+					Vector3 tilePos = new Vector3 (x,columns - y - 1,0);
 
+					for (int i = 0; i < mapInfo.layers.Length; i++) {
 
-						mapWalkableInfoArray [x, y] = -1;
+						Layer layer = mapInfo.layers [i];
 
-					} else {
+						int tileIndex = layer.data [tileIndexInMap] - 1;
+
+						if (tileIndex == -1) {
+							mapWalkableInfoArray [x,columns - y - 1] = 1;
+							continue;
+						}
+
+						string tileName = string.Format ("map1_{0}", tileIndex);
+
+						Sprite tileSprite = GameManager.Instance.allMapSprites.Find (delegate(Sprite s) {
+							return s.name == tileName;
+						});
+
+						int walkableInfo = tileInfo.walkableInfoArray[tileIndex];
+
+						mapWalkableInfoArray [x,columns - y - 1] = walkableInfo;
+
+						if (walkableInfo == -1) {
+							GameObject wall = Instantiate (wallModel, tilePos, Quaternion.identity);
 						
-						toInstantiate = floorTiles[Random.Range (0,floorTiles.Count)].gameObject;
-						instance = Instantiate (toInstantiate, new Vector3 (x, y, 0f), Quaternion.identity) as GameObject;
-						instance.transform.SetParent (floorsContainer, true);
+							wall.name = tileName;
 
-						mapWalkableInfoArray [x, y] = 1;
+							wall.GetComponent<SpriteRenderer> ().sprite = tileSprite;
 
+							wall.transform.SetParent (outerWallsContainer, true);
+						} else {
+							GameObject floor = Instantiate (floorModel, tilePos, Quaternion.identity);
+
+							floor.name = tileName;
+
+							floor.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+
+							floor.transform.SetParent (floorsContainer, true);
+						}
 					}
-
-					instance.name = toInstantiate.name;
 
 				}
 
 			}
+
+			Debug.Log (mapWalkableInfoArray);
 
 		}
 
@@ -231,13 +261,19 @@ namespace WordJourney
 
 
 		//RandomPosition returns a random position from our list gridPositions.
-		Vector3 RandomPosition ()
+		private Vector3 RandomPosition ()
 		{
+
 			//Declare an integer randomIndex, set it's value to a random number between 0 and the count of items in our List gridPositions.
 			int randomIndex = Random.Range (0, gridPositions.Count);
 
 			//Declare a variable of type Vector3 called randomPosition, set it's value to the entry at randomIndex from our List gridPositions.
 			Vector3 randomPosition = gridPositions[randomIndex];
+
+			while (mapWalkableInfoArray [(int)randomPosition.x, (int)randomPosition.y] == -1) {
+				randomIndex = Random.Range (0, gridPositions.Count);
+				randomPosition = gridPositions [randomIndex];
+			}
 
 			//Remove the entry at randomIndex from the list so that it can't be re-used.
 			gridPositions.RemoveAt (randomIndex);
@@ -246,6 +282,9 @@ namespace WordJourney
 			return randomPosition;
 		}
 
+//		private int Roll(){
+//
+//		}
 
 		//LayoutObjectAtRandom accepts an array of game objects to choose from along with a minimum and maximum range for the number of objects to create.
 		private void LayoutObjectAtRandom<T> (List<T> tileList, Count tileCount,Transform container)

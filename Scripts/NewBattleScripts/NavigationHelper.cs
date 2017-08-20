@@ -11,7 +11,7 @@ namespace WordJourney
 
 
 		// 地图上可行走位置的二维数组
-		// －1表示是墙，不可到达
+		// －1表示是墙或者地图中的镂空区域，不可到达
 		// 0表示障碍物,不可行走
 		// 1表示正常地面
 		// 2表示有陷阱
@@ -37,7 +37,6 @@ namespace WordJourney
 		/// <param name="mapWalkableInfoArray">Map walkable info array.</param>
 		public List<Vector3> FindPath(Vector3 startPos,Vector3 endPos,int[,] mapWalkableInfoArray){
 
-
 			Point startPoint = new Point(startPos);
 			Point endPoint = new Point(endPos);
 
@@ -49,14 +48,6 @@ namespace WordJourney
 			// 拿到全地图信息（包括是否可行走和每个点上的行走消耗）
 			this.mapWalkableInfoArray = mapWalkableInfoArray;
 
-			// 终点在地图外部,直接返回空的路径点集
-			if (endPoint.x >= mapWalkableInfoArray.GetLength (0)
-			   || endPoint.x < 0
-			   || endPoint.y >= mapWalkableInfoArray.GetLength (1)
-			   || endPoint.y < 0) 
-			{
-				return pathPos;
-			}
 
 			// 起点和终点重合，则将该点加入到路径点集中并直接返回
 			if (startPoint.Equals (endPoint)) {
@@ -66,6 +57,7 @@ namespace WordJourney
 
 			// 如果终点是不可行走点
 			if (mapWalkableInfoArray [endPoint.x, endPoint.y] == -1) {
+				Debug.Log ("点击在不可到达区域");
 				return pathPos;
 			}
 

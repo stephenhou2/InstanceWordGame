@@ -64,6 +64,10 @@ namespace WordJourney
 		// 移动的终点位置
 		private Vector3 endPos;
 
+		// 事件回调微透
+		public ExploreEventHandler enterMonster;
+		public ExploreEventHandler enterItem;
+		public ExploreEventHandler enterNpc;
 
 
 		protected override void Awake ()
@@ -82,6 +86,12 @@ namespace WordJourney
 		/// <param name="pathPosList">Path position list.</param>
 		/// <param name="endPos">End position.</param>
 		public void MoveToEndByPath(List<Vector3> pathPosList,Vector3 endPos){
+
+
+			if (pathPosList.Count == 0) {
+				Debug.Log ("无有效路径");
+				return;
+			}
 
 			this.pathPosList = pathPosList;
 
@@ -108,6 +118,7 @@ namespace WordJourney
 				while (inSingleMoving) {
 					yield return null;
 				}
+
 			} 
 
 			// 移动到新路径上的下一个节点
@@ -146,6 +157,64 @@ namespace WordJourney
 		/// </summary>
 		private void MoveToNextPosition(){
 
+			// 到达终点前的单步移动开始前进行碰撞检测
+			// 1.如果碰撞体存在，则根据碰撞体类型给exploreManager发送消息执行指定回调
+			// 2.如果未检测到碰撞体，则开始本次移动
+			if (pathPosList.Count == 1) {
+
+				boxCollider.enabled = false;
+
+				RaycastHit2D r2d = Physics2D.Linecast (transform.position, pathPosList [0], blockingLayer);
+
+				if (r2d.transform != null) {
+
+					switch (r2d.transform.tag) {
+
+					case "monster":
+
+						moveTweener.Pause ();
+
+						enterMonster (r2d.transform);
+
+						break;
+
+					case "item":
+						
+						moveTweener.Kill (false);
+
+						predicatePos = transform.position;
+
+						inSingleMoving = false;
+
+						enterItem (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+
+					case "npc":
+						
+						moveTweener.Kill (false);
+
+						predicatePos = transform.position;
+
+						inSingleMoving = false;
+
+						enterNpc (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+
+					default:
+						boxCollider.enabled = true;
+						break;
+
+					}
+				}
+			}
+
+
 			// 路径中没有节点，有以下两种情况 
 			// 1.原始路径中就没有节点，即没有有效的行动路径
 			// 2.按照行动路径已经将所有的节点走完
@@ -154,6 +223,8 @@ namespace WordJourney
 				// 走到了终点
 				if (ArriveEndPoint ()) {
 					Debug.Log ("到达终点");
+				} else {
+					throw new System.Exception ("路径走完但是未到终点");
 				}
 				return;
 			}
@@ -176,8 +247,6 @@ namespace WordJourney
 
 			}
 
-
-
 		}
 
 		/// <summary>
@@ -195,6 +264,34 @@ namespace WordJourney
 
 		}
 			
+		/// <summary>
+		/// 继续当前未完成的单步移动
+		/// </summary>
+		public void ContinueMove(){
+
+			moveTweener.Play ();
+
+			boxCollider.enabled = true;
+
+		}
+
+
+
+//		private void OnTriggerEnter2D(Collider2D other){
+//
+//			Debug.Log ("检测到碰撞");
+//
+//			switch (other.tag) {
+//
+//
+//			}
+//
+//
+//
+//		}
+
+
+
 
 //		private IEnumerator SmoothMovement (Vector3 end,CallBack cb)
 //		{
@@ -568,12 +665,6 @@ namespace WordJourney
 		#endif
 
 
-		private void OnTriggerEnter2D(Collider2D other){
-
-			Debug.Log ("peng");
-
-
-		}
 			
 		//AttemptMove overrides the AttemptMove function in the base class MovingObject
 		//AttemptMove takes a generic parameter T which for Player will be of the type Wall, it also takes integers for x and y direction to move in.
