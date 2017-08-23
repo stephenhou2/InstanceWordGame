@@ -9,13 +9,13 @@ namespace WordJourney
 
 		public ProduceView produceView;
 
-			private List<Item> allWeapons = new List<Item>() ;
-			private List<Item> allAmours = new List<Item>() ;
-			private List<Item> allShoes = new List<Item>() ;
-			private List<Item> allConsumables = new List<Item>() ;
-			private List<Item> allTaskItems = new List<Item>();
+		private List<Item> allWeapons = new List<Item>() ;
+		private List<Item> allAmours = new List<Item>() ;
+		private List<Item> allShoes = new List<Item>() ;
+		private List<Item> allConsumables = new List<Item>() ;
+		private List<Item> allTaskItems = new List<Item>();
 
-			private List<Item> itemsOfCurrentType;
+		private List<Item> itemsOfCurrentType;
 
 		private List<Sprite> itemSprites;
 
@@ -76,7 +76,7 @@ namespace WordJourney
 			produceView.OnQuitCharactersPlane();
 		}
 
-			public void OnGenerateButtonClick(Item item){
+		public void OnGenerateButtonClick(Item item){
 
 			GameObject spellCanvas = null;
 

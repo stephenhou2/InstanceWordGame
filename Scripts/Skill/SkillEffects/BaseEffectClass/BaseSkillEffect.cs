@@ -15,7 +15,7 @@ public abstract class BaseSkillEffect:MonoBehaviour {
 
 	public int id;//魔法效果id
 
-	public int strengthConsume;//消耗的气力数
+	public int manaConsume;//消耗的气力数
 
 	public int effectDuration;//效果持续回合数
 
@@ -78,7 +78,7 @@ public class EffectData{
 
 	public int id;//魔法效果id
 
-	public int strengthConsume;//消耗的气力数
+	public int manaConsume;//消耗的气力数
 
 	public int effectDuration;//效果持续回合数
 

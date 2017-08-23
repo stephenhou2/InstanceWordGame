@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3601490153
+CRC: 1565813335
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c6eea5f0f73a36b561b5fda1903c780e
+    Hash: 43ed8038da71e5976d13b8aa7e153004
   TypeTreeHash:
     serializedVersion: 2
     Hash: 4774d6da9b606debf00b5a5d61c4487c
@@ -15,9 +15,10 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Resources/NewBattleSprites/map1.png
-- Assets/Resources/Sprites/Npc/npc_monster.png
-- Assets/Resources/Sprites/ItemIcon/item_box_origin.jpg
-- Assets/Resources/Sprites/Npc/npc_older.png
-- Assets/Resources/Sprites/Npc/npc_gMonster.png
+- Assets/Resources/Sprites/MapIcons/item_box_origin.png
+- Assets/Resources/Sprites/MapIcons/npc_monster.png
+- Assets/Resources/Sprites/MapIcons/item_box_destroyed.png
+- Assets/Resources/Sprites/MapIcons/npc_older.png
+- Assets/Resources/Sprites/MapIcons/npc_gMonster.png
 - Assets/Resources/Sprites/ItemIcon/item_box_destroyed.jpeg
 Dependencies: []

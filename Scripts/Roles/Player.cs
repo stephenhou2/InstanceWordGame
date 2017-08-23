@@ -13,25 +13,6 @@ namespace WordJourney
 
 		private static object objectLock = new object();
 
-		//	[HideInInspector]public int[] charactersCount = new int[26];
-
-		private int[] mCharactersCount;
-
-		[HideInInspector]public int[] charactersCount{
-
-			get{
-				if (mCharactersCount == null) {
-					mCharactersCount = new int[26];
-					for(int i = 0;i<mCharactersCount.Length;i++){
-						mCharactersCount[i] = 10;
-					}
-				}
-				return mCharactersCount;
-			}
-
-		}
-
-
 		// 玩家角色单例
 		public static Player mainPlayer{
 			get{
@@ -56,7 +37,24 @@ namespace WordJourney
 			//		}
 
 		}
+			
 
+		[SerializeField]private int[] mCharactersCount;
+
+		[HideInInspector]public int[] charactersCount{
+
+			get{
+				if (mCharactersCount == null) {
+					mCharactersCount = new int[26];
+					for(int i = 0;i<mCharactersCount.Length;i++){
+						mCharactersCount[i] = 10;
+					}
+				}
+				return mCharactersCount;
+			}
+
+		}
+			
 
 		public List<Skill> allLearnedSkills = new List<Skill>();
 
@@ -77,28 +75,6 @@ namespace WordJourney
 
 		public void UpdateValidActionType(){
 
-			switch (validActionType) {
-
-			case ValidActionType.All:
-				break;
-			case ValidActionType.PhysicalExcption:
-				SetUpPlayerValidAction(false, true, true, true);
-				break;
-			case ValidActionType.MagicException:
-				SetUpPlayerValidAction(true, false, true, true);
-				break;
-			case ValidActionType.None:
-				SetUpPlayerValidAction(false, false, false, false);
-				break;
-			case ValidActionType.PhysicalOnly:
-				SetUpPlayerValidAction(true, false, false, true);
-				break;
-			case ValidActionType.MagicOnly:
-				SetUpPlayerValidAction(false, true, false, true);
-				break;
-			default:
-				break;
-			}
 			// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用
 			for (int i = 0;i < skillsEquiped.Count;i++) {
 
@@ -116,15 +92,7 @@ namespace WordJourney
 			}
 		}
 
-		//根据玩家的可用行动状态
-		private void SetUpPlayerValidAction(bool isAttackEnable,bool isSkillEnable,bool isItemEnable,bool isDefenceEnable){
 
-			this.isAttackEnable = isAttackEnable;
-			this.isSkillEnable = isSkillEnable;
-			this.isItemEnable = isItemEnable;
-			this.isDefenceEnable = isDefenceEnable;
-
-		}
 
 		// 获取玩家已学习的技能
 		public Skill GetPlayerLearnedSkill(string skillName){
@@ -133,6 +101,33 @@ namespace WordJourney
 				return obj.skillName == skillName;	
 			});
 			return s;
+		}
+
+		public void AddItems(List<Item> items){
+
+			for (int i = 0; i < items.Count; i++) {
+
+				Item item = items [i];
+
+				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
+				if (item.itemType == ItemType.Consumables) {
+
+					Item itemInBag = allItems.Find (delegate(Item obj) {
+						return obj.itemId == item.itemId;	
+					});
+
+					if (itemInBag != null) {
+						itemInBag.itemCount += item.itemCount;
+						continue;
+					} 
+				}
+
+				// 其他情况，背包中添加该物品
+				allItems.Add (item);
+
+			}
+
+
 		}
 
 		/// <summary>

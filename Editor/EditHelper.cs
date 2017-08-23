@@ -67,7 +67,7 @@ public class EditHelper {
 			Item.magicGain = System.Convert.ToInt16(ItemStr[7]);
 			Item.critGain = System.Convert.ToInt16(ItemStr[8]);
 			Item.amourGain = System.Convert.ToInt16(ItemStr[9]);
-			Item.magicResistGain = System.Convert.ToInt16(ItemStr[10]);
+			Item.manaResistGain = System.Convert.ToInt16(ItemStr[10]);
 			Item.agilityGain = System.Convert.ToInt16(ItemStr[11]);
 			Item.healthGain = System.Convert.ToInt16(ItemStr[12]);
 

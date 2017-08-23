@@ -45,6 +45,12 @@ namespace WordJourney
 		public Transform npcsContainer;
 		public Transform monstersContainer;
 
+		private InstancePool outerWallPool;
+		private InstancePool floorPool;
+		private InstancePool npcPool;
+		private InstancePool itemPool;
+		private InstancePool monsterPool;
+
 
 		public Animator destinationAnimator;
 
@@ -53,8 +59,20 @@ namespace WordJourney
 		public int[,] mapWalkableInfoArray;
 
 
+		void Awake(){
+
+			outerWallPool = InstancePool.GetOrCreateInstancePool ("OuterWallPool");
+			floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool");
+			npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool");
+			itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool");
+			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool");
+
+		}
+
+
+
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
-		public void SetUpMap (ChapterDetailInfo chapterDetail)
+		public void SetUpMap (ChapterDetailInfo chapterDetail,CallBack cb)
 		{
 
 			mapInfo = DataInitializer.LoadDataToSingleModelWithPath<MapInfo> (CommonData.jsonFileDirectoryPath, "MapJson.json");
@@ -90,7 +108,9 @@ namespace WordJourney
 
 				mapItem.transform.SetParent(itemsContainer,true);
 
-				mapItem.rewardItem = item;
+
+				#warning 这里后面改成随机物品数组
+				mapItem.rewardItems = new Item[]{item};
 
 				mapItem.name = item.itemName;
 
@@ -127,6 +147,8 @@ namespace WordJourney
 
 			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
 
+			cb ();
+
 		}
 			
 		private void SetUpPlayer(){
@@ -135,7 +157,7 @@ namespace WordJourney
 
 			player.position = playerOriginPos;
 
-			player.GetComponent<BattlePlayerController> ().predicatePos = playerOriginPos;
+			player.GetComponent<BattlePlayerController> ().singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
 

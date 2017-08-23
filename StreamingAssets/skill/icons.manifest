@@ -1,0 +1,26 @@
+ManifestFileVersion: 0
+CRC: 922251864
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 1b02dae22654dad9c3778ed7454b0b92
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4774d6da9b606debf00b5a5d61c4487c
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Sprites/Skills/skillIcon7.png
+- Assets/Resources/Sprites/Skills/skillIcon3.png
+- Assets/Resources/Sprites/Skills/skillIcon5.png
+- Assets/Resources/Sprites/Skills/skillBigIcon.png
+- Assets/Resources/Sprites/Skills/skillIcon1.png
+- Assets/Resources/Sprites/Skills/skillIcon2.png
+- Assets/Resources/Sprites/Skills/skillIcon8.png
+- Assets/Resources/Sprites/Skills/skillIcon4.png
+- Assets/Resources/Sprites/Skills/skillIcon6.png
+Dependencies: []

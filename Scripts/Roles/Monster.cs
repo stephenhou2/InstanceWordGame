@@ -7,14 +7,14 @@ using UnityEngine.EventSystems;
 
 namespace WordJourney
 {
-	public class Monster : Agent,IPointerClickHandler{
+	public class Monster : Agent{
 
 		public int monsterId;
 
 		private BattleMonsterController mBaMonsterController;
 
 		// 角色UIView
-		public new BattleMonsterController baView{
+		public BattleMonsterController baView{
 
 			get{
 				if (mBaMonsterController == null) {
@@ -65,19 +65,13 @@ namespace WordJourney
 
 				if (s.isAvalible == false) {
 					s.actionCount++;
-					if (s.actionCount >= s.actionConsume && strength >= s.strengthConsume) {
+					if (s.actionCount >= s.actionConsume && mana >= s.manaConsume) {
 						s.isAvalible = true;
 						s.actionCount = 0;
 					} 
 				}
 			}
 
-		}
-
-
-
-		public void OnPointerClick(PointerEventData data){
-			GameObject.Find (CommonData.battleCanvas).GetComponent<BattleController> ().OnPlayerSelectMonster (monsterId);
 		}
 
 	}

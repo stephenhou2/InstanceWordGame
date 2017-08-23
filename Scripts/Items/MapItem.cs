@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WordJourney{
+namespace WordJourney
+{
 	public class MapItem : MonoBehaviour {
 
 
 		public int mapItemId;
 
-		public int unlockItemId;
+		public string unlockItemName;
 
 		// 默认一个宝箱只能开出一个物品
-		private Item mRewardItem;
-		[HideInInspector]public Item rewardItem{
+		private Item[] mRewardItems;
+		[HideInInspector]public Item[] rewardItems{
 
 			get{
-				return mRewardItem;
+				return mRewardItems;
 			}
 			set{
-				mRewardItem = value;
+				mRewardItems = value;
 				InitialiseSprites ();
 			}
 
@@ -27,6 +28,10 @@ namespace WordJourney{
 
 		[HideInInspector]public Sprite originSprite;
 		[HideInInspector]public Sprite destroyedSprite;
+
+		private Animator mapItemDestroyAnimator;
+
+		[HideInInspector] public CallBack<Item> animEndCallBack;
 
 		private void InitialiseSprites(){
 
@@ -39,7 +44,7 @@ namespace WordJourney{
 
 				spriteName = s.name;
 
-			} while(spriteName == string.Empty || spriteName.Contains ("npc"));
+			} while(!spriteName.Contains ("item"));
 
 			string itemName = spriteName.Split ('_')[1];
 
@@ -59,7 +64,13 @@ namespace WordJourney{
 
 		}
 
+		public void PlayDestroyAnim(CallBack<Item> cb,Item[] rewardItems){
 
+			animEndCallBack = cb;
+
+			mapItemDestroyAnimator.SetBool ("Destroy", true);
+
+		}
 
 
 	}

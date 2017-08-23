@@ -90,7 +90,7 @@ public class ItemDetailView : MonoBehaviour {
 			item.attackGain,
 			item.magicGain,
 			item.amourGain,
-			item.magicResistGain,
+			item.manaResistGain,
 			item.critGain,
 			item.agilityGain
 		};
@@ -99,7 +99,7 @@ public class ItemDetailView : MonoBehaviour {
 			item.attackGain - compareItem.attackGain,
 			item.magicGain - compareItem.magicGain,
 			item.amourGain - compareItem.amourGain,
-			item.magicResistGain - compareItem.magicResistGain,
+			item.manaResistGain - compareItem.manaResistGain,
 			item.critGain - compareItem.critGain,
 			item.agilityGain - compareItem.agilityGain
 		};

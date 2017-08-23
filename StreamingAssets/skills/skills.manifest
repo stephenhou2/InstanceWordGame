@@ -1,59 +1,27 @@
 ManifestFileVersion: 0
-CRC: 1415924658
+CRC: 3841444244
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b93ad829f3d11d980f1c68dd945438e4
+    Hash: 44724e071838dab03e6a849135737495
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5b754149be5bc554e1482803ffb07779
+    Hash: 0102ebd9877b441d356b378d7ffcc16a
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
   Script: {instanceID: 0}
-- Class: 28
-  Script: {instanceID: 0}
-- Class: 114
-  Script: {fileID: 11500000, guid: c541f611133a64546bc497a395ff3f36, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: efe860c1c5c2f4dffa0473b50c840ea7, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 7bb24e7513b324e94a40c1d025670888, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 676468b5126ab400e86227db8cd3f718, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 2684c8460829d4298aa185d25b3050eb, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 380dfaa60f1c54acca4c4871d1e8351a, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 0f1d39d8ed0814a569d8ffbb16972c1d, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 6a7ca77a93e22410c80d29168f00d422, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 0fd6f13c5c29c40a1a6beb9727053e08, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: f83500ceeaa5b44b4a6b898ebf9f75ed, type: 3}
 - Class: 115
   Script: {instanceID: 0}
-- Class: 213
-  Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Sprites/Skills/skillIcon7.png
-- Assets/Resources/Sprites/Skills/skillIcon3.png
-- Assets/Resources/Sprites/Skills/skillIcon5.png
 - Assets/Prefabs/Skill/Skills/Attack.prefab
 - Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
 - Assets/Prefabs/Skill/Skills/FireBlade.prefab
 - Assets/Prefabs/Skill/Skills/Defence.prefab
-- Assets/Resources/Sprites/Skills/skillIcon1.png
-- Assets/Resources/Sprites/Skills/skillIcon2.png
-- Assets/Resources/Sprites/Skills/skillIcon8.png
-- Assets/Resources/Sprites/Skills/skillIcon4.png
-- Assets/Resources/Sprites/Skills/skillIcon6.png
 - Assets/Prefabs/Skill/Skills/Treat.prefab
 - Assets/Prefabs/Skill/Skills/ThunderChain.prefab
 - Assets/Prefabs/Skill/Skills/Roar.prefab

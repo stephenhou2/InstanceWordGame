@@ -36,7 +36,7 @@ public class EffectGenerator : MonoBehaviour {
 			bse.effectName = ed.effectName;
 			bse.description = ed.description;
 			bse.id = ed.id;
-			bse.strengthConsume = ed.strengthConsume;
+			bse.manaConsume = ed.manaConsume;
 			bse.effectDuration = ed.effectDuration;
 			bse.actionConsume = ed.actionConsume;
 			bse.effectTarget = ed.effectTarget;
@@ -52,37 +52,37 @@ public class EffectGenerator : MonoBehaviour {
 		}
 	}
 	public static BaseSkillEffect AddComponentWithEffectId(GameObject go,int id){
-		switch (id) {
-		case 0:
-			return go.AddComponent<WeaponExpert> ();
-		case 1:
-			return go.AddComponent<Thunder>();
-		case 2:
-			return go.AddComponent<PowerOfElement> ();
-		case 3:
-			return go.AddComponent<ThunderChain> ();
-		case 4:
-			return go.AddComponent<Paralysis> ();
-		case 5:
-			return go.AddComponent<FireBlade> ();
-		case 6:
-			return go.AddComponent<Burn>();
-		case 7:
-			return go.AddComponent<Treat> ();
-		case 8:
-			return go.AddComponent<Roar> ();
-		case 9:
-			return go.AddComponent<DecreaseAmour> ();
-		case 10:
-			return go.AddComponent<BloodThirsty> ();
-		case 11:
-			return go.AddComponent<StrikeBack>();
-		case 12:
-			return go.AddComponent<Stonelize> ();
-		default:
+//		switch (id) {
+//		case 0:
+//			return go.AddComponent<WeaponExpert> ();
+//		case 1:
+//			return go.AddComponent<Thunder>();
+//		case 2:
+//			return go.AddComponent<PowerOfElement> ();
+//		case 3:
+//			return go.AddComponent<ThunderChain> ();
+//		case 4:
+//			return go.AddComponent<Paralysis> ();
+//		case 5:
+//			return go.AddComponent<FireBlade> ();
+//		case 6:
+//			return go.AddComponent<Burn>();
+//		case 7:
+//			return go.AddComponent<Treat> ();
+//		case 8:
+//			return go.AddComponent<Roar> ();
+//		case 9:
+//			return go.AddComponent<DecreaseAmour> ();
+//		case 10:
+//			return go.AddComponent<BloodThirsty> ();
+//		case 11:
+//			return go.AddComponent<StrikeBack>();
+//		case 12:
+//			return go.AddComponent<Stonelize> ();
+//		default:
+//			return null;
+//		}
 			return null;
-		}
-
 	}
 
 //	public static BaseSkillEffect AddComponentWithEffectId(GameObject go,int id){

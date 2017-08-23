@@ -184,7 +184,7 @@ public class SkillsView : MonoBehaviour{
 		skillLevelOnBigIcon.text = "Lv." + skill.skillLevel.ToString ();
 		skillName.text = skill.skillName;
 		skillDesc.text = skill.skillDescription;
-		skillCosume.text = "气力消耗： " + skill.strengthConsume.ToString () + "点";
+		skillCosume.text = "气力消耗： " + skill.manaConsume.ToString () + "点";
 		skillCoolen.text = "冷却回合： " + skill.actionConsume.ToString () + "回合";
 
 		Image mask = skillTreeButtons [buttonIndex].transform.FindChild ("SkillMask").GetComponent<Image> ();
@@ -322,7 +322,7 @@ public class SkillsView : MonoBehaviour{
 		Skill s = Player.mainPlayer.skillsEquiped [index];
 		skillNameOnHUD.text = s.skillName;
 		skillDescOnHUD.text = s.skillDescription;
-		skillCosumeOnHUD.text = "气力消耗： " + s.strengthConsume.ToString () + "点";
+		skillCosumeOnHUD.text = "气力消耗： " + s.manaConsume.ToString () + "点";
 		skillCoolenOnHUD.text = "冷却回合：" + s.actionConsume.ToString () + "回合"; 
 	}
 

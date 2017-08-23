@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 1174896442
+CRC: 3555458826
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -57,10 +57,14 @@ AssetBundleManifest:
       Dependencies: {}
     Info_16:
       Name: explore/scene
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: mapicons
     Info_17:
       Name: monsters
       Dependencies: {}
     Info_18:
       Name: mapicons
+      Dependencies: {}
+    Info_19:
+      Name: skill/icons
       Dependencies: {}

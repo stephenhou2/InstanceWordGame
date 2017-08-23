@@ -7,6 +7,7 @@ namespace WordJourney{
 	public class MapNPC : MonoBehaviour {
 
 		private NPC mNpc;
+
 		[HideInInspector]public NPC npc{
 			get{
 				return mNpc;

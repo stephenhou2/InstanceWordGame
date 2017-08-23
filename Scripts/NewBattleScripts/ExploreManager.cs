@@ -11,9 +11,6 @@ namespace WordJourney
 
 	public class ExploreManager : MonoBehaviour
 	{
-
-		private ExploreViewController exploreViewCtr;			
-			
 		// 地图生成器
 		private MapGenerator mapGenerator;						
 
@@ -30,6 +27,11 @@ namespace WordJourney
 
 		private List<Vector3> pathPosList;
 
+		private ExploreUICotroller expUICtr;
+
+
+
+
 		void Awake()
 		{
 //			TransitionDelay = 0.5f;
@@ -44,9 +46,9 @@ namespace WordJourney
 
 			battlePlayer.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayer.enterItem = new ExploreEventHandler (EnterItem);
-			battlePlayer.enterNpc = new ExploreEventHandler (EnterNpc);
+			battlePlayer.enterNpc = new ExploreEventHandler (EnterNPC);
 
-			exploreViewCtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreViewController> ();
+			expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ();
 
 //			battleMonsters = new List<BattleMonsterController>();
 
@@ -56,7 +58,7 @@ namespace WordJourney
 		public void SetupExploreView(int chapterIndex)
 		{
 
-			exploreViewCtr.SetUpExploreView ();
+			expUICtr.SetUpExploreUI();
 
 			//Clear any Enemy objects in our List to prepare for next level.
 			battleMonsters.Clear();
@@ -64,7 +66,7 @@ namespace WordJourney
 			ChapterDetailInfo chapterDetail = DataInitializer.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.jsonFileDirectoryPath, CommonData.chapterDataFileName)[chapterIndex];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
-			mapGenerator.SetUpMap(chapterDetail);
+			mapGenerator.SetUpMap(chapterDetail,expUICtr.HideMaskImage);
 
 		}
 
@@ -136,7 +138,7 @@ namespace WordJourney
 				if(battlePlayer != null){
 
 					// 计算自动寻路路径
-					pathPosList = navHelper.FindPath(battlePlayer.predicatePos,targetPos,mapGenerator.mapWalkableInfoArray);
+					pathPosList = navHelper.FindPath(battlePlayer.singleMoveEndPos,targetPos,mapGenerator.mapWalkableInfoArray);
 
 				}
 //			}else{
@@ -168,12 +170,42 @@ namespace WordJourney
 		}
 
 		public void EnterItem(Transform mapItemTrans){
+			
 			Debug.Log ("碰到了item");
+
+			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
+
+
+			// 如果该地图物品需要使用特殊物品开启
+			if (mapItem.unlockItemName != string.Empty) {
+
+				Item unlockItem = Player.mainPlayer.allItems.Find(delegate(Item item) {
+					return item.itemName == mapItem.unlockItemName;
+				});
+
+				if (unlockItem == null) {
+					
+					expUICtr.SetUpTintHUD (unlockItem.itemName);
+
+				} else {
+
+					unlockItem.itemCount--;
+
+					mapItem.PlayDestroyAnim (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
+
+				}
+				return;
+			}
+
+			// 如果该地图物品不需要使用特殊物品开启
+
 		}
 
-		public void EnterNpc(Transform mapNpcTrans){
+		public void EnterNPC(Transform mapNpcTrans){
 
 			Debug.Log ("碰到了npc");
+
+			expUICtr.EnterNPC (mapNpcTrans.GetComponent<MapNPC> ().npc, currentMapIndex);
 
 		}
 

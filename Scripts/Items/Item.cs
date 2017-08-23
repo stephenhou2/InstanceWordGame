@@ -23,11 +23,10 @@ namespace WordJourney{
 		public int strengthenTimes;
 
 		public int attackGain;//攻击力增益
-	//	public int powerGain;//力量增益
 		public int magicGain;//魔法增益
 		public int critGain;//暴击增益
 		public int amourGain;//护甲增益
-		public int magicResistGain;//魔抗增益
+		public int manaResistGain;//魔抗增益
 		public int agilityGain;//闪避增益
 
 
@@ -93,32 +92,47 @@ namespace WordJourney{
 
 		}
 
+		public Item(string itemNameInEnglish,bool completeCopy){
+
+			Item originalItem = GameManager.Instance.allItems.Find(delegate (Item item){
+				return item.itemNameInEnglish == itemNameInEnglish;
+			});
+
+			InitItem (originalItem, completeCopy);
+
+		}
+
 		public Item(Item originalItem,bool completeCopy){
 
+			InitItem (originalItem, completeCopy);
+		}
+
+		private void InitItem(Item originalItem,bool completeCopy){
+			
 			itemId = originalItem.itemId;
 			itemName = originalItem.itemName;
 			itemDescription = originalItem.itemDescription;
 			spriteName = originalItem.spriteName;
 			itemType = originalItem.itemType;
 			itemNameInEnglish = originalItem.itemNameInEnglish;
+
 			attackGain = originalItem.attackGain;
-	//		powerGain = originalItem.powerGain;
+//			powerGain = originalItem.powerGain;
 			magicGain = originalItem.magicGain;
 			critGain = originalItem.critGain;
 			amourGain = originalItem.amourGain;
-			magicResistGain = originalItem.magicResistGain;
+			manaResistGain = originalItem.manaResistGain;
 			agilityGain = originalItem.agilityGain;
 			healthGain = originalItem.healthGain;
 			manaGain = originalItem.manaGain;
 
 
 			if (!completeCopy) {
-				
+
 				RandomQuility ();
 
 				ResetBasePropertiesByQuality ();
 			}
-
 		}
 
 		public string GetItemPotentialPropertiesString(){
@@ -143,8 +157,8 @@ namespace WordJourney{
 				string str = string.Format ("护甲: {0}~{1}", amourGain + minGain, amourGain + maxGain);
 				propertiesList.Add (str);
 			}
-			if (magicResistGain > 0) {
-				string str = string.Format ("抗性: {0}~{1}", magicResistGain + minGain, magicResistGain + maxGain);
+			if (manaResistGain > 0) {
+				string str = string.Format ("抗性: {0}~{1}", manaResistGain + minGain, manaResistGain + maxGain);
 				propertiesList.Add (str);
 			}
 			if (agilityGain > 0) {
@@ -197,8 +211,8 @@ namespace WordJourney{
 				string str = string.Format ("护甲: {0}", amourGain);
 				propertiesList.Add (str);
 			}
-			if (magicResistGain > 0) {
-				string str = string.Format ("抗性: {0}", magicResistGain);
+			if (manaResistGain > 0) {
+				string str = string.Format ("抗性: {0}", manaResistGain);
 				propertiesList.Add (str);
 			}
 			if (agilityGain > 0) {
@@ -339,11 +353,11 @@ namespace WordJourney{
 
 				propertiesList.Add (str);
 			}
-			if (magicResistGain > 0) {
+			if (manaResistGain > 0) {
 
-				CompareItemsProperty (magicResistGain, compareItem.magicResistGain,out compare,out linkSymbol,out colorText);
+				CompareItemsProperty (manaResistGain, compareItem.manaResistGain,out compare,out linkSymbol,out colorText);
 
-				string str = string.Format ("抗性: {0}({1}{2}{3}</color>)", magicResistGain,colorText,linkSymbol,Mathf.Abs(compare));
+				string str = string.Format ("抗性: {0}({1}{2}{3}</color>)", manaResistGain,colorText,linkSymbol,Mathf.Abs(compare));
 
 				propertiesList.Add (str);
 			}
@@ -451,7 +465,7 @@ namespace WordJourney{
 
 			if (propertiesArray == null) {
 				
-				propertiesArray = new int[]{ attackGain, magicGain, amourGain, magicResistGain, critGain, agilityGain };
+				propertiesArray = new int[]{ attackGain, magicGain, amourGain, manaResistGain, critGain, agilityGain };
 
 			}
 
@@ -475,7 +489,7 @@ namespace WordJourney{
 				strengthenGainStr = "护甲+" + propertyGain.ToString ();
 				break;
 			case 3:
-				magicResistGain += propertyGain;
+				manaResistGain += propertyGain;
 				strengthenGainStr = "抗性+" + propertyGain.ToString ();
 				break;
 			case 4:
@@ -538,8 +552,8 @@ namespace WordJourney{
 			if (amourGain > 0) {
 				amourGain += Random.Range (minGain, maxGain);
 			}
-			if (magicResistGain > 0) {
-				magicResistGain += Random.Range (minGain, maxGain);
+			if (manaResistGain > 0) {
+				manaResistGain += Random.Range (minGain, maxGain);
 			}
 			if (agilityGain > 0) {
 				agilityGain += Random.Range (minGain, maxGain);
@@ -568,7 +582,7 @@ namespace WordJourney{
 					amourGain = Random.Range (1, 10);
 					break;
 				case 3:
-					magicResistGain = Random.Range (1, 10);
+					manaResistGain = Random.Range (1, 10);
 					break;
 				case 4:
 					critGain = Random.Range (1, 10);

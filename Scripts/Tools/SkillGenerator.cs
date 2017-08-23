@@ -57,7 +57,8 @@ public class SkillGenerator : MonoBehaviour {
 	// 根据所选技能效果创造技能
 	public Skill GenerateSkillWithIds(int id_1,int id_2,Agent ba){
 
-			Skill mySkill = Instantiate(skill,ba.baController.skillsContainer);
+			Skill mySkill = null;
+//				Instantiate(skill,ba.baController.skillsContainer);
 
 		BaseSkillEffect skillEffect_1 = effectGenerator.skillEffectsList [id_1];
 		effectGenerator.skillEffectsList.RemoveAt (id_1);
@@ -74,7 +75,7 @@ public class SkillGenerator : MonoBehaviour {
 			skillEffect_2
 		};
 
-		mySkill.strengthConsume = skillEffect_1.strengthConsume + skillEffect_2.strengthConsume;
+		mySkill.manaConsume = skillEffect_1.manaConsume + skillEffect_2.manaConsume;
 		mySkill.actionConsume = skillEffect_1.actionConsume + skillEffect_2.actionConsume;
 
 		ba.skillsEquiped.Add (mySkill);

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace WordJourney{
 	
 	public delegate void CallBack ();
+	public delegate void CallBack<T>(T[] parameters);
 
 	public delegate void ExploreEventHandler (Transform colliderTrans);
 
@@ -69,7 +70,8 @@ namespace WordJourney{
 		Shoes,
 		Consumables,
 		Task,
-		Inscription
+		Inscription,
+		Map
 	}
 
 	public enum PropertyType{

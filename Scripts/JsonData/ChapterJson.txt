@@ -3,7 +3,7 @@
 		{
 			"chapterIndex":0,
 			"chapterLocation": "黑暗之森",
-			"itemIds": [0,5],
+			"itemIds": [12,5],
 			"npcIds": [0,1],
 			"monsterIds": [0,1],
 			"monsterScaler":1.0,

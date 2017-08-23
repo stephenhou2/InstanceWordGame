@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 209590082
+CRC: 3681039789
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: be38016dbe82480579a234f5d2788c2d
+    Hash: c2fed677b02b77e0aa8fc6b15d202cd9
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6739cb2c6477e09d03d296b29a09cb5c
+    Hash: 2d1339c23b9302af4966ffa494ae011f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -38,13 +38,21 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: cb7a6c12d84314c0bb0ed778d7c9b661, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 5eb7be42a737644b78cff94f8468901b, type: 3}
 - Class: 114
@@ -54,6 +62,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: fff182172d726402b9e9eacdb89c9724, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 5db94a988516743a5a9abf0f59eb69a8, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: a0eca23bc37a04678b7146d1e5e19073, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 64e7409c51d33492b9ca86398aac6455, type: 3}
@@ -61,6 +71,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: a7d59e4dfb9c9404b9471de0c983feac, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: e32e501edbe64452e9c87f3aea1833b4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d7fe65e983a3b4f6a99c5f3105a1adfd, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -79,4 +91,5 @@ Assets:
 - Assets/Prefabs/NewBattlePrefabs/SoundManager.prefab
 - Assets/Prefabs/NewBattlePrefabs/ExploreManager.prefab
 - Assets/Prefabs/NewBattlePrefabs/ExploreCanvas.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/mapicons

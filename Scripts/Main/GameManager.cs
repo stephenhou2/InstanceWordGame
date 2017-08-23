@@ -152,20 +152,20 @@ namespace WordJourney
 
 		}
 
-		private List<Sprite> mAllEffectsSprites = new List<Sprite>();
-		public List<Sprite> allEffectsSprites{
+		private List<Sprite> mAllSkillSprites = new List<Sprite>();
+		public List<Sprite> allSkillSprites{
 
 			get{
-				if (mAllEffectsSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName ("battle/effect_icons", () => {
+				if (mAllSkillSprites.Count == 0) {
+					ResourceManager.Instance.LoadAssetWithFileName ("skill/icons", () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-							mAllEffectsSprites.Add(ResourceManager.Instance.sprites[i]);
+							mAllSkillSprites.Add(ResourceManager.Instance.sprites[i]);
 						}
 					},true);
 				}
 
-				return mAllEffectsSprites;
+				return mAllSkillSprites;
 			}
 
 	//		set{

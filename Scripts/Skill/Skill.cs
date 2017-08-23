@@ -19,7 +19,7 @@ public class Skill:MonoBehaviour {
 
 	public BaseSkillEffect[] skillEffects;//魔法效果数组
 
-	public int strengthConsume;//技能的气力消耗
+	public int manaConsume;//技能的魔法消耗
 
 	public int actionConsume;//技能的行动数
 
@@ -40,9 +40,6 @@ public class Skill:MonoBehaviour {
 	public string associatedSkillName;
 
 	public int associatedSkillUnlockLevel;
-
-
-
 
 	public bool unlocked;
 
@@ -96,11 +93,11 @@ public class Skill:MonoBehaviour {
 		if (selfSideTarget != SkillEffectTarget.None && selfSideAnimEffect != null) {
 			switch (selfSideTarget) {
 			case SkillEffectTarget.Self:
-					self.baController.PlayEffectAnim (selfSideAnimEffect);
+//					self.baController.PlayEffectAnim (selfSideAnimEffect);
 				break;
 			case SkillEffectTarget.AllFriends:
 				foreach (Agent ba in friends) {
-					ba.baController.PlayEffectAnim (selfSideAnimEffect);
+//					ba.baController.PlayEffectAnim (selfSideAnimEffect);
 				}
 				break;
 //		default:
@@ -110,11 +107,11 @@ public class Skill:MonoBehaviour {
 		if (enemySideTarget != SkillEffectTarget.None && enemySideAnimEffect != null) {
 			switch (enemySideTarget) {
 			case SkillEffectTarget.SpecificEnemy:
-					targetEnemy.baController.PlayEffectAnim (enemySideAnimEffect);
+//					targetEnemy.baController.PlayEffectAnim (enemySideAnimEffect);
 				break;
 			case SkillEffectTarget.AllEnemies:
 				foreach (Agent ba in enemies) {
-						ba.baController.PlayEffectAnim (enemySideAnimEffect);
+//					ba.baController.PlayEffectAnim (enemySideAnimEffect);
 				}
 				break;
 //		default:
@@ -148,8 +145,8 @@ public class Skill:MonoBehaviour {
 
 	public override string ToString ()
 	{
-//		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[StrengthConsume]:" + strengthConsume + "\n[ActionConsume]:" + actionConsume + "\n[effect1]:" + skillEffects[0].effectName + "\n[effect2]:" + skillEffects[1].effectName);
-		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[StrengthConsume]:" + strengthConsume + "\n[ActionConsume]:" + actionConsume);
+//		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume + "\n[ActionConsume]:" + actionConsume + "\n[effect1]:" + skillEffects[0].effectName + "\n[effect2]:" + skillEffects[1].effectName);
+		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume + "\n[ActionConsume]:" + actionConsume);
 	}
 
 }

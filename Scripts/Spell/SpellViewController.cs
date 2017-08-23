@@ -297,7 +297,7 @@ namespace WordJourney
 		/// Creats the item.
 		/// </summary>
 		/// <param name="item">Item.</param>
-			private void CreateItem(Item item){
+		private void CreateItem(Item item){
 
 			Item itemInBag = null;
 
