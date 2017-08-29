@@ -16,12 +16,15 @@ namespace WordJourney
 
 		public int agentLevel;
 
+
+
 		//*****初始信息********//
 		public int originalMaxHealth;
 		public int originalMaxMana;
 		public int originalHealth;
 		public int originalMana;
 		public int originalAttack;
+		public int originalAttackSpeed;
 		public int originalCrit;
 		public int originalAgility;
 		public int originalAmour;
@@ -31,10 +34,32 @@ namespace WordJourney
 		public int maxHealth;//最大血量
 		public int maxMana;//最大气力值
 
-		public int health;
-		public int mana;
+		private int mHealth;
+		public int health{
+			get{ return mHealth; }
+			set{ 
+				if (value >= 0) {
+					mHealth = value;
+				} else {
+					mHealth = 0;
+				}
+			}
+		}
+
+		private int mMana;
+		public int mana{
+			get{ return mMana; }
+			set{
+				if (value >= 0) {
+					mMana = value;
+				} else {
+					mMana = 0;
+				}
+			}
+		}
 
 		public int attack;//攻击力
+		public int attackSpeed;//攻速
 		public int agility;//敏捷
 		public int amour;//护甲
 		public int manaResist;//魔抗
@@ -51,16 +76,13 @@ namespace WordJourney
 
 		public float healthAbsorbScalser;//回血比例
 
-		public List<Skill> skillsEquiped = new List<Skill>();//技能数组
+		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
 		private List<Item> mAllEquipedItems = new List<Item>();
-
 		public List<Item> allEquipedItems{
 			get{
 				if (mAllEquipedItems.Count == 0) {
-					for (int i = 0; i < 6; i++) {
-						mAllEquipedItems.Add (null);
-					}
+					mAllEquipedItems.AddRange (new Item[6]{ null, null, null, null, null, null });
 				}
 				return mAllEquipedItems;
 			}
@@ -68,19 +90,57 @@ namespace WordJourney
 				mAllEquipedItems = value;
 			}
 		}
-			
+
+
+//		private List<Consumable> mAllEquipedConsumables = new List<Consumable>();
+//		public List<Consumable> allEquipedConsumables{
+//			get{
+//				if (mAllEquipedConsumables.Count == 0) {
+//					mAllEquipedConsumables.AddRange(new Consumable[3]{null,null,null});
+//				}
+//				return mAllEquipedConsumables;
+//			}
+//			set{
+//				mAllEquipedConsumables = value;
+//			}
+//		}
+//			
+//		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
+//		public List<Equipment> allEquipedEquipments{
+//			get{
+//				if (mAllEquipedEquipments.Count == 0) {
+//					mAllEquipedEquipments.AddRange(new Equipment[3]{null,null,null});
+//				}
+//				return mAllEquipedEquipments;
+//			}
+//			set{
+//				mAllEquipedEquipments = value;
+//			}
+//		}
 
 		public List<Item> allItems = new List<Item> (); // 所有物品
 
-		[SerializeField]private Item healthBottle;
-
-		[SerializeField]private Item manaBottle;
-
-		[SerializeField]private Item antiDebuffBottle;
+//		[HideInInspector]public Item healthBottle;
+//
+//		[HideInInspector]public Item manaBottle;
+//
+//		[HideInInspector]public Item antiDebuffBottle;
 
 		public List<StateSkillEffect> states = new List<StateSkillEffect>();//状态数组
 
 		public int attackTime;//攻击次数
+
+		public float attackInterval{
+			get{
+
+				float ai = 1f / (1 + 0.01f * attackSpeed);
+				int tempt = (int)(ai * 100);
+				return tempt/100f;
+
+			}
+		}
+
+
 
 		public virtual void Awake(){
 
@@ -97,6 +157,9 @@ namespace WordJourney
 			healthAbsorbScalser = 0f;//回血比例
 
 			attackTime = 1;//攻击次数
+
+			mHealth = maxHealth;
+			mMana = maxMana;
 
 		}
 
@@ -121,13 +184,14 @@ namespace WordJourney
 			this.health = ba.health;
 
 			this.attack = ba.attack;//攻击力
+			this.attackSpeed = ba.attackSpeed;//攻速
 			this.mana = ba.mana;//魔法
 			this.agility = ba.agility;//敏捷
 			this.amour = ba.amour;//护甲
 			this.manaResist = ba.manaResist;//魔抗
 			this.crit = ba.crit;//暴击
 
-			this.skillsEquiped = ba.skillsEquiped;
+			this.equipedSkills = ba.equipedSkills;
 
 			this.allEquipedItems = ba.allEquipedItems;
 
@@ -193,14 +257,7 @@ namespace WordJourney
 //			}
 //		}
 
-		// 状态效果触发执行的方法
-		public void OnTrigger(List<Agent> friends,Agent triggerAgent,List<Agent> enemies, TriggerType triggerType,int arg){
 
-			foreach(StateSkillEffect sse in states){
-				sse.AffectAgents (this,friends,triggerAgent,enemies, sse.skillLevel, triggerType, arg);
-			}
-
-		}
 
 		private void ResetPropertiesByEquipment(Item equipment){
 
@@ -249,15 +306,8 @@ namespace WordJourney
 				health = maxHealth;
 				mana = maxMana;
 
-				// 开启血量槽和气力槽的设置动画
-//				if (baController != null) {
-//					baController.firstSetHealthBar = false;
-//					baController.firstSetStrengthBar = false;
-//				}
-
-				foreach (Skill s in skillsEquiped) {
+				foreach (Skill s in equipedSkills) {
 					s.isAvalible = true;
-					s.actionCount = 0;
 					foreach (BaseSkillEffect bse in s.skillEffects) {
 						bse.actionCount = 0;
 					}
@@ -266,9 +316,8 @@ namespace WordJourney
 
 			if (firstEnterBattleOrQuitBattle) {
 				validActionType = ValidActionType.All;
-				foreach (Skill s in skillsEquiped) {
+				foreach (Skill s in equipedSkills) {
 					s.isAvalible = true;
-					s.actionCount = 0;
 					foreach (BaseSkillEffect bse in s.skillEffects) {
 						bse.actionCount = 0;
 					}
@@ -276,10 +325,6 @@ namespace WordJourney
 
 			}
 
-//			if (baController != null) {
-//				baController.UpdateHealthBarAnim (this);
-//				baController.UpdateManaBarAnim (this);
-//			}
 		}
 
 

@@ -6,8 +6,7 @@ using DG.Tweening;
 
 namespace WordJourney
 {
-	public class BattlePlayerController : MonoBehaviour {
-
+	public class BattlePlayerController : BattleAgentController {
 
 		[HideInInspector]public Player player;
 
@@ -15,6 +14,8 @@ namespace WordJourney
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterItem;
 		public ExploreEventHandler enterNpc;
+
+
 
 		// 移动速度
 		public float moveDuration = 0.5f;			
@@ -34,25 +35,26 @@ namespace WordJourney
 		// 移动的终点位置
 		private Vector3 endPos;
 
-		public Animator animator;
 
-		// 碰撞检测层
-		public LayerMask collosionLayer;			//Layer on which collision will be checked.
+		private BattlePlayerUIController bpUICtr;
+		private BattleMonsterController bmCtr;
 
-		private BoxCollider2D boxCollider; 		//The BoxCollider2D component attached to this object.
-		private Rigidbody2D rb2D;				//The Rigidbody2D component attached to this object.
+		private CallBack playerLoseCallBack;
 
-		private void Awake(){
+
+
+
+		protected override void Awake(){
 
 			player = Player.mainPlayer;
 
-			animator = GetComponent<Animator> ();
+			agent = player;
 
-			//Get a component reference to this object's BoxCollider2D
-			boxCollider = GetComponent <BoxCollider2D> ();
+			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
 
-			//Get a component reference to this object's Rigidbody2D
-			rb2D = GetComponent <Rigidbody2D> ();
+			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+
+			base.Awake ();
 
 		}
 
@@ -134,6 +136,7 @@ namespace WordJourney
 				MoveToNextPosition();
 			});
 
+
 			// 设置匀速移动
 			moveTweener.SetEase (Ease.Linear);
 
@@ -159,7 +162,7 @@ namespace WordJourney
 		/// </summary>
 		public void ContinueMove(){
 
-			moveTweener.Play ();
+			MoveToNextPosition ();
 
 			boxCollider.enabled = true;
 
@@ -176,6 +179,7 @@ namespace WordJourney
 			// 2.如果未检测到碰撞体，则开始本次移动
 			if (pathPosList.Count == 1) {
 
+				// 禁用自身包围盒
 				boxCollider.enabled = false;
 
 				RaycastHit2D r2d = Physics2D.Linecast (transform.position, pathPosList [0], collosionLayer);
@@ -186,11 +190,11 @@ namespace WordJourney
 
 					case "monster":
 
-						moveTweener.Pause ();
+						moveTweener.Kill(false);
 
 						enterMonster (r2d.transform);
 
-						break;
+						return;
 
 					case "item":
 
@@ -235,6 +239,7 @@ namespace WordJourney
 
 				// 走到了终点
 				if (ArriveEndPoint ()) {
+					moveTweener.Kill (true);
 					Debug.Log ("到达终点");
 				} else {
 					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,endPos,singleMoveEndPos));
@@ -263,30 +268,146 @@ namespace WordJourney
 
 		}
 
-//		private IEnumerator SmoothMovement (Vector3 end,CallBack cb)
-//		{
-//			inSingleMoving = true;
-//
-//			float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-//
-//			while(sqrRemainingDistance > float.Epsilon)
-//			{
-//				Vector3 newPostion = Vector3.MoveTowards(rb2D.position, end, 1f / moveDuration * Time.deltaTime);
-//
-//				rb2D.MovePosition (newPostion);
-//
-//				sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-//
-//				yield return null;
+		/// <summary>
+		///  初始化探索界面中的玩家UI
+		/// </summary>
+		public void SetUpExplorePlayerUI(){
+
+//			if (GameManager.Instance.allSkillSprites.Count == 0) {
+//				ResourceManager.WaitUntillAsyncLoadFinished ();
 //			}
-//
-//			inSingleMoving = false;
-//
-//			cb ();
-//		}
+
+			bpUICtr.SetUpExplorePlayerView (player, GameManager.Instance.allSkillSprites, GameManager.Instance.allItemSprites);
+
+		}
+
+		/// <summary>
+		/// Starts the fight.
+		/// </summary>
+		/// <param name="bmCtr">怪物控制器</param>
+		/// <param name="playerWinCallBack">Player window call back.</param>
+		public void StartFight(BattleMonsterController bmCtr,CallBack playerLoseCallBack){
+
+			this.bmCtr = bmCtr;
+
+			this.playerLoseCallBack = playerLoseCallBack;
+
+			// 初始化玩家战斗UI（技能界面）
+			bpUICtr.SetUpBattlePlayerPlane (player);
+
+			// 默认使用普通攻击
+			PhysicalAttack ();
+
+		}
+
+		/// <summary>
+		/// 按照每玩家攻击间隔进行普通攻击
+		/// </summary>
+		private void PhysicalAttack(){
+
+			physicalAttack.AffectAgents (this, bmCtr);
+
+			bmCtr.UpdateMonsterStatusPlane ();
+
+			if (!FightEnd ()) {
+				StartCoroutine ("InvokePhysicalAttack");
+			}
+
+		}
+
+		/// <summary>
+		/// 玩家攻击间隔计时器
+		/// </summary>
+		/// <returns>The physical attack.</returns>
+		private IEnumerator InvokePhysicalAttack(){
+
+			float timePassed = 0;
+
+			while (timePassed < player.attackInterval) {
+
+				timePassed += Time.deltaTime;
+
+				yield return null;
+
+			}
+
+			PhysicalAttack ();
+
+		}
+
+		/// <summary>
+		/// 受到伤害播放伤害文字动画
+		/// </summary>
+		/// <param name="hurtStr">Hurt string.</param>
+		public override void PlayHurtTextAnim (string hurtStr)
+		{
+
+			if (this.transform.position.x <= bmCtr.transform.position.x) {
+				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left);
+			} else {
+				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right);
+			}
 
 
+		}
 
+		/// <summary>
+		/// 吸血或者补血时播放补血文字动画
+		/// </summary>
+		/// <param name="gainStr">Gain string.</param>
+		public override void PlayGainTextAnim (string gainStr)
+		{
+			bpUICtr.PlayGainTextAnim (gainStr,this.transform.position);
+		}
+			
+
+		/// <summary>
+		/// 玩家选择技能后的响应方法
+		/// </summary>
+		/// <param name="btnIndex">Button index.</param>
+		public void PlayerSelectSkill(int btnIndex){
+
+			Skill skill = player.equipedSkills [btnIndex];
+
+			StopCoroutine ("InvokePhysicalAttack");
+
+			skill.AffectAgents (this, bmCtr);
+
+			if (!FightEnd ()) {
+				Invoke ("PhysicalAttack", player.attackInterval);
+			}
+
+		}
+
+		/// <summary>
+		/// 判断本次战斗是否结束，怪物死亡执行战斗胜利回调
+		/// </summary>
+		/// <returns><c>true</c>, if end was fought, <c>false</c> otherwise.</returns>
+		private bool FightEnd(){
+
+			if (bmCtr.monster.health <= 0) {
+				bmCtr.MonsterDie ();
+				return true;
+			} else if (player.health <= 0) {
+				return true;
+			}else {
+				return false;
+			}
+
+		}
+
+		public void PlayerDie(){
+			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
+			bpUICtr.PlayPlayerDieAnim (this, playerLoseCallBack);
+
+		}
+
+		/// <summary>
+		/// 更新玩家状态栏
+		/// </summary>
+		public void UpdatePlayerStatusPlane(){
+			bpUICtr.UpdatePlayerStatusPlane ();
+		}
 
 		public float restartLevelDelay = 1f;		//Delay time in seconds to restart level.
 
@@ -389,6 +510,9 @@ namespace WordJourney
 //				other.gameObject.SetActive (false);
 //			}
 //		}
+
+
+
 			
 	}
 }

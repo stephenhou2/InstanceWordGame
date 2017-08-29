@@ -77,8 +77,7 @@ namespace WordJourney
 						foreach (Sprite s in ResourceManager.Instance.sprites) {
 							mAllMapSprites.Add (s);
 						}
-
-					}, true);
+					},true);
 
 				}
 				return mAllMapSprites;
@@ -152,6 +151,27 @@ namespace WordJourney
 
 		}
 
+		private List<Skill> mAllSkills = new List<Skill>();
+		public List<Skill> allSkills{
+
+			get{
+				if(mAllSkills.Count == 0){
+					Transform allSkillsContainer = TransformManager.NewTransform("AllSkills",GameObject.Find(CommonData.instanceContainerName).transform);
+					ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
+						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
+							Skill skill = ResourceManager.Instance.gos[i].GetComponent<Skill>();
+							mAllSkills.Add(skill);
+							skill.transform.SetParent(allSkillsContainer);
+						}
+					});
+
+				}
+
+				return mAllSkills;
+			}
+
+		}
+
 		private List<Sprite> mAllSkillSprites = new List<Sprite>();
 		public List<Sprite> allSkillSprites{
 
@@ -207,6 +227,21 @@ namespace WordJourney
 			}
 
 
+		}
+
+		private List<Monster> mAllMonsters = new List<Monster>();
+		public List<Monster> allMonsters{
+			get{
+				if (mAllMonsters.Count == 0) {
+					ResourceManager.Instance.LoadAssetWithFileName ("monsters", () => {
+						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
+							Monster m = ResourceManager.Instance.gos[i].GetComponent<Monster>();
+							mAllMonsters.Add(m);
+						};
+					}, true);
+				}
+				return mAllMonsters;
+			}
 		}
 
 		void Awake(){

@@ -7,9 +7,11 @@ namespace WordJourney
 	public class AnimBehaviourControl : StateMachineBehaviour {
 
 		 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-		//override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		//
-		//}
+		override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+
+			animator.transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ().enabled = false;
+
+		}
 
 		// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 		//override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -19,6 +21,8 @@ namespace WordJourney
 		// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 		override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 
+			animator.SetBool ("Unlock", false);
+
 			MapItem mapItem = animator.GetComponent<MapItem> ();
 
 			CallBack<Item> cb = mapItem.animEndCallBack;
@@ -26,6 +30,13 @@ namespace WordJourney
 			if (cb != null) {
 				cb(mapItem.rewardItems);
 			}
+
+			mapItem.unlocked = true;
+
+			SpriteRenderer sr = mapItem.transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ();
+
+			sr.sprite = mapItem.unlockedSprite;
+			sr.enabled = true;
 
 		}
 

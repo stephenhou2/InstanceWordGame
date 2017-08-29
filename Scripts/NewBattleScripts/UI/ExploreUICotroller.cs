@@ -10,15 +10,16 @@ namespace WordJourney
 	public class ExploreUICotroller : MonoBehaviour {
 
 
-		// 图片遮罩
-		public Image maskImage;
+//		// 图片遮罩
+//		public Image maskImage;
 
 		public Transform tintHUD;
 
 
-		private BattlePlayerUIController bpUICtr;
-		private BattleMonsterUIController bmUICtr;
+		/**********  battlePlane UI *************/
+		public Transform battlePlane;
 
+		/**********  battlePlane UI *************/
 
 		/**********  dialogPlane UI *************/
 		public Transform dialogPlane;
@@ -42,35 +43,25 @@ namespace WordJourney
 		private Dialog[] dialogs;
 		private Choice[] choices;
 
-		private List<Item> itemsToPickUp;
+		private List<Item> itemsToPickUp = new List<Item>();
+		private Player player;
 
 		void Awake(){
 
-			bpUICtr = GetComponent<BattlePlayerUIController>();
-
-			bmUICtr = GetComponent<BattleMonsterUIController> ();
+			player = Player.mainPlayer;
 
 			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
 
 			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
 
 		}
+			
 
+		public void ShowFightPlane(){
 
-		public void SetUpExploreUI(){
-
-			bpUICtr.SetUpUI (Player.mainPlayer, GameManager.Instance.allSkillSprites, GameManager.Instance.allItemSprites);
-
-
+			battlePlane.gameObject.SetActive (true);
 
 		}
-
-		//Hides black image used between levels
-		public void HideMaskImage()
-		{
-			maskImage.enabled = false;
-		}
-
 
 
 		public void SetUpTintHUD(string unlockItemName){
@@ -139,6 +130,7 @@ namespace WordJourney
 		}
 
 
+
 		private void MakeChoice(Choice choice){
 
 			if (choice.dialogId == -1) {
@@ -187,9 +179,12 @@ namespace WordJourney
 				Sprite rewardSprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite s) {
 					return s.name == rewardItem.spriteName;
 				});
+					
 
 				if (rewardSprite != null) {
-					rewardButton.transform.FindChild("ItemIcon").GetComponent<Image> ().sprite = rewardSprite;
+					Image rewardItemIcon = rewardButton.transform.FindChild ("ItemIcon").GetComponent<Image> ();
+					rewardItemIcon.sprite = rewardSprite;
+					rewardItemIcon.enabled = true;
 					rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
 					rewardButton.transform.FindChild ("SelectIcon").gameObject.SetActive (true);
 					itemsToPickUp.Add (rewardItem);
@@ -208,7 +203,7 @@ namespace WordJourney
 
 		private void ChangeRewardSelection(Button rewardButton,Item rewardItem){
 
-			Image selectionIcon = rewardButton.transform.FindChild ("SelectionIcon").GetComponent<Image>();
+			Image selectionIcon = rewardButton.transform.FindChild ("SelectIcon").GetComponent<Image>();
 
 			if (selectionIcon.IsActive()) {
 				selectionIcon.gameObject.SetActive (false);
@@ -222,24 +217,30 @@ namespace WordJourney
 
 		public void DiscardAllItems(){
 
-			QuitRewardPlane ();
+			OnQuitRewardPlane ();
 
 		}
 
 		public void PickUpSelected(){
 
-			Player.mainPlayer.AddItems (itemsToPickUp);
+			player.AddItems (itemsToPickUp);
 
-			QuitRewardPlane ();
+			OnQuitRewardPlane ();
 
 		}
 
-		private void QuitRewardPlane(){
+		private void OnQuitRewardPlane(){
 
 			rewardButtonPool.AddChildInstancesToPool (rewardContainer);
 
 			rewardPlane.gameObject.SetActive (false);
 
 		}
+
+		public void QuitFight(){
+			GetComponent<BattlePlayerUIController> ().OnQuitFight ();
+			battlePlane.gameObject.SetActive (false);
+		}
+
 	}
 }

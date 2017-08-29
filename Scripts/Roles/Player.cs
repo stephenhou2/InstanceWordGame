@@ -44,7 +44,7 @@ namespace WordJourney
 		[HideInInspector]public int[] charactersCount{
 
 			get{
-				if (mCharactersCount == null) {
+				if (mCharactersCount == null || mCharactersCount.Length == 0) {
 					mCharactersCount = new int[26];
 					for(int i = 0;i<mCharactersCount.Length;i++){
 						mCharactersCount[i] = 10;
@@ -76,18 +76,12 @@ namespace WordJourney
 		public void UpdateValidActionType(){
 
 			// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用
-			for (int i = 0;i < skillsEquiped.Count;i++) {
+			for (int i = 0;i < equipedSkills.Count;i++) {
 
-				Skill s = skillsEquiped [i];
+				Skill s = equipedSkills [i];
 				// 如果是冷却中的技能
-				if (s.isAvalible == false) {
-					s.actionCount++;
-					//				int actionBackCount = s.actionConsume - s.actionCount + 1;
-					Debug.Log (s.skillName + "从使用开始经过了" + s.actionCount + "回合");
-					if (s.actionCount > s.actionConsume) {
+				if (mana > s.manaConsume) {
 						s.isAvalible = true;
-						s.actionCount = 0;
-					} 
 				}
 			}
 		}

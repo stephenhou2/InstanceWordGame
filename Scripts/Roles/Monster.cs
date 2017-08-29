@@ -60,14 +60,12 @@ namespace WordJourney
 
 		public void ManageSkillAvalibility(){
 			// 如果技能还在冷却中或者怪物气力值小于技能消耗的气力值，则相应技能不可用
-			for (int i = 0;i < skillsEquiped.Count;i++) {
-				Skill s = skillsEquiped [i];
+			for (int i = 0;i < equipedSkills.Count;i++) {
+				Skill s = equipedSkills [i];
 
 				if (s.isAvalible == false) {
-					s.actionCount++;
-					if (s.actionCount >= s.actionConsume && mana >= s.manaConsume) {
+					if (mana >= s.manaConsume) {
 						s.isAvalible = true;
-						s.actionCount = 0;
 					} 
 				}
 			}

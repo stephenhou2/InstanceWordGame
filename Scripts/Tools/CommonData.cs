@@ -73,6 +73,9 @@ namespace WordJourney{
 		Inscription,
 		Map
 	}
+		
+
+
 
 	public enum PropertyType{
 		Attack,
@@ -91,6 +94,10 @@ namespace WordJourney{
 		Item
 	}
 
+	public enum Towards{
+		Left,
+		Right
+	}
 
 	public enum ValidActionType{
 		All,
@@ -104,10 +111,7 @@ namespace WordJourney{
 
 	public enum SkillEffectTarget{
 		Self,
-		SpecificEnemy,
-		AllFriends,
-		AllEnemies,
-		BothSides,
+		Enemy,
 		None
 	}
 

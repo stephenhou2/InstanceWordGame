@@ -16,21 +16,32 @@ namespace WordJourney
 		//血量值
 		public Text healthText;
 
-		//魔法槽
-		public Slider manaBar;
-		//魔法值
-		public Text manaText;
+		public Text attackText;
+		public Text attackSpeedText;
+		public Text amourText;
+		public Text manaResistText;
+		public Text critText;
+		public Text agilityText;
 
 		//战斗中文字HUD
-		public Text tintHUD;
+//		public Text tintTextModel;
+//
+//		private InstancePool tintTextPool;
+//
+//		public Transform tintTextContainer;
 
+		public Text hurtText;
+		public Text gainText;
 
-		[HideInInspector]public Transform skillsContainer;
 
 		public bool firstSetHealthBar = true;
 		public bool firstSetStrengthBar = true;
 
-
+//		protected virtual void Awake(){
+//
+//			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
+//
+//		}
 
 		//The virtual keyword means AttemptMove can be overridden by inheriting classes using the override keyword.
 		//AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
@@ -108,83 +119,88 @@ namespace WordJourney
 			if (firstSetHealthBar) {
 				healthBar.value = ba.health;
 			} else {
-				healthBar.DOValue (ba.health, 0.5f);
+				healthBar.DOValue (ba.health, 0.2f);
 			}
 		}
 
-		public void UpdateManaBarAnim(Agent ba){
-			manaBar.maxValue = ba.maxMana;
-			manaText.text = ba.mana + "/" + ba.maxMana;
 
 
-			if (firstSetStrengthBar) {
-				manaBar.value = ba.mana;
-			} else {
-				manaBar.DOValue (ba.mana, 0.5f);
+		// 受到伤害文本动画
+		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards){
+
+			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (50, 50, 0);;
+
+			hurtText.transform.localPosition = pos;
+
+
+			hurtText.text = hurtStr;
+
+			hurtText.gameObject.SetActive (true);
+
+			Vector3 offset = Vector3.zero;
+
+			switch(towards){
+			case Towards.Left:
+				offset = new Vector3 (-100, 0, 0);
+				break;
+			case Towards.Right:
+				offset = new Vector3(100, 0, 0);
+				break;
 			}
 
-		}
+			Vector3 newPos = hurtText.transform.localPosition + offset;
+					
+			hurtText.transform.DOLocalJump (newPos, 100f, 1, 0.35f).OnComplete(()=>{
 
-		// 伤害文本动画
-		public void PlayHurtHUDAnim(string text){
+				switch(towards){
+				case Towards.Left:
+					offset = new Vector3 (-30, 0, 0);
+					break;
+				case Towards.Right:
+					offset = new Vector3(30, 0, 0);
+					break;
+				}
 
-			tintHUD.fontSize = 40;
+				newPos = hurtText.transform.localPosition + offset;
 
-			tintHUD.text = text;
 
-			tintHUD.GetComponent<Text>().enabled = true;
+				hurtText.transform.DOLocalJump (newPos, 20f, 1, 0.15f).OnComplete(()=>{
+					hurtText.gameObject.SetActive(false);
+				});
 
-			Tweener scaleAnim = tintHUD.transform.DOScale (2.5f, 0.5f);
-
-			ManageAnimations(scaleAnim,()=>{
-
-				Vector3 newPos = tintHUD.transform.localPosition + new Vector3 (0, 100, 0);
-
-				Tweener positionAnim = tintHUD.transform.DOLocalMove (newPos, 1.0f, false);
-
-				Tweener colorAnim = tintHUD.DOFade (0f, 1.0f);
-
-				ManageAnimations (positionAnim, null);
-
-				TweenCallback tc = OnHurtTextAnimationComplete;
-
-				ManageAnimations (colorAnim, tc);
 			});
 
 		}
+
+		public void PlayGainTextAnim(string gainStr, Vector3 agentPos){
+
+			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3(50,100,0);
+
+			gainText.transform.localPosition = pos;
+
+			gainText.text = gainStr;
+
+			gainText.transform.DOLocalMoveY (100, 0.5f).OnComplete(()=>{
+				gainText.gameObject.SetActive(false);
+			});
+				
+		}
 			
-		public void AgentDieAnim(CallBack cb){
-	//		ManageAnimations (agentIcon.DOFade (0f, 0.5f), () => {
-	//			this.gameObject.SetActive (false);
-	////			this.enabled = false;
-	//			firstSetHealthBar = true;
-	//			firstSetStrengthBar = true;
-	//			cb();
-	//		});
 
-		}
-
-		private void OnHurtTextAnimationComplete(){
-			tintHUD.transform.localScale = new Vector3 (1.0f, 1.0f);
-			tintHUD.GetComponent<Text>().enabled = false;
-			tintHUD.color = Color.red;
-			tintHUD.transform.localPosition = tintHUD.transform.localPosition + new Vector3 (0, -100, 0);
-
-		}
-
-		// 动画管理方法，复杂回调单独写函数传入，简单回调使用拉姆达表达式
-		private void ManageAnimations(Tweener newTweener,TweenCallback tc){
-			allTweeners.Add (newTweener);
-
-			newTweener.OnComplete (
-				() => {
-					allTweeners.Remove (newTweener);
-					if (tc != null) {
-						tc ();
-					}
-				});
-
-		}
+			
+//		// 动画管理方法，复杂回调单独写函数传入，简单回调使用拉姆达表达式
+//		private void ManageAnimations(Tweener newTweener,CallBack tc){
+//			allTweeners.Add (newTweener);
+//
+//			newTweener.OnComplete (
+//				() => {
+//					allTweeners.Remove (newTweener);
+//					if (tc != null) {
+//						tc ();
+//					}
+//				});
+//
+//		}
 
 	}
 }

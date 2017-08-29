@@ -18,18 +18,19 @@ namespace WordJourney
 		private int currentMapIndex = 0;	
 	
 		// 当前关卡所有怪物
-		private List<BattleMonsterController> battleMonsters = new List<BattleMonsterController>();	
+//		private List<BattleMonsterController> battleMonsters = new List<BattleMonsterController>();	
+
+		// 当前碰到的怪物控制器
+		private BattleMonsterController battleMonsterCtr;
 
 		// 玩家控制器
-		private BattlePlayerController battlePlayer;
+		private BattlePlayerController battlePlayerCtr;
 
 		private NavigationHelper navHelper;
 
 		private List<Vector3> pathPosList;
 
 		private ExploreUICotroller expUICtr;
-
-
 
 
 		void Awake()
@@ -42,31 +43,27 @@ namespace WordJourney
 
 			navHelper = GetComponent<NavigationHelper> ();
 
-			battlePlayer = GetComponentInChildren<BattlePlayerController> ();
+			battlePlayerCtr = GetComponentInChildren<BattlePlayerController> ();
 
-			battlePlayer.enterMonster = new ExploreEventHandler (EnterMonster);
-			battlePlayer.enterItem = new ExploreEventHandler (EnterItem);
-			battlePlayer.enterNpc = new ExploreEventHandler (EnterNPC);
+			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
+			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
+			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
 
-			expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ();
+			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
-//			battleMonsters = new List<BattleMonsterController>();
+			expUICtr = exploreCanvas.GetComponent<ExploreUICotroller> ();
 
 		}
 			
 		//Initializes the game for each level.
 		public void SetupExploreView(int chapterIndex)
 		{
-
-			expUICtr.SetUpExploreUI();
-
-			//Clear any Enemy objects in our List to prepare for next level.
-			battleMonsters.Clear();
+			battlePlayerCtr.SetUpExplorePlayerUI ();
 
 			ChapterDetailInfo chapterDetail = DataInitializer.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.jsonFileDirectoryPath, CommonData.chapterDataFileName)[chapterIndex];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
-			mapGenerator.SetUpMap(chapterDetail,expUICtr.HideMaskImage);
+			mapGenerator.SetUpMap(chapterDetail);
 
 		}
 
@@ -135,10 +132,10 @@ namespace WordJourney
 
 //			if(r2d.transform != null){
 
-				if(battlePlayer != null){
+			if(battlePlayerCtr != null){
 
 					// 计算自动寻路路径
-					pathPosList = navHelper.FindPath(battlePlayer.singleMoveEndPos,targetPos,mapGenerator.mapWalkableInfoArray);
+				pathPosList = navHelper.FindPath(battlePlayerCtr.singleMoveEndPos,targetPos,mapGenerator.mapWalkableInfoArray);
 
 				}
 //			}else{
@@ -150,24 +147,34 @@ namespace WordJourney
 			mapGenerator.PlayDestinationAnim(targetPos,pathPosList.Count > 0);
 
 			// 游戏角色按照自动寻路路径移动到点击位置
-			battlePlayer.MoveToEndByPath (pathPosList, targetPos);
+			battlePlayerCtr.MoveToEndByPath (pathPosList, targetPos);
 
 		}
+
+
 
 		public void EnterMonster(Transform monsterTrans){
 
-			Vector3 monsterPos = monsterTrans.position;
+			CallBack<Transform> playerWinCallBack = BattlePlayerWin;
 
-			int X = (int)monsterPos.x;
-			int Y = (int)monsterPos.y;
+			CallBack playerLoseCallBack = BattlePlayerLose;
 
-			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
+			battleMonsterCtr = monsterTrans.GetComponent<BattleMonsterController> ();
 
-			Destroy (monsterTrans.gameObject);
+			battleMonsterCtr.InitMonster (monsterTrans);
 
-			battlePlayer.ContinueMove ();
+
+			battleMonsterCtr.StartFight (battlePlayerCtr,playerWinCallBack);
+			battlePlayerCtr.StartFight (battleMonsterCtr,playerLoseCallBack);
+
+
+			expUICtr.ShowFightPlane ();
 
 		}
+
+
+	
+
 
 		public void EnterItem(Transform mapItemTrans){
 			
@@ -175,6 +182,10 @@ namespace WordJourney
 
 			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
 
+			// 如果mapitem已打开，则直接返回
+			if (mapItem.unlocked) {
+				return;
+			}
 
 			// 如果该地图物品需要使用特殊物品开启
 			if (mapItem.unlockItemName != string.Empty) {
@@ -191,14 +202,14 @@ namespace WordJourney
 
 					unlockItem.itemCount--;
 
-					mapItem.PlayDestroyAnim (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
+					mapItem.UnlockMapItem (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
 
 				}
 				return;
 			}
 
 			// 如果该地图物品不需要使用特殊物品开启
-
+			mapItem.UnlockMapItem (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
 		}
 
 		public void EnterNPC(Transform mapNpcTrans){
@@ -208,6 +219,34 @@ namespace WordJourney
 			expUICtr.EnterNPC (mapNpcTrans.GetComponent<MapNPC> ().npc, currentMapIndex);
 
 		}
+
+		public void BattlePlayerWin(Transform[] monsterTransArray){
+
+			if (monsterTransArray.Length <= 0) {
+				return;
+			}
+
+			Transform trans = monsterTransArray [0];
+
+			Vector3 monsterPos = trans.position;
+
+			int X = (int)monsterPos.x;
+			int Y = (int)monsterPos.y;
+
+			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
+
+			battlePlayerCtr.ContinueMove ();
+
+
+		}
+
+		private void BattlePlayerLose(){
+
+			Debug.Log ("dead");
+
+		}
+
+
 
 	}
 }

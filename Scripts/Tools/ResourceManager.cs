@@ -19,6 +19,8 @@ namespace WordJourney{
 
 		private string fileName;
 
+		private static bool loadFinished;
+
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
 
 		public void MaxCachingSpace (int maxCaching)
@@ -120,6 +122,8 @@ namespace WordJourney{
 		private IEnumerator LoadFromFileAsync (string bundlePath)
 		{
 
+			loadFinished = false;
+
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
 			var bundleLoadRequest = AssetBundle.LoadFromFileAsync (targetPath);
@@ -192,9 +196,15 @@ namespace WordJourney{
 			}
 			gos.Clear ();
 			sprites.Clear ();
+
+			loadFinished = true;
 		}
 
+		public static IEnumerator WaitUntillAsyncLoadFinished(){
 
+			yield return new WaitUntil (()=>loadFinished == true);
+
+		}
 
 		public void WriteStringDataToFile(string stringData,string filePath){
 

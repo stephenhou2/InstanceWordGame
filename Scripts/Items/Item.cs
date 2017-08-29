@@ -14,6 +14,7 @@ namespace WordJourney{
 
 		public ItemType itemType;
 
+
 		public string itemNameInEnglish;
 		public int itemId;
 		public int itemCount;
@@ -23,6 +24,7 @@ namespace WordJourney{
 		public int strengthenTimes;
 
 		public int attackGain;//攻击力增益
+		public int attackSpeedGain;//攻速增益
 		public int magicGain;//魔法增益
 		public int critGain;//暴击增益
 		public int amourGain;//护甲增益

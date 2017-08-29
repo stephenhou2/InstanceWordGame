@@ -17,14 +17,23 @@ namespace WordJourney
 
 		private Tweener votexRotate;
 
+		public Image maskImage;
+
 		public void SetUpHomeView(){
 
-	//		GetComponent<Canvas> ().enabled = true;
+			GetComponent<Canvas> ().enabled = true;
 
 			SetUpTopBar ();
 
 			VotexRotate ();
 
+		}
+		public void ShowMaskImage (){
+			maskImage.gameObject.SetActive (true);
+		}
+
+		private void HideMaskImage(){
+			maskImage.gameObject.SetActive (false);
 		}
 
 		public void VotexRotate(){
@@ -41,13 +50,13 @@ namespace WordJourney
 
 		public void OnQuitHomeView(){
 
-	//		GetComponent<Canvas> ().enabled = false;
+			GetComponent<Canvas> ().enabled = false;
 
 			if (votexRotate != null) {
 				votexRotate.Pause ();
 			}
 
-			gameObject.SetActive (false);
+			HideMaskImage ();
 
 		}
 

@@ -130,8 +130,13 @@ namespace WordJourney
 		// 初始化已装备物品界面
 		private void SetUpEquipedItemPlane(){
 
+//			for (int i = 0; i < player.allEquipedEquipments.Length; i++) {
+//				Equipment equipment = player.allEquipedEquipments [i];
+//				SetUpItemButton (equipment, allEquipedItemBtns [i]);
+//			}
+			
 			for(int i = 0;i<player.allEquipedItems.Count;i++){
-					Item item = player.allEquipedItems[i];
+				Item item = player.allEquipedItems[i];
 				SetUpItemButton (item, allEquipedItemBtns [i]);
 			}
 
@@ -183,7 +188,7 @@ namespace WordJourney
 		/// <param name="item">Item.</param>
 			private void SetUpItemDetailHUD(Item item){
 
-			bool canStrengthen = item.CheckCanStrengthen ();
+			bool canStrengthen = item.CheckCanStrengthen();
 
 			itemDetailHUD.gameObject.SetActive (true);
 
@@ -202,11 +207,11 @@ namespace WordJourney
 
 			itemTypeText.text = item.GetItemTypeString ();
 
-			if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Amour || item.itemType == ItemType.Shoes) {
+			if (canStrengthen) {
 
 				itemQualityText.text = item.GetItemQualityString ();
 
-				itemStrengthenTimesText.text = "已强化次数:" + item.strengthenTimes.ToString () + "次";
+				itemStrengthenTimesText.text = "已强化次数:" + (item as Equipment).strengthenTimes.ToString () + "次";
 			}
 
 

@@ -22,12 +22,15 @@ namespace WordJourney
 
 			int currentExploreLevel = GameManager.Instance.unlockedMaxChapterIndex;
 
+			homeView.ShowMaskImage ();
+
 			ResourceManager.Instance.LoadAssetWithFileName ("explore/scene", () => {
+
+//				GetComponent<Canvas> ().enabled = false;
 
 				GameObject.Find("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
 				homeView.OnQuitHomeView();
-
 	//			DestroyInstances();
 				// 探索场景加载完成后后台加载战斗场景
 	//			ResourceManager.Instance.LoadAssetWithFileName ("battle/canvas",()=>{

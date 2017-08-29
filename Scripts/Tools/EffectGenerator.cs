@@ -38,7 +38,6 @@ public class EffectGenerator : MonoBehaviour {
 			bse.id = ed.id;
 			bse.manaConsume = ed.manaConsume;
 			bse.effectDuration = ed.effectDuration;
-			bse.actionConsume = ed.actionConsume;
 			bse.effectTarget = ed.effectTarget;
 			bse.scaler = ed.scaler;
 			bse.isStateEffect = ed.isStateEffect;

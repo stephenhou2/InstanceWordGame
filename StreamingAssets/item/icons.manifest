@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3940513066
+CRC: 3467837402
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 335ccf0680ca018955872d3a83088baa
+    Hash: 8ee50376619a87f781dbd7099ae22f2f
   TypeTreeHash:
     serializedVersion: 2
     Hash: 4774d6da9b606debf00b5a5d61c4487c
@@ -19,6 +19,7 @@ Assets:
 - Assets/Resources/Sprites/ItemIcon/staff.jpg
 - Assets/Resources/Sprites/ItemIcon/cloak.jpg
 - Assets/Resources/Sprites/ItemIcon/knife.jpg
+- Assets/Resources/Sprites/ItemIcon/sword.jpg
 - Assets/Resources/Sprites/ItemIcon/sandal.jpg
 - Assets/Resources/Sprites/ItemIcon/huili.jpg
 - Assets/Resources/Sprites/ItemIcon/axe.jpg

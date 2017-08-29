@@ -85,12 +85,12 @@ public class SkillsView : MonoBehaviour{
 			return obj.name == "typeButtonSelected";
 		});
 
-		for (int i = 0; i < player.skillsEquiped.Count; i++) {
+		for (int i = 0; i < player.equipedSkills.Count; i++) {
 			
 			Image skillIcon = equipedSkillButtons [i].transform.FindChild ("SkillIcon").GetComponent<Image> ();
 
 			skillIcon.sprite = sprites.Find (delegate (Sprite obj) {
-				return obj.name == player.skillsEquiped [i].skillIconName;
+				return obj.name == player.equipedSkills [i].skillIconName;
 			});
 			skillIcon.enabled = true;
 		}
@@ -184,8 +184,7 @@ public class SkillsView : MonoBehaviour{
 		skillLevelOnBigIcon.text = "Lv." + skill.skillLevel.ToString ();
 		skillName.text = skill.skillName;
 		skillDesc.text = skill.skillDescription;
-		skillCosume.text = "气力消耗： " + skill.manaConsume.ToString () + "点";
-		skillCoolen.text = "冷却回合： " + skill.actionConsume.ToString () + "回合";
+		skillCosume.text = "魔法消耗： " + skill.manaConsume.ToString () + "点";
 
 		Image mask = skillTreeButtons [buttonIndex].transform.FindChild ("SkillMask").GetComponent<Image> ();
 
@@ -287,7 +286,7 @@ public class SkillsView : MonoBehaviour{
 				if (skillIcon.enabled == false) {
 					skillIcon.sprite = spritesOfCurrentType [currentSelectSkillIndex];
 					skillIcon.enabled = true;
-					Player.mainPlayer.skillsEquiped.Insert (i, playerSkill);
+					Player.mainPlayer.equipedSkills.Insert (i, playerSkill);
 					return;
 				}
 			} 
@@ -305,7 +304,7 @@ public class SkillsView : MonoBehaviour{
 				}
 
 				Text equipedSkillNameOfHUD = equipedSkillButtonsOfHUD [i].GetComponentInChildren<Text> ();
-				equipedSkillNameOfHUD.text = Player.mainPlayer.skillsEquiped [i].skillName;
+				equipedSkillNameOfHUD.text = Player.mainPlayer.equipedSkills [i].skillName;
 
 			}
 
@@ -319,11 +318,10 @@ public class SkillsView : MonoBehaviour{
 
 	public void OnEquipedSkillButtonClick(int index){
 		skillDetailHUD.SetActive (true);
-		Skill s = Player.mainPlayer.skillsEquiped [index];
+		Skill s = Player.mainPlayer.equipedSkills [index];
 		skillNameOnHUD.text = s.skillName;
 		skillDescOnHUD.text = s.skillDescription;
-		skillCosumeOnHUD.text = "气力消耗： " + s.manaConsume.ToString () + "点";
-		skillCoolenOnHUD.text = "冷却回合：" + s.actionConsume.ToString () + "回合"; 
+		skillCosumeOnHUD.text = "魔法消耗： " + s.manaConsume.ToString () + "点"; 
 	}
 
 

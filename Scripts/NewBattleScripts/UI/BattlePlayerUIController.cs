@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-
 namespace WordJourney
 {
 	public class BattlePlayerUIController : BattleAgentUIController {
@@ -12,21 +11,30 @@ namespace WordJourney
 
 		private Player player;
 
+		//魔法槽
+		public Slider manaBar;
+		//魔法值
+		public Text manaText;
 
-		public Button[] skillButtons;
+		public Transform skillsContainer;
+		public GameObject skillButtonModel;
+	
 
-		public Button[] itemButtons;
+		public Button healthBottleButton;
+		public Button manaBottleButton;
+		public Button antiDebuffButton;
+		public Button bagButton;
 
-		private Transform mSkillAndItemDetailPlane;
-		public Transform skillAndItemDetailPlane{
-			get{
-				if (mSkillAndItemDetailPlane == null) {
-					mSkillAndItemDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/SkillAndItemDetailPlane").transform;
-				}
-				return mSkillAndItemDetailPlane;
-			}
-
-		}
+//		private Transform mSkillAndItemDetailPlane;
+//		public Transform skillAndItemDetailPlane{
+//			get{
+//				if (mSkillAndItemDetailPlane == null) {
+//					mSkillAndItemDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/SkillAndItemDetailPlane").transform;
+//				}
+//				return mSkillAndItemDetailPlane;
+//			}
+//
+//		}
 			
 		private Sequence mSequence;
 
@@ -34,106 +42,158 @@ namespace WordJourney
 
 		private List<Sprite> itemSprites;
 
+		private List<Button> skillButtons = new List<Button>();
 
-//		private void Awake(){
-//
-//			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
-//
-//
-//		}
+		private InstancePool skillButtonPool;
+
+		private void Awake(){
+
+			player = Player.mainPlayer;
+
+			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
 
 
-		public void SetUpUI(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
+		}
+
+
+		public void SetUpExplorePlayerView(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
 
 			this.player = player;
 			this.skillSprites = skillSprites;
 			this.itemSprites = itemSprites;
 
-			SetUpPlayerStatusUI ();
-			SetUpItemButtons ();
-
-//			SetUpSkillButtons ();
-//
-//			SetUpItemButtons ();
+			SetUpPlayerStatusPlane ();
+			UpdateItemButtons ();
 
 		}
 
 
-		private void SetUpPlayerStatusUI(){
+
+		private void SetUpPlayerStatusPlane(){
 
 			healthBar.maxValue = player.maxHealth;
-			healthBar.value = player.health;
 			manaBar.maxValue = player.maxMana;
-			manaBar.value = player.mana;
 
 			healthText.text = string.Format ("{0}/{1}", player.health, player.maxHealth);
 			manaText.text = string.Format ("{0}/{1}", player.mana, player.maxMana);
 
+			healthBar.value = player.health;
+			manaBar.value = player.mana;
 
 		}
 
-		private void SetUpSkillButtons(){
-
-			for (int i = 0; i < player.skillsEquiped.Count; i++) {
-
-				Button skillButton = skillButtons [i];
-				Skill skill = player.skillsEquiped [i];
-
-				Image skillIcon = skillButton.GetComponent<Image> ();
-
-				Text strengthConsumeText = skillButton.transform.parent.FindChild ("StrengthConsumeText").GetComponent<Text>();
-
-				Text skillNameText = skillButton.transform.FindChild ("SkillName").GetComponent<Text> ();
-
-				skillIcon.sprite = skillSprites.Find (delegate(Sprite obj) {
-					return obj.name == skill.skillIconName;
-				});
-				skillIcon.enabled = true;
-				skillButton.interactable = true;
-				strengthConsumeText.text = skill.manaConsume.ToString();
-				skillNameText.text = skill.skillName;
-				skillButton.transform.GetComponentInChildren<Text> ().text = "";
-			}
-
-			for (int i = player.skillsEquiped.Count; i < skillButtons.Length; i++) {
-				skillButtons [i].interactable = false;
-			}
+		public void UpdatePlayerStatusPlane(){
+			UpdateHealthBarAnim(player);
+			UpdateManaBarAnim (player);
 		}
 
-		public void SetUpItemButtons(){
+		public void SetUpBattlePlayerPlane(Player player){
 
-			for (int i = 3; i < player.allEquipedItems.Count; i++) {
+			skillButtons.Clear ();
 
-				Item consumable = player.allEquipedItems [i];
+			for (int i = 0; i < player.equipedSkills.Count; i++) {
 
-				Button itemButton = itemButtons [i - 3];
+				Skill skill = player.equipedSkills [i];
 
-				Image itemIcon = itemButton.GetComponent<Image> ();
+				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel, skillsContainer);
 
-				Text itemCount = itemButton.transform.FindChild ("Text").GetComponent<Text> ();
+				Image skillIcon = skillButton.transform.FindChild ("SkillIcon").GetComponent<Image> ();
+				Text skillName = skillButton.transform.FindChild ("SkillName").GetComponent<Text> ();
+				Text manaConsume = skillButton.transform.FindChild ("ManaConsume").GetComponent<Text> ();
 
-				if (consumable == null) {
 
-					itemButton.interactable = false;
-					itemIcon.enabled = false;
-
-					itemIcon.sprite = null;
-					itemCount.text = string.Empty;
-
-					continue;
-				}
-
-				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
-					return obj.name == consumable.spriteName;
+				Sprite sprite = GameManager.Instance.allSkillSprites.Find(delegate (Sprite s){
+					return s.name == skill.skillIconName;
 				});
-				if (itemIcon.sprite != null) {
-					itemIcon.enabled = true;
-					itemButton.interactable = true;
-					itemCount.text = consumable.itemCount.ToString ();
+
+				if (sprite != null) {
+					skillIcon.sprite = sprite;
+					skillIcon.enabled = true;
 				}
 
-				itemButton.interactable = (consumable.itemCount > 0);
+				skillName.text = skill.skillName;
+				manaConsume.text = skill.manaConsume.ToString();
+
+				skillButton.interactable = player.mana >= skill.manaConsume;
+
+				if (skillButton.interactable) {
+					skillIcon.color = Color.white;
+				} else {
+					skillIcon.color = new Color (100, 100, 100,255);
+				}
+
+				skillButtons.Add (skillButton);
+
 			}
+
+		}
+
+
+		public void UpdateItemButtons(){
+
+			Item healthBottle = player.allItems.Find (delegate(Item obj) {
+				return obj.itemNameInEnglish == "health";
+			});
+
+			Item manaBottle = player.allItems.Find (delegate(Item obj) {
+				return obj.itemNameInEnglish == "mana";
+			});
+
+			Item antiDebuffBottle = player.allItems.Find (delegate(Item obj) {
+				return obj.itemNameInEnglish == "antiDebuff";
+			});
+
+			SetUpItemButton (healthBottle, healthBottleButton);
+			SetUpItemButton (manaBottle, manaBottleButton);
+			SetUpItemButton (antiDebuffBottle, antiDebuffButton);
+
+//			for (int i = 3; i < player.allEquipedItems.Count; i++) {
+//
+//				Item consumable = player.allEquipedItems [i];
+//
+//				Button itemButton = itemButtons [i - 3];
+//
+//				Image itemIcon = itemButton.GetComponent<Image> ();
+//
+//				Text itemCount = itemButton.transform.FindChild ("Text").GetComponent<Text> ();
+//
+//				if (consumable == null) {
+//
+//					itemButton.interactable = false;
+//					itemIcon.enabled = false;
+//
+//					itemIcon.sprite = null;
+//					itemCount.text = string.Empty;
+//
+//					continue;
+//				}
+//
+//				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
+//					return obj.name == consumable.spriteName;
+//				});
+//				if (itemIcon.sprite != null) {
+//					itemIcon.enabled = true;
+//					itemButton.interactable = true;
+//					itemCount.text = consumable.itemCount.ToString ();
+//				}
+//
+//				itemButton.interactable = (consumable.itemCount > 0);
+//			}
+
+		}
+
+		private void SetUpItemButton(Item item,Button itemButton){
+
+			if (item == null) {
+				itemButton.GetComponent<Image> ().color = new Color (100, 100, 100, 255);
+				itemButton.interactable = false;
+				itemButton.GetComponentInChildren<Text> ().text = "0";
+			} else {
+				itemButton.GetComponent<Image> ().color = Color.white;
+				itemButton.interactable = true;
+				itemButton.GetComponentInChildren<Text> ().text = item.itemCount.ToString ();
+			}
+
 
 		}
 
@@ -141,45 +201,110 @@ namespace WordJourney
 		// 更新战斗中玩家UI的状态
 		public void UpdateSkillButtonsStatus(Player player){
 
-			for (int i = 0;i < player.skillsEquiped.Count;i++) {
+			for (int i = 0; i < skillButtons.Count; i++) {
 
-				Skill s = player.skillsEquiped [i];
-				// 如果是冷却中的技能
-				if (s.isAvalible == false) {
-					int actionBackCount = s.actionConsume - s.actionCount + 1;
-					skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount.ToString ();
-				} else {
-					skillButtons [i].GetComponentInChildren<Text> ().text = "";
-				}
-				skillButtons [i].interactable = s.isAvalible && player.mana >= s.manaConsume; 
+				Button skillButton = skillButtons [i];
+
+//				Skill s = player.equipedSkills [i];
+//				// 如果是冷却中的技能
+//				if (s.isAvalible == false) {
+//					int actionBackCount = s.actionConsume - s.actionCount + 1;
+//					skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount.ToString ();
+//				} else {
+//					skillButtons [i].GetComponentInChildren<Text> ().text = "";
+//				}
+//				skillButtons [i].interactable = s.isAvalible && player.mana >= s.manaConsume; 
+//			}
+
 			}
-
-			//			attackButton.interactable = player.isAttackEnable && player.strength >= player.attackSkill.manaConsume;
-			//			defenceButton.interactable = player.isDefenceEnable && player.strength >= player.defenceSkill.manaConsume;
-
 
 		}
 
+		public void OnItemButtonClick(int ButtonIndex){
+
+			Item item = null;
+
+			switch (ButtonIndex) {
+			case 0:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "health";
+				});
+				break;
+			case 1:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "mana";
+				});
+				break;
+			case 2:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "antiDebuff";
+				});
+				break;
+			default:
+				break;
+
+			}
+
+
+			if (item == null) {
+				return;
+			}
+
+			player.health += (item as Consumable).healthGain;
+			player.mana += (item as Consumable).manaGain;
+
+			if (item.itemNameInEnglish == "antiDebuff") {
+				player.states.Clear ();
+			}
+
+			item.itemCount--;
+
+			if (item.itemCount <= 0) {
+				player.allItems.Remove (item);
+			}
+
+			UpdateItemButtons ();
+			UpdatePlayerStatusPlane ();
+
+		}
+
+
+		public void UpdateManaBarAnim(Agent ba){
+			manaBar.maxValue = ba.maxMana;
+			manaText.text = ba.mana + "/" + ba.maxMana;
+
+
+			if (firstSetStrengthBar) {
+				manaBar.value = ba.mana;
+			} else {
+				manaBar.DOValue (ba.mana, 0.2f);
+			}
+
+		}
+
+		public void OnBagButtonClick(){
+
+		}
 
 		public void QuitDetailPlane(){
 
-			skillAndItemDetailPlane.gameObject.SetActive (false);
+//			skillAndItemDetailPlane.gameObject.SetActive (false);
 
 		}
 
 
-		public void ShowItemDetail(int index,Item item){
-
-			skillAndItemDetailPlane.SetParent (itemButtons [index].transform,false);
-
-			skillAndItemDetailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
-
-			skillAndItemDetailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
-
-			skillAndItemDetailPlane.FindChild ("Detail").GetComponent<Text> ().text = item.GetItemPropertiesString ();
-
-			skillAndItemDetailPlane.gameObject.SetActive (true);
-		}
+//		public void ShowItemDetail(int index,Item item){
+//
+//			skillAndItemDetailPlane.SetParent (itemButtons [index].transform,false);
+//
+//			skillAndItemDetailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
+//
+//			skillAndItemDetailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
+//
+//			skillAndItemDetailPlane.FindChild ("Detail").GetComponent<Text> ().text = item.GetItemPropertiesString ();
+//
+//			skillAndItemDetailPlane.gameObject.SetActive (true);
+//		}
 
 
 //		public void SetUpBattleGainsHUD(List<Item> battleGains){
@@ -227,65 +352,43 @@ namespace WordJourney
 //
 //		}
 
-		public void OnQuitBattle(){
+//		public void OnQuitBattle(){
+//
+//			foreach (Button btn in skillButtons) {
+//				btn.interactable = false;
+//				btn.GetComponent<Image> ().enabled = false;
+//				foreach (Text t in btn.GetComponentsInChildren<Text>()) {
+//					t.text = string.Empty;
+//				}
+//			}
+//
+//			foreach (Button btn in new Button[]{healthBottleButton,manaBottleButton,antiDebuffButton}) {
+//				btn.interactable = false;
+//				btn.GetComponent<Image> ().enabled = false;
+//				btn.GetComponentInChildren<Text> ().text = string.Empty;
+//			}
+//		}
 
-			foreach (Button btn in skillButtons) {
-				btn.interactable = false;
-				btn.GetComponent<Image> ().enabled = false;
-				foreach (Text t in btn.GetComponentsInChildren<Text>()) {
-					t.text = string.Empty;
-				}
-			}
-
-			foreach (Button btn in itemButtons) {
-				btn.interactable = false;
-				btn.GetComponent<Image> ().enabled = false;
-				btn.GetComponentInChildren<Text> ().text = string.Empty;
-			}
-		}
-
-		private BattlePlayerController mBaPlayerController;
+//		private BattlePlayerController mBaPlayerController;
 
 		private List<Sprite> skillIcons = new List<Sprite>();
 
 		//	private List<Item> consumables = new List<Item> ();
 
 		// 角色UIView
-		public BattlePlayerController baView{
+//		public BattlePlayerController baView{
+//
+//			get{
+//				if (mBaPlayerController == null) {
+//					mBaPlayerController = GetComponent<BattlePlayerController> ();
+//				}
+//				return mBaPlayerController;
+//			}
+//
+//		}
 
-			get{
-				if (mBaPlayerController == null) {
-					mBaPlayerController = GetComponent<BattlePlayerController> ();
-				}
-				return mBaPlayerController;
-			}
-
-		}
 
 
-		public void SetUpBattlePlayerView(){
-
-			//		for(int i = 3;i<player.allEquipedItems.Count;i++){
-			//			Item consumable = player.allEquipedItems [i];
-			//			consumables.Add (consumable);
-			//		}
-
-			List<Sprite> allItemSprites = GameManager.Instance.allItemSprites;
-
-			if (skillIcons.Count != 0) {
-				SetUpUI (player,skillIcons,allItemSprites);
-				return;
-			}
-
-			ResourceManager.Instance.LoadSpritesAssetWithFileName("skills/skills", () => {
-
-				foreach(Sprite s in ResourceManager.Instance.sprites){
-					skillIcons.Add(s);
-				}
-				SetUpUI (player,skillIcons,allItemSprites);
-			},true);
-
-		}
 
 		public void OnPlayerSelectSkill(int skillIndex){
 
@@ -311,36 +414,36 @@ namespace WordJourney
 			if (item.itemCount <= 0) {
 				player.allEquipedItems [itemIndex + 3] = null;
 				player.allItems.Remove (item);
-				SetUpItemButtons ();
+				UpdateItemButtons ();
 			}
 
 
 
-			if (item.healthGain != 0 && item.manaGain != 0) {
-				player.health += item.healthGain;
-				player.mana += item.manaGain;
-				UpdateHealthBarAnim (player);
-				UpdateManaBarAnim (player);
+//			if (item.healthGain != 0 && item.manaGain != 0) {
+//				player.health += item.healthGain;
+//				player.mana += item.manaGain;
+//				UpdateHealthBarAnim (player);
+//				UpdateManaBarAnim (player);
+//
+//				string tintText = "<color=green>+" + item.healthGain.ToString() + "体力</color>" 
+//					+ "\t\t\t\t\t" 
+//					+ "<color=orange>+" + item.manaGain.ToString() + "魔法</color>";
+//				PlayTintHUDAnim(tintText);
+//
+//			}else if (item.healthGain != 0) {
+//				player.health += item.healthGain;
+//				UpdateHealthBarAnim (player);
+//				string tintText = "<color=green>+" + item.healthGain.ToString() + "体力</color>";
+//				PlayTintHUDAnim(tintText);
+//
+//			}else if (item.manaGain != 0) {
+//				player.mana += item.manaGain;
+//				UpdateManaBarAnim (player);
+//				string tintText = "<color=blue>+" + item.manaGain.ToString() + "魔法</color>";
+//				PlayTintHUDAnim(tintText);
+//			}
 
-				string hurtText = "<color=green>+" + item.healthGain.ToString() + "体力</color>" 
-					+ "\t\t\t\t\t" 
-					+ "<color=orange>+" + item.manaGain.ToString() + "魔法</color>";
-				PlayHurtHUDAnim(hurtText);
-
-			}else if (item.healthGain != 0) {
-				player.health += item.healthGain;
-				UpdateHealthBarAnim (player);
-				string hurtText = "<color=green>+" + item.healthGain.ToString() + "体力</color>";
-				PlayHurtHUDAnim(hurtText);
-
-			}else if (item.manaGain != 0) {
-				player.mana += item.manaGain;
-				UpdateManaBarAnim (player);
-				string hurtText = "<color=orange>+" + item.manaGain.ToString() + "魔法</color>";
-				PlayHurtHUDAnim(hurtText);
-			}
-
-			SetUpItemButtons ();
+			UpdateItemButtons ();
 
 		}
 
@@ -350,15 +453,34 @@ namespace WordJourney
 			QuitDetailPlane ();
 		}
 
-		public void OnItemLongPress(int index){
-			Item i = player.allEquipedItems [3 + index];
-			ShowItemDetail (index, i);
-		}
+//		public void OnItemLongPress(int index){
+//			Item i = player.allEquipedItems [3 + index];
+//			ShowItemDetail (index, i);
+//		}
 
 		public void OnItemButtonUp(){
 
 			QuitDetailPlane ();
 		}
 
+
+		public void PlayPlayerDieAnim(BattleAgentController baCtr,CallBack cb){
+			
+			baCtr.GetComponent<SpriteRenderer> ().DOFade (0, 0.5f).OnComplete(()=>{
+				baCtr.gameObject.SetActive(false);
+
+				if(cb != null){
+					cb();
+				}
+
+			});
+		}
+
+
+		public void OnQuitFight(){
+
+			skillButtonPool.AddChildInstancesToPool (skillsContainer);
+
+		}
 	}
 }

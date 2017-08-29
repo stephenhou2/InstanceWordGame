@@ -11,9 +11,11 @@ namespace WordJourney
 
 		public string unlockItemName;
 
-		// 默认一个宝箱只能开出一个物品
+		public bool unlocked;
+
+
 		private Item[] mRewardItems;
-		[HideInInspector]public Item[] rewardItems{
+		public Item[] rewardItems{
 
 			get{
 				return mRewardItems;
@@ -27,11 +29,18 @@ namespace WordJourney
 		}
 
 		[HideInInspector]public Sprite originSprite;
-		[HideInInspector]public Sprite destroyedSprite;
+		[HideInInspector]public Sprite unlockedSprite;
 
-		private Animator mapItemDestroyAnimator;
+		private Animator mapItemAnimator;
 
 		[HideInInspector] public CallBack<Item> animEndCallBack;
+
+		void Awake(){
+
+			mapItemAnimator = GetComponent<Animator> ();
+
+		}
+
 
 		private void InitialiseSprites(){
 
@@ -54,21 +63,26 @@ namespace WordJourney
 				return s.name == originSpriteName;
 			});
 
-			string destroyedSpriteName = "item_" + itemName + "_destroyed";
+			string destroyedSpriteName = "item_" + itemName + "_unlocked";
 			
-			destroyedSprite = GameManager.Instance.allMapSprites.Find (delegate(Sprite s) {
+			unlockedSprite = GameManager.Instance.allMapSprites.Find (delegate(Sprite s) {
 				return s.name == destroyedSpriteName;
 			});
 
-			GetComponent<SpriteRenderer> ().sprite = originSprite;
+
+			if (originSprite != null) {
+				SpriteRenderer sr = transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ();
+				sr.sprite = originSprite;
+				sr.enabled = true;
+			}
 
 		}
 
-		public void PlayDestroyAnim(CallBack<Item> cb,Item[] rewardItems){
+		public void UnlockMapItem(CallBack<Item> cb,Item[] rewardItems){
 
 			animEndCallBack = cb;
 
-			mapItemDestroyAnimator.SetBool ("Destroy", true);
+			mapItemAnimator.SetBool ("Unlock", true);
 
 		}
 

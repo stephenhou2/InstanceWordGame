@@ -6,14 +6,8 @@ using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine rand
 
 namespace WordJourney	
 {
-
-
-
 	public class MapGenerator : SingletonMono<MapGenerator>
 	{
-
-
-
 		[HideInInspector]public int columns; 										//Number of columns in our game board.
 		[HideInInspector]public int rows;											//Number of rows in our game board.
 
@@ -72,7 +66,7 @@ namespace WordJourney
 
 
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
-		public void SetUpMap (ChapterDetailInfo chapterDetail,CallBack cb)
+		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
 
 			mapInfo = DataInitializer.LoadDataToSingleModelWithPath<MapInfo> (CommonData.jsonFileDirectoryPath, "MapJson.json");
@@ -94,11 +88,11 @@ namespace WordJourney
 
 			List<NPC> currentChapterNpcs = chapterDetail.GetCurrentChapterNpcs ();
 
-			int count = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
+			int mapItemcount = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
 
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < mapItemcount; i++) {
 
-				Item item = RandomEvent<Item> (currentChapterItems);
+				int rewardItemCount = Random.Range (2,4);
 
 				Vector3 pos = RandomPosition ();
 
@@ -108,13 +102,19 @@ namespace WordJourney
 
 				mapItem.transform.SetParent(itemsContainer,true);
 
+				mapItem.rewardItems = new Item[rewardItemCount];
 
-				#warning 这里后面改成随机物品数组
-				mapItem.rewardItems = new Item[]{item};
+				for (int j = 0; j < rewardItemCount; j++) {
+					
+					Item item = RandomEvent<Item> (currentChapterItems);
 
-				mapItem.name = item.itemName;
+					mapItem.rewardItems [j] = item;
+				}
 
-				mapItems.Add (mapItem);
+				if (mapItem != null) {
+					mapItems.Add (mapItem);
+				}
+
 
 			}
 
@@ -146,8 +146,6 @@ namespace WordJourney
 			}
 
 			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
-
-			cb ();
 
 		}
 			

@@ -10,7 +10,7 @@ public abstract class StateSkillEffect : BaseSkillEffect {
 
 	public bool hasBeenExcuted;
 
-	public Agent[] enemies;
+	public Agent enemy;
 
 //	// 状态管理方法，提供状态类效果的等级信息和作用的单位信息
 //	public void AddStateCopyToEffectTarget (BattleAgent self, BattleAgent enemy, int skillLevel,TriggerType triggerType,int attachedInfo)
@@ -64,12 +64,12 @@ public abstract class StateSkillEffect : BaseSkillEffect {
 //
 //	}
 
-	public void ExcuteEffect(Agent self,List<Agent> friends, Agent targetEnemy,
-		List<Agent> enemies, int skillLevel,TriggerType triggerType,int attachedInfo){
+		public void ExcuteEffect(BattleAgentController self, BattleAgentController enemy,
+		 int skillLevel,TriggerType triggerType){
 		if (hasBeenExcuted && !canOverlay) {
 			return;
 		}
-		AffectAgents(self,friends,targetEnemy, enemies, skillLevel,triggerType,attachedInfo);
+		AffectAgents(self, enemy, skillLevel, triggerType);
 		hasBeenExcuted = true;
 	}
 
