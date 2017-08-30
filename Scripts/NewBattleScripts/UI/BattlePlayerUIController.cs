@@ -46,12 +46,13 @@ namespace WordJourney
 
 		private InstancePool skillButtonPool;
 
-		private void Awake(){
+		protected override void Awake(){
 
 			player = Player.mainPlayer;
 
 			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
 
+			base.Awake ();
 
 		}
 
@@ -253,9 +254,9 @@ namespace WordJourney
 			player.health += (item as Consumable).healthGain;
 			player.mana += (item as Consumable).manaGain;
 
-			if (item.itemNameInEnglish == "antiDebuff") {
-				player.states.Clear ();
-			}
+//			if (item.itemNameInEnglish == "antiDebuff") {
+//				player.states.Clear ();
+//			}
 
 			item.itemCount--;
 

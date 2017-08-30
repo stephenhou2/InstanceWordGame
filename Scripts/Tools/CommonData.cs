@@ -99,6 +99,12 @@ namespace WordJourney{
 		Right
 	}
 
+	public enum TintTextType{
+		Crit,
+		Miss,
+		None
+	}
+
 	public enum ValidActionType{
 		All,
 		PhysicalExcption,

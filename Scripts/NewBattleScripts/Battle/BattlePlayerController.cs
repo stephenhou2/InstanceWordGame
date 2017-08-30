@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 
+
+
 namespace WordJourney
 {
 	public class BattlePlayerController : BattleAgentController {
@@ -79,6 +81,8 @@ namespace WordJourney
 					inSingleMoving = false;
 
 				});
+
+				PlayIdleAnim ();
 
 				Debug.Log ("无有效路径");
 
@@ -174,6 +178,14 @@ namespace WordJourney
 		private void MoveToNextPosition ()
 		{
 
+			Vector3 nextPos = pathPosList [0];
+
+			if (nextPos.x > transform.position.x) {
+				transform.localScale = new Vector3 (1, 1, 1);
+			} else if(nextPos.x < transform.position.x){
+				transform.localScale = new Vector3 (-1, 1, 1);
+			}
+
 			// 到达终点前的单步移动开始前进行碰撞检测
 			// 1.如果碰撞体存在，则根据碰撞体类型给exploreManager发送消息执行指定回调
 			// 2.如果未检测到碰撞体，则开始本次移动
@@ -240,6 +252,7 @@ namespace WordJourney
 				// 走到了终点
 				if (ArriveEndPoint ()) {
 					moveTweener.Kill (true);
+					PlayIdleAnim ();
 					Debug.Log ("到达终点");
 				} else {
 					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,endPos,singleMoveEndPos));
@@ -251,13 +264,13 @@ namespace WordJourney
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
 
-				Vector3 nextPos = pathPosList [0];
-
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
 
 				// 向下一节点移动
 				MoveToPosition (nextPos);
+
+				PlayRunAnim ();
 
 				// 标记单步移动中
 				inSingleMoving = true;
@@ -305,13 +318,23 @@ namespace WordJourney
 		/// </summary>
 		private void PhysicalAttack(){
 
-			physicalAttack.AffectAgents (this, bmCtr);
+			PlayFightAnim (() => {
 
-			bmCtr.UpdateMonsterStatusPlane ();
+				physicalAttack.AffectAgents (this, bmCtr);
 
-			if (!FightEnd ()) {
-				StartCoroutine ("InvokePhysicalAttack");
-			}
+				bmCtr.UpdateMonsterStatusPlane ();
+
+				if (!FightEnd ()) {
+					StartCoroutine ("InvokePhysicalAttack");
+				}
+
+			});
+
+		}
+
+		public void PlayFightAnim(CallBack cb){
+			armature.animation.Play ("battle",1);
+			StartCoroutine ("ExcuteCallBack", cb);
 
 		}
 
@@ -339,13 +362,13 @@ namespace WordJourney
 		/// 受到伤害播放伤害文字动画
 		/// </summary>
 		/// <param name="hurtStr">Hurt string.</param>
-		public override void PlayHurtTextAnim (string hurtStr)
+		public override void PlayHurtTextAnim (string hurtStr, TintTextType tintTextType)
 		{
 
 			if (this.transform.position.x <= bmCtr.transform.position.x) {
-				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left);
+				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left, tintTextType);
 			} else {
-				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right);
+				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right, tintTextType);
 			}
 
 
@@ -396,9 +419,26 @@ namespace WordJourney
 
 		}
 
+
+		public void PlayRunAnim(){
+			armature.animation.Play ("walk");
+		}
+
+
+
+//		public void ReverseDirection(){
+//			if (armature.flipX) {
+//				armature.transform.localScale = new Vector3 (1, 0, 0);
+//			} else {
+//				armature.transform.localScale = new Vector3 (-1, 0, 0);
+//			}
+//		}
+
 		public void PlayerDie(){
 			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-			bpUICtr.PlayPlayerDieAnim (this, playerLoseCallBack);
+//			bpUICtr.PlayPlayerDieAnim (this, playerLoseCallBack);
+			gameObject.SetActive(false);
+			playerLoseCallBack ();
 
 		}
 

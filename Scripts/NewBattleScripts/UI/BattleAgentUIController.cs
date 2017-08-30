@@ -7,7 +7,6 @@ using DG.Tweening;
 namespace WordJourney
 {
 	public abstract class BattleAgentUIController : MonoBehaviour {
-		
 
 		public List<Tweener> allTweeners = new List<Tweener>();
 
@@ -24,24 +23,24 @@ namespace WordJourney
 		public Text agilityText;
 
 		//战斗中文字HUD
-//		public Text tintTextModel;
-//
-//		private InstancePool tintTextPool;
-//
-//		public Transform tintTextContainer;
+		public GameObject tintTextModel;
 
-		public Text hurtText;
-		public Text gainText;
+		private InstancePool tintTextPool;
+
+		public Transform tintTextContainer;
+
+//		public Text hurtText;
+//		public Text gainText;
 
 
 		public bool firstSetHealthBar = true;
 		public bool firstSetStrengthBar = true;
 
-//		protected virtual void Awake(){
-//
-//			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
-//
-//		}
+		protected virtual void Awake(){
+
+			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
+
+		}
 
 		//The virtual keyword means AttemptMove can be overridden by inheriting classes using the override keyword.
 		//AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
@@ -76,16 +75,7 @@ namespace WordJourney
 //			where T : Component;
 		
 
-		public void PlayEffectAnim(BaseSkillEffect bse){
-			
-//			effectAnimator.gameObject.SetActive (true);
-//
-//			Debug.Log ("特效开始");
-//
-//			StartCoroutine ("PlayEffectAnimation", bse);
 
-
-		}
 
 //		private IEnumerator PlayEffectAnimation(BaseSkillEffect bse){
 
@@ -126,29 +116,48 @@ namespace WordJourney
 
 
 		// 受到伤害文本动画
-		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards){
+		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards, TintTextType tintTextType){
 
-			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (50, 50, 0);;
 
-			hurtText.transform.localPosition = pos;
+			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 
+			Vector3 originPos = Vector3.zero;
+			Vector3 offset = Vector3.zero;
+			Vector3 originTintPos = Vector3.zero;
+
+			switch(towards){
+			case Towards.Left:
+				originPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (0, 100, 0);
+				offset = new Vector3 (-100, 0, 0);
+				originTintPos = originPos + new Vector3 (-100, 100, 0);
+				break;
+			case Towards.Right:
+				originPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (100, 100, 0);
+				offset = new Vector3(100, 0, 0);
+				originTintPos = originPos + new Vector3 (100, 100, 0);
+				break;
+			}
+
+			hurtText.transform.localPosition = originPos;
+
+			Vector3 newPos = hurtText.transform.localPosition + offset;
 
 			hurtText.text = hurtStr;
 
 			hurtText.gameObject.SetActive (true);
 
-			Vector3 offset = Vector3.zero;
-
-			switch(towards){
-			case Towards.Left:
-				offset = new Vector3 (-100, 0, 0);
+			switch (tintTextType) {
+			case TintTextType.None:
 				break;
-			case Towards.Right:
-				offset = new Vector3(100, 0, 0);
+			case TintTextType.Crit:
+				string tintStr = "<color=red>暴击</color>";
+				PlayTintTextAnim (tintStr, originTintPos);
 				break;
+			case TintTextType.Miss:
+				tintStr = "<color=gray>miss</color>";
+				PlayTintTextAnim (tintStr, originTintPos);
+				return;
 			}
-
-			Vector3 newPos = hurtText.transform.localPosition + offset;
 					
 			hurtText.transform.DOLocalJump (newPos, 100f, 1, 0.35f).OnComplete(()=>{
 
@@ -163,9 +172,9 @@ namespace WordJourney
 
 				newPos = hurtText.transform.localPosition + offset;
 
-
 				hurtText.transform.DOLocalJump (newPos, 20f, 1, 0.15f).OnComplete(()=>{
 					hurtText.gameObject.SetActive(false);
+					tintTextPool.AddInstanceToPool(hurtText.gameObject);
 				});
 
 			});
@@ -176,17 +185,39 @@ namespace WordJourney
 
 			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3(50,100,0);
 
+			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
+
 			gainText.transform.localPosition = pos;
 
 			gainText.text = gainStr;
 
+			gainText.gameObject.SetActive (true);
+
 			gainText.transform.DOLocalMoveY (100, 0.5f).OnComplete(()=>{
 				gainText.gameObject.SetActive(false);
+				tintTextPool.AddInstanceToPool(gainText.gameObject);
 			});
 				
 		}
 			
+		private void PlayTintTextAnim(string tintStr, Vector3 originPos){
+			
+			Text tintText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 
+			tintText.transform.localPosition = originPos;
+
+			tintText.text = tintStr;
+
+			tintText.gameObject.SetActive (true);
+
+			tintText.transform.DOScale(new Vector3(1.5f,1.5f,1.5f),0.5f).OnComplete (() => {
+
+				tintText.gameObject.SetActive(false);
+
+				tintTextPool.AddInstanceToPool(tintText.gameObject);
+
+			});
+		}
 			
 //		// 动画管理方法，复杂回调单独写函数传入，简单回调使用拉姆达表达式
 //		private void ManageAnimations(Tweener newTweener,CallBack tc){

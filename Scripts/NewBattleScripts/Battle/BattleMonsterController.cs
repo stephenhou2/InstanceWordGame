@@ -49,15 +49,27 @@ namespace WordJourney
 
 		}
 
+		public void PlayFightAnim(CallBack cb){
+			armature.animation.Play ("fight",1);
+			StartCoroutine ("ExcuteCallBack", cb);
+
+		}
+
 		private void PhysicalAttack(){
 
-			physicalAttack.AffectAgents (this, bpCtr);
+			PlayFightAnim (() => {
 
-			bpCtr.UpdatePlayerStatusPlane ();
+				physicalAttack.AffectAgents (this, bpCtr);
 
-			if (!FightEnd ()) {
-				StartCoroutine ("InvokePhysicalAttack");
-			}
+				bpCtr.UpdatePlayerStatusPlane ();
+
+				if (!FightEnd ()) {
+					StartCoroutine ("InvokePhysicalAttack");
+				}
+
+			});
+
+
 
 		}
 
@@ -77,12 +89,12 @@ namespace WordJourney
 
 		}
 
-		public override void PlayHurtTextAnim (string hurtStr)
+		public override void PlayHurtTextAnim (string hurtStr,TintTextType tintTextType)
 		{
 			if (this.transform.position.x < bpCtr.transform.position.x) {
-				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left);
+				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left, tintTextType);
 			} else {
-				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right);
+				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right, tintTextType);
 			}
 
 		}
@@ -111,7 +123,9 @@ namespace WordJourney
 
 		public void MonsterDie(){
 			bmUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-			bmUICtr.PlayMonsterDieAnim (this, playerWinCallBack, new Transform[]{transform});
+//			bmUICtr.PlayMonsterDieAnim (this, playerWinCallBack, new Transform[]{transform});
+			gameObject.SetActive(false);
+			playerWinCallBack (new Transform[]{ transform });
 		}
 
 	}

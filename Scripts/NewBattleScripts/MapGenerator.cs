@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic; 		//Allows us to use Lists.
 using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine random number generator.
-
+using Transform = UnityEngine.Transform;
+using DragonBones;
 
 namespace WordJourney	
 {
@@ -29,7 +30,7 @@ namespace WordJourney
 
 		private List<MapItem> mapItems = new List<MapItem> ();
 		private List<MapNPC>mapNpcs = new List<MapNPC>();
-		private List<Monster>monsters;
+		private List<Transform>monsters;
 
 		public Transform monsterModelsContainer;
 
@@ -141,8 +142,9 @@ namespace WordJourney
 
 			monsters = chapterDetail.GetCurrentChapterMonsters ();
 
-			foreach (Monster m in monsters) {
-				m.transform.SetParent (monsterModelsContainer, false);
+			foreach (Transform monster in monsters) {
+				monster.SetParent (monsterModelsContainer, false);
+				monster.GetComponent<BattleMonsterController> ().PlayIdleAnim ();
 			}
 
 			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
@@ -166,6 +168,9 @@ namespace WordJourney
 			Camera.main.transform.rotation = Quaternion.identity;
 
 			Camera.main.transform.SetParent (player,false);
+
+			player.GetComponent<BattlePlayerController> ().PlayIdleAnim ();
+
 		}
 
 		private T RandomEvent<T>(List<T> eventsList){

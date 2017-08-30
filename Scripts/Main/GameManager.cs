@@ -157,13 +157,13 @@ namespace WordJourney
 			get{
 				if(mAllSkills.Count == 0){
 					Transform allSkillsContainer = TransformManager.NewTransform("AllSkills",GameObject.Find(CommonData.instanceContainerName).transform);
-					ResourceManager.Instance.LoadAssetWithFileName ("skills/skills", () => {
+					ResourceManager.Instance.LoadAssetWithFileName ("skills/skill", () => {
 						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 							Skill skill = ResourceManager.Instance.gos[i].GetComponent<Skill>();
 							mAllSkills.Add(skill);
 							skill.transform.SetParent(allSkillsContainer);
 						}
-					});
+					},true);
 
 				}
 
@@ -177,7 +177,7 @@ namespace WordJourney
 
 			get{
 				if (mAllSkillSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName ("skill/icons", () => {
+					ResourceManager.Instance.LoadAssetWithFileName ("skills/icons", () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllSkillSprites.Add(ResourceManager.Instance.sprites[i]);
@@ -229,14 +229,14 @@ namespace WordJourney
 
 		}
 
-		private List<Monster> mAllMonsters = new List<Monster>();
-		public List<Monster> allMonsters{
+		private List<Transform> mAllMonsters = new List<Transform>();
+		public List<Transform> allMonsters{
 			get{
 				if (mAllMonsters.Count == 0) {
 					ResourceManager.Instance.LoadAssetWithFileName ("monsters", () => {
 						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
-							Monster m = ResourceManager.Instance.gos[i].GetComponent<Monster>();
-							mAllMonsters.Add(m);
+							Transform monster = ResourceManager.Instance.gos[i].transform;
+							mAllMonsters.Add(monster);
 						};
 					}, true);
 				}

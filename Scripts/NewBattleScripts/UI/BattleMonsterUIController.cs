@@ -17,10 +17,12 @@ namespace WordJourney
 		private Animator animator;							//Variable of type Animator to store a reference to the enemy's Animator component.
 
 
-		protected void Awake ()
+		protected override void Awake ()
 		{
 
 			animator = GetComponent<Animator> ();
+
+			base.Awake ();
 
 		}
 			

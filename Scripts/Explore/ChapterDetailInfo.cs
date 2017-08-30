@@ -31,7 +31,7 @@ namespace WordJourney
 
 		private List<NPC> npcs = new List<NPC>();
 
-		private List<Monster> monsters = new List<Monster>();
+		private List<Transform> monsters = new List<Transform>();
 
 
 		private void LoadItemsData(){
@@ -100,7 +100,7 @@ namespace WordJourney
 
 		}
 
-		public List<Monster> GetCurrentChapterMonsters(){
+		public List<Transform> GetCurrentChapterMonsters(){
 
 			if (monsters.Count == 0) {
 				LoadMonsters ();

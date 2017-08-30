@@ -32,7 +32,7 @@ namespace WordJourney
 		//*****初始信息********//
 
 		public int maxHealth;//最大血量
-		public int maxMana;//最大气力值
+		public int maxMana;//最大魔法值
 
 		private int mHealth;
 		public int health{
@@ -66,11 +66,13 @@ namespace WordJourney
 		public int crit;//暴击
 
 
-		public int healthGainScaler;//力量对最大血量的加成系数
+//		public int healthGainScaler;//力量对最大血量的加成系数
 
 		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
 
-		public float hurtScaler;//伤害系数
+		public float physicalHurtScaler;//物理伤害系数
+
+		public float magicalHurtScaler;//魔法伤害系数
 
 		public float critScaler;//暴击伤害系数
 
@@ -126,7 +128,7 @@ namespace WordJourney
 //
 //		[HideInInspector]public Item antiDebuffBottle;
 
-		public List<StateSkillEffect> states = new List<StateSkillEffect>();//状态数组
+//		public List<StateSkillEffect> states = new List<StateSkillEffect>();//状态数组
 
 		public int attackTime;//攻击次数
 
@@ -146,11 +148,13 @@ namespace WordJourney
 
 			isActive = true; // 角色初始化后默认可以行动
 
-			healthGainScaler = 1;//力量对最大血量的加成系数
+//			healthGainScaler = 1;//力量对最大血量的加成系数
 
 			validActionType = ValidActionType.All;// 有效的行动类型
 
-			hurtScaler = 1.0f;//伤害系数
+			physicalHurtScaler = 1.0f;//伤害系数
+
+			magicalHurtScaler = 1.0f;
 
 			critScaler = 1.0f;//暴击伤害系数
 
@@ -296,7 +300,8 @@ namespace WordJourney
 //			maxHealth = originalMaxHealth + healthGainScaler * power;
 //			maxMana = originalMaxMana + (int)( * power);
 
-			hurtScaler = 1.0f;//伤害系数
+			physicalHurtScaler = 1.0f;// 物理伤害系数
+			magicalHurtScaler = 1.0f;// 魔法伤害系数
 			critScaler = 1.0f;//暴击伤害系数
 			healthAbsorbScalser = 0f;//吸血比例
 			attackTime = 1;
@@ -308,9 +313,9 @@ namespace WordJourney
 
 				foreach (Skill s in equipedSkills) {
 					s.isAvalible = true;
-					foreach (BaseSkillEffect bse in s.skillEffects) {
-						bse.actionCount = 0;
-					}
+//					foreach (BaseSkillEffect bse in s.skillEffects) {
+//						bse.actionCount = 0;
+//					}
 				}
 			}
 
@@ -318,9 +323,9 @@ namespace WordJourney
 				validActionType = ValidActionType.All;
 				foreach (Skill s in equipedSkills) {
 					s.isAvalible = true;
-					foreach (BaseSkillEffect bse in s.skillEffects) {
-						bse.actionCount = 0;
-					}
+//					foreach (BaseSkillEffect bse in s.skillEffects) {
+//						bse.actionCount = 0;
+//					}
 				}
 
 			}
@@ -329,21 +334,21 @@ namespace WordJourney
 
 
 		//添加状态 
-		public void AddState(StateSkillEffect sse){
-			states.Add (sse);
-			ResetBattleAgentProperties (false,false);
-		}
-		//删除状态
-		public void RemoveState(StateSkillEffect sse){
-			for(int i = 0;i<states.Count;i++){
-				if (sse.effectName == states[i].effectName) {
-					states.RemoveAt(i);
-					Destroy (sse);
-					ResetBattleAgentProperties (false,false);
-					return;
-				}
-			}
-		}
+//		public void AddState(StateSkillEffect sse){
+//			states.Add (sse);
+//			ResetBattleAgentProperties (false,false);
+//		}
+//		//删除状态
+//		public void RemoveState(StateSkillEffect sse){
+//			for(int i = 0;i<states.Count;i++){
+//				if (sse.effectName == states[i].effectName) {
+//					states.RemoveAt(i);
+//					Destroy (sse);
+//					ResetBattleAgentProperties (false,false);
+//					return;
+//				}
+//			}
+//		}
 
 
 //		public void AgentDie(CallBack cb){

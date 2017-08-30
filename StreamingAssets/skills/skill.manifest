@@ -1,0 +1,28 @@
+ManifestFileVersion: 0
+CRC: 1374787176
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 449642ab446a88f58fa18f3938e4a662
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: bf95ee769a68bda66f97cc366be39d64
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Skill/Skills/PhysicalAttack.prefab
+- Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
+- Assets/Prefabs/Skill/Skills/FireBlade.prefab
+- Assets/Prefabs/Skill/Skills/Treat.prefab
+- Assets/Prefabs/Skill/Skills/ThunderChain.prefab
+- Assets/Prefabs/Skill/Skills/Roar.prefab
+- Assets/Prefabs/Skill/Skills/Thunder.prefab
+Dependencies: []
