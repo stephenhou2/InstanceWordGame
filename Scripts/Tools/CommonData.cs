@@ -66,7 +66,7 @@ namespace WordJourney{
 
 	public enum ItemType{
 		Weapon,
-		Amour,
+		armour,
 		Shoes,
 		Consumables,
 		Task,
@@ -80,10 +80,10 @@ namespace WordJourney{
 	public enum PropertyType{
 		Attack,
 		Magic,
-		Amour,
+		armour,
 		MagicResist,
 		Crit,
-		Agility,
+		dodge,
 		Health,
 		Strength
 	}

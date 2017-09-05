@@ -35,15 +35,12 @@ namespace WordJourney
 
 		void Awake()
 		{
-//			TransitionDelay = 0.5f;
-//			currentMapIndex = 0;
-
 
 			mapGenerator = GetComponent<MapGenerator>();
 
 			navHelper = GetComponent<NavigationHelper> ();
 
-			battlePlayerCtr = GetComponentInChildren<BattlePlayerController> ();
+			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
@@ -235,7 +232,7 @@ namespace WordJourney
 
 			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
 
-			battlePlayerCtr.ContinueMove ();
+//			battlePlayerCtr.ContinueMove ();
 
 
 		}

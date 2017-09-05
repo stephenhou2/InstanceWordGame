@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class Skill:MonoBehaviour {
+	public abstract class Skill:MonoBehaviour {
 
 		public string skillName;// 技能名称
 
@@ -19,29 +19,34 @@ namespace WordJourney
 
 		public int manaConsume;//技能的魔法消耗
 
-		public int skillInterval;// 技能的冷却时间
+		public float coolenInterval;// 技能的冷却时间
 
 		public int skillLevel;// 技能等级
 
 		public bool isAvalible = true;
 
-		public string skillType;
+		public int unlockAgentLevel;
 
-		public string associatedSkillName;
-
-		public int associatedSkillUnlockLevel;
-
-		public bool unlocked;
-
-		public int effectDuration;
+//		public bool unlocked;
 
 		public float dodgeSeed = 0.01f; //计算闪避时的种子数
 
-		public float critSeed = 0.01f; //计算伤害时的种子数
+		public float critSeed = 0.01f; //计算暴击时的种子数
 
-		public float amourSeed = 0.01f; //计算魔抗抵消伤害的种子数
+		public float armourSeed = 0.01f; //计算护甲抵消伤害的种子数
 
 		public float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
+
+		public float baseNum;
+
+		public bool isPassive;
+
+		public string selfAnimName;
+		public string enemyAnimName;
+
+		public string selfEffectName;
+		public string enemyEffectName;
+
 
 		/// <summary>
 		/// 技能作用效果
@@ -49,8 +54,8 @@ namespace WordJourney
 		/// <param name="self">Self.</param>
 		/// <param name="enemy">Enemy.</param>
 		/// <param name="skillLevel">Skill level.</param>
-		public virtual void AffectAgents(BattleAgentController self, BattleAgentController enemy){
-
+		public abstract void AffectAgents(BattleAgentController self, BattleAgentController enemy);
+//		{
 //			for (int i = 0; i < skillEffects.Length; i++) {
 //
 //				BaseSkillEffect bse = skillEffects [i];
@@ -69,7 +74,7 @@ namespace WordJourney
 //				bse.AffectAgents (self, enemy, skillLevel, TriggerType.None);
 //
 //			}
-		}
+//		}
 
 		// 判断概率性技能是否生效
 		protected bool isEffective(float chance){

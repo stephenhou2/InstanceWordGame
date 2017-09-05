@@ -38,13 +38,15 @@ namespace WordJourney
 			
 		private Sequence mSequence;
 
-		private List<Sprite> skillSprites;
-
-		private List<Sprite> itemSprites;
+//		private List<Sprite> skillSprites;
+//
+//		private List<Sprite> itemSprites;
 
 		private List<Button> skillButtons = new List<Button>();
 
 		private InstancePool skillButtonPool;
+
+		private CallBack<int> skillSelectCallBack;
 
 		protected override void Awake(){
 
@@ -57,11 +59,10 @@ namespace WordJourney
 		}
 
 
-		public void SetUpExplorePlayerView(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites){
+		public void SetUpExplorePlayerView(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites,CallBack<int> skillSelectCallBack){
 
 			this.player = player;
-			this.skillSprites = skillSprites;
-			this.itemSprites = itemSprites;
+			this.skillSelectCallBack = skillSelectCallBack;
 
 			SetUpPlayerStatusPlane ();
 			UpdateItemButtons ();
@@ -88,9 +89,11 @@ namespace WordJourney
 			UpdateManaBarAnim (player);
 		}
 
-		public void SetUpBattlePlayerPlane(Player player){
+		public void SetUpPlayerSkillPlane(Player player){
 
 			skillButtons.Clear ();
+
+//			BattlePlayerController bpCtr = GameObject.Find (CommonData.instanceContainerName, "ExploreManager").GetComponent<BattlePlayerController> ();
 
 			for (int i = 0; i < player.equipedSkills.Count; i++) {
 
@@ -115,18 +118,64 @@ namespace WordJourney
 				skillName.text = skill.skillName;
 				manaConsume.text = skill.manaConsume.ToString();
 
-				skillButton.interactable = player.mana >= skill.manaConsume;
+				UpdateSkillButtonsStatus ();
 
-				if (skillButton.interactable) {
-					skillIcon.color = Color.white;
-				} else {
-					skillIcon.color = new Color (100, 100, 100,255);
-				}
+				int index = i;
+
+				skillButton.onClick.RemoveAllListeners ();
+				skillButton.onClick.AddListener (delegate() {
+					skillSelectCallBack(new int[]{index});
+					SkillButtonCoolen(skillButton,skill);
+				});
 
 				skillButtons.Add (skillButton);
 
 			}
 
+		}
+
+		/// <summary>
+		/// 技能按钮的冷却
+		/// </summary>
+		private void SkillButtonCoolen(Button skillButton,Skill skill){
+			
+			skillButton.interactable = false;
+
+			Image coolenMask = skillButton.transform.FindChild ("CoolenMask").GetComponent<Image> ();
+
+			coolenMask.enabled = true;
+
+			coolenMask.fillAmount = 1;
+
+			coolenMask.DOFillAmount (0, skill.coolenInterval).OnComplete(()=>{
+				coolenMask.enabled = false;
+				UpdateSkillButtonsStatus();
+			});
+				
+		}
+
+		private void UpdateSkillButtonsStatus(){
+			
+			for (int i = 0; i < skillButtons.Count; i++) {
+				
+				Button skillButton = skillButtons [i];
+				Skill skill = player.equipedSkills [i];
+
+				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
+//				Image coolenMask = skillButton.transform.FindChild ("CoolenMask").GetComponent<Image>();
+
+				skillButton.interactable = player.mana >= skill.manaConsume;
+
+				if (!skillButton.interactable) {
+					manaConsume.color = Color.red;
+//					coolenMask.fillAmount = 1;
+//					coolenMask.gameObject.SetActive (true);
+				} else {
+					manaConsume.color = Color.green;
+//					coolenMask.gameObject.SetActive (false);
+				}
+
+			}
 		}
 
 
@@ -148,38 +197,6 @@ namespace WordJourney
 			SetUpItemButton (manaBottle, manaBottleButton);
 			SetUpItemButton (antiDebuffBottle, antiDebuffButton);
 
-//			for (int i = 3; i < player.allEquipedItems.Count; i++) {
-//
-//				Item consumable = player.allEquipedItems [i];
-//
-//				Button itemButton = itemButtons [i - 3];
-//
-//				Image itemIcon = itemButton.GetComponent<Image> ();
-//
-//				Text itemCount = itemButton.transform.FindChild ("Text").GetComponent<Text> ();
-//
-//				if (consumable == null) {
-//
-//					itemButton.interactable = false;
-//					itemIcon.enabled = false;
-//
-//					itemIcon.sprite = null;
-//					itemCount.text = string.Empty;
-//
-//					continue;
-//				}
-//
-//				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
-//					return obj.name == consumable.spriteName;
-//				});
-//				if (itemIcon.sprite != null) {
-//					itemIcon.enabled = true;
-//					itemButton.interactable = true;
-//					itemCount.text = consumable.itemCount.ToString ();
-//				}
-//
-//				itemButton.interactable = (consumable.itemCount > 0);
-//			}
 
 		}
 
@@ -198,28 +215,6 @@ namespace WordJourney
 
 		}
 
-
-		// 更新战斗中玩家UI的状态
-		public void UpdateSkillButtonsStatus(Player player){
-
-			for (int i = 0; i < skillButtons.Count; i++) {
-
-				Button skillButton = skillButtons [i];
-
-//				Skill s = player.equipedSkills [i];
-//				// 如果是冷却中的技能
-//				if (s.isAvalible == false) {
-//					int actionBackCount = s.actionConsume - s.actionCount + 1;
-//					skillButtons [i].GetComponentInChildren<Text> ().text = actionBackCount.ToString ();
-//				} else {
-//					skillButtons [i].GetComponentInChildren<Text> ().text = "";
-//				}
-//				skillButtons [i].interactable = s.isAvalible && player.mana >= s.manaConsume; 
-//			}
-
-			}
-
-		}
 
 		public void OnItemButtonClick(int ButtonIndex){
 
@@ -270,7 +265,8 @@ namespace WordJourney
 		}
 
 
-		public void UpdateManaBarAnim(Agent ba){
+		private void UpdateManaBarAnim(Agent ba){
+			
 			manaBar.maxValue = ba.maxMana;
 			manaText.text = ba.mana + "/" + ba.maxMana;
 
@@ -372,7 +368,7 @@ namespace WordJourney
 
 //		private BattlePlayerController mBaPlayerController;
 
-		private List<Sprite> skillIcons = new List<Sprite>();
+//		private List<Sprite> skillIcons = new List<Sprite>();
 
 		//	private List<Item> consumables = new List<Item> ();
 
@@ -390,18 +386,7 @@ namespace WordJourney
 
 
 
-
-		public void OnPlayerSelectSkill(int skillIndex){
-
-
-			//			baView.SelectedSkillAnim (player.currentSkill == player.attackSkill,
-			//				player.currentSkill == player.defenceSkill,
-			//				skillIndex);
-
-		}
-
 		public void OnPlayerUseItem(int itemIndex){
-
 
 			Item item = player.allEquipedItems[itemIndex + 3];
 
@@ -417,7 +402,6 @@ namespace WordJourney
 				player.allItems.Remove (item);
 				UpdateItemButtons ();
 			}
-
 
 
 //			if (item.healthGain != 0 && item.manaGain != 0) {
@@ -454,28 +438,23 @@ namespace WordJourney
 			QuitDetailPlane ();
 		}
 
-//		public void OnItemLongPress(int index){
-//			Item i = player.allEquipedItems [3 + index];
-//			ShowItemDetail (index, i);
-//		}
-
 		public void OnItemButtonUp(){
 
 			QuitDetailPlane ();
 		}
 
 
-		public void PlayPlayerDieAnim(BattleAgentController baCtr,CallBack cb){
-			
-			baCtr.GetComponent<SpriteRenderer> ().DOFade (0, 0.5f).OnComplete(()=>{
-				baCtr.gameObject.SetActive(false);
-
-				if(cb != null){
-					cb();
-				}
-
-			});
-		}
+//		public void PlayPlayerDieAnim(BattleAgentController baCtr,CallBack cb){
+//			
+//			baCtr.GetComponent<SpriteRenderer> ().DOFade (0, 0.5f).OnComplete(()=>{
+//				baCtr.gameObject.SetActive(false);
+//
+//				if(cb != null){
+//					cb();
+//				}
+//
+//			});
+//		}
 
 
 		public void OnQuitFight(){

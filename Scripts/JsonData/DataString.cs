@@ -13,9 +13,9 @@
 			"originalPower":,
 			"originalMagic",
 			"originalCrit",
-			"originalAmour":,
+			"originalarmour":,
 			"originalMagicResist":,
-			"originalAgility":
+			"originaldodge":
 
 }
 ]

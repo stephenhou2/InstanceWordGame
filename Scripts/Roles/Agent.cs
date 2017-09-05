@@ -26,8 +26,8 @@ namespace WordJourney
 		public int originalAttack;
 		public int originalAttackSpeed;
 		public int originalCrit;
-		public int originalAgility;
-		public int originalAmour;
+		public int originaldodge;
+		public int originalarmour;
 		public int originalManaResist;
 		//*****初始信息********//
 
@@ -60,11 +60,62 @@ namespace WordJourney
 
 		public int attack;//攻击力
 		public int attackSpeed;//攻速
-		public int agility;//敏捷
-		public int amour;//护甲
+		public int dodge;//敏捷
+		public int armour;//护甲
 		public int manaResist;//魔抗
 		public int crit;//暴击
 
+
+		public float reflectScaler;
+		public float decreaseHurtScaler;
+
+		public int magicBase;
+
+		private float mAttackSpeedGainScaler;
+		public float attackSpeedGainScaler{
+			get{ return mAttackSpeedGainScaler; }
+			set{
+				mAttackSpeedGainScaler = value;
+				ResetBattleAgentProperties ();
+			}
+		}
+
+		private float mArmourGainScaler;
+		public float armourGainScaler{
+			get{ return mArmourGainScaler; }
+			set{
+				mArmourGainScaler = value; 
+				ResetBattleAgentProperties ();
+			}
+				
+		}
+
+		private float mManaResistGainScaler;
+		public float manaResistGainScaler{
+			get{ return mManaResistGainScaler; }
+			set{
+				mManaResistGainScaler = value;
+				ResetBattleAgentProperties ();
+			}
+		}
+
+		private float mCritGainScalser;
+		public float critGainScaler{
+			get{ return mCritGainScalser; }
+			set{
+				mCritGainScalser = value;
+				ResetBattleAgentProperties ();
+			}
+		}
+
+		private float mDodgeGainScaler;
+		public float dodgeGainScaler{
+			get{ return mDodgeGainScaler; }
+			set{
+				mDodgeGainScaler = value;
+				ResetBattleAgentProperties ();
+			}
+		}
 
 //		public int healthGainScaler;//力量对最大血量的加成系数
 
@@ -144,17 +195,13 @@ namespace WordJourney
 
 
 
+
+
 		public virtual void Awake(){
 
 			isActive = true; // 角色初始化后默认可以行动
 
-//			healthGainScaler = 1;//力量对最大血量的加成系数
-
 			validActionType = ValidActionType.All;// 有效的行动类型
-
-			physicalHurtScaler = 1.0f;//伤害系数
-
-			magicalHurtScaler = 1.0f;
 
 			critScaler = 1.0f;//暴击伤害系数
 
@@ -178,8 +225,8 @@ namespace WordJourney
 //			this.originalPower = ba.originalPower;
 //			this.originalMana = ba.originalMana;
 //			this.originalCrit = ba.originalCrit;
-//			this.originalAgility = ba.originalAgility;
-//			this.originalAmour = ba.originalAmour;
+//			this.originaldodge = ba.originaldodge;
+//			this.originalarmour = ba.originalarmour;
 //			this.originalManaResist = ba.originalManaResist;
 
 			this.maxHealth = ba.maxHealth;
@@ -190,8 +237,8 @@ namespace WordJourney
 			this.attack = ba.attack;//攻击力
 			this.attackSpeed = ba.attackSpeed;//攻速
 			this.mana = ba.mana;//魔法
-			this.agility = ba.agility;//敏捷
-			this.amour = ba.amour;//护甲
+			this.dodge = ba.dodge;//敏捷
+			this.armour = ba.armour;//护甲
 			this.manaResist = ba.manaResist;//魔抗
 			this.crit = ba.crit;//暴击
 
@@ -200,12 +247,6 @@ namespace WordJourney
 			this.allEquipedItems = ba.allEquipedItems;
 
 			this.allItems = ba.allItems;
-
-//			foreach (StateSkillEffect state in ba.states) {
-//				state.transform.SetParent (this.transform.FindChild ("States").transform);
-//			}
-//			ba.states.Clear ();
-//			this.states = ba.states;
 
 		}
 
@@ -221,8 +262,8 @@ namespace WordJourney
 //			this.originalPower = ba.originalPower;
 //			this.originalMana = ba.originalMana;
 //			this.originalCrit = ba.originalCrit;
-//			this.originalAgility = ba.originalAgility;
-//			this.originalAmour = ba.originalAmour;
+//			this.originaldodge = ba.originaldodge;
+//			this.originalarmour = ba.originalarmour;
 //			this.originalManaResist = ba.originalManaResist;
 //
 //			this.maxHealth = ba.maxHealth;
@@ -235,8 +276,8 @@ namespace WordJourney
 //			this.attack = ba.attack;//攻击力
 //			this.power = ba.power;//力量
 //			this.mana = ba.mana;//魔法
-//			this.agility = ba.agility;//敏捷
-//			this.amour = ba.amour;//护甲
+//			this.dodge = ba.dodge;//敏捷
+//			this.armour = ba.armour;//护甲
 //			this.manaResist = ba.manaResist;//魔抗
 //			this.crit = ba.crit;//暴击
 //
@@ -269,39 +310,37 @@ namespace WordJourney
 				return;
 			}
 
-			attack += equipment.attackGain;
+			health += equipment.healthGain;
 			mana += equipment.manaGain;
-			crit += equipment.critGain;
-			amour += equipment.amourGain;
-			manaResist += equipment.manaResistGain;
-			agility += equipment.agilityGain;
+			attack += equipment.attackGain;
+
+			attackSpeed = (int)((attackSpeed + equipment.attackSpeedGain) * (1 + attackSpeedGainScaler));
+			crit = (int)((crit + equipment.critGain) * (1 + critGainScaler));
+			armour = (int)((armour + equipment.armourGain) * (1 + armourGainScaler));
+			manaResist = (int)((manaResist + equipment.manaResistGain) * (1 + manaResistGainScaler));
+			dodge = (int)((dodge + equipment.dodgeGain) * (1 + dodgeGainScaler));
 
 		}
 
 		// 仅根据物品重新计人物的属性，其余属性重置为初始状态
-		public void ResetBattleAgentProperties (bool toOriginalState,bool firstEnterBattleOrQuitBattle)
+		public void ResetBattleAgentProperties (bool toOriginalState = false)
 		{
 			// 所有属性重置为初始值
 			attack = originalAttack;
 			mana = originalMana;
 			crit = originalCrit;
-			amour = originalAmour;
+			armour = originalarmour;
 			manaResist = originalManaResist;
-			agility = originalAgility;
+			dodge = originaldodge;
 
 			// 根据装备更新属性
-
 			foreach (Item item in allEquipedItems) {
 				if (item != null && item.itemType != ItemType.Consumables) {
 					ResetPropertiesByEquipment (item);
 				}
 			}
 
-//			maxHealth = originalMaxHealth + healthGainScaler * power;
-//			maxMana = originalMaxMana + (int)( * power);
 
-			physicalHurtScaler = 1.0f;// 物理伤害系数
-			magicalHurtScaler = 1.0f;// 魔法伤害系数
 			critScaler = 1.0f;//暴击伤害系数
 			healthAbsorbScalser = 0f;//吸血比例
 			attackTime = 1;
@@ -310,23 +349,6 @@ namespace WordJourney
 				validActionType = ValidActionType.All;
 				health = maxHealth;
 				mana = maxMana;
-
-				foreach (Skill s in equipedSkills) {
-					s.isAvalible = true;
-//					foreach (BaseSkillEffect bse in s.skillEffects) {
-//						bse.actionCount = 0;
-//					}
-				}
-			}
-
-			if (firstEnterBattleOrQuitBattle) {
-				validActionType = ValidActionType.All;
-				foreach (Skill s in equipedSkills) {
-					s.isAvalible = true;
-//					foreach (BaseSkillEffect bse in s.skillEffects) {
-//						bse.actionCount = 0;
-//					}
-				}
 
 			}
 
@@ -361,9 +383,9 @@ namespace WordJourney
 				"\n[attack]:" + attack + 
 				"\n[mana]:" + mana +
 				"\n[crit]:" + crit +
-				"\n[amour]:" + amour +
+				"\n[armour]:" + armour +
 				"\n[manaResist]:" + manaResist +
-				"\n[agiglity]:" + agility +
+				"\n[agiglity]:" + dodge +
 				"\n[maxHealth]:" + maxHealth +
 				"\n[maxMana]:" + maxMana);
 		}
@@ -391,8 +413,8 @@ namespace WordJourney
 		public int originalPower;
 		public int originalMana;
 		public int originalCrit;
-		public int originalAgility;
-		public int originalAmour;
+		public int originaldodge;
+		public int originalarmour;
 		public int originalManaResist;
 		//*****初始信息********//
 
@@ -405,8 +427,8 @@ namespace WordJourney
 		public int attack;//攻击力
 		public int power;//力量
 		public int mana;//魔法
-		public int agility;//敏捷
-		public int amour;//护甲
+		public int dodge;//敏捷
+		public int armour;//护甲
 		public int manaResist;//魔抗
 		public int crit;//暴击
 

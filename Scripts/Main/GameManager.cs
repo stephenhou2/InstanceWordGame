@@ -157,6 +157,9 @@ namespace WordJourney
 			get{
 				if(mAllSkills.Count == 0){
 					Transform allSkillsContainer = TransformManager.NewTransform("AllSkills",GameObject.Find(CommonData.instanceContainerName).transform);
+
+					ResourceManager.Instance.gos.Clear ();
+
 					ResourceManager.Instance.LoadAssetWithFileName ("skills/skill", () => {
 						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 							Skill skill = ResourceManager.Instance.gos[i].GetComponent<Skill>();
@@ -167,9 +170,27 @@ namespace WordJourney
 
 				}
 
+				SortSkillsById (mAllSkills);
+
 				return mAllSkills;
 			}
 
+		}
+
+		// 技能按照id排序方法
+		private void SortSkillsById(List<Skill> skills){
+			Skill temp;
+			for (int i = 0; i < skills.Count - 1; i++) {
+				for (int j = 0; j < skills.Count - 1 - i; j++) {
+					Skill sBefore = skills [j];
+					Skill sAfter = skills [j + 1];
+					if (sBefore.skillId > sAfter.skillId) {
+						temp = sBefore;
+						skills [j] = sAfter;
+						skills [j + 1] = temp; 
+					}
+				}
+			}
 		}
 
 		private List<Sprite> mAllSkillSprites = new List<Sprite>();

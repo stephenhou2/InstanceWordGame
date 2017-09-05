@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3615065536
+CRC: 1702969836
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8394f86c779f8f243d42a29689636abc
+    Hash: d043e76fff6eff94f966089a9749867f
   TypeTreeHash:
     serializedVersion: 2
-    Hash: d00c74e781010d113324c14e5482baa1
+    Hash: 50de0cb4fcf8da4e6f3652eebeff6859
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -22,11 +22,7 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
@@ -49,5 +45,4 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Skill/SkillsCanvas.prefab
-Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/button
+Dependencies: []

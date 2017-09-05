@@ -22,13 +22,13 @@ namespace WordJourney
 		public Text progressText;
 
 		public Text attackText;
-		public Text amourText;
+		public Text armourText;
 		public Text manaResistText;
 		public Text critText;
-		public Text agilityText;
+		public Text dodgeText;
 
 	//	public Image weaponImage;
-	//	public Image amourImage;
+	//	public Image armourImage;
 	//	public Image shoesImage;
 		public Button[] allEquipedItemBtns;
 
@@ -120,10 +120,10 @@ namespace WordJourney
 			#warning 进度文字未设置
 			attackText.text = "攻击:" + player.attack.ToString ();
 			manaText.text = "魔法:" + player.mana.ToString ();
-			amourText.text = "护甲:" + player.amour.ToString();
+			armourText.text = "护甲:" + player.armour.ToString();
 			manaResistText.text = "抗性:" + player.manaResist.ToString();
 			critText.text = "暴击:" + (player.crit / (1 + 0.01f * player.crit)).ToString("F0") + "%";
-			agilityText.text = "闪避:" + (player.agility / (1 + 0.01f * player.agility)).ToString("F0") + "%";
+			dodgeText.text = "闪避:" + (player.dodge / (1 + 0.01f * player.dodge)).ToString("F0") + "%";
 
 		}
 
@@ -161,7 +161,7 @@ namespace WordJourney
 					SetUpItemButton (player.allItems [i], itemBtn);
 
 					if (item.equiped &&
-					    (item.itemType == ItemType.Weapon || item.itemType == ItemType.Amour || item.itemType == ItemType.Shoes)) {
+					    (item.itemType == ItemType.Weapon || item.itemType == ItemType.armour || item.itemType == ItemType.Shoes)) {
 						extraInfo.text = "<color=green>已装备</color>";
 					} else if (item.itemType == ItemType.Consumables) {
 						extraInfo.text = item.itemCount.ToString ();
@@ -232,7 +232,7 @@ namespace WordJourney
 			case ItemType.Weapon:
 				equipedItemOfCurrentType = player.allEquipedItems [0];
 				break;
-			case ItemType.Amour:
+			case ItemType.armour:
 				equipedItemOfCurrentType = player.allEquipedItems [1];
 				break;
 			case ItemType.Shoes:

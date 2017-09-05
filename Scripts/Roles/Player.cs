@@ -21,7 +21,7 @@ namespace WordJourney
 						ResourceManager.Instance.LoadAssetWithFileName("player",()=>{
 							mPlayerSingleton = GameObject.Find ("Player").GetComponent<Player>();
 							mPlayerSingleton.transform.SetParent(null);
-							mPlayerSingleton.ResetBattleAgentProperties (true,false);
+							mPlayerSingleton.ResetBattleAgentProperties (true);
 							DontDestroyOnLoad (mPlayerSingleton);
 						},true);
 					}
@@ -66,6 +66,8 @@ namespace WordJourney
 		public override void Awake(){
 
 			base.Awake ();
+
+			magicBase = 50;
 
 			#warning 这里用来玩家信息初始化
 		}

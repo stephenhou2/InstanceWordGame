@@ -10,7 +10,7 @@ namespace WordJourney
 		public ProduceView produceView;
 
 		private List<Item> allWeapons = new List<Item>() ;
-		private List<Item> allAmours = new List<Item>() ;
+		private List<Item> allarmours = new List<Item>() ;
 		private List<Item> allShoes = new List<Item>() ;
 		private List<Item> allConsumables = new List<Item>() ;
 		private List<Item> allTaskItems = new List<Item>();
@@ -45,7 +45,7 @@ namespace WordJourney
 				itemsOfCurrentType = allWeapons;
 				break;
 			case 1:
-				itemsOfCurrentType = allAmours;;
+				itemsOfCurrentType = allarmours;;
 				break;
 			case 2:
 				itemsOfCurrentType = allConsumables;
@@ -152,8 +152,8 @@ namespace WordJourney
 //				case ItemType.Weapon:
 //					allWeapons.Add (item);
 //					break;
-//				case ItemType.Amour:
-//					allAmours.Add (item);
+//				case ItemType.armour:
+//					allarmours.Add (item);
 //					break;
 //				case ItemType.Shoes:
 //					allShoes.Add (item);

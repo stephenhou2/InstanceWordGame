@@ -12,8 +12,6 @@ public class PicTool {
 		ShowPicTool ();
 
 
-
-
 	}
 
 	private static void ShowPicTool(){

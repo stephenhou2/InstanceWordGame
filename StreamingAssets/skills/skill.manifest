@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1374787176
+CRC: 2447398356
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 449642ab446a88f58fa18f3938e4a662
+    Hash: 9c2b34d5505defd31b28ddcfdd660af5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: bf95ee769a68bda66f97cc366be39d64
+    Hash: 16f675c64b1794664934470003061976
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -14,15 +14,48 @@ ClassTypes:
 - Class: 4
   Script: {instanceID: 0}
 - Class: 114
-  Script: {fileID: 11500000, guid: 850503fc84411469e9fb4e6a5075adb6, type: 3}
+  Script: {fileID: 11500000, guid: 50df3331004e74d52881e71e56549431, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 17825c31ef463455abb2547e9380b14f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 949c6f43c57aa4071b61b235bf3722aa, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dd739d243d5b148089d4ef9d1ddf9d01, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 701cb76842b6547b3955f6c0e6154aec, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a2f71be8588a74bd599e12a2ba61e0b0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c037fff9d1189408293e95977384aa67, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: df774facefd22450cbe4bcc1b5700fb4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 95f0c2cd4cd4d4839b012cac3af5a732, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8b92a3fd8c9c14b45845e810d8caf077, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 12969d4eb10b246d996fed9ca687bb73, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 39e05c7eb78ee40a6887e1cc4c35c147, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9993f95fd37284e3aa21413bca2b5bd1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5bea1def3cacb4818982c1a1432cf99a, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Skill/Skills/PhysicalAttack.prefab
-- Assets/Prefabs/Skill/Skills/WeaponExpert.prefab
-- Assets/Prefabs/Skill/Skills/FireBlade.prefab
-- Assets/Prefabs/Skill/Skills/Treat.prefab
-- Assets/Prefabs/Skill/Skills/ThunderChain.prefab
-- Assets/Prefabs/Skill/Skills/Roar.prefab
-- Assets/Prefabs/Skill/Skills/Thunder.prefab
+- Assets/Prefabs/Skill/NewSkills/DecreaseArmour.prefab
+- Assets/Prefabs/Skill/NewSkills/ElementBody.prefab
+- Assets/Prefabs/Skill/NewSkills/IronSkin.prefab
+- Assets/Prefabs/Skill/NewSkills/WeaponExpert.prefab
+- Assets/Prefabs/Skill/NewSkills/Thunder.prefab
+- Assets/Prefabs/Skill/NewSkills/PowerStrengthen.prefab
+- Assets/Prefabs/Skill/NewSkills/IceExplosion.prefab
+- Assets/Prefabs/Skill/NewSkills/BrambleShield.prefab
+- Assets/Prefabs/Skill/NewSkills/HardBeat.prefab
+- Assets/Prefabs/Skill/NewSkills/MagicShield.prefab
+- Assets/Prefabs/Skill/NewSkills/Vision.prefab
+- Assets/Prefabs/Skill/NewSkills/SneakAttack.prefab
+- Assets/Prefabs/Skill/NewSkills/MagicStrengthen.prefab
+- Assets/Prefabs/Skill/NewSkills/FastAttack.prefab
 Dependencies: []

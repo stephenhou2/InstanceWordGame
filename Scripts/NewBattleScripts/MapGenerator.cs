@@ -18,7 +18,7 @@ namespace WordJourney
 
 		public Transform exit;	
 
-		public Transform player;
+		private Transform player;
 
 //		public List<Transform> floorTiles;
 //		public List<Transform> outerWallTiles;
@@ -144,7 +144,7 @@ namespace WordJourney
 
 			foreach (Transform monster in monsters) {
 				monster.SetParent (monsterModelsContainer, false);
-				monster.GetComponent<BattleMonsterController> ().PlayIdleAnim ();
+				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand", 0, null);
 			}
 
 			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
@@ -152,16 +152,16 @@ namespace WordJourney
 		}
 			
 		private void SetUpPlayer(){
+
+			player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 			
 			Vector3 playerOriginPos = RandomPosition ();
 
 			player.position = playerOriginPos;
 
-			player.GetComponent<BattlePlayerController> ().singleMoveEndPos = playerOriginPos;
+			player.GetComponent<BattlePlayerController>().singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
-
-			player.SetParent (null,true);
 
 			Camera.main.transform.position = new Vector3 (0, 0, -10);
 
@@ -169,7 +169,7 @@ namespace WordJourney
 
 			Camera.main.transform.SetParent (player,false);
 
-			player.GetComponent<BattlePlayerController> ().PlayIdleAnim ();
+			player.GetComponent<BattlePlayerController> ().PlayRoleAnim ("stand", 0, null);
 
 		}
 
@@ -260,8 +260,6 @@ namespace WordJourney
 		}
 
 
-
-
 		//Clears our list gridPositions and prepares it to generate a new board.
 		void ResetGridList ()
 		{
@@ -279,10 +277,6 @@ namespace WordJourney
 				}
 			}
 		}
-
-
-
-
 
 
 		//RandomPosition returns a random position from our list gridPositions.
@@ -306,10 +300,7 @@ namespace WordJourney
 			//Return the randomly selected Vector3 position.
 			return randomPosition;
 		}
-
-//		private int Roll(){
-//
-//		}
+			
 
 		//LayoutObjectAtRandom accepts an array of game objects to choose from along with a minimum and maximum range for the number of objects to create.
 		private void LayoutObjectAtRandom<T> (List<T> tileList, Count tileCount,Transform container)
@@ -343,8 +334,15 @@ namespace WordJourney
 
 			}
 		}
+
+		public void QuitCurrentMap(){
+			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
+			floorPool.AddChildInstancesToPool (floorsContainer);
+			npcPool.AddChildInstancesToPool (npcsContainer);
+			itemPool.AddChildInstancesToPool (itemsContainer);
+			monsterPool.AddChildInstancesToPool (monstersContainer);
+		}
+
 	}
-
-
-
+		
 }

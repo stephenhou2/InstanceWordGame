@@ -10,8 +10,6 @@ namespace WordJourney
 {
 	public class BattlePlayerController : BattleAgentController {
 
-		[HideInInspector]public Player player;
-
 		// 事件回调
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterItem;
@@ -37,24 +35,22 @@ namespace WordJourney
 		// 移动的终点位置
 		private Vector3 endPos;
 
-
+		// 玩家UI控制器
 		private BattlePlayerUIController bpUICtr;
+
+		// 当前碰到的怪物控制器
 		private BattleMonsterController bmCtr;
 
+		// 玩家战斗失败回调
 		private CallBack playerLoseCallBack;
-
 
 
 
 		protected override void Awake(){
 
-			player = Player.mainPlayer;
+			agent = GetComponentInParent<Player> ();
 
-			agent = player;
-
-			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
-
-			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+			physicalAttack.selfAnimName = "battle";
 
 			base.Awake ();
 
@@ -82,7 +78,7 @@ namespace WordJourney
 
 				});
 
-				PlayIdleAnim ();
+				PlayRoleAnim ("stand", 0, null);
 
 				Debug.Log ("无有效路径");
 
@@ -164,26 +160,30 @@ namespace WordJourney
 		/// <summary>
 		/// 继续当前未完成的单步移动
 		/// </summary>
-		public void ContinueMove(){
-
-			MoveToNextPosition ();
-
-			boxCollider.enabled = true;
-
-		}
+//		public void ContinueMove(){
+//
+//			MoveToNextPosition ();
+//
+//			boxCollider.enabled = true;
+//
+//		}
 
 		/// <summary>
 		/// 移动到下一个节点
 		/// </summary>
 		private void MoveToNextPosition ()
 		{
+			Vector3 nextPos = Vector3.zero;
+			if (pathPosList.Count > 0) {
+				
+				nextPos = pathPosList [0];
 
-			Vector3 nextPos = pathPosList [0];
+				if (nextPos.x > transform.position.x) {
+					transform.localScale = new Vector3 (1, 1, 1);
+				} else if (nextPos.x < transform.position.x) {
+					transform.localScale = new Vector3 (-1, 1, 1);
+				}
 
-			if (nextPos.x > transform.position.x) {
-				transform.localScale = new Vector3 (1, 1, 1);
-			} else if(nextPos.x < transform.position.x){
-				transform.localScale = new Vector3 (-1, 1, 1);
 			}
 
 			// 到达终点前的单步移动开始前进行碰撞检测
@@ -212,6 +212,8 @@ namespace WordJourney
 
 						moveTweener.Kill (false);
 
+						PlayRoleAnim ("stand", 0, null);
+
 						singleMoveEndPos = transform.position;
 
 						inSingleMoving = false;
@@ -223,6 +225,8 @@ namespace WordJourney
 						return;
 
 					case "npc":
+
+						PlayRoleAnim ("stand", 0, null);
 
 						moveTweener.Kill (false);
 
@@ -252,7 +256,7 @@ namespace WordJourney
 				// 走到了终点
 				if (ArriveEndPoint ()) {
 					moveTweener.Kill (true);
-					PlayIdleAnim ();
+					PlayRoleAnim ("stand", 0, null);
 					Debug.Log ("到达终点");
 				} else {
 					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,endPos,singleMoveEndPos));
@@ -270,7 +274,7 @@ namespace WordJourney
 				// 向下一节点移动
 				MoveToPosition (nextPos);
 
-				PlayRunAnim ();
+				PlayRoleAnim ("walk", 0, null);
 
 				// 标记单步移动中
 				inSingleMoving = true;
@@ -286,11 +290,11 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpExplorePlayerUI(){
 
-//			if (GameManager.Instance.allSkillSprites.Count == 0) {
-//				ResourceManager.WaitUntillAsyncLoadFinished ();
-//			}
+			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
 
-			bpUICtr.SetUpExplorePlayerView (player, GameManager.Instance.allSkillSprites, GameManager.Instance.allItemSprites);
+			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+
+			bpUICtr.SetUpExplorePlayerView (agent as Player, GameManager.Instance.allSkillSprites, GameManager.Instance.allItemSprites,PlayerSelectSkill);
 
 		}
 
@@ -298,7 +302,7 @@ namespace WordJourney
 		/// Starts the fight.
 		/// </summary>
 		/// <param name="bmCtr">怪物控制器</param>
-		/// <param name="playerWinCallBack">Player window call back.</param>
+		/// <param name="playerLoseCallBack"> 玩家战斗失败回调 </param>
 		public void StartFight(BattleMonsterController bmCtr,CallBack playerLoseCallBack){
 
 			this.bmCtr = bmCtr;
@@ -306,65 +310,29 @@ namespace WordJourney
 			this.playerLoseCallBack = playerLoseCallBack;
 
 			// 初始化玩家战斗UI（技能界面）
-			bpUICtr.SetUpBattlePlayerPlane (player);
+			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
 
-			// 默认使用普通攻击
-			PhysicalAttack ();
+			// 开始战斗
+			Fight();
 
 		}
 
 		/// <summary>
-		/// 按照每玩家攻击间隔进行普通攻击
+		/// 角色战斗逻辑
 		/// </summary>
-		private void PhysicalAttack(){
-
-			PlayFightAnim (() => {
-
-				physicalAttack.AffectAgents (this, bmCtr);
-
-				bmCtr.UpdateMonsterStatusPlane ();
-
-				if (!FightEnd ()) {
-					StartCoroutine ("InvokePhysicalAttack");
-				}
-
-			});
-
+		public override void Fight(){
+			UseSkill(physicalAttack);
 		}
 
-		public void PlayFightAnim(CallBack cb){
-			armature.animation.Play ("battle",1);
-			StartCoroutine ("ExcuteCallBack", cb);
-
-		}
 
 		/// <summary>
-		/// 玩家攻击间隔计时器
-		/// </summary>
-		/// <returns>The physical attack.</returns>
-		private IEnumerator InvokePhysicalAttack(){
-
-			float timePassed = 0;
-
-			while (timePassed < player.attackInterval) {
-
-				timePassed += Time.deltaTime;
-
-				yield return null;
-
-			}
-
-			PhysicalAttack ();
-
-		}
-
-		/// <summary>
-		/// 受到伤害播放伤害文字动画
+		/// 伤害文本动画
 		/// </summary>
 		/// <param name="hurtStr">Hurt string.</param>
+		/// <param name="tintTextType">伤害类型 [TintTextType.Crit:暴击伤害 ,TintTextType.Miss: 伤害闪避]</param>
 		public override void PlayHurtTextAnim (string hurtStr, TintTextType tintTextType)
 		{
-
+			// 伤害文字的动画方向根据玩家和怪物的位置信息进行调整
 			if (this.transform.position.x <= bmCtr.transform.position.x) {
 				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left, tintTextType);
 			} else {
@@ -375,7 +343,7 @@ namespace WordJourney
 		}
 
 		/// <summary>
-		/// 吸血或者补血时播放补血文字动画
+		/// 血量提升文本动画
 		/// </summary>
 		/// <param name="gainStr">Gain string.</param>
 		public override void PlayGainTextAnim (string gainStr)
@@ -388,57 +356,86 @@ namespace WordJourney
 		/// 玩家选择技能后的响应方法
 		/// </summary>
 		/// <param name="btnIndex">Button index.</param>
-		public void PlayerSelectSkill(int btnIndex){
+		public void PlayerSelectSkill(int[] btnIndexArray){
 
-			Skill skill = player.equipedSkills [btnIndex];
+			int btnIndex = btnIndexArray [0];
 
-			StopCoroutine ("InvokePhysicalAttack");
+			Skill skill = agent.equipedSkills [btnIndex];
 
-			skill.AffectAgents (this, bmCtr);
+			StopCoroutine ("InvokeAttack");
 
-			if (!FightEnd ()) {
-				Invoke ("PhysicalAttack", player.attackInterval);
-			}
-
+			UseSkill (skill);
 		}
 
 		/// <summary>
-		/// 判断本次战斗是否结束，怪物死亡执行战斗胜利回调
+		/// 使用技能
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		protected override void UseSkill (Skill skill)
+		{
+			// 技能对应的角色动画，动画结束后执行技能效果并更新角色状态栏
+			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
+				skill.AffectAgents(this,bmCtr);
+				this.UpdatePlayerStatusPlane();
+				bmCtr.UpdateMonsterStatusPlane();
+				if(!FightEnd()){
+					StopCoroutine("InvokeAttack");
+					StartCoroutine("InvokeAttack",physicalAttack);
+				}
+			});
+				
+			// 播放技能对应的怪物动画
+			if (skill.enemyAnimName != string.Empty) {
+				bmCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
+			}
+
+			// 播放技能对应的玩家技能特效动画
+			if (skill.selfEffectName != string.Empty) {
+				SetEffectAnim (skill.selfEffectName);
+			}
+
+			// 播放技能对应的怪物技能特效动画
+			if (skill.enemyEffectName != string.Empty) {
+				bmCtr.SetEffectAnim (skill.enemyEffectName);
+			}
+		}
+
+		/// <summary>
+		/// 判断本次战斗是否结束,如果怪物死亡则执行怪物死亡对应的方法
 		/// </summary>
 		/// <returns><c>true</c>, if end was fought, <c>false</c> otherwise.</returns>
 		private bool FightEnd(){
 
-			if (bmCtr.monster.health <= 0) {
+			if (bmCtr.agent.health <= 0) {
 				bmCtr.MonsterDie ();
+				agent.ResetBattleAgentProperties ();
 				return true;
-			} else if (player.health <= 0) {
+			} else if (agent.health <= 0) {
 				return true;
 			}else {
 				return false;
 			}
 
 		}
-
-
-		public void PlayRunAnim(){
-			armature.animation.Play ("walk");
-		}
-
-
-
-//		public void ReverseDirection(){
-//			if (armature.flipX) {
-//				armature.transform.localScale = new Vector3 (1, 0, 0);
-//			} else {
-//				armature.transform.localScale = new Vector3 (-1, 0, 0);
-//			}
-//		}
-
+			
+		/// <summary>
+		/// 玩家死亡
+		/// </summary>
 		public void PlayerDie(){
+
+			// 停止玩家和怪物的攻击
+			this.StopCoroutine ("InvokeAttack");
+			bmCtr.StopCoroutine ("InvokeAttack");
+
+
 			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-//			bpUICtr.PlayPlayerDieAnim (this, playerLoseCallBack);
-			gameObject.SetActive(false);
-			playerLoseCallBack ();
+
+
+			PlayRoleAnim("die", 1, () => {
+				playerLoseCallBack ();
+				gameObject.SetActive(false);
+			});
+
 
 		}
 
@@ -449,110 +446,5 @@ namespace WordJourney
 			bpUICtr.UpdatePlayerStatusPlane ();
 		}
 
-		public float restartLevelDelay = 1f;		//Delay time in seconds to restart level.
-
-		public AudioClip moveSound1;				//1 of 2 Audio clips to play when player moves.
-		public AudioClip moveSound2;				//2 of 2 Audio clips to play when player moves.
-		public AudioClip eatSound1;					//1 of 2 Audio clips to play when player collects a food object.
-		public AudioClip eatSound2;					//2 of 2 Audio clips to play when player collects a food object.
-		public AudioClip drinkSound1;				//1 of 2 Audio clips to play when player collects a soda object.
-		public AudioClip drinkSound2;				//2 of 2 Audio clips to play when player collects a soda object.
-		public AudioClip gameOverSound;				//Audio clip to play when player dies.
-
-		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-		private Vector2 touchOrigin = -Vector2.one;	//Used to store location of screen touch origin for mobile controls.
-		#endif
-
-
-			
-		//AttemptMove overrides the AttemptMove function in the base class MovingObject
-		//AttemptMove takes a generic parameter T which for Player will be of the type Wall, it also takes integers for x and y direction to move in.
-//		private void AttemptMove <T> (int xDir, int yDir)
-//		{
-//
-//			//Hit will store whatever our linecast hits when Move is called.
-//			RaycastHit2D hit;
-//
-//			//Set canMove to true if Move was successful, false if failed.
-//			bool canMove = Move (xDir, yDir, out hit);
-//
-//			//Check if nothing was hit by linecast
-//			if(hit.transform == null)
-//				//If nothing was hit, return and don't execute further code.
-//				return;
-//
-//			//Get a component reference to the component of type T attached to the object that was hit
-//			T hitComponent = hit.transform.GetComponent <T> ();
-//
-//			//If canMove is false and hitComponent is not equal to null, meaning MovingObject is blocked and has hit something it can interact with.
-//			if(!canMove && hitComponent != null)
-//
-//				//Call the OnCantMove function and pass it hitComponent as a parameter.
-//				OnCantMove (hitComponent);
-//
-//			//If Move returns true, meaning Player was able to move into an empty space.
-//			if (Move (xDir, yDir, out hit)) 
-//			{
-//				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
-//				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
-//			}
-//
-//			//Since the player has moved and lost food points, check if the game has ended.
-//			CheckIfGameOver ();
-//
-//		}
-//
-
-		//OnCantMove overrides the abstract function OnCantMove in MovingObject.
-		//It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
-//		private void OnCantMove <T> (T component)
-//		{
-//			//Set hitWall to equal the component passed in as a parameter.
-//			Wall hitWall = component as Wall;
-//
-//			//Set the attack trigger of the player's animation controller in order to play the player's attack animation.
-//			animator.SetTrigger ("playerChop");
-//		}
-//
-
-		//OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
-//		private void OnTriggerEnter2D (Collider2D other)
-//		{
-//			//Check if the tag of the trigger collided with is Exit.
-//			if(other.tag == "Exit")
-//			{
-//				//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
-//				Invoke ("Restart", restartLevelDelay);
-//
-//				//Disable the player object since level is over.
-//				enabled = false;
-//			}
-//
-//			//Check if the tag of the trigger collided with is Food.
-//			else if(other.tag == "Food")
-//			{
-//
-//				//Call the RandomizeSfx function of SoundManager and pass in two eating sounds to choose between to play the eating sound effect.
-//				SoundManager.instance.RandomizeSfx (eatSound1, eatSound2);
-//
-//				//Disable the food object the player collided with.
-//				other.gameObject.SetActive (false);
-//			}
-//
-//			//Check if the tag of the trigger collided with is Soda.
-//			else if(other.tag == "Soda")
-//			{
-//
-//				//Call the RandomizeSfx function of SoundManager and pass in two drinking sounds to choose between to play the drinking sound effect.
-//				SoundManager.instance.RandomizeSfx (drinkSound1, drinkSound2);
-//
-//				//Disable the soda object the player collided with.
-//				other.gameObject.SetActive (false);
-//			}
-//		}
-
-
-
-			
 	}
 }

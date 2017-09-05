@@ -44,7 +44,7 @@ namespace WordJourney
 				type = ItemType.Weapon;
 				break;
 			case 1:
-				type = ItemType.Amour;
+				type = ItemType.armour;
 				break;
 			case 2:
 				type = ItemType.Shoes;
@@ -116,7 +116,7 @@ namespace WordJourney
 
 			player.allEquipedItems [currentSelectEquipIndex] = item;
 
-			player.ResetBattleAgentProperties (false,false);
+			player.ResetBattleAgentProperties (false);
 
 			bagView.OnEquipButtonOfDetailHUDClick ();
 

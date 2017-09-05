@@ -27,9 +27,9 @@ namespace WordJourney{
 		public int attackSpeedGain;//攻速增益
 		public int magicGain;//魔法增益
 		public int critGain;//暴击增益
-		public int amourGain;//护甲增益
+		public int armourGain;//护甲增益
 		public int manaResistGain;//魔抗增益
-		public int agilityGain;//闪避增益
+		public int dodgeGain;//闪避增益
 
 
 		public int healthGain;//血量增益
@@ -122,9 +122,9 @@ namespace WordJourney{
 //			powerGain = originalItem.powerGain;
 			magicGain = originalItem.magicGain;
 			critGain = originalItem.critGain;
-			amourGain = originalItem.amourGain;
+			armourGain = originalItem.armourGain;
 			manaResistGain = originalItem.manaResistGain;
-			agilityGain = originalItem.agilityGain;
+			dodgeGain = originalItem.dodgeGain;
 			healthGain = originalItem.healthGain;
 			manaGain = originalItem.manaGain;
 
@@ -155,16 +155,16 @@ namespace WordJourney{
 				string str = string.Format ("暴击: {0}~{1}", critGain + minGain, critGain + maxGain);
 				propertiesList.Add (str);
 			}
-			if (amourGain > 0) {
-				string str = string.Format ("护甲: {0}~{1}", amourGain + minGain, amourGain + maxGain);
+			if (armourGain > 0) {
+				string str = string.Format ("护甲: {0}~{1}", armourGain + minGain, armourGain + maxGain);
 				propertiesList.Add (str);
 			}
 			if (manaResistGain > 0) {
 				string str = string.Format ("抗性: {0}~{1}", manaResistGain + minGain, manaResistGain + maxGain);
 				propertiesList.Add (str);
 			}
-			if (agilityGain > 0) {
-				string str = string.Format ("闪避: {0}~{1}", agilityGain + minGain, agilityGain + maxGain);
+			if (dodgeGain > 0) {
+				string str = string.Format ("闪避: {0}~{1}", dodgeGain + minGain, dodgeGain + maxGain);
 				propertiesList.Add (str);
 			} 
 			if (healthGain > 0) {
@@ -209,16 +209,16 @@ namespace WordJourney{
 				string str = string.Format ("暴击: {0}", critGain);
 				propertiesList.Add (str);
 			}
-			if (amourGain > 0) {
-				string str = string.Format ("护甲: {0}", amourGain);
+			if (armourGain > 0) {
+				string str = string.Format ("护甲: {0}", armourGain);
 				propertiesList.Add (str);
 			}
 			if (manaResistGain > 0) {
 				string str = string.Format ("抗性: {0}", manaResistGain);
 				propertiesList.Add (str);
 			}
-			if (agilityGain > 0) {
-				string str = string.Format ("闪避: {0}", agilityGain);
+			if (dodgeGain > 0) {
+				string str = string.Format ("闪避: {0}", dodgeGain);
 				propertiesList.Add (str);
 			} 
 			if (healthGain > 0) {
@@ -272,7 +272,7 @@ namespace WordJourney{
 			case ItemType.Weapon:
 				itemTypeStr = "类型: 武器";
 				break;
-			case ItemType.Amour:
+			case ItemType.armour:
 				itemTypeStr = "类型: 防具";
 				break;
 			case ItemType.Shoes:
@@ -347,11 +347,11 @@ namespace WordJourney{
 
 				propertiesList.Add (str);
 			}
-			if (amourGain > 0) {
+			if (armourGain > 0) {
 
-				CompareItemsProperty (amourGain, compareItem.amourGain,out compare,out linkSymbol,out colorText);
+				CompareItemsProperty (armourGain, compareItem.armourGain,out compare,out linkSymbol,out colorText);
 
-				string str = string.Format ("护甲: {0}({1}{2}{3}</color>)", amourGain,colorText,linkSymbol,Mathf.Abs(compare));
+				string str = string.Format ("护甲: {0}({1}{2}{3}</color>)", armourGain,colorText,linkSymbol,Mathf.Abs(compare));
 
 				propertiesList.Add (str);
 			}
@@ -363,11 +363,11 @@ namespace WordJourney{
 
 				propertiesList.Add (str);
 			}
-			if (agilityGain > 0) {
+			if (dodgeGain > 0) {
 
-				CompareItemsProperty (agilityGain, compareItem.agilityGain,out compare,out linkSymbol,out colorText);
+				CompareItemsProperty (dodgeGain, compareItem.dodgeGain,out compare,out linkSymbol,out colorText);
 
-				string str = string.Format ("闪避: {0}({1}{2}{3}</color>)", agilityGain,colorText,linkSymbol,Mathf.Abs(compare));
+				string str = string.Format ("闪避: {0}({1}{2}{3}</color>)", dodgeGain,colorText,linkSymbol,Mathf.Abs(compare));
 
 				propertiesList.Add (str);
 			} 
@@ -406,7 +406,7 @@ namespace WordJourney{
 			case ItemType.Weapon:
 				canStrengthen = true;
 				break;
-			case ItemType.Amour:
+			case ItemType.armour:
 				canStrengthen = true;
 				break;
 			case ItemType.Shoes:
@@ -467,7 +467,7 @@ namespace WordJourney{
 
 			if (propertiesArray == null) {
 				
-				propertiesArray = new int[]{ attackGain, magicGain, amourGain, manaResistGain, critGain, agilityGain };
+				propertiesArray = new int[]{ attackGain, magicGain, armourGain, manaResistGain, critGain, dodgeGain };
 
 			}
 
@@ -487,7 +487,7 @@ namespace WordJourney{
 				strengthenGainStr = "魔法+" + propertyGain.ToString ();
 				break;
 			case 2:
-				amourGain += propertyGain;
+				armourGain += propertyGain;
 				strengthenGainStr = "护甲+" + propertyGain.ToString ();
 				break;
 			case 3:
@@ -499,7 +499,7 @@ namespace WordJourney{
 				strengthenGainStr = "暴击+" + propertyGain.ToString ();
 				break;
 			case 5:
-				agilityGain += propertyGain;
+				dodgeGain += propertyGain;
 				strengthenGainStr = "闪避+" + propertyGain.ToString ();
 				break;
 			}
@@ -551,14 +551,14 @@ namespace WordJourney{
 			if (critGain > 0) {
 				critGain += Random.Range (minGain, maxGain);
 			}
-			if (amourGain > 0) {
-				amourGain += Random.Range (minGain, maxGain);
+			if (armourGain > 0) {
+				armourGain += Random.Range (minGain, maxGain);
 			}
 			if (manaResistGain > 0) {
 				manaResistGain += Random.Range (minGain, maxGain);
 			}
-			if (agilityGain > 0) {
-				agilityGain += Random.Range (minGain, maxGain);
+			if (dodgeGain > 0) {
+				dodgeGain += Random.Range (minGain, maxGain);
 			}
 
 
@@ -581,7 +581,7 @@ namespace WordJourney{
 					magicGain = Random.Range (1, 10);
 					break;
 				case 2:
-					amourGain = Random.Range (1, 10);
+					armourGain = Random.Range (1, 10);
 					break;
 				case 3:
 					manaResistGain = Random.Range (1, 10);
@@ -590,7 +590,7 @@ namespace WordJourney{
 					critGain = Random.Range (1, 10);
 					break;
 				case 5:
-					agilityGain = Random.Range (1, 10);
+					dodgeGain = Random.Range (1, 10);
 					break;
 				case 6:
 					healthGain = Random.Range (10, 100);

@@ -75,7 +75,7 @@ namespace WordJourney
 				case ItemType.Weapon:
 					compareEquipment = Player.mainPlayer.allEquipedItems [0];
 					break;
-				case ItemType.Amour:
+				case ItemType.armour:
 					compareEquipment = Player.mainPlayer.allEquipedItems [1];
 					break;
 				case ItemType.Shoes:
@@ -92,19 +92,19 @@ namespace WordJourney
 				itemProperties = new int[] {
 					equipment.attackGain,
 					equipment.magicGain,
-					equipment.amourGain,
+					equipment.armourGain,
 					equipment.manaResistGain,
 					equipment.critGain,
-					equipment.agilityGain
+					equipment.dodgeGain
 				};
 				
 				itemPropertiesDif = new int[] {
 					equipment.attackGain - compareEquipment.attackGain,
 					equipment.magicGain - compareEquipment.magicGain,
-					equipment.amourGain - compareEquipment.amourGain,
+					equipment.armourGain - compareEquipment.armourGain,
 					equipment.manaResistGain - compareEquipment.manaResistGain,
 					equipment.critGain - compareEquipment.critGain,
-					equipment.agilityGain - compareEquipment.agilityGain
+					equipment.dodgeGain - compareEquipment.dodgeGain
 				};
 
 

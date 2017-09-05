@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4139801376
+CRC: 3313223905
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3f59f0ee65f6caf54f1f26bb6374aee4
+    Hash: f5ab41c492112d32a00206d78710dd54
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 0d0ab2edf8f321da7dd7622865e9b9a0
+    Hash: 31a6220a3cbf5613aeb21d2073cf2171
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,17 +29,29 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 61
   Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 6f46fce80bb83409ea50f974a4700dfd, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 080eb479955f648e3b8ff3b06ea2be5c, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: b7609e5a17e6e4337818965107391bec, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: cdb2adfce6e55433d9ebd843d448bb0a, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 080eb479955f648e3b8ff3b06ea2be5c, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 0fcd348d78db24f25b4abd7820502708, type: 3}
 - Class: 115
+  Script: {instanceID: 0}
+- Class: 212
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 221
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/NewBattlePrefabs/Monsters/Monster.prefab
