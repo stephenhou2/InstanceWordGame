@@ -14,6 +14,8 @@ namespace WordJourney
 
 		public Monster monster;
 
+		public Transform monsterStatusPlane;
+
 		protected override void Awake ()
 		{
 			base.Awake ();
@@ -34,6 +36,8 @@ namespace WordJourney
 			critText.text = string.Format ("暴击:{0}", monster.crit);
 			dodgeText.text = string.Format ("闪避:{0}", monster.dodge);
 
+			monsterStatusPlane.gameObject.SetActive (true);
+
 
 		}
 
@@ -43,7 +47,10 @@ namespace WordJourney
 
 		}
 
-
+		public override void QuitFight ()
+		{
+			monsterStatusPlane.gameObject.SetActive (false);
+		}
 //		public void PlayMonsterDieAnim(BattleAgentController baCtr,CallBack<Transform> cb,Transform[] transArray){
 //
 //			baCtr.GetComponent<SpriteRenderer> ().DOFade (0, 0.5f).OnComplete(()=>{

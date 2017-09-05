@@ -237,8 +237,14 @@ namespace WordJourney
 
 		}
 
+
+		public void HideFightPlane(){
+			GetComponent<BattlePlayerUIController> ().QuitFight ();
+			GetComponent<BattleMonsterUIController>().QuitFight ();
+		}
+
 		public void QuitFight(){
-			GetComponent<BattlePlayerUIController> ().OnQuitFight ();
+	
 			battlePlane.gameObject.SetActive (false);
 		}
 

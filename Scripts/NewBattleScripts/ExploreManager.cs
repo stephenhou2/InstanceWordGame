@@ -40,6 +40,8 @@ namespace WordJourney
 
 			navHelper = GetComponent<NavigationHelper> ();
 
+			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive (true);
+
 			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);

@@ -24,6 +24,9 @@ namespace WordJourney
 
 			GetComponent<Canvas>().enabled = true; 
 
+			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive(true);
+
+
 		}
 
 		public void GetCurrentSelectInfo(Skill skill){
@@ -34,7 +37,7 @@ namespace WordJourney
 		public void OnUpgradeButtonClick(){
 
 			// 获取玩家想要升级的技能
-			Skill skillToUpgradeInLearnedSkills = Player.mainPlayer.GetPlayerLearnedSkill (currentSelectSkill.skillName);
+			Skill skillToUpgradeInLearnedSkills = Player.mainPlayer.GetPlayerLearnedSkill (currentSelectSkill.skillId);
 
 			// 想要升级的技能之前没有学过
 			if (skillToUpgradeInLearnedSkills == null) {
@@ -79,6 +82,8 @@ namespace WordJourney
 		}
 
 		public void OnQuitButtonClick(){
+
+			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive (false);
 
 			skillsView.OnQuitSkillsPlane (DestroyInstances);
 

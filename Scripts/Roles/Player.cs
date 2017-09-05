@@ -91,10 +91,10 @@ namespace WordJourney
 
 
 		// 获取玩家已学习的技能
-		public Skill GetPlayerLearnedSkill(string skillName){
+		public Skill GetPlayerLearnedSkill(int skillId){
 			Skill s = null;
 			s = allLearnedSkills.Find (delegate(Skill obj) {
-				return obj.skillName == skillName;	
+				return obj.skillId == skillId;	
 			});
 			return s;
 		}

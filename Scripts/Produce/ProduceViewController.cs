@@ -30,7 +30,7 @@ namespace WordJourney
 
 				produceView.SetUpProduceView (itemSprites);
 
-				OnItemTypeButtonClick(0);
+//				OnItemTypeButtonClick(0);
 
 				GetComponent<Canvas>().enabled = true; 
 

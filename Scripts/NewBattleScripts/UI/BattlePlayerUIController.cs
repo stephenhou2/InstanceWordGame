@@ -132,6 +132,8 @@ namespace WordJourney
 
 			}
 
+			skillsContainer.gameObject.SetActive (true);
+
 		}
 
 		/// <summary>
@@ -457,9 +459,11 @@ namespace WordJourney
 //		}
 
 
-		public void OnQuitFight(){
+		public override void QuitFight(){
 
 			skillButtonPool.AddChildInstancesToPool (skillsContainer);
+
+			skillsContainer.gameObject.SetActive (false);
 
 		}
 	}

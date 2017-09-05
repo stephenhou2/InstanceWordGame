@@ -139,16 +139,26 @@ namespace WordJourney
 		/// 怪物死亡
 		/// </summary>
 		public void MonsterDie(){
+			
 			bpCtr.StopCoroutine ("InvokeAttack");
 			StopCoroutine ("InvokeAttack");
 
-			bmUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-
 			bpCtr.PlayRoleAnim ("stand", 0, null);
+
+//			playerWinCallBack (new Transform[]{ transform });
+//			bmUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
+//			gameObject.SetActive(false);
+
+			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
+
+			expUICtr.HideFightPlane ();
+
 			PlayRoleAnim ("death", 1, () => {
 				playerWinCallBack (new Transform[]{ transform });
+				expUICtr.QuitFight ();
 				gameObject.SetActive(false);
 			});
+
 		}
 
 	}

@@ -24,7 +24,7 @@ namespace WordJourney
 
 		public Text skillDesc;
 
-		public Text skillCosume;
+		public Text skillConsume;
 
 		public Text skillCoolen;
 
@@ -49,13 +49,24 @@ namespace WordJourney
 			skillPointsLeft.text = Player.mainPlayer.skillPointsLeft.ToString ();
 			
 			for (int i = 0; i < skillTreeButtons.Length; i++) {
+				
 				Skill skill = skills [i];
 				Button skillButton = skillTreeButtons [i];
 				Sprite skillSprite = sprites.Find (delegate(Sprite obj) {
 					return obj.name == skill.skillIconName;
 				});
 
-				SetUpSkillButton (skillButton, skillSprite, skill);
+				Skill learnedSkill = Player.mainPlayer.GetPlayerLearnedSkill (skill.skillId);
+
+				if (learnedSkill == null) {
+					learnedSkill = skill;
+				}
+
+				SetUpSkillButton (skillButton, skillSprite, learnedSkill);
+
+				if (i == 0) {
+					OnSkillTreeButtonClick (skillButton, skillSprite, learnedSkill);
+				}
 			}
 
 		}
@@ -111,14 +122,24 @@ namespace WordJourney
 
 			skillDesc.text = skill.skillDescription;
 
-			skillCosume.text = "魔法消耗: " + skill.manaConsume.ToString ();
+			if (skill.isPassive) {
+				
+				skillConsume.text = "<color=orange>被动</color>";
 
-			skillCoolen.text = "冷却时间: " + skill.coolenInterval.ToString() + "s";
+				skillCoolen.text = string.Empty;
+
+			} else {
+
+				skillConsume.text = "魔法消耗: " + skill.manaConsume.ToString ();
+
+				skillCoolen.text = "冷却时间: " + skill.coolenInterval.ToString () + "s";
+
+			}
 
 			bool unlock = Player.mainPlayer.agentLevel >= skill.unlockAgentLevel;
 
 			if (!unlock) {
-				skillUnlock.text = "<color=red>解锁：人物等级>=" + skill.unlockAgentLevel + "</color>";
+				skillUnlock.text = "<color=red>解锁：人物等级≥" + skill.unlockAgentLevel + "</color>";
 			} else {
 				skillUnlock.text = "<color=green>已解锁</color>";
 			}

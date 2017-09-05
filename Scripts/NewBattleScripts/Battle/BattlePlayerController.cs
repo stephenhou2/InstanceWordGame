@@ -427,12 +427,17 @@ namespace WordJourney
 			this.StopCoroutine ("InvokeAttack");
 			bmCtr.StopCoroutine ("InvokeAttack");
 
+//			playerLoseCallBack ();
+//			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
+//			gameObject.SetActive(false);
 
-			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
+			ExploreUICotroller expUICtr = bpUICtr.GetComponent<ExploreUICotroller> ();
 
+			expUICtr.HideFightPlane ();
 
 			PlayRoleAnim("die", 1, () => {
 				playerLoseCallBack ();
+				expUICtr.QuitFight ();
 				gameObject.SetActive(false);
 			});
 

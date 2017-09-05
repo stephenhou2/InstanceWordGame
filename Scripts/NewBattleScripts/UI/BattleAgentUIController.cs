@@ -176,5 +176,7 @@ namespace WordJourney
 //
 //		}
 
+		public abstract void QuitFight ();
+
 	}
 }

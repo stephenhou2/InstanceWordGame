@@ -154,12 +154,14 @@ namespace WordJourney
 		private void SetUpPlayer(){
 
 			player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
+
+			BattlePlayerController bpCtr = player.GetComponent<BattlePlayerController> ();
 			
 			Vector3 playerOriginPos = RandomPosition ();
 
 			player.position = playerOriginPos;
 
-			player.GetComponent<BattlePlayerController>().singleMoveEndPos = playerOriginPos;
+			bpCtr.singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
 
@@ -169,7 +171,7 @@ namespace WordJourney
 
 			Camera.main.transform.SetParent (player,false);
 
-			player.GetComponent<BattlePlayerController> ().PlayRoleAnim ("stand", 0, null);
+			bpCtr.PlayRoleAnim ("stand", 0, null);
 
 		}
 
