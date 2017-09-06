@@ -21,20 +21,19 @@ namespace WordJourney
 
 		public void SetUpProduceView(){
 
-//			LoadAllItems ();
-
-			ResourceManager.Instance.LoadSpritesAssetWithFileName ("item/icons", () => {
-
 				// 获取所有游戏物品的图片
-				itemSprites = GameManager.Instance.allItemSprites;
+			itemSprites = GameManager.Instance.allItemSprites;
 
-				produceView.SetUpProduceView (itemSprites);
-
-//				OnItemTypeButtonClick(0);
-
-				GetComponent<Canvas>().enabled = true; 
-
+			allWeapons = GameManager.Instance.allItems.FindAll (delegate (Item obj) {
+				return obj.itemType == ItemType.Weapon;
 			});
+
+			produceView.SetUpProduceView (itemSprites);
+
+			OnItemTypeButtonClick (0);
+
+			GetComponent<Canvas>().enabled = true; 
+
 
 		}
 
