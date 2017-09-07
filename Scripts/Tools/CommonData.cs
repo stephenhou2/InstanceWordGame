@@ -65,9 +65,7 @@ namespace WordJourney{
 	}
 
 	public enum ItemType{
-		Weapon,
-		armour,
-		Shoes,
+		Equipment,
 		Consumables,
 		Task,
 		Inscription,

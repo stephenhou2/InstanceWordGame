@@ -50,19 +50,20 @@ namespace WordJourney
 
 		public int unlockedMaxChapterIndex = 0;
 
-		private List<Item> mAllItems = new List<Item> ();
-		public List<Item> allItems{
+		private List<ItemModel> mAllItemModels = new List<ItemModel> ();
+		public List<ItemModel> allItemModels{
 			get{
-				if (mAllItems.Count == 0) {
+				if (mAllItemModels.Count == 0) {
 					
-					Item[] ItemArray = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, "AllItemsJson.txt");
+					ItemModel[] ItemArray = DataInitializer.LoadDataToModelWithPath<ItemModel> (CommonData.jsonFileDirectoryPath, "AllItemsJson.txt");
 
-					foreach (Item Item in ItemArray) {
-						mAllItems.Add (Item);
+					foreach (ItemModel itemModel in ItemArray) {
+						Debug.Log (itemModel.itemType);
+						mAllItemModels.Add (itemModel);
 					}
 
 				}
-				return mAllItems;
+				return mAllItemModels;
 			}
 
 		}

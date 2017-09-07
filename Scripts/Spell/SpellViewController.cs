@@ -14,8 +14,6 @@ namespace WordJourney
 		// 已输入的所有字母
 		private StringBuilder enteredCharacters = new StringBuilder();
 
-		// 字母a的ASCII码
-	//	private int aInAscii = (int)('a'); 
 
 		private SpellPurpose spellPurpose;
 
@@ -31,7 +29,9 @@ namespace WordJourney
 		private string itemNameInEnglish;
 
 		// 目标物品（从图鉴系统中选择的物品）
-			private Item itemToSpell;
+		private ItemModel itemToSpell;
+
+		private Equipment equipmentToStrengthen;
 
 		// 根据玩家已有字母碎片数量计算出得目标物品最大制造数
 		private int maxCreateCount{
@@ -63,30 +63,39 @@ namespace WordJourney
 
 		// 要制造的物品列表（因为武器装备的属性各不相同，每个物品制造后需单独存储数据，故使用列表作为容器）
 		// 列表中相同类型的消耗品放在同一个条目中
-			private List<Item> createdItems = new List<Item> ();
+		private List<Item> createdItems = new List<Item> ();
 
 
 		/// <summary>
 		/// 初始化拼写界面
 		/// </summary>
-			public void SetUpSpellView(Item item,SpellPurpose spellPurpose){
+		public void SetUpSpellViewForCreate(ItemModel itemModel){
 
-			if (item != null) {
-				this.itemNameInEnglish = item.itemNameInEnglish;
+			if (itemModel != null) {
+				this.itemNameInEnglish = itemModel.itemNameInEnglish;
 			}
 
-			this.spellPurpose = spellPurpose;
+			this.spellPurpose = SpellPurpose.Create;
 
-			if (spellPurpose == SpellPurpose.Strengthen) {
-				this.itemToSpell = item;
-			}
-
-			spellView.SetUpSpellView (item,spellPurpose);
+			spellView.SetUpSpellView (itemModel);
 
 			GetComponent<Canvas>().enabled = true;
 
 			ClearUnsufficientCharacters ();
 
+		}
+
+		public void SetUpSpellViewForStrengthen(Item item){
+			
+			this.spellPurpose = SpellPurpose.Strengthen;
+
+			this.equipmentToStrengthen = item as Equipment;
+
+			spellView.SetUpSpellView (item);
+
+			GetComponent<Canvas>().enabled = true;
+
+			ClearUnsufficientCharacters ();
 		}
 
 		/// <summary>
@@ -228,7 +237,7 @@ namespace WordJourney
 		/// 检查拼写的单词是否存在
 		/// </summary>
 		/// return 返回对应的物品，不一致或不存在返回null，其余返回对应的item
-			private Item CheckEnteredWord(){
+		private ItemModel CheckEnteredWord(){
 
 			// 从图鉴接口进入，目标物品名称不为空
 			if (itemNameInEnglish != null) {
@@ -240,18 +249,17 @@ namespace WordJourney
 
 			}
 
-			Item item = GameManager.Instance.allItems.Find (delegate(Item obj) {
+			ItemModel itemModel = GameManager.Instance.allItemModels.Find (delegate(ItemModel obj) {
 				
 				return obj.itemNameInEnglish == enteredCharacters.ToString ();
+
 			});
 
-			if (item == null) {
+			if (itemModel == null) {
 				Debug.Log("没有这种物品");
 			}
 
-			return item;
-
-
+			return itemModel;
 
 		}
 			
@@ -297,16 +305,16 @@ namespace WordJourney
 		/// Creats the item.
 		/// </summary>
 		/// <param name="item">Item.</param>
-		private void CreateItem(Item item){
+		private void CreateItem(ItemModel itemModel){
 
 			Item itemInBag = null;
 
 			// 如果制造的物品是消耗品
-			if (item.itemType == ItemType.Consumables) {
+			if (itemModel.itemType == ItemType.Consumables) {
 
-				Item newItem = new Item (item,true);
+				Consumables newConsumables = new Consumables (itemModel);
 
-				newItem.itemCount = createCount;
+				newConsumables.itemCount = createCount;
 
 				// 在玩家所有已有物品中查找指定名称的物品
 				itemInBag = Player.mainPlayer.allItems.Find (delegate(Item obj) {
@@ -318,7 +326,7 @@ namespace WordJourney
 					// 如果玩家背包中存在对应消耗品，则对应消耗品数量 ＋＝ 制造数量
 					itemInBag.itemCount += createCount;
 
-					createdItems.Add (newItem);		
+					createdItems.Add (newConsumables);		
 
 					// 更新剩余字母碎片
 					UpdateOwnedCharacters ();
@@ -334,9 +342,9 @@ namespace WordJourney
 				}
 
 				// 如果玩家背包中不存在对应消耗品，则背包中添加该物品
-				Player.mainPlayer.allItems.Add (newItem);
+				Player.mainPlayer.allItems.Add (newConsumables);
 
-				createdItems.Add (newItem);
+				createdItems.Add (newConsumables);
 
 				UpdateOwnedCharacters ();
 
@@ -350,7 +358,19 @@ namespace WordJourney
 
 				for (int i = 0; i < createCount; i++) {
 
-					Item newItem = new Item (item,false);
+					Item newItem = null;
+					switch(itemModel.itemType){
+					case ItemType.Equipment:
+						newItem = new Equipment (itemModel);
+						break;
+					case ItemType.Inscription:
+						newItem = new Inscription (itemModel);
+						break;
+					case ItemType.Task:
+						newItem = new TaskItem (itemModel);
+						break;
+
+					}
 
 					newItem.itemCount = 1;
 
@@ -373,7 +393,8 @@ namespace WordJourney
 		private IEnumerator StrengthenItem(){
 
 			yield return new WaitForSeconds (0.05f);
-			spellView.SetUpStrengthenItemDetailHUD (itemToSpell);
+
+			spellView.SetUpStrengthenItemDetailHUD (equipmentToStrengthen);
 
 		}
 
@@ -381,11 +402,11 @@ namespace WordJourney
 
 			if (CheckCharactersSufficient (1)) {
 
-				string strengthenGainStr = itemToSpell.StrengthenItem ();
+				string strengthenGainStr = equipmentToStrengthen.StrengthenItem ();
 
 				UpdateOwnedCharacters ();
 
-				spellView.UpdateStrengthenItemDetailHUD (itemToSpell, strengthenGainStr);
+				spellView.UpdateStrengthenItemDetailHUD (equipmentToStrengthen, strengthenGainStr);
 			}
 		}
 
@@ -406,7 +427,7 @@ namespace WordJourney
 
 			createCount = 1;
 
-			itemToSpell = null;
+			equipmentToStrengthen = null;
 		}
 
 

@@ -135,8 +135,8 @@ namespace WordJourney
 //				SetUpItemButton (equipment, allEquipedItemBtns [i]);
 //			}
 			
-			for(int i = 0;i<player.allEquipedItems.Count;i++){
-				Item item = player.allEquipedItems[i];
+			for(int i = 0;i<player.allEquipedEquipments.Count;i++){
+				Item item = player.allEquipedEquipments[i];
 				SetUpItemButton (item, allEquipedItemBtns [i]);
 			}
 
@@ -156,12 +156,11 @@ namespace WordJourney
 
 				if (i < player.allItems.Count) {
 
-						Item item = player.allItems [i];
+					Item item = player.allItems [i];
 
 					SetUpItemButton (player.allItems [i], itemBtn);
 
-					if (item.equiped &&
-					    (item.itemType == ItemType.Weapon || item.itemType == ItemType.armour || item.itemType == ItemType.Shoes)) {
+					if (item.itemType == ItemType.Equipment && (item as Equipment).equiped) {
 						extraInfo.text = "<color=green>已装备</color>";
 					} else if (item.itemType == ItemType.Consumables) {
 						extraInfo.text = item.itemCount.ToString ();
@@ -186,17 +185,12 @@ namespace WordJourney
 		/// 初始化物品详细介绍页面
 		/// </summary>
 		/// <param name="item">Item.</param>
-			private void SetUpItemDetailHUD(Item item){
+		private void SetUpItemDetailHUD(Item item){
 
-			bool canStrengthen = item.CheckCanStrengthen();
+//			bool canStrengthen = item.CheckCanStrengthen();
 
 			itemDetailHUD.gameObject.SetActive (true);
 
-			if (canStrengthen) {
-				choicePanelWithTwoBtns.gameObject.SetActive (true);
-			} else{
-				choicePanelWithOneBtn.gameObject.SetActive (true);
-			}
 
 			itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
@@ -207,48 +201,47 @@ namespace WordJourney
 
 			itemTypeText.text = item.GetItemTypeString ();
 
-			if (canStrengthen) {
+			// 如果物品是装备
+			if (item is Equipment) {
 
-				itemQualityText.text = item.GetItemQualityString ();
+				Equipment equipment = item as Equipment;
+				
+				choicePanelWithTwoBtns.gameObject.SetActive (true);
+
+				itemQualityText.text = equipment.GetItemQualityString ();
 
 				itemStrengthenTimesText.text = "已强化次数:" + (item as Equipment).strengthenTimes.ToString () + "次";
-			}
+
+				Equipment currentEquipment = null;
+
+				switch (equipment.equipmentType) {
+				case EquipmentType.Weapon:
+					currentEquipment = player.allEquipedEquipments [0] as Equipment;
+					break;
+				case EquipmentType.Armour:
+					currentEquipment = player.allEquipedEquipments [1] as Equipment;
+					break;
+				case EquipmentType.Shoes:
+					currentEquipment = player.allEquipedEquipments [2] as Equipment;
+					break;
+				}
+
+				if (currentEquipment != null) {
+					itemPropertiesText.text = equipment.GetComparePropertiesStringWithItem (currentEquipment);
+				} else {
+					itemPropertiesText.text = equipment.GetItemPropertiesString ();
+				}
 
 
-				Item equipedItemOfCurrentType = null;
-
-			string itemPropertiesString = string.Empty;
-
-
-			if (item.itemType == ItemType.Consumables || item.itemType == ItemType.Inscription || item.itemType == ItemType.Task) {
-
+			} 
+			#warning 不是装备的情况后面再补充一下
+			// 如果不是装备
+			else{
+				
 				itemPropertiesText.text = item.GetItemPropertiesString ();
-
-				return;
+				choicePanelWithOneBtn.gameObject.SetActive (true);
 
 			}
-
-			switch (item.itemType) {
-			case ItemType.Weapon:
-				equipedItemOfCurrentType = player.allEquipedItems [0];
-				break;
-			case ItemType.armour:
-				equipedItemOfCurrentType = player.allEquipedItems [1];
-				break;
-			case ItemType.Shoes:
-				equipedItemOfCurrentType = player.allEquipedItems [2];
-				break;
-			}
-
-			if (equipedItemOfCurrentType != null) {
-				itemPropertiesString = item.GetComparePropertiesStringWithItem (equipedItemOfCurrentType);
-			} else {
-				itemPropertiesString = item.GetItemPropertiesString ();
-			}
-
-			itemPropertiesText.text = itemPropertiesString;
-		
-
 		}
 
 		/// <summary>
@@ -288,7 +281,7 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="item">Item.</param>
 		/// <param name="btn">Button.</param>
-			private void SetUpItemButton(Item item,Button btn){
+		private void SetUpItemButton(Item item,Button btn){
 
 	//		if (item == null || item.itemName == null) {
 	//			btn.interactable = (item != null);
@@ -328,11 +321,11 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="type">Type.</param>
 		/// <param name="allItemsOfCurrentSelectType">All items of current select type.</param>
-			public void OnEquipedItemButtonsClick(ItemType type,List<Item> allItemsOfCurrentSelectType){
+		public void OnEquipedItemButtonsClick(List<Item> allItemsOfCurrentSelectType){
 
 			for(int i =0;i<allItemsOfCurrentSelectType.Count;i++){
 				
-					Item item = allItemsOfCurrentSelectType[i];
+				Item item = allItemsOfCurrentSelectType[i];
 
 				Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailModel,itemDetailContainer);
 
@@ -343,7 +336,7 @@ namespace WordJourney
 
 		}
 
-			public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
+		public void OnItemButtonOfSpecificItemPlaneClick(Item item,int currentSelectEquipIndex){
 
 			SetUpItemDetailHUD (item);
 

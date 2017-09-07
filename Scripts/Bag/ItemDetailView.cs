@@ -22,25 +22,26 @@ namespace WordJourney
 		public Transform propertiesPlane;
 		public Transform detailDescText;
 
-			public void SetUpItemDetailView(Item item,BagViewController bagViewCtr){
+		public void SetUpItemDetailView(Item item,BagViewController bagViewCtr){
+
 
 			if (item.itemType == ItemType.Consumables) {
+
+				Consumables consumables = item as Consumables;
 				
 				itemName.text = item.itemName;
+
 				itemQuality.text = "品质: -";
+
 				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
+
 				if (itemIcon.sprite != null) {
 					itemIcon.enabled = true;
 				}
+
 				detailDescText.GetComponent<Text> ().text = item.GetItemPropertiesString ();
-
-				equipButton.onClick.RemoveAllListeners ();
-
-				equipButton.onClick.AddListener (delegate() {
-					bagViewCtr.EquipItem(item);	
-				});
 
 				detailDescText.gameObject.SetActive (true);
 
@@ -66,20 +67,20 @@ namespace WordJourney
 					return obj.name == "arrowIcon";
 				});
 
-				Item compareEquipment = null;
+				Equipment compareEquipment = null;
 				int[] itemProperties = null;
 				int[] itemPropertiesDif = null;
 
 
-				switch (item.itemType) {
-				case ItemType.Weapon:
-					compareEquipment = Player.mainPlayer.allEquipedItems [0];
+				switch (equipment.equipmentType) {
+				case EquipmentType.Weapon:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [0] as Equipment;
 					break;
-				case ItemType.armour:
-					compareEquipment = Player.mainPlayer.allEquipedItems [1];
+				case EquipmentType.Armour:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [1] as Equipment;
 					break;
-				case ItemType.Shoes:
-					compareEquipment = Player.mainPlayer.allEquipedItems [2];
+				case EquipmentType.Shoes:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [2] as Equipment;
 					break;
 				default:
 					break;
@@ -91,7 +92,7 @@ namespace WordJourney
 
 				itemProperties = new int[] {
 					equipment.attackGain,
-					equipment.magicGain,
+					equipment.attackSpeedGain,
 					equipment.armourGain,
 					equipment.manaResistGain,
 					equipment.critGain,
@@ -100,7 +101,7 @@ namespace WordJourney
 				
 				itemPropertiesDif = new int[] {
 					equipment.attackGain - compareEquipment.attackGain,
-					equipment.magicGain - compareEquipment.magicGain,
+					equipment.attackSpeedGain - compareEquipment.attackSpeedGain,
 					equipment.armourGain - compareEquipment.armourGain,
 					equipment.manaResistGain - compareEquipment.manaResistGain,
 					equipment.critGain - compareEquipment.critGain,
@@ -117,8 +118,6 @@ namespace WordJourney
 
 					Image arrowImage = arrowsImages [i];
 					Text propDifText = itemDetailPropDifTexts [i];
-
-					//			arrowImage.sprite = arrowSprite;
 
 					if (itemPropertiesDif [i] < 0) {
 						arrowImage.sprite = arrowSprite;
@@ -139,12 +138,11 @@ namespace WordJourney
 					}
 
 				}
-
-
+					
 				equipButton.onClick.RemoveAllListeners ();
 
 				equipButton.onClick.AddListener (delegate() {
-					bagViewCtr.EquipItem (item);	
+					bagViewCtr.EquipItem (equipment);	
 				});
 			}
 

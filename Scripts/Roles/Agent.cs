@@ -131,16 +131,16 @@ namespace WordJourney
 
 		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
-		private List<Item> mAllEquipedItems = new List<Item>();
-		public List<Item> allEquipedItems{
+		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
+		public List<Equipment> allEquipedEquipments{
 			get{
-				if (mAllEquipedItems.Count == 0) {
-					mAllEquipedItems.AddRange (new Item[6]{ null, null, null, null, null, null });
+				if (mAllEquipedEquipments.Count == 0) {
+					mAllEquipedEquipments.AddRange (new Equipment[3]{ null, null, null});
 				}
-				return mAllEquipedItems;
+				return mAllEquipedEquipments;
 			}
 			set{
-				mAllEquipedItems = value;
+				mAllEquipedEquipments = value;
 			}
 		}
 
@@ -244,7 +244,7 @@ namespace WordJourney
 
 			this.equipedSkills = ba.equipedSkills;
 
-			this.allEquipedItems = ba.allEquipedItems;
+			this.allEquipedEquipments = ba.allEquipedEquipments;
 
 			this.allItems = ba.allItems;
 
@@ -304,14 +304,15 @@ namespace WordJourney
 
 
 
-		private void ResetPropertiesByEquipment(Item equipment){
+		private void ResetPropertiesByEquipment(Equipment equipment){
 
 			if (equipment.itemName == null) {
 				return;
 			}
 
-			health += equipment.healthGain;
-			mana += equipment.manaGain;
+//			health += equipment.healthGain;
+//			mana += equipment.manaGain;
+
 			attack += equipment.attackGain;
 
 			attackSpeed = (int)((attackSpeed + equipment.attackSpeedGain) * (1 + attackSpeedGainScaler));
@@ -334,9 +335,9 @@ namespace WordJourney
 			dodge = originaldodge;
 
 			// 根据装备更新属性
-			foreach (Item item in allEquipedItems) {
-				if (item != null && item.itemType != ItemType.Consumables) {
-					ResetPropertiesByEquipment (item);
+			foreach (Equipment equipment in allEquipedEquipments) {
+				if (equipment != null) {
+					ResetPropertiesByEquipment (equipment);
 				}
 			}
 

@@ -38,11 +38,26 @@ namespace WordJourney
 
 			foreach (int itemId in itemIds) {
 
-				Item item = GameManager.Instance.allItems.Find (delegate(Item i) {
-					return i.itemId == itemId;
+				ItemModel itemModel = GameManager.Instance.allItemModels.Find (delegate(ItemModel obj) {
+					return obj.itemId == itemId;
 				});
 
-				items.Add (item);
+				Item item = null;
+
+				switch (itemModel.itemType) {
+				case ItemType.Equipment:
+					item = new Equipment (itemModel);
+					break;
+				case ItemType.Consumables:
+					item = new Consumables (itemModel);
+					break;
+				default:
+					break;
+				}
+
+				if (item != null) {
+					items.Add (item);
+				}
 			}
 		
 		}

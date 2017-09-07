@@ -248,8 +248,8 @@ namespace WordJourney
 				return;
 			}
 
-			player.health += (item as Consumable).healthGain;
-			player.mana += (item as Consumable).manaGain;
+			player.health += (item as Consumables).healthGain;
+			player.mana += (item as Consumables).manaGain;
 
 //			if (item.itemNameInEnglish == "antiDebuff") {
 //				player.states.Clear ();
@@ -390,7 +390,7 @@ namespace WordJourney
 
 		public void OnPlayerUseItem(int itemIndex){
 
-			Item item = player.allEquipedItems[itemIndex + 3];
+			Item item = player.allEquipedEquipments[itemIndex + 3];
 
 			if (item == null) {
 				return;
@@ -400,7 +400,7 @@ namespace WordJourney
 
 
 			if (item.itemCount <= 0) {
-				player.allEquipedItems [itemIndex + 3] = null;
+				player.allEquipedEquipments [itemIndex + 3] = null;
 				player.allItems.Remove (item);
 				UpdateItemButtons ();
 			}

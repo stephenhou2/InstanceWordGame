@@ -35,40 +35,29 @@ namespace WordJourney
 
 			allItemsOfCurrentSelcetType.Clear ();
 
-			ItemType type = ItemType.Task;
-
 			currentSelectEquipIndex = index;
+
+			EquipmentType equipmentType = EquipmentType.Weapon;
 
 			switch (index) {
 			case 0:
-				type = ItemType.Weapon;
+				equipmentType = EquipmentType.Weapon;
 				break;
 			case 1:
-				type = ItemType.armour;
+				equipmentType = EquipmentType.Armour;
 				break;
 			case 2:
-				type = ItemType.Shoes;
-				break;
-			case 3:
-				type = ItemType.Consumables;
-				break;
-			case 4:
-				type = ItemType.Consumables;
-				break;
-			case 5:
-				type = ItemType.Consumables;
+				equipmentType = EquipmentType.Shoes;
 				break;
 			}
-				
 
-
-				foreach (Item i in Player.mainPlayer.allItems) {
-				if (i.itemType == type) {
+			foreach (Item i in Player.mainPlayer.allItems) {
+				if (i.itemType == ItemType.Equipment && (i as Equipment).equipmentType == equipmentType) {
 					allItemsOfCurrentSelcetType.Add (i);
 				}
 			}
 
-			bagView.OnEquipedItemButtonsClick (type,allItemsOfCurrentSelcetType);
+			bagView.OnEquipedItemButtonsClick (allItemsOfCurrentSelcetType);
 
 		}
 
@@ -88,33 +77,33 @@ namespace WordJourney
 
 		}
 
-		public void EquipItem(Item item){
+		public void EquipItem(Equipment equipment){
 
 			Player player = Player.mainPlayer;
 
-			if (player.allEquipedItems [currentSelectEquipIndex] != null) {
+			if (player.allEquipedEquipments [currentSelectEquipIndex] != null) {
 				
-				player.allEquipedItems [currentSelectEquipIndex].equiped = false;
+				player.allEquipedEquipments [currentSelectEquipIndex].equiped = false;
 
 			}
 
-			for (int i = 3; i < player.allEquipedItems.Count; i++) {
+//			for (int i = 3; i < player.allEquipedEquipments.Count; i++) {
+//
+//				Item equipedConsumable = player.allEquipedEquipments [i];
+//
+//				if (equipedConsumable != null && equipedConsumable.itemId == item.itemId) {
+//
+//					equipedConsumable.equiped = false;
+//
+//					player.allEquipedEquipments [i] = null;
+//
+//				}
+//
+//			}
 
-				Item equipedConsumable = player.allEquipedItems [i];
+			equipment.equiped = true;
 
-				if (equipedConsumable != null && equipedConsumable.itemId == item.itemId) {
-
-					equipedConsumable.equiped = false;
-
-					player.allEquipedItems [i] = null;
-
-				}
-
-			}
-
-			item.equiped = true;
-
-			player.allEquipedItems [currentSelectEquipIndex] = item;
+			player.allEquipedEquipments [currentSelectEquipIndex] = equipment;
 
 			player.ResetBattleAgentProperties (false);
 
@@ -223,7 +212,8 @@ namespace WordJourney
 			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 				
 				GameObject spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-				spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item,SpellPurpose.Strengthen);
+
+				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForStrengthen(item);
 
 				OnQuitItemDetailHUD ();
 

@@ -51,7 +51,7 @@ namespace WordJourney
 		}
 
 		// 初始化物品图鉴
-			public void SetUpItemDetailsPlane(List<Item> itemsOfCurrentType, int buttonIndex){
+		public void SetUpItemDetailsPlane(List<ItemModel> itemModelsOfCurrentType, int buttonIndex){
 
 			itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
 
@@ -69,9 +69,9 @@ namespace WordJourney
 			}
 
 
-			for (int i = 0; i < itemsOfCurrentType.Count; i++) {
+			for (int i = 0; i < itemModelsOfCurrentType.Count; i++) {
 
-				Item item = itemsOfCurrentType [i];
+				ItemModel itemModel = itemModelsOfCurrentType [i];
 
 				Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
 
@@ -86,23 +86,26 @@ namespace WordJourney
 				Button produceButton = itemDetails.FindChild ("ProduceButton").GetComponent<Button> ();
 
 				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
-					return obj.name == item.spriteName;
+					return obj.name == itemModel.spriteName;
 				});
 
 				if (itemIcon.sprite != null) {
 					itemIcon.enabled = true;
 				}
 
-				itemName.text = item.itemName;
+				itemName.text = itemModel.itemName;
 
-				itemDescText.text = item.itemDescription;
+				itemDescText.text = itemModel.itemDescription;
 
-				itemPropertiesText.text = item.GetItemPotentialPropertiesString ();
+				if (itemModel.itemType == ItemType.Equipment) {
+					Equipment equipment = new Equipment (itemModel);
+					itemPropertiesText.text = equipment.potentialPropertiesString;
+				}
 
 				produceButton.onClick.RemoveAllListeners ();
 
 				produceButton.onClick.AddListener (delegate() {
-					GetComponent<ProduceViewController>().OnGenerateButtonClick(item);
+					GetComponent<ProduceViewController>().OnGenerateButtonClick(itemModel);
 				});
 
 			}

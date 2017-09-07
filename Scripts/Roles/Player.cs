@@ -131,7 +131,7 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>分解后获得的字母碎片</returns>
 		/// <param name="item">Item.</param>
-			public List<char> ResolveItem(Item item,int resolveCount){
+		public List<char> ResolveItem(Item item,int resolveCount){
 
 			List<char> charactersReturn = new List<char> ();
 
@@ -164,15 +164,14 @@ namespace WordJourney
 			if (item.itemCount <= 0) {
 				allItems.Remove (item);
 
-				if (item.equiped) {
+				if (item is Equipment && (item as Equipment).equiped) {
+					
+					int itemIndex = allEquipedEquipments.IndexOf (item as Equipment);
 
-					int itemIndex = allEquipedItems.IndexOf (item);
-
-					allEquipedItems [itemIndex] = null;
+					allEquipedEquipments [itemIndex] = null;
 				}
 
 			}
-
 
 			return charactersReturn;
 

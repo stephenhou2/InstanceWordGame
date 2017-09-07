@@ -9,13 +9,15 @@ namespace WordJourney
 
 		public ProduceView produceView;
 
-		private List<Item> allWeapons = new List<Item>() ;
-		private List<Item> allarmours = new List<Item>() ;
-		private List<Item> allShoes = new List<Item>() ;
-		private List<Item> allConsumables = new List<Item>() ;
-		private List<Item> allTaskItems = new List<Item>();
+//		private List<Item> allWeapons = new List<Item>() ;
+//		private List<Item> allarmours = new List<Item>() ;
+//		private List<Item> allShoes = new List<Item>() ;
 
-		private List<Item> itemsOfCurrentType;
+		private List<ItemModel> allEquipmentModels = new List<ItemModel> ();
+		private List<ItemModel> allConsumablesModels = new List<ItemModel>() ;
+		private List<ItemModel> allTaskItemModels = new List<ItemModel>();
+
+		private List<ItemModel> itemModelsOfCurrentType;
 
 		private List<Sprite> itemSprites;
 
@@ -24,9 +26,14 @@ namespace WordJourney
 				// 获取所有游戏物品的图片
 			itemSprites = GameManager.Instance.allItemSprites;
 
-			allWeapons = GameManager.Instance.allItems.FindAll (delegate (Item obj) {
-				return obj.itemType == ItemType.Weapon;
+			allEquipmentModels = GameManager.Instance.allItemModels.FindAll (delegate (ItemModel obj) {
+				return obj.itemType == ItemType.Equipment;
 			});
+
+//			for (int i = 0; i < allEquipmentModel.Count; i++) {
+//				Equipment equipment = new Equipment (allEquipmentModel [i]);
+//				allEquipments.Add (equipment);
+//			}
 
 			produceView.SetUpProduceView (itemSprites);
 
@@ -41,27 +48,27 @@ namespace WordJourney
 
 			switch (buttonIndex) {
 			case 0:
-				itemsOfCurrentType = allWeapons;
+				itemModelsOfCurrentType = allEquipmentModels;
 				break;
-			case 1:
-				itemsOfCurrentType = allarmours;;
-				break;
+//			case 1:
+//				itemsOfCurrentType = allarmours;;
+//				break;
 			case 2:
-				itemsOfCurrentType = allConsumables;
+				itemModelsOfCurrentType = allConsumablesModels;
 				break;
 			case 3:
-				itemsOfCurrentType = allTaskItems;
+				itemModelsOfCurrentType = allTaskItemModels;
 				break;
 			default:
 				break;
 			}
 
-			if (itemsOfCurrentType == null) {
+			if (itemModelsOfCurrentType == null) {
 				Debug.Log ("未找到制定类型的物品");
 				return;
 			}
 
-			produceView.SetUpItemDetailsPlane (itemsOfCurrentType,buttonIndex);	
+			produceView.SetUpItemDetailsPlane (itemModelsOfCurrentType,buttonIndex);	
 
 		}
 
@@ -75,20 +82,20 @@ namespace WordJourney
 			produceView.OnQuitCharactersPlane();
 		}
 
-		public void OnGenerateButtonClick(Item item){
+		public void OnGenerateButtonClick(ItemModel itemModel){
 
 			GameObject spellCanvas = null;
 
-			if (item == null) {
+			if (itemModel == null) {
 				ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 					spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-					spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(null,SpellPurpose.Create);
+					spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
 				});
 				return;
 			}
 
 
-			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (item.itemNameInEnglish);
+			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (itemModel.itemNameInEnglish);
 
 			if (unsufficientCharacters.Count > 0) {
 				foreach (char c in unsufficientCharacters) {
@@ -100,7 +107,7 @@ namespace WordJourney
 			// 如果玩家字母碎片足够，则进入拼写界面
 			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
 				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-				spellCanvas.GetComponent<SpellViewController>().SetUpSpellView(item,SpellPurpose.Create);
+				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(itemModel);
 			});
 
 		}
