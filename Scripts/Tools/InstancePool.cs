@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WordJourney{
+namespace WordJourney
+{
 	public class InstancePool: MonoBehaviour{
 
 
@@ -29,8 +30,10 @@ namespace WordJourney{
 				mInstance = mInstancePool [0];
 				mInstancePool.RemoveAt (0);
 				mInstance.transform.SetParent (instanceParent,false);
+				ResetInstance (mInstance);
 			} else {
-				mInstance = Instantiate (instanceModel,instanceParent);	
+				mInstance = Instantiate (instanceModel,instanceParent);
+				ResetInstance (mInstance);
 				mInstance.name = instanceModel.name;
 			}
 
@@ -54,6 +57,13 @@ namespace WordJourney{
 
 			instance.transform.SetParent (GetComponent<Transform>());
 			mInstancePool.Add (instance);
+
+		}
+
+		private void ResetInstance(GameObject instance){
+
+			instance.transform.localRotation = Quaternion.identity;
+			instance.transform.localScale = Vector3.one;
 
 		}
 

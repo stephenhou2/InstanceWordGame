@@ -19,13 +19,8 @@ namespace WordJourney{
 
 		public ItemType itemType;
 
-		public ItemQuality itemQuality;
 
-		public int strengthenTimes;
-
-
-	
-
+		// 物品属性数组
 		protected int[] propertiesArray;
 
 
@@ -40,77 +35,19 @@ namespace WordJourney{
 //		public int healthGain;//血量增益
 //		public int manaGain;//魔法增益
 
-
-		public static List<Equipment> GetAllEquipments(){
-
-			List<ItemModel> allItemModels = GameManager.Instance.allItemModels;
-
-			List<Equipment> allEquipment = new List<Equipment> ();
-
-			for (int i = 0; i < allItemModels.Count; i++) {
-
-				ItemModel itemModel = allItemModels [i];
-
-				if (itemModel.itemType == ItemType.Equipment) {
-					Equipment equipment = new Equipment (itemModel);
-					allEquipment.Add (equipment);
-				}
-					
-			}
-			return allEquipment;
+		/// <summary>
+		/// 空构造函数
+		/// </summary>
+		public Item(){ 
+		
 		}
 
-//		public static Item CreateInscription(string englishName){
-//
-//			MySQLiteHelper sql = MySQLiteHelper.Instance;
-//
-//			sql.GetConnectionWith (CommonData.dataBaseName);
-//
-//			IDataReader reader =  sql.ReadSpecificRowsAndColsOfTable ("AllWordsData", "*",
-//				new string[]{ string.Format ("Spell='{0}'", englishName)},
-//				true);
-//
-//			if (!reader.Read ()) {
-//				Debug.Log ("不存在");
-//				return null;
-//			}
-//
-//			bool valid = reader.GetBoolean (4);
-//
-//			if (!valid) {
-//				Debug.Log ("已使用");
-//				return null;
-//			}
-//
-//			int id = reader.GetInt32 (0);
-//
-//			string explaination = reader.GetString (2);
-//
-//
-//			Item inscription = new Item ();
-//
-//			inscription.itemType = ItemType.Inscription;
-//
-//			string inscriptionName = explaination.Split (new string[]{ ".", "，" }, System.StringSplitOptions.RemoveEmptyEntries)[1];
-//
-//			inscription.itemName = string.Format ("{0}之石", inscriptionName);
-//
-//			inscription.RandomProperties ();
-//
-//			sql.UpdateSpecificColsWithValues ("AllWordsData",
-//				new string[]{ "Valid" },
-//				new string[]{ "0" },
-//				new string[]{ string.Format("Id={0}",id) },
-//				true);
-//
-//			sql.CloseConnection (CommonData.dataBaseName);
-//
-//			return inscription;
-//		}
 
-		public Item(){
-		}
-
+		/// <summary>
+		/// 通过物品英文名称初始化物品
+		/// </summary>
+		/// <returns>The item with name.</returns>
+		/// <param name="itemNameInEnglish">Item name in english.</param>
 		public static Item NewItemWithName(string itemNameInEnglish){
 
 			ItemModel itemModel = GameManager.Instance.allItemModels.Find(delegate (ItemModel item){
@@ -121,7 +58,7 @@ namespace WordJourney{
 
 			switch (itemModel.itemType) {
 			case ItemType.Equipment:
-				newItem = new Equipment (itemModel);
+				newItem = new Equipment (itemModel,ItemQuality.Random);
 				break;
 			case ItemType.Consumables:
 				newItem = new Consumables (itemModel);
@@ -138,16 +75,51 @@ namespace WordJourney{
 
 			return newItem;
 		}
+
+
+
+
+		/// <summary>
+		/// 初始化基础属性
+		/// </summary>
+		/// <param name="itemModel">Item model.</param>
+		protected void InitBaseProperties(ItemModel itemModel){
+
+			itemId = itemModel.itemId;
+			itemName = itemModel.itemName;
+			itemDescription = itemModel.itemDescription;
+			spriteName = itemModel.spriteName;
+			itemType = itemModel.itemType;
+			itemNameInEnglish = itemModel.itemNameInEnglish;
+
+		}
+
+		/// <summary>
+		/// 获取所有游戏物品中的武器类物品
+		/// </summary>
+		public static List<Equipment> GetAllEquipments(){
+
+			List<ItemModel> allItemModels = GameManager.Instance.allItemModels;
+
+			List<Equipment> allEquipment = new List<Equipment> ();
+
+			for (int i = 0; i < allItemModels.Count; i++) {
+
+				ItemModel itemModel = allItemModels [i];
+
+				if (itemModel.itemType == ItemType.Equipment) {
+					Equipment equipment = new Equipment (itemModel,ItemQuality.Random);
+					allEquipment.Add (equipment);
+				}
+					
+			}
+			return allEquipment;
+		}
 			
-
-
-		public abstract string GetItemTypeString ();
-
-		public abstract string GetItemPropertiesString ();
-
-		public abstract string GetItemQualityString ();
-
-
+		/// <summary>
+		/// 物品是否可以进行强化
+		/// </summary>
+		/// <returns><c>true</c>, if can strengthen was checked, <c>false</c> otherwise.</returns>
 		public bool CheckCanStrengthen(){
 
 			return itemType == ItemType.Equipment;
@@ -155,14 +127,36 @@ namespace WordJourney{
 		}
 
 
+		/// <summary>
+		/// 获取物品类型字符串
+		/// </summary>
+		/// <returns>The item type string.</returns>
+		public abstract string GetItemTypeString ();
+
+		/// <summary>
+		/// 获取物品属性字符串
+		/// </summary>
+		/// <returns>The item properties string.</returns>
+		public abstract string GetItemPropertiesString ();
+
+		/// <summary>
+		/// 获取物品品质字符串
+		/// </summary>
+		/// <returns>The item quality string.</returns>
+		public abstract string GetItemQualityString ();
+
+
 		public override string ToString ()
 		{
 			return string.Format ("[Item]:" + itemName + "[\nItemDesc]:" + itemDescription);
 		}
 
-
 	}
 
+
+	/// <summary>
+	/// 物品模型类
+	/// </summary>
 	[System.Serializable]
 	public class ItemModel{
 

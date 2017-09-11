@@ -12,33 +12,44 @@ namespace WordJourney{
 
 	public struct CommonData{
 
-		
-		public static string jsonFileDirectoryPath = "Assets/Scripts/JsonData";
-	//	public static string effectsFileName = "SkillEffectData.txt";
-		public static string effectsDataFileName = "TestEffectString.txt";
-		public static string chaptersDataFileName = "ChaptersJson.txt";
-		public static string chapterDataFileName = "ChapterJson.txt";
-		public static string itemsDataFileName = "ItemsJson.txt";
+		public static string originDataPath = Application.streamingAssetsPath + "/Data";
+		public static string persistDataPath = Application.persistentDataPath + "/Data";
+
+		public static string effectsDataFileName = persistDataPath + "/TestEffectString.txt";
+		public static string chaptersDataFileName = persistDataPath + "/ChaptersJson.txt";
+		public static string chapterDataFileName = persistDataPath + "/ChapterJson.txt";
+		public static string itemsDataFileName = persistDataPath + "/AllItemsJson.txt";
+		public static string npcsDataFileName = persistDataPath + "/AllNpcsJson.txt";
+
+
+		public static string mapDataFileName = persistDataPath + "/MapJson.json";
+		public static string mapTilesDataFileName = persistDataPath + "/TileJson.json";
+
+		public static string settingsFileName = persistDataPath + "/Settings.txt";
+		public static string learningInfoFileName = persistDataPath + "/LearningInfo.txt";
+
+		public static string dataBaseName = "MyGameDB.db";
+
+		public static string allWordTable = "AllWordsData";
+		public static string CET4Table = "CET4";
+		public static string CET6Table = "CET6";
+		public static string BussinessEnglishTable = "Bussiness";
+		public static string DailyEnglishTable = "Daily";
+
+
+
 
 		public static string instanceContainerName = "InstanceContainer";
 		public static string poolContainerName = "PoolContainer";
 
 
 		public static string homeCanvas = "HomeCanvas";
-		public static string exploreListCanvas = "ExploreListCanvas";
-		public static string exploreMainCanvas = "ExploreMainCanvas";
-		public static string dialogAndItemCanvas = "DialogAndItemCanvas";
-		public static string battleCanvas = "BattleCanvas";
 		public static string bagCanvas = "BagCanvas";
 		public static string skillCanvas = "SkillCanvas";
 		public static string settingCanvas = "SettingCanvas";
 		public static string spellCanvas = "SpellCanvas";
 
-		public static string dataBaseName = "MyGameDB.db";
-		public static string itemsTable = "ItemsTable";
 
-		public static string settingsFileName = "Settings.txt";
-		public static string learningInfoFileName = "LearningInfo.txt";
 
 		public static int aInASCII = (int)('a');
 
@@ -61,7 +72,8 @@ namespace WordJourney{
 		C,
 		B,
 		A,
-		S
+		S,
+		Random
 	}
 
 	public enum ItemType{

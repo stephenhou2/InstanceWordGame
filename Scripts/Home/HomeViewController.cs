@@ -86,6 +86,15 @@ namespace WordJourney
 
 		public void OnBagButtonClick(){
 
+			GameObject bagCanvas = GameObject.Find ("BagCanvas");
+
+			if (bagCanvas != null) {
+				
+				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
+
+				homeView.OnQuitHomeView();
+			}
+
 			ResourceManager.Instance.LoadAssetWithFileName ("bag/canvas", () => {
 
 				ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();

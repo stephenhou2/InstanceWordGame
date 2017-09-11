@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Data;
 
 
-
 namespace WordJourney
 {
 	public class GameManager : SingletonMono<GameManager> {
@@ -55,7 +54,7 @@ namespace WordJourney
 			get{
 				if (mAllItemModels.Count == 0) {
 					
-					ItemModel[] ItemArray = DataInitializer.LoadDataToModelWithPath<ItemModel> (CommonData.jsonFileDirectoryPath, "AllItemsJson.txt");
+					ItemModel[] ItemArray = DataInitializer.LoadDataToModelWithPath<ItemModel> (CommonData.itemsDataFileName);
 
 					foreach (ItemModel itemModel in ItemArray) {
 						Debug.Log (itemModel.itemType);
@@ -269,9 +268,9 @@ namespace WordJourney
 		void Awake(){
 
 			#warning 加载本地游戏数据,后面需要写一下
-			mGameSettings = DataInitializer.LoadDataToSingleModelWithPath<GameSettings> (Application.persistentDataPath, CommonData.settingsFileName);
+			mGameSettings = DataInitializer.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFileName);
 
-			mLearnInfo = DataInitializer.LoadDataToSingleModelWithPath<LearningInfo> (Application.persistentDataPath, CommonData.learningInfoFileName);
+			mLearnInfo = DataInitializer.LoadDataToSingleModelWithPath<LearningInfo> (CommonData.learningInfoFileName);
 
 			ResourceManager.Instance.MaxCachingSpace (200);
 
@@ -325,9 +324,9 @@ namespace WordJourney
 
 			string settingsString = JsonUtility.ToJson (gameSettings);
 
-			ResourceManager.Instance.WriteStringDataToFile (settingsString, Application.persistentDataPath + "/" + CommonData.settingsFileName);
+			ResourceManager.Instance.WriteStringDataToFile (settingsString, CommonData.settingsFileName);
 
-			Debug.Log (Application.persistentDataPath + "/" + CommonData.settingsFileName);
+			Debug.Log (CommonData.settingsFileName);
 
 		}
 
@@ -335,9 +334,9 @@ namespace WordJourney
 
 			string learnInfoStr = JsonUtility.ToJson (learnInfo);
 
-			ResourceManager.Instance.WriteStringDataToFile (learnInfoStr, Application.persistentDataPath + "/" + CommonData.learningInfoFileName);
+			ResourceManager.Instance.WriteStringDataToFile (learnInfoStr, CommonData.settingsFileName);
 
-			Debug.Log (Application.persistentDataPath + "/" + CommonData.learningInfoFileName);
+			Debug.Log (CommonData.settingsFileName);
 
 		}
 

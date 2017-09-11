@@ -9,6 +9,9 @@ namespace WordJourney
 
 		public TaskItem(ItemModel itemModel){
 			this.itemType = ItemType.Task;
+
+			InitBaseProperties (itemModel);
+
 		}
 
 		public override string GetItemPropertiesString ()
@@ -25,5 +28,7 @@ namespace WordJourney
 		{
 			return string.Empty;
 		}
+
+
 	}
 }

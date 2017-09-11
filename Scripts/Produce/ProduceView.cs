@@ -98,7 +98,7 @@ namespace WordJourney
 				itemDescText.text = itemModel.itemDescription;
 
 				if (itemModel.itemType == ItemType.Equipment) {
-					Equipment equipment = new Equipment (itemModel);
+					Equipment equipment = new Equipment (itemModel,ItemQuality.Random);
 					itemPropertiesText.text = equipment.potentialPropertiesString;
 				}
 
@@ -148,7 +148,9 @@ namespace WordJourney
 
 			produceViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
-			producePlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
+			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+
+			producePlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
 				
 				cb();
 

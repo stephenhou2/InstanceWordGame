@@ -41,13 +41,13 @@ namespace WordJourney{
 
 			string allItemsJsonStr = JsonUtility.ToJson (aij);
 
-			File.WriteAllText (CommonData.jsonFileDirectoryPath + "/AllItemsJson.txt", allItemsJsonStr);
+			File.WriteAllText (CommonData.persistDataPath + "/AllItemsJson.txt", allItemsJsonStr);
 
 		}
 
 		static private ItemModel[] ItemsToJson(){
 
-			string csv = DataInitializer.LoadDataString (CommonData.jsonFileDirectoryPath, "itemsData.csv");
+			string csv = DataInitializer.LoadDataString ("itemsData.csv");
 
 			string[] dataArray = csv.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

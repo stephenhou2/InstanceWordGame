@@ -275,7 +275,9 @@ namespace WordJourney
 
 			spellViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
-			spellPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
+			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+
+			spellPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
 	//			Destroy (GameObject.Find ("SpellCanvas"));
 			});
 		}

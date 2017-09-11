@@ -6,7 +6,9 @@ using System.Text;
 
 namespace WordJourney
 {
-
+	/// <summary>
+	/// 消耗品类型
+	/// </summary>
 	public enum ConsumablesType{
 		Medicine,
 		Tool
@@ -17,18 +19,28 @@ namespace WordJourney
 		public int healthGain;//血量增益
 		public int manaGain;//魔法增益
 
-		public Consumables(){
-		}
 
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		/// <param name="itemModel">Item model.</param>
 		public Consumables(ItemModel itemModel){
 
 			this.itemType = ItemType.Consumables;
 
+			// 初始化物品基础属性
+			InitBaseProperties (itemModel);
+
+			// 初始化消耗品属性
 			healthGain = itemModel.healthGain;
 			manaGain = itemModel.manaGain;
 
 		}
 
+		/// <summary>
+		/// 获取物品属性字符串
+		/// </summary>
+		/// <returns>The item properties string.</returns>
 		public override string GetItemPropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
@@ -59,11 +71,20 @@ namespace WordJourney
 
 		}
 
+
+		/// <summary>
+		/// 获取物品类型字符串
+		/// </summary>
+		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
 			return "类型: 消耗品";
 		}
 
+		/// <summary>
+		/// 获取物品品质字符串
+		/// </summary>
+		/// <returns>The item quality string.</returns>
 		public override string GetItemQualityString ()
 		{
 			return string.Empty;

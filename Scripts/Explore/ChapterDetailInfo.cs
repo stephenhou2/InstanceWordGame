@@ -46,7 +46,7 @@ namespace WordJourney
 
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
-					item = new Equipment (itemModel);
+					item = new Equipment (itemModel,ItemQuality.Random);
 					break;
 				case ItemType.Consumables:
 					item = new Consumables (itemModel);
@@ -84,7 +84,7 @@ namespace WordJourney
 
 		private void LoadNPCsData(){
 
-			NPC[] npcsArray = DataInitializer.LoadDataToModelWithPath<NPC> (CommonData.jsonFileDirectoryPath, "AllNpcsJson.txt");
+			NPC[] npcsArray = DataInitializer.LoadDataToModelWithPath<NPC> (CommonData.npcsDataFileName);
 			
 			foreach (int npcId in npcIds) {
 				foreach (NPC npc in npcsArray) {

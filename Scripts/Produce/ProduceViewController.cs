@@ -144,7 +144,7 @@ namespace WordJourney
 
 //		private void LoadAllItems(){
 //
-//	//		Item[] allItems = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.jsonFileDirectoryPath, CommonData.itemsDataFileName);
+//	//		Item[] allItems = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.persistDataPath, CommonData.itemsDataFileName);
 //
 //			List<Item> allItems = GameManager.Instance.allItems;
 //

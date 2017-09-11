@@ -33,7 +33,7 @@ namespace WordJourney
 			}
 
 			//原始物理伤害值
-			int originalDamage = (int)(self.agent.attack * (1 + enemy.agent.physicalHurtScaler) * self.agent.critScaler);
+			int originalDamage = (int)(self.agent.attack * (1 + self.agent.physicalHurtScaler) * self.agent.critScaler);
 
 			// 攻击之后将暴击伤害率重新设定为1
 			self.agent.critScaler = 1.0f;

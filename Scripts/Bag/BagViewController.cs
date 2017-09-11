@@ -47,7 +47,16 @@ namespace WordJourney
 				equipmentType = EquipmentType.Armour;
 				break;
 			case 2:
+				equipmentType = EquipmentType.Helmet;
+				break;
+			case 3:
+				equipmentType = EquipmentType.Shield;
+				break;
+			case 4:
 				equipmentType = EquipmentType.Shoes;
+				break;
+			case 5:
+				equipmentType = EquipmentType.Ring;
 				break;
 			}
 
@@ -146,7 +155,7 @@ namespace WordJourney
 
 			Player player = Player.mainPlayer;
 
-				Item item = player.allItems [currentSelectItemIndex];
+			Item item = player.allItems [currentSelectItemIndex];
 
 			int resolveCount = (int)bagView.resolveCountSlider.value;
 
@@ -251,13 +260,25 @@ namespace WordJourney
 		// 退出背包界面
 		public void OnQuitBagPlaneButtonClick(){
 
-			bagView.OnQuitBagPlane (DestroyInstances);
+			bagView.OnQuitBagPlane (() => {
 
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+				GameObject exploreCanvas = GameObject.Find (CommonData.instanceContainerName + "/ExploreCanvas");
 
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			}
+				if (exploreCanvas != null) {
+
+					GetComponent<Canvas>().enabled = false;
+
+				} else {
+
+					GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+					if (homeCanvas != null) {
+						homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+					}
+
+					bagView.OnQuitBagPlane(DestroyInstances);
+				}
+			});
 
 		}
 

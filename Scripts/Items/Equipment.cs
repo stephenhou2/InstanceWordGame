@@ -5,11 +5,19 @@ using System.Text;
 
 namespace WordJourney
 {
+	/// <summary>
+	/// 装备类型枚举
+	/// </summary>
 	public enum EquipmentType{
-		Weapon,
-		Armour,
-		Shoes,
+		Weapon,//武器
+		Armour,//护甲
+		Helmet,//头盔
+		Shield,//盾
+		Shoes,//鞋
+		Ring,//饰品
 	}
+
+
 
 	public class Equipment : Item {
 
@@ -20,37 +28,47 @@ namespace WordJourney
 		public int manaResistGain;//魔抗增益
 		public int dodgeGain;//闪避增益
 
-
+		//装备品质
 		public ItemQuality itemQuality;
 
+		//装备的潜在属性字符串（装备根据品质不同属性上有差异）
 		public string potentialPropertiesString;
 
+		//装备已强化次数
 		public int strengthenTimes;
 
+		//装备是否已佩戴
 		public bool equiped;
 
+		//装备类型
 		public EquipmentType equipmentType;
 
+
+		//装备根据品质不同属性变化范围
 		private int minGain = -3;
 		private int maxGain = 8;
 
 
-
+		/// <summary>
+		/// 空构造函数，初始化一个0属性的装备
+		/// </summary>
 		public Equipment(){
 			
 		}
 
-		public Equipment(ItemModel itemModel){
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		/// <param name="itemModel">Item model.</param>
+		/// </param> 装备品质［if＝＝ItemQuality.Random，则装备属性随机］</param>
+		public Equipment(ItemModel itemModel,ItemQuality iq){
 
 			this.itemType = ItemType.Equipment;
-			
-			itemId = itemModel.itemId;
-			itemName = itemModel.itemName;
-			itemDescription = itemModel.itemDescription;
-			spriteName = itemModel.spriteName;
-			itemType = itemModel.itemType;
-			itemNameInEnglish = itemModel.itemNameInEnglish;
 
+			// 初始化物品基本属性
+			InitBaseProperties (itemModel);
+
+			// 初始化装备属性
 			attackGain = itemModel.attackGain;
 			attackSpeedGain = itemModel.attackSpeedGain;
 			critGain = itemModel.critGain;
@@ -58,16 +76,29 @@ namespace WordJourney
 			manaResistGain = itemModel.manaResistGain;
 			dodgeGain = itemModel.dodgeGain;
 
+
 			equipmentType = itemModel.equipmentType;
 
+			// 获取装备潜在属性范围字符串
 			this.potentialPropertiesString = GetItemPotentialPropertiesString ();
 
-			RandomQuility ();
+			// 确定装备品质
+			if (iq == ItemQuality.Random) {
+				RandomQuility ();
+			} else {
+				this.itemQuality = iq;
+			}
 
+			// 根据装备品质在基础属性上重新设定装备属性
 			ResetBasePropertiesByQuality ();
 
 		}
 
+
+		/// <summary>
+		/// 获取物品类型字符串
+		/// </summary>
+		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
 			switch (equipmentType) {
@@ -82,6 +113,9 @@ namespace WordJourney
 			}
 		}
 
+		/// <summary>
+		/// 随机装备品质
+		/// </summary>
 		protected void RandomQuility(){
 
 			float seed = Random.Range (0f, 100f);
@@ -97,27 +131,36 @@ namespace WordJourney
 
 		}
 
+
+		/// <summary>
+		/// 根据装备品质重设装备初始属性
+		/// </summary>
 		protected void ResetBasePropertiesByQuality(){
 
 			switch (itemQuality) {
 			case ItemQuality.C:
-				ResetProperties (-3, 1);
+				UpdateProperties (-3, 1);
 				break;
 			case ItemQuality.B:
-				ResetProperties (-2, 3);
+				UpdateProperties (-2, 3);
 				break;
 			case ItemQuality.A:
-				ResetProperties (-1, 5);
+				UpdateProperties (-1, 5);
 				break;
 			case ItemQuality.S:
-				ResetProperties (1, 8);
+				UpdateProperties (1, 8);
 				break;
 
 			}
 
 		}
 
-		private void ResetProperties(int minGain,int maxGain){
+		/// <summary>
+		/// 强化时更新装备属性
+		/// </summary>
+		/// <param name="minGain">Minimum gain.</param>
+		/// <param name="maxGain">Max gain.</param>
+		private void UpdateProperties(int minGain,int maxGain){
 
 			if (attackGain > 0) {
 				attackGain += Random.Range (minGain, maxGain);
@@ -139,6 +182,10 @@ namespace WordJourney
 			}
 		}
 
+
+		/// <summary>
+		/// 获取装备潜在属性范围字符串
+		/// </summary>
 		private string GetItemPotentialPropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
@@ -194,6 +241,10 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 获取物品属性字符串
+		/// </summary>
+		/// <returns>The item properties string.</returns>
 		public override string GetItemPropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
@@ -249,6 +300,10 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 获取物品品质字符串
+		/// </summary>
+		/// <returns>The item quality string.</returns>
 		public override string GetItemQualityString(){
 
 			string itemQualityStr = string.Empty;
@@ -264,6 +319,14 @@ namespace WordJourney
 		}
 
 
+		/// <summary>
+		/// 比较两个装备的给定属性，并返回比较后的字符串
+		/// </summary>
+		/// <param name="propertyValue0">Property value0.</param>
+		/// <param name="propertyValue1">Property value1.</param>
+		/// <param name="compare">Compare.</param>
+		/// <param name="linkSymbol">Link symbol.</param>
+		/// <param name="colorText">Color text.</param>
 		private void CompareItemsProperty(int propertyValue0,int propertyValue1,out int compare,out string linkSymbol,out string colorText){
 
 			compare = propertyValue0 - propertyValue1;
@@ -273,6 +336,11 @@ namespace WordJourney
 			colorText = compare < 0 ? "<color=red>" : "<color=green>";
 		}
 
+		/// <summary>
+		/// 获取两件装备的对比字符串
+		/// </summary>
+		/// <returns>The compare properties string with item.</returns>
+		/// <param name="compareEquipment">Compare equipment.</param>
 		public string GetComparePropertiesStringWithItem(Equipment compareEquipment){
 
 			StringBuilder itemProperties = new StringBuilder ();
@@ -287,12 +355,6 @@ namespace WordJourney
 
 				CompareItemsProperty (attackGain, compareEquipment.attackGain,out compare,out linkSymbol,out colorText);
 
-				//			int compare = attackGain - item.attackGain;
-				//	
-				//			string linkSymbol = compare < 0 ? "-" : "+";
-				//	
-				//			string colorText = compare < 0 ? "<color=red>" : "<color=green>";
-
 				string str = string.Format ("攻击: {0}({1}{2}{3}</color>)", attackGain,colorText,linkSymbol,Mathf.Abs(compare));
 
 				propertiesList.Add (str);
@@ -301,12 +363,6 @@ namespace WordJourney
 
 				CompareItemsProperty (attackSpeedGain, compareEquipment.attackSpeedGain,out compare,out linkSymbol,out colorText);
 
-				//			int compare = magicGain - item.magicGain;
-				//
-				//			string linkSymbol = compare < 0 ? "-" : "+";
-				//
-				//			string colorText = compare < 0 ? "<color=red>" : "<color=green>";
-				//
 				string str = string.Format ("攻速: {0}({1}{2}{3}</color>)", attackSpeedGain,colorText,linkSymbol,Mathf.Abs(compare));
 
 				propertiesList.Add (str);
@@ -314,14 +370,6 @@ namespace WordJourney
 			if (critGain > 0) {
 
 				CompareItemsProperty (critGain, compareEquipment.critGain,out compare,out linkSymbol,out colorText);
-
-				//			int compare = critGain - item.critGain;
-				//
-				//			string preText = null;
-				//
-				//			string linkSymbol = compare < 0 ? "-" : "+";
-				//
-				//			string colorText = compare < 0 ? "<color=red>" : "<color=green>";
 
 				string str = string.Format ("暴击: {0}({1}{2}{3}</color>)", critGain,colorText,linkSymbol,Mathf.Abs(compare));
 
@@ -369,6 +417,13 @@ namespace WordJourney
 
 		}
 
+
+		/// <summary>
+		/// Chances the of gain.
+		/// </summary>
+		/// <returns>The of gain.</returns>
+		/// <param name="chanceArray">Chance array.</param>
+		/// <param name="gain">Gain.</param>
 		protected float chanceOfGain(float[] chanceArray,int gain){
 			float totalChance = 0f;
 			for (int i = 0; i < gain; i++) {
@@ -379,9 +434,12 @@ namespace WordJourney
 
 
 
-
+		/// <summary>
+		/// 强化物品
+		/// </summary>
 		public string StrengthenItem(){
 
+			// 增加不同属性点的概率数组
 			float[] chanceArray = null;
 
 			switch (itemQuality) {
@@ -404,6 +462,12 @@ namespace WordJourney
 
 		}
 
+
+		/// <summary>
+		/// 根据品质得到的属性增长概率数组，强化物品
+		/// </summary>
+		/// <returns>物品属性字符串</returns>
+		/// <param name="chanceArray">属性［＋1的概率，＋2的概率，＋3的概率，＋4的概率］</param>
 		private string StrengthenPropertyByQuality(float[] chanceArray){
 
 			int propertyGain = 0;
@@ -468,46 +532,6 @@ namespace WordJourney
 
 			return strengthenGainStr;
 		}
-
-		protected void RandomProperties(){
-
-			int seed1 = Random.Range (1, 8);
-			int seed2 = 0;
-			do {
-				seed2 = Random.Range (1, 8);
-			} while(seed2 == seed1);
-
-			foreach (int seed in new int[]{seed1,seed2}) {
-				switch (seed) {
-				case 0:
-					attackGain = Random.Range (1, 10);
-					break;
-				case 1:
-					attackSpeedGain = Random.Range (1, 10);
-					break;
-				case 2:
-					armourGain = Random.Range (1, 10);
-					break;
-				case 3:
-					manaResistGain = Random.Range (1, 10);
-					break;
-				case 4:
-					critGain = Random.Range (1, 10);
-					break;
-				case 5:
-					dodgeGain = Random.Range (1, 10);
-					break;
-//				case 6:
-//					healthGain = Random.Range (10, 100);
-//					break;
-//				case 7:
-//					manaGain = Random.Range (1, 5);
-//					break;
-				}
-			}
-
-		}
-
-
+			
 	}
 }

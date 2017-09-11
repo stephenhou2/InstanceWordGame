@@ -17,11 +17,16 @@ namespace WordJourney
 		public int manaResistGain;//魔抗增益
 		public int dodgeGain;//闪避增益
 
-
+		/// <summary>
+		/// 构造函数
+		/// </summary>
+		/// <param name="itemModel">Item model.</param>
 		public Inscription(ItemModel itemModel){
 
 			this.itemType = ItemType.Inscription;
 
+
+			/************从单词数据库中获取物品名称**************/
 			MySQLiteHelper sql = MySQLiteHelper.Instance;
 
 			sql.GetConnectionWith (CommonData.dataBaseName);
@@ -46,9 +51,9 @@ namespace WordJourney
 
 			string explaination = reader.GetString (2);
 
-			this.itemType = ItemType.Inscription;
-
 			string inscriptionName = explaination.Split (new string[]{ ".", "，" }, System.StringSplitOptions.RemoveEmptyEntries)[1];
+
+			inscriptionName = inscriptionName.Replace ("的", string.Empty);
 
 			this.itemName = string.Format ("{0}之石", inscriptionName);
 
@@ -63,7 +68,10 @@ namespace WordJourney
 			sql.CloseConnection (CommonData.dataBaseName);
 		}
 
-
+		/// <summary>
+		/// 获取物品属性字符串
+		/// </summary>
+		/// <returns>The item properties string.</returns>
 		public override string GetItemPropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
@@ -118,12 +126,15 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 铭文随机获得值为1～9的两个属性
+		/// </summary>
 		protected void RandomProperties(){
 
-			int seed1 = Random.Range (1, 8);
+			int seed1 = Random.Range (0, 6);
 			int seed2 = 0;
 			do {
-				seed2 = Random.Range (1, 8);
+				seed2 = Random.Range (0, 6);
 			} while(seed2 == seed1);
 
 			foreach (int seed in new int[]{seed1,seed2}) {
@@ -146,16 +157,30 @@ namespace WordJourney
 				case 5:
 					dodgeGain = Random.Range (1, 10);
 					break;
+//				case 6:
+//					healthGain = Random.Range (10, 100);
+//					break;
+//				case 7:
+//					manaGain = Random.Range (1, 5);
+//					break;
 				}
 			}
 		}
 
 
+		/// <summary>
+		/// 获取物品类型字符串
+		/// </summary>
+		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
 			return "类型: 铭文";
 		}
 
+		/// <summary>
+		/// 获取物品品质字符串
+		/// </summary>
+		/// <returns>The item quality string.</returns>
 		public override string GetItemQualityString ()
 		{
 			return string.Empty;

@@ -135,7 +135,7 @@ namespace WordJourney
 
 				if (spellPurpose == SpellPurpose.Strengthen) {
 
-					if (enteredCharacters.ToString () != itemToSpell.itemNameInEnglish) {
+					if (enteredCharacters.ToString () != equipmentToStrengthen.itemNameInEnglish) {
 						return;
 					}
 
@@ -144,7 +144,6 @@ namespace WordJourney
 					}
 
 					StartCoroutine ("StrengthenItem");
-	//				StrengthenItem (itemToSpell);
 				}
 
 			}
@@ -361,7 +360,7 @@ namespace WordJourney
 					Item newItem = null;
 					switch(itemModel.itemType){
 					case ItemType.Equipment:
-						newItem = new Equipment (itemModel);
+						newItem = new Equipment (itemModel,ItemQuality.Random);
 						break;
 					case ItemType.Inscription:
 						newItem = new Inscription (itemModel);

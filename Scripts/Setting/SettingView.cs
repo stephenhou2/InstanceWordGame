@@ -86,7 +86,9 @@ namespace WordJourney{
 
 			settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
 
-			settingPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete(()=>{
+			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+
+			settingPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
 				cb();
 			});
 		}

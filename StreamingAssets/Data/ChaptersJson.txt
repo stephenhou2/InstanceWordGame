@@ -1,0 +1,18 @@
+﻿{
+	"Items": [
+		{
+			"chapterIndex": 0,
+			"chapterName": "黑暗森林",
+			"chapterDescription": "这段曲子极富画面感：晚霞下的塔拉多森林，夕阳的余晖洒在奥金顿的塔尖上。风中吹着塔拉多幽兰的清香，仿佛还能听见沙塔斯港码头上船只的汽笛声。惟愿这世上兵戈不起，战火永熄，阿里克南泼罗斯，愿你有一个美好的未来。",
+			"chapterLocations":["死亡峡谷","勇者森林","月亮井"],
+			"unlockLevel": 0
+		},
+		{
+			"chapterIndex": 1,
+			"chapterName": "迷雾沼泽",
+			"chapterDescription": "那天野外杀一个精英怪，应该叫游荡的守备官，打完以后看守备官留下的日志，正好放起这首歌，我直接被惊呆了……守备官悲伤的故事和这首歌曲太吻合了",
+			"chapterLocations":["迷雾之湖","迷失沼泽"],
+			"unlockLevel": 5
+		}
+	]
+}

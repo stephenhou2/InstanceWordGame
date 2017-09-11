@@ -86,7 +86,9 @@ namespace WordJourney{
 		// 从指定文件（txt／csv等文本文件）中读取数据 csv为从excel中导出的文本文件，导入unity之后需要选择结尾格式（mono里是这样的，在mono中打开csv文件后会有提示），否则在读取数据库时会报字段名不同的错误
 		private static void LoadItemsData(string dataFileName){
 
-			string itemsString = DataInitializer.LoadDataString (CommonData.jsonFileDirectoryPath, dataFileName);
+			string dataFilePath = CommonData.persistDataPath + "/" + dataFileName;
+
+			string itemsString = DataInitializer.LoadDataString (dataFilePath);
 
 			string[] stringsByLine = itemsString.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

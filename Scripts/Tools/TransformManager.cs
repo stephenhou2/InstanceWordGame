@@ -40,7 +40,13 @@ namespace WordJourney{
 
 		public static Transform FindTransform (string transformName){
 
-			return GameObject.Find (transformName).transform;
+			GameObject go = GameObject.Find (transformName);
+
+			if (go == null) {
+				return null;
+			}
+
+			return go.transform;
 
 		}
 

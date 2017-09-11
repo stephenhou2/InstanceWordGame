@@ -7,9 +7,9 @@ public static class DataInitializer{
 
 
 	// 数据转模型
-	public static T[] LoadDataToModelWithPath<T>(string filePath,string fileName){
+	public static T[] LoadDataToModelWithPath<T>(string fileName){
 
-		string jsonStr = LoadDataString (filePath, fileName);
+		string jsonStr = LoadDataString (fileName);
 
 		T[] dataArray = null;
 
@@ -22,9 +22,9 @@ public static class DataInitializer{
 		return dataArray;
 	}
 
-	public static T LoadDataToSingleModelWithPath<T>(string filePath,string fileName){
+	public static T LoadDataToSingleModelWithPath<T>(string fileName){
 
-		string jsonStr = LoadDataString (filePath, fileName);
+		string jsonStr = LoadDataString (fileName);
 
 		T instance = default (T);
 
@@ -40,13 +40,13 @@ public static class DataInitializer{
 
 
 	// 加载指定路径的文件数据
-	public static string LoadDataString(string filePath,string fileName){
+	public static string LoadDataString(string fileName){
 		
 		StreamReader sr = null;
 
 		//读取文件
 		try{
-			sr = File.OpenText (filePath + "/" + fileName);
+			sr = File.OpenText (fileName);
 			string dataString = sr.ReadToEnd ();
 			Debug.Log(dataString);
 			return dataString;

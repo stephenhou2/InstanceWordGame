@@ -29,19 +29,17 @@ namespace WordJourney
 
 				Consumables consumables = item as Consumables;
 				
-				itemName.text = item.itemName;
-
-				itemQuality.text = "品质: -";
+				itemName.text = consumables.itemName;
 
 				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == item.spriteName;
+					return obj.name == consumables.spriteName;
 				});
 
 				if (itemIcon.sprite != null) {
 					itemIcon.enabled = true;
 				}
 
-				detailDescText.GetComponent<Text> ().text = item.GetItemPropertiesString ();
+				detailDescText.GetComponent<Text> ().text = consumables.GetItemPropertiesString ();
 
 				detailDescText.gameObject.SetActive (true);
 

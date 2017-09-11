@@ -7,225 +7,227 @@ using DG.Tweening;
 
 namespace WordJourney
 {
-public class RecordView : MonoBehaviour {
+	public class RecordView : MonoBehaviour {
 
 
-	public Text wordType;
+		public Text wordType;
 
-	public Transform recordViewContainer;
+		public Transform recordViewContainer;
 
-	public Transform recordPlane;
+		public Transform recordPlane;
 
-	public Transform generalRecordPlane;
-	public Transform wordsRecordPlane;
+		public Transform generalRecordPlane;
+		public Transform wordsRecordPlane;
 
-	public Transform wordItemsContainer;
+		public Transform wordItemsContainer;
 
-	public Button[] titleButtons;
+		public Button[] titleButtons;
 
-	public Image completionImage;
+		public Image completionImage;
 
-	public Text completionPercentage;
+		public Text completionPercentage;
 
-	public Text learnedTime;
+		public Text learnedTime;
 
-	public Text learnedCount;
+		public Text learnedCount;
 
-	public Text unlearnedCount;
+		public Text unlearnedCount;
 
-	// 选项卡选中图片
-	private Sprite typeBtnNormalSprite;
-	// 选项卡未选中图片
-	private Sprite typeBtnSelectedSprite;
+		// 选项卡选中图片
+		private Sprite typeBtnNormalSprite;
+		// 选项卡未选中图片
+		private Sprite typeBtnSelectedSprite;
 
-	// 单词cell模型
-	public GameObject wordItemModel;
+		// 单词cell模型
+		public GameObject wordItemModel;
 
-	// 复用缓存池
-	private InstancePool wordItemPool;
+		// 复用缓存池
+		private InstancePool wordItemPool;
 
 
-	public void SetUpRecordView(){
+		public void SetUpRecordView(){
 
-		wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
+			wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
 
-		typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeButtonNormal";
-		});
+			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				return obj.name == "typeButtonNormal";
+			});
 
-		typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-			return obj.name == "typeButtonSelected";
-		});
-
-	}
-
-	/// <summary>
-	/// 初始化学习记录页
-	/// </summary>
-	/// <param name="learnInfo">Learn info.</param>
-	public void OnGeneralInfoButtonClick(LearningInfo learnInfo){
-
-		generalRecordPlane.gameObject.SetActive (true);
-
-		wordsRecordPlane.gameObject.SetActive (false);
-
-		for (int i = 0; i < titleButtons.Length; i++) {
-
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				return obj.name == "typeButtonSelected";
+			});
 
 		}
 
-		string wordTypeStr = string.Empty;
+		/// <summary>
+		/// 初始化学习记录页
+		/// </summary>
+		/// <param name="learnInfo">Learn info.</param>
+		public void OnGeneralInfoButtonClick(LearningInfo learnInfo){
 
-		switch (learnInfo.wordType) {
-		case WordType.CET4:
-			wordTypeStr = "四级核心词汇";
-			break;
-		case WordType.CET6:
-			wordTypeStr = "六级核心词汇";
-			break;
-		case WordType.Bussiness:
-			wordTypeStr = "商务英语词汇";
-			break;
-		case WordType.Daily:
-			wordTypeStr = "日常英语词汇";
-			break;
-		}
+			generalRecordPlane.gameObject.SetActive (true);
 
-		wordType.text = wordTypeStr;
+			wordsRecordPlane.gameObject.SetActive (false);
 
-		float percentage = learnInfo.learnedWordCount / learnInfo.totalWordCount;
+			for (int i = 0; i < titleButtons.Length; i++) {
 
-		completionImage.fillAmount = percentage;
+				titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
-		completionPercentage.text = ((int)(percentage * 100)).ToString() + "%";
+			}
 
-		learnedTime.text = learnInfo.learnTime.ToString();
+			string wordTypeStr = string.Empty;
 
-		learnedCount.text = learnInfo.learnedWordCount.ToString ();
+			switch (learnInfo.wordType) {
+			case WordType.CET4:
+				wordTypeStr = "四级核心词汇";
+				break;
+			case WordType.CET6:
+				wordTypeStr = "六级核心词汇";
+				break;
+			case WordType.Bussiness:
+				wordTypeStr = "商务英语词汇";
+				break;
+			case WordType.Daily:
+				wordTypeStr = "日常英语词汇";
+				break;
+			}
 
-		unlearnedCount.text = (learnInfo.totalWordCount - learnInfo.learnedWordCount).ToString ();
+			wordType.text = wordTypeStr;
 
-	}
+			float percentage = learnInfo.learnedWordCount / learnInfo.totalWordCount;
 
-	/// <summary>
-	/// 初始化已学习页
-	/// </summary>
-	/// <param name="learnInfo">Learn info.</param>
-	public void OnLearnedButtonClick(LearningInfo learnInfo){
+			completionImage.fillAmount = percentage;
 
+			completionPercentage.text = ((int)(percentage * 100)).ToString() + "%";
 
-		
-		generalRecordPlane.gameObject.SetActive (false);
+			learnedTime.text = learnInfo.learnTime.ToString();
 
-		wordsRecordPlane.gameObject.SetActive (true);
+			learnedCount.text = learnInfo.learnedWordCount.ToString ();
 
-		for (int i = 0; i < titleButtons.Length; i++) {
-
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+			unlearnedCount.text = (learnInfo.totalWordCount - learnInfo.learnedWordCount).ToString ();
 
 		}
+
+		/// <summary>
+		/// 初始化已学习页
+		/// </summary>
+		/// <param name="learnInfo">Learn info.</param>
+		public void OnLearnedButtonClick(LearningInfo learnInfo){
+
+
 			
+			generalRecordPlane.gameObject.SetActive (false);
 
-		for (int i = 0; i < learnInfo.learnedWordCount; i++) {
+			wordsRecordPlane.gameObject.SetActive (true);
 
-			Word w = learnInfo.learnedWords [i];
+			for (int i = 0; i < titleButtons.Length; i++) {
 
-			Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordsRecordPlane);
+				titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? typeBtnSelectedSprite : typeBtnNormalSprite);
 
-			Text word = wordItem.FindChild ("Word").GetComponent<Text>();
+			}
+				
 
-			Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
+			for (int i = 0; i < learnInfo.learnedWordCount; i++) {
 
-			word.text = w.spell;
+				Word w = learnInfo.learnedWords [i];
 
-			explaination.text = w.example;
+				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordsRecordPlane);
+
+				Text word = wordItem.FindChild ("Word").GetComponent<Text>();
+
+				Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
+
+				word.text = w.spell;
+
+				explaination.text = w.example;
+
+			}
+
+
+
+		}
+
+		/// <summary>
+		/// 初始化未学习页
+		/// </summary>
+		/// <param name="learnInfo">Learn info.</param>
+		public void OnUnlearnedButtonClick(LearningInfo learnInfo){
+			
+			generalRecordPlane.gameObject.SetActive (false);
+
+			wordsRecordPlane.gameObject.SetActive (true);
+
+			for (int i = 0; i < titleButtons.Length; i++) {
+
+				titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+
+			}
+
+			int unlearnedWordsCount = learnInfo.totalWordCount - learnInfo.learnedWordCount;
+
+			for (int i = 0; i < unlearnedWordsCount; i++) {
+
+				Word w = learnInfo.unlearnedWords [i];
+
+				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordItemsContainer);
+
+				Text word = wordItem.FindChild ("Word").gameObject.GetComponent<Text>();
+
+				Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
+
+				word.text = w.spell;
+
+				explaination.text = w.explaination;
+
+			}
+
+
+
+		}
+
+
+		/// <summary>
+		/// 选择选项卡后更新选项卡图片
+		/// </summary>
+		/// <param name="index">Index.</param>
+		public void OnSelectTitleButton(int index){
+
+			for (int i = 0; i < titleButtons.Length; i++) {
+				Button titleButton = titleButtons [i];
+				titleButton.GetComponent<Image> ().sprite = (i == index ? typeBtnSelectedSprite : typeBtnNormalSprite);
+
+			}
+
+
+		}
+
+		/// <summary>
+		/// 退出已学习／未学习页时将cell放入缓存池
+		/// </summary>
+		public void OnQuitWordsRecordPlane(){
+
+			wordItemPool.AddChildInstancesToPool (wordItemsContainer);
+
+		}
+
+		/// <summary>
+		/// 退出整个单词记录几面
+		/// </summary>
+		/// <param name="cb">Cb.</param>
+		public void OnQuitRecordPlane(CallBack cb){
+
+			recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+
+			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+
+				recordPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
+				cb();
+			});
+
 
 		}
 
 
 
 	}
-
-	/// <summary>
-	/// 初始化未学习页
-	/// </summary>
-	/// <param name="learnInfo">Learn info.</param>
-	public void OnUnlearnedButtonClick(LearningInfo learnInfo){
-		
-		generalRecordPlane.gameObject.SetActive (false);
-
-		wordsRecordPlane.gameObject.SetActive (true);
-
-		for (int i = 0; i < titleButtons.Length; i++) {
-
-			titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-		}
-
-		int unlearnedWordsCount = learnInfo.totalWordCount - learnInfo.learnedWordCount;
-
-		for (int i = 0; i < unlearnedWordsCount; i++) {
-
-			Word w = learnInfo.unlearnedWords [i];
-
-			Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordItemsContainer);
-
-			Text word = wordItem.FindChild ("Word").gameObject.GetComponent<Text>();
-
-			Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
-
-			word.text = w.spell;
-
-			explaination.text = w.explaination;
-
-		}
-
-
-
-	}
-
-
-	/// <summary>
-	/// 选择选项卡后更新选项卡图片
-	/// </summary>
-	/// <param name="index">Index.</param>
-	public void OnSelectTitleButton(int index){
-
-		for (int i = 0; i < titleButtons.Length; i++) {
-			Button titleButton = titleButtons [i];
-			titleButton.GetComponent<Image> ().sprite = (i == index ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-		}
-
-
-	}
-
-	/// <summary>
-	/// 退出已学习／未学习页时将cell放入缓存池
-	/// </summary>
-	public void OnQuitWordsRecordPlane(){
-
-		wordItemPool.AddChildInstancesToPool (wordItemsContainer);
-
-	}
-
-	/// <summary>
-	/// 退出整个单词记录几面
-	/// </summary>
-	/// <param name="cb">Cb.</param>
-	public void OnQuitRecordPlane(CallBack cb){
-
-		recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
-
-		recordPlane.DOLocalMoveY (-Screen.height, 0.5f).OnComplete(()=>{
-			cb();
-		});
-
-
-	}
-
-
-
-}
 }

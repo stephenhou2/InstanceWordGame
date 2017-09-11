@@ -22,6 +22,7 @@ namespace WordJourney
 		public Text progressText;
 
 		public Text attackText;
+		public Text attackSpeedText;
 		public Text armourText;
 		public Text manaResistText;
 		public Text critText;
@@ -97,6 +98,10 @@ namespace WordJourney
 
 			SetUpAllItemsPlane ();
 
+			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 200);
+
+			bagPlane.transform.localPosition = Vector3.zero;
+
 			this.GetComponent<Canvas> ().enabled = true;
 
 		}
@@ -117,9 +122,8 @@ namespace WordJourney
 
 			playerLevelText.text = "Lv." + player.agentLevel;
 
-			#warning 进度文字未设置
 			attackText.text = "攻击:" + player.attack.ToString ();
-			manaText.text = "魔法:" + player.mana.ToString ();
+			attackSpeedText.text = "攻速:" + player.attackSpeed.ToString ();
 			armourText.text = "护甲:" + player.armour.ToString();
 			manaResistText.text = "抗性:" + player.manaResist.ToString();
 			critText.text = "暴击:" + (player.crit / (1 + 0.01f * player.crit)).ToString("F0") + "%";
@@ -424,9 +428,15 @@ namespace WordJourney
 
 		// 关闭背包界面
 		public void OnQuitBagPlane(CallBack cb){
+			
 			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
-			bagPlane.transform.DOLocalMoveY (-Screen.height, 0.5f).OnComplete (() => {
-				cb();
+
+			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+
+			bagPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+				if(cb != null){
+					cb();
+				}
 			});
 
 		}
