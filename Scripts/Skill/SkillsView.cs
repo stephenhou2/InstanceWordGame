@@ -75,9 +75,9 @@ namespace WordJourney
 
 			skillButton.name = skill.skillName;
 
-			Image skillIcon = skillButton.transform.FindChild ("SkillIcon").GetComponent<Image> ();
-			Text skillLevelText = skillButton.transform.FindChild ("SkillLevel").GetComponent<Text> ();
-			Image skillMask = skillButton.transform.FindChild ("SkillMask").GetComponent<Image> ();
+			Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
+			Text skillLevelText = skillButton.transform.Find ("SkillLevel").GetComponent<Text> ();
+			Image skillMask = skillButton.transform.Find ("SkillMask").GetComponent<Image> ();
 
 			if (skillSprite != null) {
 				skillIcon.sprite = skillSprite;
@@ -104,10 +104,10 @@ namespace WordJourney
 			currentSelectSkillButton = skillButton;
 
 			for (int i = 0; i < skillTreeButtons.Length; i++) {
-				skillTreeButtons [i].transform.FindChild ("SelectedIcon").GetComponent<Image> ().enabled = false;
+				skillTreeButtons [i].transform.Find ("SelectedIcon").GetComponent<Image> ().enabled = false;
 			}
 
-			skillButton.transform.FindChild ("SelectedIcon").GetComponent<Image> ().enabled = true;
+			skillButton.transform.Find ("SelectedIcon").GetComponent<Image> ().enabled = true;
 
 
 			if (skillSprite != null) {

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3070254247
+CRC: 1728535509
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 98ab1ac197008683f1f704db83ad7d77
+    Hash: 597bc20dca95e54e456f5f9c3b8845a7
   TypeTreeHash:
     serializedVersion: 2
-    Hash: aaeee07a9a0efc12308179149537e337
+    Hash: 1376f397a52dd118e164f48cd682b5e9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -61,5 +61,4 @@ Assets:
 - Assets/Prefabs/Spell/SpellCanvas.prefab
 - Assets/Prefabs/Spell/StrengthenGainTextModel.prefab
 - Assets/Prefabs/Spell/CreatedItemDetailModel.prefab
-Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui_icons
+Dependencies: []

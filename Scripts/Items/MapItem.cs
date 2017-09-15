@@ -71,7 +71,7 @@ namespace WordJourney
 
 
 			if (originSprite != null) {
-				SpriteRenderer sr = transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ();
+				SpriteRenderer sr = transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ();
 				sr.sprite = originSprite;
 				sr.enabled = true;
 			}

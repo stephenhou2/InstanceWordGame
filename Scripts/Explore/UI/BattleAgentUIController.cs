@@ -34,7 +34,7 @@ namespace WordJourney
 
 
 		public bool firstSetHealthBar = true;
-		public bool firstSetStrengthBar = true;
+		public bool firstSetManaBar = true;
 
 
 

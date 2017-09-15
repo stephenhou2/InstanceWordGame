@@ -2,41 +2,83 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
+using Object=UnityEngine.Object;
 
-namespace WordJourney{
+namespace WordJourney
+{
+
+	/// <summary>
+	/// streamingAssets内资源加载类
+	/// </summary>
 	public class ResourceManager:SingletonMono<ResourceManager>
 	{
 
+		// 加载进度
 		public float loadProgress;
 
+		// 加载完成回调
 		private CallBack callBack;
 
-		private bool spriteOnly;
+		// 想要加载的资源类型
+		private Type type;
 
+		// 从本地加载的图片
 		public List<Sprite> sprites = new List<Sprite> ();
 
+		// 从本地加载的游戏体
 		public List<GameObject> gos = new List<GameObject> ();
 
+		// 指定加载的文件名
 		private string fileName;
 
-		private static bool loadFinished;
+		// 加载asset请求
+		private AssetBundleRequest assetLoadRequest;
+
+		// 从本地加载出的资源包
+		private AssetBundle myLoadedAssetBundle;
+
 
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
 
-		public void MaxCachingSpace (int maxCaching)
-		{
-			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
-		}
-
-
-		public void LoadAssetWithFileName (string bundlePath, CallBack callBack, bool isSync = false, string fileName = null)
+		/// <summary>
+		/// 加载指定名称的bundle中的资源
+		/// </summary>
+		/// <param name="bundlePath">Bundle path.</param>
+		/// <param name="callBack">加载完成后回调</param>
+		/// <param name="isSync">是否采用同步加载[default：false]</param>
+		/// <param name="fileName">指定文件名（指定后只加载指定名称的文件镜像）.</param>
+		public void LoadAssetWithBundlePath (string bundlePath, CallBack callBack, bool isSync = false, string fileName = null)
 		{
 
 			this.fileName = fileName;
 
 			this.callBack = callBack;
 
-			this.spriteOnly = false;
+			if (isSync) {
+				LoadFromFileSync (bundlePath);
+			} else {
+				StartCoroutine ("LoadFromFileAsync", bundlePath);
+			}
+				
+		}
+
+		/// <summary>
+		/// 加载指定名称的bundle中的资源
+		/// </summary>
+		/// <param name="bundlePath">Bundle path.</param>
+		/// <param name="callBack">加载完成后回调</param>
+		/// <param name="isSync">是否采用同步加载[default：false]</param>
+		/// <param name="fileName">指定文件名（指定后只加载指定名称的文件镜像）.</param>
+		/// <typeparam name="T">指定加载资源的类型</typeparam>
+		public void LoadAssetWithBundlePath<T> (string bundlePath, CallBack callBack, bool isSync = false, string fileName = null)
+		{
+
+			this.type = typeof(T);
+
+			this.fileName = fileName;
+
+			this.callBack = callBack;
 
 			if (isSync) {
 				LoadFromFileSync (bundlePath);
@@ -45,84 +87,47 @@ namespace WordJourney{
 			}
 
 		}
-
-		public void LoadSpritesAssetWithFileName(string bundlePath,CallBack callBack,bool isSync = false,string fileName = null){
-
-			this.fileName = fileName;
-
-			this.callBack = callBack;
-
-			this.spriteOnly = true;
-
-			if (isSync) {
-				LoadFromFileSync (bundlePath);
-			} else {
-				StartCoroutine ("LoadFromFileAsync", bundlePath);
-			}
-		}
-
-
+			
+		/// <summary>
+		/// 同步加载资源
+		/// </summary>
+		/// <param name="bundlePath">Bundle path.</param>
 		private void LoadFromFileSync (string bundlePath)
 		{
-			
+
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
-			var myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
+			myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
+
+			Object[] assetsLoaded = null;
 
 			if (fileName != null) {
 				
-				var assetLoaded = myLoadedAssetBundle.LoadAsset (fileName);
-
-				if (assetLoaded.GetType () == typeof(Sprite)) {
-					Debug.Log ("加载图片" + assetLoaded.name);
-					sprites.Add (assetLoaded as Sprite);
-				} else if (assetLoaded.GetType () == typeof(Texture2D)) {
-					Texture2D t2d = assetLoaded as Texture2D;
-					Sprite s = Sprite.Create (t2d, new Rect (0.0f, 0.0f, t2d.width, t2d.height), new Vector2 (0.5f, 0.5f));
-					Debug.Log ("加载图片" + assetLoaded.name);
-					sprites.Add (s);
-				} else if (!spriteOnly) {
-					GameObject go = Instantiate (assetLoaded as GameObject,Vector3.zero,Quaternion.identity);
-					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
-					go.name = assetLoaded.name;
-					gos.Add (go);
-
+				if (type != null) {
+					assetsLoaded = new Object[]{myLoadedAssetBundle.LoadAsset (fileName, type)};
+				} else {
+					assetsLoaded = new Object[]{myLoadedAssetBundle.LoadAsset (fileName)};
 				}
-
-
 			} else {
-
-				var assetsLoaded = myLoadedAssetBundle.LoadAllAssets ();
-
-				foreach (Object obj in assetsLoaded) {
-					if (obj.GetType () == typeof(Sprite)) {
-						sprites.Add (obj as Sprite);
-					} else if (obj.GetType () == typeof(Texture2D)) {
-						continue;
-					} else if (!spriteOnly) {
-						GameObject go = Instantiate (obj as GameObject,Vector3.zero,Quaternion.identity);
-						go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
-						go.name = obj.name;
-						gos.Add (go);
-
-					}
+				
+				if (type != null) {
+					assetsLoaded = myLoadedAssetBundle.LoadAllAssets (type);
+				} else {
+					assetsLoaded = myLoadedAssetBundle.LoadAllAssets ();
 				}
 
-			}
-				
-			myLoadedAssetBundle.Unload (false);
+				LoadResourceWithAssetObjects (assetsLoaded);
 
-			if (callBack != null) {
-				callBack ();
 			}
-			gos.Clear ();
-			sprites.Clear ();
 		}
 
+		/// <summary>
+		/// 异步加载资源
+		/// </summary>
+		/// <returns>The from file async.</returns>
+		/// <param name="bundlePath">Bundle path.</param>
 		private IEnumerator LoadFromFileAsync (string bundlePath)
 		{
-
-			loadFinished = false;
 
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
@@ -132,85 +137,82 @@ namespace WordJourney{
 
 			yield return bundleLoadRequest;
 
-			var myLoadedAssetBundle = bundleLoadRequest.assetBundle;
-
-
-
+			myLoadedAssetBundle = bundleLoadRequest.assetBundle;
 
 			if (myLoadedAssetBundle == null) {
 				Debug.Log ("Failed to load AssetBundle!");
 				yield break;
 			}
-				
 
 			if (fileName != null) {
 
-				var assetLoadRequest = myLoadedAssetBundle.LoadAssetAsync (fileName);
+				if (type != null) {
+					assetLoadRequest = myLoadedAssetBundle.LoadAssetAsync (fileName, type);
+				} else {
+					assetLoadRequest = myLoadedAssetBundle.LoadAssetAsync (fileName);
+				}
 
 				yield return assetLoadRequest;
 
-				var assetLoaded = assetLoadRequest.asset;
-
-				if (assetLoaded.GetType () == typeof(Sprite)) {
-					Debug.Log ("加载图片" + assetLoaded.name);
-					sprites.Add (assetLoaded as Sprite);
-				} else if (assetLoaded.GetType () == typeof(Texture2D)) {
-					Texture2D t2d = assetLoaded as Texture2D;
-					Sprite s = Sprite.Create (t2d, new Rect (0.0f, 0.0f, t2d.width, t2d.height), new Vector2 (0.5f, 0.5f));
-					Debug.Log ("加载图片" + assetLoaded.name);
-					sprites.Add (s);
-				} else if (!spriteOnly) {
-					GameObject go = Instantiate (assetLoaded as GameObject,Vector3.zero,Quaternion.identity);
-					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
-					go.name = assetLoaded.name;
-					gos.Add (go);
-
-				}
+				LoadResourceWithAssetObjects (assetLoadRequest.allAssets);
 
 			} else {
-				
-				var assetLoadRequest = myLoadedAssetBundle.LoadAllAssetsAsync ();
+
+				if (type != null) {
+					assetLoadRequest = myLoadedAssetBundle.LoadAllAssetsAsync (type);
+				} else {
+					assetLoadRequest = myLoadedAssetBundle.LoadAllAssetsAsync ();
+				}
 
 				yield return assetLoadRequest;
 
-				var assetsLoaded = assetLoadRequest.allAssets;
+				LoadResourceWithAssetObjects (assetLoadRequest.allAssets);
 
-				foreach (Object obj in assetsLoaded) {
-					if (obj.GetType () == typeof(Sprite)) {
-						sprites.Add (obj as Sprite);
-					} else if (obj.GetType () == typeof(Texture2D)) {
-						continue;
-					} else if (!spriteOnly) {
-						GameObject go = Instantiate (obj as GameObject,Vector3.zero,Quaternion.identity);
-						go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
-						go.name = obj.name;
-						gos.Add (go);
-					}
-				}
 			}
+
+		}
+
+
+		/// <summary>
+		/// 处理加载出的资源
+		/// 1.图片：放入缓存 
+		/// 2.prefab：拷贝后放入缓存
+		/// 清理资源
+		/// </summary>
+		/// <param name="assetsLoaded">Assets loaded.</param>
+		private void LoadResourceWithAssetObjects(Object[] assetsLoaded){
+				
+			for (int i = 0; i < assetsLoaded.Length; i++) {
+
+				Object obj = assetsLoaded [i];
+
+				if (obj.GetType () == typeof(Sprite)) {
+					sprites.Add (obj as Sprite);
+				} else if (obj.GetType () == typeof(Texture2D)) {
+					continue;
+				} else {
+					GameObject go = Instantiate (obj as GameObject, Vector3.zero, Quaternion.identity);
+					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
+					go.name = obj.name;
+					gos.Add (go);
+				}
+
+				obj = null;
+			}
+
+			assetLoadRequest = null;
+			assetsLoaded = null;
+			type = null;
 
 			myLoadedAssetBundle.Unload (false);
 
 			if (callBack != null) {
 				callBack ();
 			}
+				
 			gos.Clear ();
 			sprites.Clear ();
-
-			loadFinished = true;
 		}
 
-		public static IEnumerator WaitUntillAsyncLoadFinished(){
-
-			yield return new WaitUntil (()=>loadFinished == true);
-
-		}
-
-		public void WriteStringDataToFile(string stringData,string filePath){
-
-			File.WriteAllText (filePath, stringData);
-
-		}
-			
 	}
 }

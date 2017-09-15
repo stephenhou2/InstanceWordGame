@@ -71,8 +71,8 @@ namespace WordJourney
 		public Slider resolveCountSlider;
 		public Text resolveCount;
 
-		private Sprite typeBtnNormalSprite;
-		private Sprite typeBtnSelectedSprite;
+//		private Sprite typeBtnNormalSprite;
+//		private Sprite typeBtnSelectedSprite;
 
 		/// <summary>
 		/// 初始化背包界面
@@ -82,13 +82,13 @@ namespace WordJourney
 			this.sprites = GameManager.Instance.allItemSprites;
 			this.player = Player.mainPlayer;
 
-			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonNormal";
-			});
-
-			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonSelected";
-			});
+//			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+//				return obj.name == "typeButtonNormal";
+//			});
+//
+//			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+//				return obj.name == "typeButtonSelected";
+//			});
 
 			itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
 
@@ -156,7 +156,7 @@ namespace WordJourney
 
 				Button itemBtn = allItemsBtns [i];
 
-				Text extraInfo = allItemsBtns [i].transform.FindChild ("ExtraInfo").GetComponent<Text> ();
+				Text extraInfo = allItemsBtns [i].transform.Find ("ExtraInfo").GetComponent<Text> ();
 
 				if (i < player.allItems.Count) {
 
@@ -175,7 +175,7 @@ namespace WordJourney
 					
 					SetUpItemButton (null, itemBtn);
 
-					Image selectedBorder = itemBtn.transform.FindChild ("SelectedBorder").GetComponent<Image> ();
+					Image selectedBorder = itemBtn.transform.Find ("SelectedBorder").GetComponent<Image> ();
 					selectedBorder.enabled = false;
 
 					extraInfo.text = string.Empty;
@@ -304,14 +304,14 @@ namespace WordJourney
 
 			if (item == null) {
 	//			btn.interactable = (item != null);
-				Image itemIcon = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+				Image itemIcon = btn.transform.Find ("ItemIcon").GetComponent<Image>();
 				itemIcon.enabled = false;
 				itemIcon.sprite = null;
 
 			}
 			else if (item != null && item.itemName != null) {
 	//			btn.interactable = (item != null);
-				Image image = btn.transform.FindChild ("ItemIcon").GetComponent<Image>();
+				Image image = btn.transform.Find ("ItemIcon").GetComponent<Image>();
 				image.enabled = true;
 				image.sprite = sprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
@@ -390,7 +390,7 @@ namespace WordJourney
 
 			for(int i = 0;i<allItemsBtns.Length;i++){
 				Button btn = allItemsBtns [i];
-				btn.transform.FindChild ("SelectedBorder").GetComponent<Image> ().enabled = i == index;
+				btn.transform.Find ("SelectedBorder").GetComponent<Image> ().enabled = i == index;
 			}
 				
 

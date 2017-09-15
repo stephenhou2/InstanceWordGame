@@ -24,7 +24,7 @@ namespace WordJourney
 
 			GetComponent<Canvas>().enabled = true; 
 
-			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive(true);
+//			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
 
 
 		}
@@ -45,7 +45,7 @@ namespace WordJourney
 				// 生成技能
 				skillToUpgradeInLearnedSkills = Instantiate (currentSelectSkill);
 				skillToUpgradeInLearnedSkills.name = currentSelectSkill.skillName;
-				skillToUpgradeInLearnedSkills.transform.SetParent (Player.mainPlayer.transform.FindChild ("Skills").transform);
+				skillToUpgradeInLearnedSkills.transform.SetParent (Player.mainPlayer.transform.Find ("Skills").transform);
 
 				// 技能等级 + 1
 				skillToUpgradeInLearnedSkills.skillLevel++;
@@ -82,8 +82,8 @@ namespace WordJourney
 		}
 
 		public void OnQuitButtonClick(){
-
-			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive (false);
+			
+//			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (false);
 
 			skillsView.OnQuitSkillsPlane (DestroyInstances);
 
@@ -96,9 +96,17 @@ namespace WordJourney
 
 		private void DestroyInstances(){
 
+			mSkills = null;
+
+			mSkillSprites = null;
+
 			TransformManager.DestroyTransform (gameObject.transform);
 
 			TransformManager.DestroyTransfromWithName ("Skills", TransformRoot.InstanceContainer);
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
 
 		}
 	}

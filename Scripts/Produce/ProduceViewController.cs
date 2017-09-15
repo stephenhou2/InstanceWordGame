@@ -87,7 +87,7 @@ namespace WordJourney
 			GameObject spellCanvas = null;
 
 			if (itemModel == null) {
-				ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+				ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
 					spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 					spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
 				});
@@ -105,7 +105,7 @@ namespace WordJourney
 			}
 				
 			// 如果玩家字母碎片足够，则进入拼写界面
-			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
 				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(itemModel);
 			});
@@ -118,7 +118,7 @@ namespace WordJourney
 
 		}
 
-		public void OnQuitButtonClick(){
+		public void QuitProduceView(){
 
 			produceView.QuitProduceView (DestroyInstances);
 
@@ -139,12 +139,16 @@ namespace WordJourney
 
 			TransformManager.DestroyTransform (gameObject.transform);
 
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
+
 		}
 
 
 //		private void LoadAllItems(){
 //
-//	//		Item[] allItems = DataInitializer.LoadDataToModelWithPath<Item> (CommonData.persistDataPath, CommonData.itemsDataFileName);
+//	//		Item[] allItems = DataHandler.LoadDataToModelWithPath<Item> (CommonData.persistDataPath, CommonData.itemsDataFileName);
 //
 //			List<Item> allItems = GameManager.Instance.allItems;
 //

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 550461000
+CRC: 833328826
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 59a727ea26f59ef315522c72311a2859
+    Hash: 9d9fd51555539c304e5cf9a61b0b97c5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 489b74fda67f780aee65634dea165910
+    Hash: 6b88bc4e343e15e43f0316f61c2066df
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -54,5 +54,4 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/Record/RecordCanvas.prefab
 - Assets/Prefabs/Record/WordItem.prefab
-Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/button
+Dependencies: []

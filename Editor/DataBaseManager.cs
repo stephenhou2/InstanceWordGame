@@ -88,7 +88,7 @@ namespace WordJourney{
 
 			string dataFilePath = CommonData.persistDataPath + "/" + dataFileName;
 
-			string itemsString = DataInitializer.LoadDataString (dataFilePath);
+			string itemsString = DataHandler.LoadDataString (dataFilePath);
 
 			string[] stringsByLine = itemsString.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

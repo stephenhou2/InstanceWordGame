@@ -70,7 +70,7 @@ namespace WordJourney
 //
 //				string monsterName = string.Format ("Monster_{0}", monsterIds [i]);
 //
-//				ResourceManager.Instance.LoadAssetWithFileName ("monsters", () => {
+//				ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
 //
 //					monsters.Add(ResourceManager.Instance.gos[0].GetComponent<Monster>());
 //
@@ -78,13 +78,15 @@ namespace WordJourney
 //					
 //			}
 
+			Debug.Log (GameManager.Instance);
+
 			monsters = GameManager.Instance.allMonsters;
 
 		}
 
 		private void LoadNPCsData(){
 
-			NPC[] npcsArray = DataInitializer.LoadDataToModelWithPath<NPC> (CommonData.npcsDataFileName);
+			NPC[] npcsArray = DataHandler.LoadDataToModelWithPath<NPC> (CommonData.npcsDataFilePath);
 			
 			foreach (int npcId in npcIds) {
 				foreach (NPC npc in npcsArray) {

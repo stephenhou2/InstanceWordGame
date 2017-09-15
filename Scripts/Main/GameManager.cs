@@ -54,7 +54,7 @@ namespace WordJourney
 			get{
 				if (mAllItemModels.Count == 0) {
 					
-					ItemModel[] ItemArray = DataInitializer.LoadDataToModelWithPath<ItemModel> (CommonData.itemsDataFileName);
+					ItemModel[] ItemArray = DataHandler.LoadDataToModelWithPath<ItemModel> (CommonData.itemsDataFilePath);
 
 					foreach (ItemModel itemModel in ItemArray) {
 						Debug.Log (itemModel.itemType);
@@ -72,7 +72,7 @@ namespace WordJourney
 			get{
 				if (mAllMapSprites.Count == 0) {
 
-					ResourceManager.Instance.LoadSpritesAssetWithFileName ("mapicons", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("mapicons", () => {
 
 						foreach (Sprite s in ResourceManager.Instance.sprites) {
 							mAllMapSprites.Add (s);
@@ -89,7 +89,7 @@ namespace WordJourney
 //		public List<MapNPC> allMapNpcs{
 //			get{
 //				if (mAllMapNpcs.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithFileName ("mapnpcs", () => {
+//					ResourceManager.Instance.LoadAssetWithBundlePath ("mapnpcs", () => {
 //
 //						foreach (GameObject mapNpc in ResourceManager.Instance.gos) {
 //							mAllMapNpcs.Add (mapNpc.GetComponent<MapNPC>());
@@ -105,7 +105,7 @@ namespace WordJourney
 //		public List<Monster> allMonsters{
 //			get{
 //				if (mAllMonsters.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithFileName ("monsters", () => {
+//					ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
 //						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 //						mAllMonsters.Add(ResourceManager.Instance.gos[i].GetComponent<Monster>());
 //						}
@@ -119,7 +119,7 @@ namespace WordJourney
 //		public List<NPC> allNPCs{
 //			get{
 //				if (mAllNPCs.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithFileName ("npcs", () => {
+//					ResourceManager.Instance.LoadAssetWithBundlePath ("npcs", () => {
 //						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 //							mAllNPCs.Add(ResourceManager.Instance.gos[i].GetComponent<NPC>());
 //						}
@@ -134,7 +134,7 @@ namespace WordJourney
 
 			get{
 				if (mAllItemsSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName ("item/icons", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath ("item/icons", () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllItemsSprites.Add(ResourceManager.Instance.sprites[i]);
@@ -160,7 +160,7 @@ namespace WordJourney
 
 					ResourceManager.Instance.gos.Clear ();
 
-					ResourceManager.Instance.LoadAssetWithFileName ("skills/skill", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath ("skills/skill", () => {
 						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 							Skill skill = ResourceManager.Instance.gos[i].GetComponent<Skill>();
 							mAllSkills.Add(skill);
@@ -198,7 +198,7 @@ namespace WordJourney
 
 			get{
 				if (mAllSkillSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName ("skills/icons", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("skills/icons", () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllSkillSprites.Add(ResourceManager.Instance.sprites[i]);
@@ -220,7 +220,7 @@ namespace WordJourney
 
 			get{
 				if (mAllUIIcons.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName("ui_icons",()=>{
+					ResourceManager.Instance.LoadAssetWithBundlePath("ui_icons",()=>{
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllUIIcons.Add(ResourceManager.Instance.sprites[i]);
 						}
@@ -238,7 +238,7 @@ namespace WordJourney
 
 			get{
 				if (mAllExploreIcons.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName("explore/icons",()=>{
+					ResourceManager.Instance.LoadAssetWithBundlePath("explore/icons",()=>{
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllExploreIcons.Add(ResourceManager.Instance.sprites[i]);
 						}
@@ -254,7 +254,7 @@ namespace WordJourney
 		public List<Transform> allMonsters{
 			get{
 				if (mAllMonsters.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithFileName ("monsters", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
 						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
 							Transform monster = ResourceManager.Instance.gos[i].transform;
 							mAllMonsters.Add(monster);
@@ -268,13 +268,9 @@ namespace WordJourney
 		void Awake(){
 
 			#warning 加载本地游戏数据,后面需要写一下
-			mGameSettings = DataInitializer.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFileName);
+			mGameSettings = DataHandler.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFilePath);
 
-			mLearnInfo = DataInitializer.LoadDataToSingleModelWithPath<LearningInfo> (CommonData.learningInfoFileName);
-
-			ResourceManager.Instance.MaxCachingSpace (200);
-
-			SetUpHomeView (Player.mainPlayer);
+			mLearnInfo = DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (CommonData.learningInfoFilePath);
 
 		}
 
@@ -303,41 +299,21 @@ namespace WordJourney
 
 
 			#warning 离线下载和更改词库的代码后续补充
-
-			SaveGameSettings ();
+			// 保存游戏设置到本地文件
+			DataHandler.WriteModelDataToFile <GameSettings>(gameSettings, CommonData.settingsFilePath);
 
 		}
 
 
 
 
-		private void SetUpHomeView(Player player){
+		public void SetUpHomeView(Player player){
 
-			ResourceManager.Instance.LoadAssetWithFileName ("home/canvas", () => {
+			ResourceManager.Instance.LoadAssetWithBundlePath ("home/canvas", () => {
 
 				ResourceManager.Instance.gos[0].GetComponent<HomeViewController> ().SetUpHomeView ();
 
 			});
-		}
-			
-		public void SaveGameSettings(){
-
-			string settingsString = JsonUtility.ToJson (gameSettings);
-
-			ResourceManager.Instance.WriteStringDataToFile (settingsString, CommonData.settingsFileName);
-
-			Debug.Log (CommonData.settingsFileName);
-
-		}
-
-		public void SaveLearnInfo(){
-
-			string learnInfoStr = JsonUtility.ToJson (learnInfo);
-
-			ResourceManager.Instance.WriteStringDataToFile (learnInfoStr, CommonData.settingsFileName);
-
-			Debug.Log (CommonData.settingsFileName);
-
 		}
 
 	}

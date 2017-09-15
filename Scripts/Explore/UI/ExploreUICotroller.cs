@@ -182,11 +182,11 @@ namespace WordJourney
 					
 
 				if (rewardSprite != null) {
-					Image rewardItemIcon = rewardButton.transform.FindChild ("ItemIcon").GetComponent<Image> ();
+					Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
 					rewardItemIcon.sprite = rewardSprite;
 					rewardItemIcon.enabled = true;
 					rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
-					rewardButton.transform.FindChild ("SelectIcon").gameObject.SetActive (true);
+					rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
 					itemsToPickUp.Add (rewardItem);
 					rewardButton.onClick.AddListener (delegate {
 						ChangeRewardSelection(rewardButton,rewardItem);
@@ -203,7 +203,7 @@ namespace WordJourney
 
 		private void ChangeRewardSelection(Button rewardButton,Item rewardItem){
 
-			Image selectionIcon = rewardButton.transform.FindChild ("SelectIcon").GetComponent<Image>();
+			Image selectionIcon = rewardButton.transform.Find ("SelectIcon").GetComponent<Image>();
 
 			if (selectionIcon.IsActive()) {
 				selectionIcon.gameObject.SetActive (false);

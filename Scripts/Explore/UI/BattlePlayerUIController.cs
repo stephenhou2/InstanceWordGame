@@ -102,9 +102,9 @@ namespace WordJourney
 
 				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel, skillsContainer);
 
-				Image skillIcon = skillButton.transform.FindChild ("SkillIcon").GetComponent<Image> ();
-				Text skillName = skillButton.transform.FindChild ("SkillName").GetComponent<Text> ();
-				Text manaConsume = skillButton.transform.FindChild ("ManaConsume").GetComponent<Text> ();
+				Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
+				Text skillName = skillButton.transform.Find ("SkillName").GetComponent<Text> ();
+				Text manaConsume = skillButton.transform.Find ("ManaConsume").GetComponent<Text> ();
 
 
 				Sprite sprite = GameManager.Instance.allSkillSprites.Find(delegate (Sprite s){
@@ -144,7 +144,7 @@ namespace WordJourney
 			
 			skillButton.interactable = false;
 
-			Image coolenMask = skillButton.transform.FindChild ("CoolenMask").GetComponent<Image> ();
+			Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
 
 			coolenMask.enabled = true;
 
@@ -221,18 +221,45 @@ namespace WordJourney
 
 		public void OnBagButtonClick(){
 
-			Transform bagCanvas = TransformManager.FindTransform (CommonData.instanceContainerName + "/BagCanvas");
+			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 
-			if (bagCanvas != null) {
-				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
+			bpCtr.OnPlayerClickBag ();
+
+		}
+
+
+		public void OnItemButtonClick(int buttonIndex){
+
+			Item item = null;
+
+			switch (buttonIndex) {
+			case 0:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "health";
+				});
+				break;
+			case 1:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "mana";
+				});
+				break;
+			case 2:
+				item = player.allItems.Find (delegate (Item obj) {
+					return obj.itemNameInEnglish == "antiDebuff";
+				});
+				break;
+			default:
+				break;
+
+			}
+				
+			if (item == null) {
 				return;
 			}
 
-			ResourceManager.Instance.LoadAssetWithFileName ("bag/canvas", () => {
+			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 
-				ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
-
-			});
+			bpCtr.OnPlayerUseItem (item);
 
 		}
 
@@ -251,7 +278,7 @@ namespace WordJourney
 			manaText.text = ba.mana + "/" + ba.maxMana;
 
 
-			if (firstSetStrengthBar) {
+			if (firstSetManaBar) {
 				manaBar.value = ba.mana;
 			} else {
 				manaBar.DOValue (ba.mana, 0.2f);
@@ -363,52 +390,6 @@ namespace WordJourney
 //		}
 
 
-
-		public void OnPlayerUseItem(int itemIndex){
-
-			Item item = player.allEquipedEquipments[itemIndex + 3];
-
-			if (item == null) {
-				return;
-			}
-
-			item.itemCount--;
-
-
-			if (item.itemCount <= 0) {
-				player.allEquipedEquipments [itemIndex + 3] = null;
-				player.allItems.Remove (item);
-				UpdateItemButtons ();
-			}
-
-
-//			if (item.healthGain != 0 && item.manaGain != 0) {
-//				player.health += item.healthGain;
-//				player.mana += item.manaGain;
-//				UpdateHealthBarAnim (player);
-//				UpdateManaBarAnim (player);
-//
-//				string tintText = "<color=green>+" + item.healthGain.ToString() + "体力</color>" 
-//					+ "\t\t\t\t\t" 
-//					+ "<color=orange>+" + item.manaGain.ToString() + "魔法</color>";
-//				PlayTintHUDAnim(tintText);
-//
-//			}else if (item.healthGain != 0) {
-//				player.health += item.healthGain;
-//				UpdateHealthBarAnim (player);
-//				string tintText = "<color=green>+" + item.healthGain.ToString() + "体力</color>";
-//				PlayTintHUDAnim(tintText);
-//
-//			}else if (item.manaGain != 0) {
-//				player.mana += item.manaGain;
-//				UpdateManaBarAnim (player);
-//				string tintText = "<color=blue>+" + item.manaGain.ToString() + "魔法</color>";
-//				PlayTintHUDAnim(tintText);
-//			}
-
-			UpdateItemButtons ();
-
-		}
 
 
 //		public void OnSkillButtonUp(){

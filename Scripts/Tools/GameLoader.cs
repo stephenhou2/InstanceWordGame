@@ -1,43 +1,75 @@
 ﻿using UnityEngine;
 using System;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using Object = UnityEngine.Object;
+using System.Collections;
 
 
 namespace WordJourney
 {
 	public class GameLoader : MonoBehaviour {
 
-		private bool hasInitialized;
+		private int maxCaching = 100;
 
 		void Awake(){
 
-			PersistDataIfFirstLoad ();
+			StartCoroutine ("PersistDataIfFirstLoad");
 
+		}
+
+		private void InitGame(){
+
+			SetUpSystemSettings ();
+			
 			DontDestroyOnLoad (Player.mainPlayer);
 
 			DontDestroyOnLoad (GameManager.Instance);
 
+			GameManager.Instance.SetUpHomeView (Player.mainPlayer);
+
+
+
 		}
 
-		private void PersistDataIfFirstLoad(){
+		/// <summary>
+		/// 初始化系统设置
+		/// </summary>
+		private void SetUpSystemSettings(){
+			
+			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
+
+		}
+
+
+
+		private IEnumerator PersistDataIfFirstLoad(){
 
 			DirectoryInfo persistDi = new DirectoryInfo (CommonData.persistDataPath);
 
 			if (!persistDi.Exists) {
+				
+				Debug.Log ("文件本地化");
+
 				persistDi.Create ();
+
 				DirectoryInfo originDi = new DirectoryInfo (CommonData.originDataPath);
-				FileInfo[] dataFiles = originDi.GetFiles ();
-				for (int i = 0; i < dataFiles.Length; i++) {
-					FileInfo fi = dataFiles [i];
-					string persistFilePath = string.Format ("{0}/{1}", CommonData.persistDataPath, fi.Name);
-					fi.CopyTo (persistFilePath);
+
+				while (persistDi.GetFiles ().Length != originDi.GetFiles ().Length) {
+
+					FileInfo[] dataFiles = originDi.GetFiles ();
+
+					for (int i = 0; i < dataFiles.Length; i++) {
+						FileInfo fi = dataFiles [i];
+						string persistFilePath = string.Format ("{0}/{1}", CommonData.persistDataPath, fi.Name);
+						fi.CopyTo (persistFilePath);
+					}
+
+					yield return null;
 				}
 			}
 	
 			Debug.Log (CommonData.persistDataPath);
+
+			InitGame ();
 
 		}
 

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 682805011
+CRC: 30828397
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3f30c640370df879f972645a59c3ca9c
+    Hash: 76d783c69dfea40f5e7cf1199cdfd987
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8a34cb48f983f91056c4375a870e83ee
+    Hash: 76f041be2c6a7eb27646b1614fade6da
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -24,10 +24,6 @@ ClassTypes:
 - Class: 61
   Script: {instanceID: 0}
 - Class: 74
-  Script: {instanceID: 0}
-- Class: 82
-  Script: {instanceID: 0}
-- Class: 83
   Script: {instanceID: 0}
 - Class: 91
   Script: {instanceID: 0}
@@ -58,8 +54,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 0e4f48038e5c94502b0b3eff2fecb1d0, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: e9664006bbf82436782d24280d78f122, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: fff182172d726402b9e9eacdb89c9724, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 5db94a988516743a5a9abf0f59eb69a8, type: 3}
@@ -86,9 +80,8 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/NewBattlePrefabs/SoundManager.prefab
-- Assets/Prefabs/NewBattlePrefabs/ExploreManager.prefab
-- Assets/Prefabs/NewBattlePrefabs/TintTextModel.prefab
-- Assets/Prefabs/NewBattlePrefabs/ExploreCanvas.prefab
+- Assets/Prefabs/Explore/ExploreManager.prefab
+- Assets/Prefabs/Explore/TintTextModel.prefab
+- Assets/Prefabs/Explore/ExploreCanvas.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/mapicons

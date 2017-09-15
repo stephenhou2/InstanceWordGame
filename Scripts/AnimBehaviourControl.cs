@@ -9,7 +9,7 @@ namespace WordJourney
 		 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 		override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 
-			animator.transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ().enabled = false;
+			animator.transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ().enabled = false;
 
 		}
 
@@ -33,7 +33,7 @@ namespace WordJourney
 
 			mapItem.unlocked = true;
 
-			SpriteRenderer sr = mapItem.transform.FindChild("MapItemIcon").GetComponent<SpriteRenderer> ();
+			SpriteRenderer sr = mapItem.transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ();
 
 			sr.sprite = mapItem.unlockedSprite;
 			sr.enabled = true;

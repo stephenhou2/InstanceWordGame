@@ -9,32 +9,30 @@ namespace WordJourney
 {
 	public class Player : Agent {
 
-		private static Player mPlayerSingleton;
+		private static volatile Player mPlayerSingleton;
 
-		private static object objectLock = new object();
+		private static object objectLock = new System.Object();
 
 		// 玩家角色单例
 		public static Player mainPlayer{
 			get{
 				if (mPlayerSingleton == null) {
+					Player[] existPlayers = GameObject.FindObjectsOfType<Player>();
+					if (existPlayers != null) {
+						for (int i = 0; i < existPlayers.Length; i++) {
+							Destroy (existPlayers [i].gameObject);
+						}
+					}
 					lock (objectLock) {
-						ResourceManager.Instance.LoadAssetWithFileName("player",()=>{
-							mPlayerSingleton = GameObject.Find ("Player").GetComponent<Player>();
-							mPlayerSingleton.transform.SetParent(null);
+						ResourceManager.Instance.LoadAssetWithBundlePath<GameObject> ("player", () => {
+							mPlayerSingleton = ResourceManager.Instance.gos[0].GetComponent<Player> ();
+							mPlayerSingleton.transform.SetParent (null);
 							mPlayerSingleton.ResetBattleAgentProperties (true);
-							DontDestroyOnLoad (mPlayerSingleton);
 						},true);
 					}
-				}
-				//			else{
-				//				mPlayerSingleton.ResetBattleAgentProperties (false,false);
-				//			}
-
+				} 
 				return mPlayerSingleton;
 			}
-			//		set{
-			//			mPlayerSingleton = value;
-			//		}
 
 		}
 			
@@ -67,12 +65,14 @@ namespace WordJourney
 
 			base.Awake ();
 
-			magicBase = 50;
-
 			#warning 这里用来玩家信息初始化
+
 		}
 
 
+		private void InitPlayerFromLocalData(){
+
+		}
 
 
 		public void UpdateValidActionType(){

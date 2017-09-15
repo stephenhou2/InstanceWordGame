@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 604032266
+CRC: 1604765448
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1dabc7e2c34fd407c7cb0b8cd0bb2bec
+    Hash: a26ebf7a76795a606535b895cab142f5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f42c1c33835e908443a5940e476bf2a9
+    Hash: 492b5ed87180237f639b074b41030382
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -54,5 +54,5 @@ ClassTypes:
 - Class: 221
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/NewBattlePrefabs/Monsters/Monster.prefab
+- Assets/Prefabs/Explore/Monsters/Monster.prefab
 Dependencies: []

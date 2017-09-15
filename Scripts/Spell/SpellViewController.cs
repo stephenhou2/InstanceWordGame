@@ -67,7 +67,7 @@ namespace WordJourney
 
 
 		/// <summary>
-		/// 初始化拼写界面
+		/// 初始化拼写界面（制造）
 		/// </summary>
 		public void SetUpSpellViewForCreate(ItemModel itemModel){
 
@@ -85,9 +85,15 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 初始化拼写界面（强化）
+		/// </summary>
+		/// <param name="item">Item.</param>
 		public void SetUpSpellViewForStrengthen(Item item){
 			
 			this.spellPurpose = SpellPurpose.Strengthen;
+
+			this.itemNameInEnglish = item.itemNameInEnglish;
 
 			this.equipmentToStrengthen = item as Equipment;
 
@@ -121,7 +127,7 @@ namespace WordJourney
 
 				enteredCharactersArray [characterIndex]++;
 
-				string characterWithColor = string.Empty;
+				string characterWithColor = null;
 
 				// 字母碎片足够的字母使用绿色，不足的字母使用红色
 				if (Player.mainPlayer.charactersCount [characterIndex] >= enteredCharactersArray[characterIndex]) {
@@ -389,6 +395,10 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// Strengthens the item.
+		/// </summary>
+		/// <returns>The item.</returns>
 		private IEnumerator StrengthenItem(){
 
 			yield return new WaitForSeconds (0.05f);
@@ -397,14 +407,21 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 玩家点击强化按钮的响应方法
+		/// </summary>
 		public void ConfirmStrengthenItem(){
 
+			// 检查字母碎片是否足够1次强化
 			if (CheckCharactersSufficient (1)) {
 
+				// 强化1次
 				string strengthenGainStr = equipmentToStrengthen.StrengthenItem ();
 
+				// 更新玩家字母碎片数量
 				UpdateOwnedCharacters ();
 
+				// 更新UI
 				spellView.UpdateStrengthenItemDetailHUD (equipmentToStrengthen, strengthenGainStr);
 			}
 		}
@@ -473,24 +490,45 @@ namespace WordJourney
 			}
 		}
 
+		/// <summary>
+		/// 退出制造出的物品描述界面
+		/// </summary>
 		public void QuitCreateDetailHUD(){
 
 			spellView.OnQuitCreateDetailHUD ();
 		}
 
+
+		/// <summary>
+		/// 退出强化物品描述界面
+		/// </summary>
 		public void QuitStrengthenItemDetailHUD(){
 			ClearSpellInfos ();
 			spellView.QuitStrengthenItemDetailHUD();
 			QuitSpellPlane ();
 		}
 
+		/// <summary>
+		/// Quits the spell plane.
+		/// </summary>
 		public void QuitSpellPlane(){
 			
 			spellView.OnQuitSpellPlane ();
 
-			if (itemNameInEnglish != null) {
 
+			if (itemNameInEnglish == null) {
+
+				// 如果从制造接口的任意制造接口进入
+				GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
+				produceCanvas.GetComponent<ProduceViewController> ().QuitProduceView ();
+
+				GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+				DestroyInstances ();
+
+			} else {
 				switch (spellPurpose) {
+
 				case SpellPurpose.Create:
 					GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
 					produceCanvas.GetComponent<Canvas> ().enabled = true;
@@ -503,19 +541,9 @@ namespace WordJourney
 					break;
 				}
 
-
-				DestroyInstances ();
-
-				return;
-
-			}
-
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
-
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
 				DestroyInstances ();
 			}
+
 
 		}
 
@@ -523,11 +551,16 @@ namespace WordJourney
 		/// 退出拼写界面时清除内存
 		/// </summary>
 		private void DestroyInstances(){
+			
 			TransformManager.DestroyTransform (gameObject.transform);
 			TransformManager.DestroyTransfromWithName ("CreatedItemDetailModel", TransformRoot.InstanceContainer);
 			TransformManager.DestroyTransfromWithName ("CreatedItemDetailPool", TransformRoot.PoolContainer);
 			TransformManager.DestroyTransfromWithName ("StrengthenGainTextModel", TransformRoot.InstanceContainer);
 			TransformManager.DestroyTransfromWithName ("StrengthenGainTextPool", TransformRoot.PoolContainer);
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
 
 		}
 

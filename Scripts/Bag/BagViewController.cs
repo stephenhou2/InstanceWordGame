@@ -218,7 +218,7 @@ namespace WordJourney
 				
 
 			// 玩家的字母碎片数量足够，进入强化界面
-			ResourceManager.Instance.LoadAssetWithFileName ("spell/canvas", () => {
+			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
 				
 				GameObject spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 
@@ -276,7 +276,7 @@ namespace WordJourney
 						homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
 					}
 
-					bagView.OnQuitBagPlane(DestroyInstances);
+					DestroyInstances(); 
 				}
 			});
 
@@ -288,6 +288,11 @@ namespace WordJourney
 			TransformManager.DestroyTransform (gameObject.transform);
 			TransformManager.DestroyTransfromWithName ("ItemDetailModel", TransformRoot.InstanceContainer);
 			TransformManager.DestroyTransfromWithName ("ItemDetailsPool", TransformRoot.PoolContainer);
+		
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
+		
 		}
 	}
 }

@@ -11,6 +11,7 @@ namespace WordJourney
 
 
 		public Text playerLevelText;
+
 		public Slider playerHealthBar;
 
 		public Transform votexImage;
@@ -63,13 +64,13 @@ namespace WordJourney
 		// 初始化顶部bar
 		private void SetUpTopBar(){
 
-			Player player = Player.mainPlayer;
-
-			playerLevelText.text = player.agentLevel.ToString();
-
-			playerHealthBar.maxValue = player.maxHealth;
-			playerHealthBar.value = player.health;
-			playerHealthBar.transform.FindChild ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+//			Player player = Player.mainPlayer;
+//
+//			playerLevelText.text = player.agentLevel.ToString();
+//
+//			playerHealthBar.maxValue = player.maxHealth;
+//			playerHealthBar.value = player.health;
+//			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
 
 		}
 	}

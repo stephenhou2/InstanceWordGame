@@ -98,6 +98,10 @@ namespace WordJourney
 		}
 
 		public void OnEnterCharacter(StringBuilder enteredCharacters,string character){
+
+			if (character == null) {
+				return;
+			}
 			
 			characterTexts [enteredCharacters.Length - 1].text = character;
 
@@ -156,15 +160,15 @@ namespace WordJourney
 			
 				Transform itemTrans = createdItemDetailPool.GetInstance<Transform> (createdItemDetailModel, itemDetailContainer);
 
-				Image itemIcon = itemTrans.FindChild ("ItemIcon").GetComponent<Image> ();
+				Image itemIcon = itemTrans.Find ("ItemIcon").GetComponent<Image> ();
 
-				Text itemName = itemTrans.FindChild ("ItemName").GetComponent<Text> ();
+				Text itemName = itemTrans.Find ("ItemName").GetComponent<Text> ();
 
-				Text itemCount = itemTrans.FindChild ("ItemCount").GetComponent<Text> ();
+				Text itemCount = itemTrans.Find ("ItemCount").GetComponent<Text> ();
 
-				Text itemQuality = itemTrans.FindChild ("ItemQuality").GetComponent<Text> ();
+				Text itemQuality = itemTrans.Find ("ItemQuality").GetComponent<Text> ();
 
-				Text itemDesciption = itemTrans.FindChild ("ItemDescription").GetComponent<Text> ();
+				Text itemDesciption = itemTrans.Find ("ItemDescription").GetComponent<Text> ();
 
 				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;	

@@ -15,18 +15,18 @@ namespace WordJourney{
 		public static string originDataPath = Application.streamingAssetsPath + "/Data";
 		public static string persistDataPath = Application.persistentDataPath + "/Data";
 
-		public static string effectsDataFileName = persistDataPath + "/TestEffectString.txt";
-		public static string chaptersDataFileName = persistDataPath + "/ChaptersJson.txt";
-		public static string chapterDataFileName = persistDataPath + "/ChapterJson.txt";
-		public static string itemsDataFileName = persistDataPath + "/AllItemsJson.txt";
-		public static string npcsDataFileName = persistDataPath + "/AllNpcsJson.txt";
+		public static string effectsDataFilePath = persistDataPath + "/TestEffectString.txt";
+		public static string chaptersDataFilePath = persistDataPath + "/ChaptersJson.txt";
+		public static string chapterDataFilePath = persistDataPath + "/ChapterJson.txt";
+		public static string itemsDataFilePath = persistDataPath + "/AllItemsJson.txt";
+		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";
 
 
-		public static string mapDataFileName = persistDataPath + "/MapJson.json";
-		public static string mapTilesDataFileName = persistDataPath + "/TileJson.json";
+		public static string mapDataFilePath = persistDataPath + "/MapJson.json";
+		public static string mapTilesDataFilePath = persistDataPath + "/TileJson.json";
 
-		public static string settingsFileName = persistDataPath + "/Settings.txt";
-		public static string learningInfoFileName = persistDataPath + "/LearningInfo.txt";
+		public static string settingsFilePath = persistDataPath + "/Settings.txt";
+		public static string learningInfoFilePath = persistDataPath + "/LearningInfo.txt";
 
 		public static string dataBaseName = "MyGameDB.db";
 

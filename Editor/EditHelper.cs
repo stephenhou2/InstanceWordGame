@@ -47,7 +47,7 @@ namespace WordJourney{
 
 		static private ItemModel[] ItemsToJson(){
 
-			string csv = DataInitializer.LoadDataString ("itemsData.csv");
+			string csv = DataHandler.LoadDataString ("itemsData.csv");
 
 			string[] dataArray = csv.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

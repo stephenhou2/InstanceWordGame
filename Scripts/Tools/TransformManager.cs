@@ -80,7 +80,7 @@ namespace WordJourney{
 
 		public static void DestroyTransfromWithName(string transformName,TransformRoot transRoot){
 
-			string transInHierarchy = string.Empty;
+			string transInHierarchy = null;
 
 			switch (transRoot) {
 			case TransformRoot.InstanceContainer:

@@ -75,15 +75,15 @@ namespace WordJourney
 
 				Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
 
-				Image itemIcon = itemDetails.FindChild ("ItemIcon").GetComponent<Image>();
+				Image itemIcon = itemDetails.Find ("ItemIcon").GetComponent<Image>();
 
-				Text itemName = itemDetails.FindChild ("ItemName").GetComponent<Text> ();
+				Text itemName = itemDetails.Find ("ItemName").GetComponent<Text> ();
 
-				Text itemDescText = itemDetails.FindChild ("ItemDescText").GetComponent<Text> ();
+				Text itemDescText = itemDetails.Find ("ItemDescText").GetComponent<Text> ();
 
-				Text itemPropertiesText = itemDetails.FindChild ("ItemPropertiesText").GetComponent<Text> ();
+				Text itemPropertiesText = itemDetails.Find ("ItemPropertiesText").GetComponent<Text> ();
 
-				Button produceButton = itemDetails.FindChild ("ProduceButton").GetComponent<Button> ();
+				Button produceButton = itemDetails.Find ("ProduceButton").GetComponent<Button> ();
 
 				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
 					return obj.name == itemModel.spriteName;
@@ -120,7 +120,7 @@ namespace WordJourney
 
 			for (int i = 0; i < charactersOwned.Length; i++) {
 
-				Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
+				Text characterCount = charactersOwned [i].Find("Count").GetComponent<Text>();
 
 				characterCount.text = player.charactersCount [i].ToString ();
 
@@ -134,7 +134,7 @@ namespace WordJourney
 
 			for (int i = 0; i < charactersOwned.Length; i++) {
 
-				Text characterCount = charactersOwned [i].FindChild("Count").GetComponent<Text>();
+				Text characterCount = charactersOwned [i].Find("Count").GetComponent<Text>();
 
 				characterCount.text = string.Empty;
 

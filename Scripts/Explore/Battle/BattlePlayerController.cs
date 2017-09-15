@@ -452,35 +452,7 @@ namespace WordJourney
 		}
 
 
-		public void OnItemButtonClick(int ButtonIndex){
-
-			Item item = null;
-
-			switch (ButtonIndex) {
-			case 0:
-				item = agent.allItems.Find (delegate (Item obj) {
-					return obj.itemNameInEnglish == "health";
-				});
-				break;
-			case 1:
-				item = agent.allItems.Find (delegate (Item obj) {
-					return obj.itemNameInEnglish == "mana";
-				});
-				break;
-			case 2:
-				item = agent.allItems.Find (delegate (Item obj) {
-					return obj.itemNameInEnglish == "antiDebuff";
-				});
-				break;
-			default:
-				break;
-
-			}
-
-
-			if (item == null) {
-				return;
-			}
+		public void OnPlayerUseItem(Item item){
 
 			agent.health += (item as Consumables).healthGain;
 			agent.mana += (item as Consumables).manaGain;
@@ -493,6 +465,23 @@ namespace WordJourney
 			}
 
 			bpUICtr.UpdateItemButtonsAndStatusPlane ();
+
+		}
+
+		public void OnPlayerClickBag(){
+
+			Transform bagCanvas = TransformManager.FindTransform (CommonData.instanceContainerName + "/BagCanvas");
+
+			if (bagCanvas != null) {
+				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
+				return;
+			}
+
+			ResourceManager.Instance.LoadAssetWithBundlePath ("bag/canvas", () => {
+
+				ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
+
+			});
 
 		}
 

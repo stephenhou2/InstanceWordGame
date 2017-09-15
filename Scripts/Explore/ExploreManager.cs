@@ -40,7 +40,7 @@ namespace WordJourney
 
 			navHelper = GetComponent<NavigationHelper> ();
 
-			Player.mainPlayer.transform.FindChild ("BattlePlayer").gameObject.SetActive (true);
+			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (true);
 
 			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
@@ -59,7 +59,7 @@ namespace WordJourney
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
-			ChapterDetailInfo chapterDetail = DataInitializer.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFileName)[chapterIndex];
+			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);

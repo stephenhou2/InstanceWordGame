@@ -34,9 +34,9 @@ namespace WordJourney
 		public Text unlearnedCount;
 
 		// 选项卡选中图片
-		private Sprite typeBtnNormalSprite;
-		// 选项卡未选中图片
-		private Sprite typeBtnSelectedSprite;
+//		private Sprite typeBtnNormalSprite;
+//		// 选项卡未选中图片
+//		private Sprite typeBtnSelectedSprite;
 
 		// 单词cell模型
 		public GameObject wordItemModel;
@@ -48,14 +48,6 @@ namespace WordJourney
 		public void SetUpRecordView(){
 
 			wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
-
-			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonNormal";
-			});
-
-			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonSelected";
-			});
 
 		}
 
@@ -69,13 +61,13 @@ namespace WordJourney
 
 			wordsRecordPlane.gameObject.SetActive (false);
 
-			for (int i = 0; i < titleButtons.Length; i++) {
+//			for (int i = 0; i < titleButtons.Length; i++) {
+//
+//				titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+//
+//			}
 
-				titleButtons [i].GetComponent<Image> ().sprite = (i == 0 ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-			}
-
-			string wordTypeStr = string.Empty;
+			string wordTypeStr = null;
 
 			switch (learnInfo.wordType) {
 			case WordType.CET4:
@@ -113,18 +105,16 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="learnInfo">Learn info.</param>
 		public void OnLearnedButtonClick(LearningInfo learnInfo){
-
-
 			
 			generalRecordPlane.gameObject.SetActive (false);
 
 			wordsRecordPlane.gameObject.SetActive (true);
 
-			for (int i = 0; i < titleButtons.Length; i++) {
-
-				titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-			}
+//			for (int i = 0; i < titleButtons.Length; i++) {
+//
+//				titleButtons [i].GetComponent<Image> ().sprite = (i == 1 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+//
+//			}
 				
 
 			for (int i = 0; i < learnInfo.learnedWordCount; i++) {
@@ -133,9 +123,9 @@ namespace WordJourney
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordsRecordPlane);
 
-				Text word = wordItem.FindChild ("Word").GetComponent<Text>();
+				Text word = wordItem.Find ("Word").GetComponent<Text>();
 
-				Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
+				Text explaination = wordItem.Find ("Explaination").GetComponent<Text> ();
 
 				word.text = w.spell;
 
@@ -157,11 +147,11 @@ namespace WordJourney
 
 			wordsRecordPlane.gameObject.SetActive (true);
 
-			for (int i = 0; i < titleButtons.Length; i++) {
-
-				titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-			}
+//			for (int i = 0; i < titleButtons.Length; i++) {
+//
+//				titleButtons [i].GetComponent<Image> ().sprite = (i == 2 ? typeBtnSelectedSprite : typeBtnNormalSprite);
+//
+//			}
 
 			int unlearnedWordsCount = learnInfo.totalWordCount - learnInfo.learnedWordCount;
 
@@ -171,9 +161,9 @@ namespace WordJourney
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordItemsContainer);
 
-				Text word = wordItem.FindChild ("Word").gameObject.GetComponent<Text>();
+				Text word = wordItem.Find ("Word").gameObject.GetComponent<Text>();
 
-				Text explaination = wordItem.FindChild ("Explaination").GetComponent<Text> ();
+				Text explaination = wordItem.Find ("Explaination").GetComponent<Text> ();
 
 				word.text = w.spell;
 
@@ -192,11 +182,11 @@ namespace WordJourney
 		/// <param name="index">Index.</param>
 		public void OnSelectTitleButton(int index){
 
-			for (int i = 0; i < titleButtons.Length; i++) {
-				Button titleButton = titleButtons [i];
-				titleButton.GetComponent<Image> ().sprite = (i == index ? typeBtnSelectedSprite : typeBtnNormalSprite);
-
-			}
+//			for (int i = 0; i < titleButtons.Length; i++) {
+//				Button titleButton = titleButtons [i];
+//				titleButton.GetComponent<Image> ().sprite = (i == index ? typeBtnSelectedSprite : typeBtnNormalSprite);
+//
+//			}
 
 
 		}
@@ -216,10 +206,13 @@ namespace WordJourney
 		/// <param name="cb">Cb.</param>
 		public void OnQuitRecordPlane(CallBack cb){
 
+			wordItemModel = null;
+
+			wordItemPool = null;
+
 			recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-
 				recordPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
 				cb();
 			});

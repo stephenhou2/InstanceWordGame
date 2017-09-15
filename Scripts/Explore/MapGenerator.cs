@@ -70,12 +70,12 @@ namespace WordJourney
 		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
 
-			mapInfo = DataInitializer.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFileName);
+			mapInfo = DataHandler.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFilePath);
 
 			rows = mapInfo.height;
 			columns = mapInfo.width;
 
-			tileInfo = DataInitializer.LoadDataToSingleModelWithPath<TileInfo> (CommonData.mapTilesDataFileName);
+			tileInfo = DataHandler.LoadDataToSingleModelWithPath<TileInfo> (CommonData.mapTilesDataFilePath);
 
 			mapWalkableInfoArray = new int[rows, columns];
 
@@ -142,10 +142,12 @@ namespace WordJourney
 
 			monsters = chapterDetail.GetCurrentChapterMonsters ();
 
-			foreach (Transform monster in monsters) {
+			for(int i = 0;i<monsters.Count;i++){
+				Transform monster = monsters [i].transform;
 				monster.SetParent (monsterModelsContainer, false);
-				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand", 0, null);
 			}
+
+
 
 			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
 
@@ -240,8 +242,6 @@ namespace WordJourney
 
 			}
 
-			Debug.Log (mapWalkableInfoArray);
-
 		}
 
 
@@ -330,7 +330,6 @@ namespace WordJourney
 				go.name = tileChoice.name;
 
 				go.transform.SetParent (container, true);
-
 
 				mapWalkableInfoArray [(int)randomPosition.x, (int)randomPosition.y] = 0;
 
