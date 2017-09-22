@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.AI;
 using UnityEngine.EventSystems;
-
+using System.Collections.Generic;
 
 namespace WordJourney
 {
-	using System.Collections.Generic;		//Allows us to use Lists. 
-	using UnityEngine.UI;					//Allows us to use UI.
-
 	public class ExploreManager : MonoBehaviour
 	{
 		// 地图生成器
@@ -59,7 +54,7 @@ namespace WordJourney
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
-			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex];
+			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex-1];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);
@@ -93,12 +88,8 @@ namespace WordJourney
 			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began){
 
 				if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
-						Debug.Log("点击在UI上");
 						return;
 				}
-
-			Debug.Log("没有点击在UI上");	
-
 				clickPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
 			}
 #endif
@@ -109,10 +100,9 @@ namespace WordJourney
 			}
 
 
-
 			// 点击位置在地图有效区之外，直接返回
-			if(clickPos.x + 0.5f >= mapGenerator.rows 
-				|| clickPos.y + 0.5f >= mapGenerator.columns 
+			if(clickPos.x + 0.5f >= mapGenerator.columns 
+				|| clickPos.y + 0.5f >= mapGenerator.rows
 				|| clickPos.x + 0.5f < 0 
 				|| clickPos.y + 0.5f < 0){
 				Debug.Log ("点击在地图有效区外部");
@@ -184,36 +174,123 @@ namespace WordJourney
 			
 			Debug.Log ("碰到了item");
 
+			expUICtr.ShowMask ();
+
 			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
 
+
+
+			switch (mapItem.mapItemType) {
+
+			case MapItemType.Obstacle:
+				EnterObstacle (mapItem);
+				break;
+			case MapItemType.TrapSwitch:
+				EnterSwitch (mapItem);
+				break;
+			case MapItemType.TreasureBox:
+				EnterTreasureBox (mapItem);
+				break;
+			default:
+				break;
+			}
+
+
+
+
+		}
+
+		private void EnterObstacle(MapItem mapItem){
+
+			Obstacle obstacle = mapItem as Obstacle;
+
+			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+
+			battlePlayerCtr.PlayRoleAnim ("battle", 1, () => {
+
+				obstacle.UnlockOrDestroyMapItem(()=>{
+
+					mapGenerator.mapWalkableInfoArray [(int)obstacle.transform.position.x, (int)obstacle.transform.position.y] = 1;
+
+					expUICtr.HideMask();
+				});
+
+			});
+
+
+		}
+
+		private void EnterSwitch(MapItem mapItem){
+
+			TrapSwitch trapSwitch = mapItem as TrapSwitch;
+
+			if (trapSwitch.switchOff) {
+				
+				expUICtr.HideMask ();
+
+				return;
+			}
+
+			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+
+			trapSwitch.SwitchOffTrap ();
+
+			expUICtr.HideMask ();
+
+		}
+
+		private void EnterTreasureBox(MapItem mapItem){
+
+			TreasureBox tb = mapItem as TreasureBox;
+
 			// 如果mapitem已打开，则直接返回
-			if (mapItem.unlocked) {
+			if (tb.unlocked) {
+				expUICtr.HideMask ();
 				return;
 			}
 
 			// 如果该地图物品需要使用特殊物品开启
-			if (mapItem.unlockItemName != string.Empty) {
+			if (tb.unlockItemName != string.Empty) {
 
 				Item unlockItem = Player.mainPlayer.allItems.Find(delegate(Item item) {
-					return item.itemName == mapItem.unlockItemName;
+					return item.itemName == tb.unlockItemName;
 				});
 
 				if (unlockItem == null) {
-					
-					expUICtr.SetUpTintHUD (unlockItem.itemName);
+
+					expUICtr.SetUpTintHUD (tb.unlockItemName);
 
 				} else {
 
 					unlockItem.itemCount--;
 
-					mapItem.UnlockMapItem (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
+					GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+
+					tb.UnlockOrDestroyMapItem (()=>{
+
+						if (tb.walkableAfterUnlockOrDestroy) {
+							mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
+						}
+						expUICtr.SetUpRewardItemsPlane(tb.rewardItems);
+					});
+
+
 
 				}
 				return;
 			}
 
+			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+
 			// 如果该地图物品不需要使用特殊物品开启
-			mapItem.UnlockMapItem (expUICtr.SetUpRewardItemsPlane,mapItem.rewardItems);
+			tb.UnlockOrDestroyMapItem (()=>{
+
+				if (tb.walkableAfterUnlockOrDestroy) {
+					mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
+				}
+				expUICtr.SetUpRewardItemsPlane(tb.rewardItems);
+			});
+
 		}
 
 		public void EnterNPC(Transform mapNpcTrans){
@@ -239,6 +316,8 @@ namespace WordJourney
 
 			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
 
+
+			#warning 消灭怪物后需要走到怪物原位置的话开启下面这段代卖
 //			battlePlayerCtr.ContinueMove ();
 
 

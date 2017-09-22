@@ -34,7 +34,7 @@ namespace WordJourney
 
 				GameObject.Find("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
-				homeView.OnQuitHomeView();
+				QuitHomeView();
 
 			},true);
 
@@ -112,9 +112,11 @@ namespace WordJourney
 			});
 		}
 
+		private void QuitHomeView(){
+			homeView.OnQuitHomeView (DestroyInstances);
+		}
+
 		private void DestroyInstances(){
-
-
 
 			TransformManager.DestroyTransfromWithName ("HomeCanvas", TransformRoot.InstanceContainer);
 

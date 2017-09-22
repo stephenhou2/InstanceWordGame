@@ -9,6 +9,8 @@ namespace WordJourney
 
 		public string skillName;// 技能名称
 
+		public string skillEngName;
+
 		public int skillId;
 
 		public string skillIconName;

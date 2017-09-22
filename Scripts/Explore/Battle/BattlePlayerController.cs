@@ -15,10 +15,8 @@ namespace WordJourney
 		public ExploreEventHandler enterItem;
 		public ExploreEventHandler enterNpc;
 
-
-
 		// 移动速度
-		public float moveDuration = 0.5f;			
+		public float moveDuration = 0.4f;			
 
 		// 当前的单步移动动画对象
 		private Tweener moveTweener;
@@ -44,7 +42,7 @@ namespace WordJourney
 		// 玩家战斗失败回调
 		private CallBack playerLoseCallBack;
 
-
+		public Trap trapTriggered;
 
 		protected override void Awake(){
 
@@ -62,6 +60,8 @@ namespace WordJourney
 		/// <param name="pathPosList">Path position list.</param>
 		/// <param name="endPos">End position.</param>
 		public void MoveToEndByPath(List<Vector3> pathPosList,Vector3 endPos){
+
+			StopCoroutine ("MoveWithNewPath");
 
 			this.pathPosList = pathPosList;
 
@@ -132,6 +132,11 @@ namespace WordJourney
 				// 将当前节点从路径点中删除
 				pathPosList.RemoveAt(0);
 
+				if(trapTriggered != null && !trapTriggered.transform.position.Equals(singleMoveEndPos)){
+					trapTriggered.GetComponent<BoxCollider2D>().enabled = true;
+					trapTriggered = null;
+				}
+
 				// 移动到下一个节点位置
 				MoveToNextPosition();
 			});
@@ -173,7 +178,9 @@ namespace WordJourney
 		/// </summary>
 		private void MoveToNextPosition ()
 		{
+			
 			Vector3 nextPos = Vector3.zero;
+
 			if (pathPosList.Count > 0) {
 				
 				nextPos = pathPosList [0];
@@ -191,7 +198,7 @@ namespace WordJourney
 			// 2.如果未检测到碰撞体，则开始本次移动
 			if (pathPosList.Count == 1) {
 
-				// 禁用自身包围盒
+				// 禁用自身包围盒（否则射线检测时监测到的是自己的包围盒）
 				boxCollider.enabled = false;
 
 				RaycastHit2D r2d = Physics2D.Linecast (transform.position, pathPosList [0], collosionLayer);
@@ -202,7 +209,7 @@ namespace WordJourney
 
 					case "monster":
 
-						moveTweener.Kill(false);
+						moveTweener.Kill (false);
 
 						enterMonster (r2d.transform);
 
@@ -220,8 +227,6 @@ namespace WordJourney
 
 						enterItem (r2d.transform);
 
-						boxCollider.enabled = true;
-
 						return;
 
 					case "npc":
@@ -236,16 +241,15 @@ namespace WordJourney
 
 						enterNpc (r2d.transform);
 
-						boxCollider.enabled = true;
-
 						return;
 
 					default:
-						boxCollider.enabled = true;
 						break;
 
 					}
 				}
+
+				boxCollider.enabled = true;
 			}
 
 
@@ -267,6 +271,9 @@ namespace WordJourney
 
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
+
+				GameManager.Instance.soundManager.PlayStepClips ();
+
 
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
@@ -373,6 +380,8 @@ namespace WordJourney
 		/// <param name="skill">Skill.</param>
 		protected override void UseSkill (Skill skill)
 		{
+
+			GameManager.Instance.soundManager.PlaySkillEffectClip (skill);
 			// 技能对应的角色动画，动画结束后执行技能效果并更新角色状态栏
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
 				skill.AffectAgents(this,bmCtr);

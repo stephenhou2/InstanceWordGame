@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 1752330227
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 770ba40dc42c8fe2e47eca526dd60f47
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c516f2a3b2b6b67ef759f6410a790acd
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Audio/Steps/sfx_doomwolf_step_02.wav
+- Assets/Audio/Steps/sfx_doomwolf_step_01.wav
+- Assets/Audio/Steps/sfx_step.wav
+Dependencies: []

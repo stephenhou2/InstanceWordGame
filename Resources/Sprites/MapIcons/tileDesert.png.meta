@@ -1,0 +1,974 @@
+fileFormatVersion: 2
+guid: a3fbd0c624f2144d88a657756524ed9b
+timeCreated: 1505730262
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: tileDesert_0
+    21300002: tileDesert_1
+    21300004: tileDesert_2
+    21300006: tileDesert_3
+    21300008: tileDesert_4
+    21300010: tileDesert_5
+    21300012: tileDesert_6
+    21300014: tileDesert_7
+    21300016: tileDesert_8
+    21300018: tileDesert_9
+    21300020: tileDesert_10
+    21300022: tileDesert_11
+    21300024: tileDesert_12
+    21300026: tileDesert_13
+    21300028: tileDesert_14
+    21300030: tileDesert_15
+    21300032: tileDesert_16
+    21300034: tileDesert_17
+    21300036: tileDesert_18
+    21300038: tileDesert_19
+    21300040: tileDesert_20
+    21300042: tileDesert_21
+    21300044: tileDesert_22
+    21300046: tileDesert_23
+    21300048: tileDesert_24
+    21300050: tileDesert_25
+    21300052: tileDesert_26
+    21300054: tileDesert_27
+    21300056: tileDesert_28
+    21300058: tileDesert_29
+    21300060: tileDesert_30
+    21300062: tileDesert_31
+    21300064: tileDesert_32
+    21300066: tileDesert_33
+    21300068: tileDesert_34
+    21300070: tileDesert_35
+    21300072: tileDesert_36
+    21300074: tileDesert_37
+    21300076: tileDesert_38
+    21300078: tileDesert_39
+    21300080: tileDesert_40
+    21300082: tileDesert_41
+    21300084: tileDesert_42
+    21300086: tileDesert_43
+    21300088: tileDesert_44
+    21300090: tileDesert_45
+    21300092: tileDesert_46
+    21300094: tileDesert_47
+    21300096: tileDesert_48
+    21300098: tileDesert_49
+    21300100: tileDesert_50
+    21300102: tileDesert_51
+    21300104: tileDesert_52
+    21300106: tileDesert_53
+    21300108: tileDesert_54
+    21300110: tileDesert_55
+    21300112: tileDesert_56
+    21300114: tileDesert_57
+    21300116: tileDesert_58
+    21300118: tileDesert_59
+    21300120: tileDesert_60
+    21300122: tileDesert_61
+    21300124: tileDesert_62
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 135
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: iPhone
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Android
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tileDesert_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_1
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_2
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_3
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_4
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_5
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_6
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1080
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_8
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_9
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_10
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_11
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_12
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_13
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 945
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_15
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_16
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_17
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_18
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_19
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_20
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 810
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_22
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_23
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_24
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_25
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_26
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_27
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 675
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_29
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_30
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_31
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_32
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_33
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_34
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 540
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_35
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_36
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_37
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_38
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_39
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_40
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_41
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 405
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_43
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_44
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_45
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_46
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_47
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_48
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 270
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_49
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_50
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_51
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_52
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_53
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_54
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_55
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 135
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_56
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_57
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_58
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_59
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_60
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_61
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: tileDesert_62
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 0
+        width: 135
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: mapicons
+  assetBundleVariant: 

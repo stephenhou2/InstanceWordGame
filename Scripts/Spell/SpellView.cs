@@ -18,6 +18,9 @@ namespace WordJourney
 
 		public Text[] characterTexts;
 
+
+		public Button[] characterButtons;
+
 		public Button onceButton;
 
 		public Button multiTimesButton;
@@ -106,6 +109,20 @@ namespace WordJourney
 			characterTexts [enteredCharacters.Length - 1].text = character;
 
 		}
+
+		public void ShowCharacterTintHUD(int buttonIndex){
+			Button characterButton = characterButtons [buttonIndex];
+			Transform characterTintHUD = characterButton.transform.Find ("TintHUD");
+			characterTintHUD.gameObject.SetActive (true);
+		}
+
+		public void HideCharacterTintHUD(int buttonIndex){
+			Button characterButton = characterButtons [buttonIndex];
+			Transform characterTintHUD = characterButton.transform.Find ("TintHUD");
+			characterTintHUD.gameObject.SetActive (false);
+		}
+
+
 
 		public void OnBackspace(int enteredStringLength){
 			

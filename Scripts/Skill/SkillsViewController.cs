@@ -24,7 +24,7 @@ namespace WordJourney
 
 			GetComponent<Canvas>().enabled = true; 
 
-//			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
+			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
 
 
 		}
@@ -83,7 +83,7 @@ namespace WordJourney
 
 		public void OnQuitButtonClick(){
 			
-//			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (false);
+			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (false);
 
 			skillsView.OnQuitSkillsPlane (DestroyInstances);
 

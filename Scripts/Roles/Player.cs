@@ -17,18 +17,18 @@ namespace WordJourney
 		public static Player mainPlayer{
 			get{
 				if (mPlayerSingleton == null) {
-					Player[] existPlayers = GameObject.FindObjectsOfType<Player>();
-					if (existPlayers != null) {
-						for (int i = 0; i < existPlayers.Length; i++) {
-							Destroy (existPlayers [i].gameObject);
-						}
-					}
 					lock (objectLock) {
-						ResourceManager.Instance.LoadAssetWithBundlePath<GameObject> ("player", () => {
+						Player[] existPlayers = GameObject.FindObjectsOfType<Player>();
+						if (existPlayers != null) {
+							for (int i = 0; i < existPlayers.Length; i++) {
+								Destroy (existPlayers [i].gameObject);
+							}
+						}
+						ResourceManager.Instance.LoadAssetWithBundlePath<GameObject> ("main", () => {
 							mPlayerSingleton = ResourceManager.Instance.gos[0].GetComponent<Player> ();
 							mPlayerSingleton.transform.SetParent (null);
 							mPlayerSingleton.ResetBattleAgentProperties (true);
-						},true);
+						},true,"Player");
 					}
 				} 
 				return mPlayerSingleton;

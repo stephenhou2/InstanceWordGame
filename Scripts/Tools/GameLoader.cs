@@ -10,6 +10,8 @@ namespace WordJourney
 
 		private int maxCaching = 100;
 
+		public GameManager gameManager;
+
 		void Awake(){
 
 			StartCoroutine ("PersistDataIfFirstLoad");
@@ -19,10 +21,10 @@ namespace WordJourney
 		private void InitGame(){
 
 			SetUpSystemSettings ();
-			
-			DontDestroyOnLoad (Player.mainPlayer);
 
-			DontDestroyOnLoad (GameManager.Instance);
+			DontDestroyOnLoad (Player.mainPlayer.gameObject);
+
+			DontDestroyOnLoad (GameManager.Instance.gameObject);
 
 			GameManager.Instance.SetUpHomeView (Player.mainPlayer);
 

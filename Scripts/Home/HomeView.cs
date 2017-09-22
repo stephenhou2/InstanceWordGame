@@ -49,29 +49,36 @@ namespace WordJourney
 			votexRotate.SetEase (Ease.Linear);
 		}
 
-		public void OnQuitHomeView(){
-
-			GetComponent<Canvas> ().enabled = false;
-
-			if (votexRotate != null) {
-				votexRotate.Pause ();
-			}
-
-			HideMaskImage ();
-
-		}
 
 		// 初始化顶部bar
 		private void SetUpTopBar(){
 
-//			Player player = Player.mainPlayer;
-//
-//			playerLevelText.text = player.agentLevel.ToString();
-//
-//			playerHealthBar.maxValue = player.maxHealth;
-//			playerHealthBar.value = player.health;
-//			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+			Player player = Player.mainPlayer;
+
+			playerLevelText.text = player.agentLevel.ToString();
+
+			playerHealthBar.maxValue = player.maxHealth;
+			playerHealthBar.value = player.health;
+			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
 
 		}
+
+		public void OnQuitHomeView(CallBack cb = null){
+
+			if (cb == null) {
+				GetComponent<Canvas> ().enabled = false;
+
+				if (votexRotate != null) {
+					votexRotate.Pause ();
+				}
+
+				HideMaskImage ();
+			} else {
+				votexRotate.Kill (false);
+				cb ();
+			}
+
+		}
+
 	}
 }

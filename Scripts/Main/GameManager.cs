@@ -6,8 +6,31 @@ using System.Data;
 
 namespace WordJourney
 {
-	public class GameManager : SingletonMono<GameManager> {
+	public class GameManager : MonoBehaviour {
 
+		private static volatile GameManager instance;  
+		private static object objectLock = new System.Object();  
+		public static  GameManager Instance {  
+			get {  
+				if (instance == null) {  
+					lock (objectLock) {  
+						GameManager[] instances = FindObjectsOfType<GameManager> ();  
+						if (instances != null) {  
+							for (var i = 0; i < instances.Length; i++) {  
+								Destroy (instances [i].gameObject);  
+							}  
+						} 
+						ResourceManager.Instance.LoadAssetWithBundlePath ("main", ()=>{
+							instance = ResourceManager.Instance.gos[0].GetComponent<GameManager>();
+							instance.transform.SetParent(null);
+						}, true,"GameManager");
+					}  
+				}  
+				return instance;  
+			}  
+		}
+
+		public SoundManager soundManager;
 
 		private GameSettings mGameSettings;
 
@@ -41,11 +64,6 @@ namespace WordJourney
 			}
 		}
 
-		private AudioSource pronunciationAs;
-
-		private AudioSource effectAs;
-
-		private AudioSource bgmAs;
 
 		public int unlockedMaxChapterIndex = 0;
 
@@ -134,7 +152,7 @@ namespace WordJourney
 
 			get{
 				if (mAllItemsSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath ("item/icons", () => {
+					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("item/icons", () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllItemsSprites.Add(ResourceManager.Instance.sprites[i]);
@@ -220,7 +238,7 @@ namespace WordJourney
 
 			get{
 				if (mAllUIIcons.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath("ui_icons",()=>{
+					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite>("ui_icons",()=>{
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllUIIcons.Add(ResourceManager.Instance.sprites[i]);
 						}
@@ -238,7 +256,7 @@ namespace WordJourney
 
 			get{
 				if (mAllExploreIcons.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath("explore/icons",()=>{
+					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite>("explore/icons",()=>{
 						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
 							mAllExploreIcons.Add(ResourceManager.Instance.sprites[i]);
 						}
@@ -266,7 +284,7 @@ namespace WordJourney
 		}
 
 		void Awake(){
-
+			
 			#warning 加载本地游戏数据,后面需要写一下
 			mGameSettings = DataHandler.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFilePath);
 
@@ -275,27 +293,16 @@ namespace WordJourney
 		}
 
 		void Start(){
-			SetUpAudioSources ();
-		}
-
-		private void SetUpAudioSources(){
-
-			pronunciationAs = Instance.gameObject.AddComponent<AudioSource> ();
-			effectAs = Instance.gameObject.AddComponent<AudioSource> ();
-			bgmAs = Instance.gameObject.AddComponent<AudioSource> ();
-
-			pronunciationAs.playOnAwake = false;
-			effectAs.playOnAwake = false;
-
+			soundManager.InitAudioClips ();
 		}
 
 		// 系统设置更改后更新相关设置
 		public void OnSettingsChanged(){
 
-			effectAs.volume = gameSettings.systemVolume;
-			bgmAs.volume = gameSettings.systemVolume;
+			soundManager.effectAS.volume = gameSettings.systemVolume;
+			soundManager.bgmAS.volume = gameSettings.systemVolume;
 
-			pronunciationAs.enabled = gameSettings.isPronunciationEnable;
+			soundManager.pronunciationAS.enabled = gameSettings.isPronunciationEnable;
 
 
 			#warning 离线下载和更改词库的代码后续补充

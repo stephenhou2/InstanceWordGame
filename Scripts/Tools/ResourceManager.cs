@@ -29,6 +29,9 @@ namespace WordJourney
 		// 从本地加载的游戏体
 		public List<GameObject> gos = new List<GameObject> ();
 
+		// 从本地加载的音频
+		public List<AudioClip> audioClips = new List<AudioClip> ();
+
 		// 指定加载的文件名
 		private string fileName;
 
@@ -38,7 +41,8 @@ namespace WordJourney
 		// 从本地加载出的资源包
 		private AssetBundle myLoadedAssetBundle;
 
-
+		private Object[] assetsLoaded;
+	
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
 
 		/// <summary>
@@ -73,18 +77,9 @@ namespace WordJourney
 		/// <typeparam name="T">指定加载资源的类型</typeparam>
 		public void LoadAssetWithBundlePath<T> (string bundlePath, CallBack callBack, bool isSync = false, string fileName = null)
 		{
-
 			this.type = typeof(T);
 
-			this.fileName = fileName;
-
-			this.callBack = callBack;
-
-			if (isSync) {
-				LoadFromFileSync (bundlePath);
-			} else {
-				StartCoroutine ("LoadFromFileAsync", bundlePath);
-			}
+			LoadAssetWithBundlePath (bundlePath, callBack, isSync, fileName);
 
 		}
 			
@@ -98,8 +93,6 @@ namespace WordJourney
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
 			myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
-
-			Object[] assetsLoaded = null;
 
 			if (fileName != null) {
 				
@@ -115,10 +108,8 @@ namespace WordJourney
 				} else {
 					assetsLoaded = myLoadedAssetBundle.LoadAllAssets ();
 				}
-
-				LoadResourceWithAssetObjects (assetsLoaded);
-
 			}
+			LoadResourceWithAssetObjects (assetsLoaded);
 		}
 
 		/// <summary>
@@ -154,8 +145,6 @@ namespace WordJourney
 
 				yield return assetLoadRequest;
 
-				LoadResourceWithAssetObjects (assetLoadRequest.allAssets);
-
 			} else {
 
 				if (type != null) {
@@ -166,9 +155,11 @@ namespace WordJourney
 
 				yield return assetLoadRequest;
 
-				LoadResourceWithAssetObjects (assetLoadRequest.allAssets);
-
 			}
+
+			assetsLoaded = assetLoadRequest.allAssets;
+
+			LoadResourceWithAssetObjects (assetsLoaded);
 
 		}
 
@@ -181,16 +172,18 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="assetsLoaded">Assets loaded.</param>
 		private void LoadResourceWithAssetObjects(Object[] assetsLoaded){
-				
+
 			for (int i = 0; i < assetsLoaded.Length; i++) {
 
 				Object obj = assetsLoaded [i];
 
 				if (obj.GetType () == typeof(Sprite)) {
 					sprites.Add (obj as Sprite);
-				} else if (obj.GetType () == typeof(Texture2D)) {
+				} else if(obj.GetType() == typeof(Texture2D)){
 					continue;
-				} else {
+				}else if(obj.GetType() == typeof(AudioClip)){
+					audioClips.Add (obj as AudioClip);
+				}else {
 					GameObject go = Instantiate (obj as GameObject, Vector3.zero, Quaternion.identity);
 					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
 					go.name = obj.name;
@@ -200,19 +193,39 @@ namespace WordJourney
 				obj = null;
 			}
 
+			ExcuteCallBackAndClearMemory ();
+
+		}
+
+		/// <summary>
+		/// Excutes the call back and clear memory.
+		/// </summary>
+		private void ExcuteCallBackAndClearMemory(){
+
+			// 清除加载信息
 			assetLoadRequest = null;
+
 			assetsLoaded = null;
+
 			type = null;
 
 			myLoadedAssetBundle.Unload (false);
 
+			// 执行资源加载完成后回调，取得资源必须在回调中完成，之后资源会从内存中删除
 			if (callBack != null) {
 				callBack ();
 			}
-				
-			gos.Clear ();
-			sprites.Clear ();
-		}
 
+			// 从内存中删除资源
+			gos.Clear();
+
+			sprites.Clear();
+
+			audioClips.Clear();
+
+			Resources.UnloadUnusedAssets ();
+
+			GC.Collect ();
+		}
 	}
 }

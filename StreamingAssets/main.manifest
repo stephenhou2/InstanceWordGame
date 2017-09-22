@@ -1,0 +1,65 @@
+ManifestFileVersion: 0
+CRC: 2791788333
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c8bcda1a602435f54916178611f2838b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9b92599a5b5ce82f3133499a74a20270
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 49
+  Script: {instanceID: 0}
+- Class: 50
+  Script: {instanceID: 0}
+- Class: 61
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: d2c96d45fdb144f318b471f05f321507, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 37351127fcba542e8a60b781f4ecca72, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 080eb479955f648e3b8ff3b06ea2be5c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b7609e5a17e6e4337818965107391bec, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a0eca23bc37a04678b7146d1e5e19073, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0fcd348d78db24f25b4abd7820502708, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 946cb58fb70c34600a940d270b7c4816, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 212
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Main/GameManager.prefab
+- Assets/Prefabs/Main/Player.prefab
+Dependencies: []

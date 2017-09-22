@@ -15,6 +15,7 @@ namespace WordJourney
 
 		public Transform tintHUD;
 
+		public Transform mask;
 
 		/**********  battlePlane UI *************/
 		public Transform battlePlane;
@@ -65,14 +66,22 @@ namespace WordJourney
 
 
 		public void SetUpTintHUD(string unlockItemName){
-			
+			HideMask ();
 			tintHUD.gameObject.SetActive (true);
-			Text tintText = tintHUD.GetComponent<Text> ();
-			tintText.text = string.Format ("好像需要使用<color=orange>{0}</color>才能打开", unlockItemName);
-			tintText.DOFade (0, 0.5f).OnComplete (() => {
-				tintText.text = string.Empty;
-				tintHUD.gameObject.SetActive (false);
-			});
+			Text tintText = tintHUD.GetComponentInChildren<Text> ();
+			tintText.color = Color.black;
+			tintText.text = string.Format ("缺少 <color=blue>{0}x1</color>", unlockItemName);
+
+			StartCoroutine ("PlayTintTextAnim", tintText);
+
+		}
+
+		private IEnumerator PlayTintTextAnim(Text tintText){
+
+			yield return new WaitForSeconds (1f);
+
+			tintText.text = string.Empty;
+			tintHUD.gameObject.SetActive (false);
 
 		}
 
@@ -160,6 +169,13 @@ namespace WordJourney
 
 		}
 
+		public void ShowMask(){
+			mask.gameObject.SetActive (true);
+		}
+
+		public void HideMask(){
+			mask.gameObject.SetActive (false);
+		}
 
 
 		public void SetUpRewardItemsPlane(Item[] rewardItems){
@@ -167,6 +183,7 @@ namespace WordJourney
 			itemsToPickUp.Clear ();
 
 			if (rewardItems == null || rewardItems.Length == 0) {
+				HideMask ();
 				return;
 			}
 
@@ -196,7 +213,8 @@ namespace WordJourney
 				}
 
 			}
-
+				
+			HideMask ();
 			rewardPlane.gameObject.SetActive (true);
 
 		}

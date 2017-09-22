@@ -52,6 +52,9 @@ namespace WordJourney
 		/// <param name="skill">Skill.</param>
 		protected override void UseSkill (Skill skill)
 		{
+			
+			GameManager.Instance.soundManager.PlaySkillEffectClip (skill);
+
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
 				skill.AffectAgents(this,bpCtr);
 				this.UpdateMonsterStatusPlane();

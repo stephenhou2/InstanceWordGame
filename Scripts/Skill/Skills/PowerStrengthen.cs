@@ -17,6 +17,7 @@ namespace WordJourney
 
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
+			Debug.Log (self.agent);
 			self.agent.physicalHurtScaler = baseNum * skillLevel;
 		}
 	}

@@ -156,6 +156,14 @@ namespace WordJourney
 
 		}
 
+		public void CharacterButtonDown(int buttonIndex){
+			spellView.ShowCharacterTintHUD (buttonIndex);
+		}
+
+		public void CharacterButtonUp(int buttonIndex){
+			spellView.HideCharacterTintHUD (buttonIndex);
+		}
+
 		/// <summary>
 		///  delete按钮点击响应方法
 		/// </summary>

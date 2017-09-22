@@ -78,8 +78,6 @@ namespace WordJourney
 //					
 //			}
 
-			Debug.Log (GameManager.Instance);
-
 			monsters = GameManager.Instance.allMonsters;
 
 		}

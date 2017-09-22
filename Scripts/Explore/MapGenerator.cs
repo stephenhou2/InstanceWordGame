@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic; 		//Allows us to use Lists.
 using Random = UnityEngine.Random; 		//Tells Random to use the Unity Engine random number generator.
 using Transform = UnityEngine.Transform;
@@ -7,14 +8,15 @@ using DragonBones;
 
 namespace WordJourney	
 {
-	public class MapGenerator : SingletonMono<MapGenerator>
+	public class MapGenerator:MonoBehaviour
 	{
 		[HideInInspector]public int columns; 										//Number of columns in our game board.
 		[HideInInspector]public int rows;											//Number of rows in our game board.
 
+		private MapItemGenerator mapItemGenerator;
 
 		private MapInfo mapInfo;
-		private TileInfo tileInfo;
+//		private TileInfo tileInfo;
 
 		public Transform exit;	
 
@@ -25,7 +27,7 @@ namespace WordJourney
 
 		public GameObject wallModel;
 		public GameObject floorModel;
-		public MapItem mapItemModel;
+		public TreasureBox treasureBoxModel;
 		public MapNPC mapNpcModel;
 
 		private List<MapItem> mapItems = new List<MapItem> ();
@@ -49,6 +51,8 @@ namespace WordJourney
 
 		public Animator destinationAnimator;
 
+		private ChapterDetailInfo chapterDetail;
+
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
 		public int[,] mapWalkableInfoArray;
@@ -62,6 +66,8 @@ namespace WordJourney
 			itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool");
 			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool");
 
+			mapItemGenerator = GetComponent<MapItemGenerator> ();
+
 		}
 
 
@@ -69,87 +75,36 @@ namespace WordJourney
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
+			this.chapterDetail = chapterDetail;
 
 			mapInfo = DataHandler.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFilePath);
 
+			// 获取地图建模的行数和列数
 			rows = mapInfo.height;
 			columns = mapInfo.width;
 
-			tileInfo = DataHandler.LoadDataToSingleModelWithPath<TileInfo> (CommonData.mapTilesDataFilePath);
+			// 地图上的可行走信息数组
+			mapWalkableInfoArray = new int[columns,rows];
 
-			mapWalkableInfoArray = new int[rows, columns];
+			ResetMapWalkableInfoArray ();
 
+			// 重建地图列表（可摆放位置列表）
 			ResetGridList ();
 
-			SetUpWallAndFloor ();
+			// 初始化地面和墙
+			SetUpWallAndFloor();
 
+			// 初始化玩家
 			SetUpPlayer ();
 
-			List<Item> currentChapterItems = chapterDetail.GetCurrentChapterItems ();
+			// 初始化地图物品
+			SetUpItems ();
 
-			List<NPC> currentChapterNpcs = chapterDetail.GetCurrentChapterNpcs ();
+			// 初始化地图NPC
+			SetUpNPCs ();
 
-			int mapItemcount = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
-
-			for (int i = 0; i < mapItemcount; i++) {
-
-				int rewardItemCount = Random.Range (2,4);
-
-				Vector3 pos = RandomPosition ();
-
-				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
-
-				MapItem mapItem = Instantiate (mapItemModel, pos, Quaternion.identity);
-
-				mapItem.transform.SetParent(itemsContainer,true);
-
-				mapItem.rewardItems = new Item[rewardItemCount];
-
-				for (int j = 0; j < rewardItemCount; j++) {
-					
-					Item item = RandomEvent<Item> (currentChapterItems);
-
-					mapItem.rewardItems [j] = item;
-				}
-
-				if (mapItem != null) {
-					mapItems.Add (mapItem);
-				}
-
-
-			}
-
-			for (int i = 0; i < currentChapterNpcs.Count; i++) {
-
-				NPC npc = currentChapterNpcs [i];
-
-				Vector3 pos = RandomPosition ();
-
-				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
-
-				MapNPC mapNpc = Instantiate (mapNpcModel, pos, Quaternion.identity);
-
-				mapNpc.transform.SetParent (npcsContainer, true);
-
-				mapNpc.npc = npc;
-
-				mapNpc.name = npc.npcName;
-
-				mapNpcs.Add (mapNpc);
-
-			}
-				
-
-			monsters = chapterDetail.GetCurrentChapterMonsters ();
-
-			for(int i = 0;i<monsters.Count;i++){
-				Transform monster = monsters [i].transform;
-				monster.SetParent (monsterModelsContainer, false);
-			}
-
-
-
-			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
+			// 初始化地图怪物
+			SetUpMonsters ();
 
 		}
 			
@@ -177,6 +132,85 @@ namespace WordJourney
 
 		}
 
+		private void SetUpItems(){
+			
+			List<Item> currentChapterItems = chapterDetail.GetCurrentChapterItems ();
+
+//			int mapItemCount = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
+
+			int mapItemCount = 50;
+
+			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (currentChapterItems, mapItemCount);
+
+			for (int i = 0; i < randomMapItems.Count; i++) {
+
+				MapItem mapItem = randomMapItems [i];
+
+				Vector3 pos = RandomPosition ();
+
+				mapItem.transform.position = pos;
+
+				mapItem.transform.rotation = Quaternion.identity;
+
+				mapItem.transform.localScale = Vector3.one;
+
+				if (mapItem.mapItemType == MapItemType.Trap) {
+					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 1;
+				} else {
+					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
+				}
+
+				mapItem.transform.SetParent (itemsContainer);
+
+
+				if (mapItem != null) {
+					mapItems.Add (mapItem);
+				}
+
+			}
+
+		}
+
+		private void SetUpNPCs(){
+			
+			List<NPC> currentChapterNpcs = chapterDetail.GetCurrentChapterNpcs ();
+
+			for (int i = 0; i < currentChapterNpcs.Count; i++) {
+
+				NPC npc = currentChapterNpcs [i];
+
+				Vector3 pos = RandomPosition ();
+
+				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
+
+				MapNPC mapNpc = Instantiate (mapNpcModel, pos, Quaternion.identity);
+
+				mapNpc.transform.SetParent (npcsContainer, true);
+
+				mapNpc.npc = npc;
+
+				mapNpc.name = npc.npcName;
+
+				mapNpcs.Add (mapNpc);
+
+			}
+		}
+
+		private void SetUpMonsters(){
+			
+			monsters = chapterDetail.GetCurrentChapterMonsters ();
+
+			for(int i = 0;i<monsters.Count;i++){
+				Transform monster = monsters [i].transform;
+				monster.SetParent (monsterModelsContainer, false);
+			}
+
+			#warning for test
+			LayoutObjectAtRandom (monsters, new Count(30,40),monstersContainer);
+//			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
+		}
+
+
 		private T RandomEvent<T>(List<T> eventsList){
 
 			int index = Random.Range (0, eventsList.Count);
@@ -186,40 +220,69 @@ namespace WordJourney
 		}
 
 		//Sets up the outer walls and floor (background) of the game board.
-		void SetUpWallAndFloor ()
+		private void SetUpWallAndFloor ()
 		{
 
-			for(int y = 0; y < columns; y++)
-			{
-				for(int x = 0; x < rows; x++)
+			string mapImageName = mapInfo.tilesets[0].image;
+
+			// 创建地面和墙体
+			// x代表列
+			// y代表行
+			// i代表地图层
+
+			for (int i = 0; i < mapInfo.layers.Length; i++) {
+
+				Layer layer = mapInfo.layers [i];
+
+				for(int y = 0; y < rows; y++)
 				{
+					for(int x = 0; x < columns; x++)
+					{
 
-					int tileIndexInMap = columns * y + x;
+						int tileIndexInMap = x + y * columns;
 
-					Vector3 tilePos = new Vector3 (x,columns - y - 1,0);
-
-					for (int i = 0; i < mapInfo.layers.Length; i++) {
-
-						Layer layer = mapInfo.layers [i];
+						Vector3 tilePos = new Vector3 (x,rows - y - 1,0);
 
 						int tileIndex = layer.data [tileIndexInMap] - 1;
 
 						if (tileIndex == -1) {
-							mapWalkableInfoArray [x,columns - y - 1] = 1;
 							continue;
 						}
 
-						string tileName = string.Format ("map1_{0}", tileIndex);
+						int walkableInfo = mapInfo.tilesets[0].walkableInfoArray[tileIndex];
+
+						if (walkableInfo < mapWalkableInfoArray [x, rows - y - 1]) {
+							mapWalkableInfoArray [x, rows - y - 1] = walkableInfo;
+						}
+
+						string tileName = string.Format ("{0}_{1}", mapImageName,tileIndex);
 
 						Sprite tileSprite = GameManager.Instance.allMapSprites.Find (delegate(Sprite s) {
 							return s.name == tileName;
 						});
 
-						int walkableInfo = tileInfo.walkableInfoArray[tileIndex];
+						// 如果是遮罩层
+						if (layer.name == "Mask") {
+							
+							GameObject wall = Instantiate (wallModel, tilePos, Quaternion.identity);
 
-						mapWalkableInfoArray [x,columns - y - 1] = walkableInfo;
+							wall.name = tileName;
 
+							wall.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+
+							wall.transform.SetParent (outerWallsContainer, true);
+
+							wall.GetComponent<SpriteRenderer> ().sortingOrder = 2;
+
+							wall.GetComponent<BoxCollider2D> ().enabled = false;
+
+							continue;
+
+						}
+
+						// 非遮罩层的墙体
 						if (walkableInfo == -1) {
+							
 							GameObject wall = Instantiate (wallModel, tilePos, Quaternion.identity);
 						
 							wall.name = tileName;
@@ -227,7 +290,12 @@ namespace WordJourney
 							wall.GetComponent<SpriteRenderer> ().sprite = tileSprite;
 
 							wall.transform.SetParent (outerWallsContainer, true);
-						} else {
+			
+
+						} 
+
+						// 其他
+						else {
 							GameObject floor = Instantiate (floorModel, tilePos, Quaternion.identity);
 
 							floor.name = tileName;
@@ -236,6 +304,7 @@ namespace WordJourney
 
 							floor.transform.SetParent (floorsContainer, true);
 						}
+							
 					}
 
 				}
@@ -280,6 +349,14 @@ namespace WordJourney
 			}
 		}
 
+		private void ResetMapWalkableInfoArray (){
+			for (int i = 0; i < columns; i++) {
+				for (int j = 0; j < rows; j++) {
+					mapWalkableInfoArray [i, j] = 1;
+				}
+			}
+		}
+			
 
 		//RandomPosition returns a random position from our list gridPositions.
 		private Vector3 RandomPosition ()
@@ -290,6 +367,9 @@ namespace WordJourney
 
 			//Declare a variable of type Vector3 called randomPosition, set it's value to the entry at randomIndex from our List gridPositions.
 			Vector3 randomPosition = gridPositions[randomIndex];
+
+//			Debug.Log (mapWalkableInfoArray.Length);
+//			Debug.Log(string.Format("{0}/{1}",randomPosition.x,randomPosition.y));
 
 			while (mapWalkableInfoArray [(int)randomPosition.x, (int)randomPosition.y] == -1) {
 				randomIndex = Random.Range (0, gridPositions.Count);
@@ -337,6 +417,7 @@ namespace WordJourney
 		}
 
 		public void QuitCurrentMap(){
+			chapterDetail = null;
 			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
 			floorPool.AddChildInstancesToPool (floorsContainer);
 			npcPool.AddChildInstancesToPool (npcsContainer);

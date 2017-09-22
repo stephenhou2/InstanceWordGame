@@ -22,8 +22,8 @@ namespace WordJourney{
 		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";
 
 
-		public static string mapDataFilePath = persistDataPath + "/MapJson.json";
-		public static string mapTilesDataFilePath = persistDataPath + "/TileJson.json";
+		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";
+//		public static string mapTilesDataFilePath = persistDataPath + "/NewTileJson.json";
 
 		public static string settingsFilePath = persistDataPath + "/Settings.txt";
 		public static string learningInfoFilePath = persistDataPath + "/LearningInfo.txt";
@@ -204,34 +204,44 @@ namespace WordJourney{
 	}
 
 	[System.Serializable]
-	public class MapInfo
+	public struct MapInfo
 	{
+		public TileSet[] tilesets;
 		public int width;
 		public int height;
 		public int tilewidth;
 		public int tileheight;
 		public Layer[] layers;
 
+//		public TileInfo tileInfo;
 
 
 	}
 
 	[System.Serializable]
-	public class Layer
+	public struct Layer
 	{
 		public int[] data;
 		public int height;
 		public int width;
 		public int x;
 		public int y;
+		public string name;
 
 	}
 
 	[System.Serializable]
-	public class TileInfo
-	{
+	public struct TileSet{
+		public string image;
 		public int[] walkableInfoArray;
-
 	}
+
+//	[System.Serializable]
+//	public struct TileInfo
+//	{
+//		
+//		public int[] walkableInfoArray;
+//
+//	}
 		
 }

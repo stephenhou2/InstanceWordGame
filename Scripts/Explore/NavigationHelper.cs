@@ -15,7 +15,7 @@ namespace WordJourney
 		// 0表示障碍物,不可行走
 		// 1表示正常地面
 		// 2表示有陷阱
-		// 0和1同时也是寻路参数中的G值
+		// 1和2同时也是寻路参数中的G值
 		public int[,] mapWalkableInfoArray;
 
 		// 可以用来检测的点阵
