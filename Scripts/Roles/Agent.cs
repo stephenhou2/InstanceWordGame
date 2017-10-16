@@ -26,13 +26,17 @@ namespace WordJourney
 		public int originalAttack;
 		public int originalAttackSpeed;
 		public int originalCrit;
-		public int originaldodge;
-		public int originalarmour;
+		public int originalDodge;
+		public int originalArmor;
 		public int originalManaResist;
 		//*****初始信息********//
 
+
+
+
 		public int maxHealth;//最大血量
 		public int maxMana;//最大魔法值
+
 
 		private int mHealth;
 		public int health{
@@ -61,7 +65,7 @@ namespace WordJourney
 		public int attack;//攻击力
 		public int attackSpeed;//攻速
 		public int dodge;//敏捷
-		public int armour;//护甲
+		public int armor;//护甲
 		public int manaResist;//魔抗
 		public int crit;//暴击
 
@@ -71,53 +75,89 @@ namespace WordJourney
 
 		public int magicBase;
 
-		private float mAttackSpeedGainScaler;
-		public float attackSpeedGainScaler{
-			get{ return mAttackSpeedGainScaler; }
-			set{
-				mAttackSpeedGainScaler = value;
-				ResetBattleAgentProperties ();
-			}
-		}
 
-		private float mArmourGainScaler;
-		public float armourGainScaler{
-			get{ return mArmourGainScaler; }
-			set{
-				mArmourGainScaler = value; 
-				ResetBattleAgentProperties ();
-			}
-				
-		}
+		//*****基础属性加成比例，只由技能影响*******//
+		private double baseMaxHealthGainScaler;
+		private double baseMaxManaGainScaler;
+		private double baseAttackGainScaler;
+		private double baseAttackSpeedGainScaler;
+		private double baseArmorGainScaler;
+		private double baseManaResistGainScaler;
+		private double baseDodgeGainScaler;
+		private double baseCritGainScaler; 
+		//*****基础属性加成比例，只由技能影响*******//
 
-		private float mManaResistGainScaler;
-		public float manaResistGainScaler{
-			get{ return mManaResistGainScaler; }
-			set{
-				mManaResistGainScaler = value;
-				ResetBattleAgentProperties ();
-			}
-		}
 
-		private float mCritGainScalser;
-		public float critGainScaler{
-			get{ return mCritGainScalser; }
-			set{
-				mCritGainScalser = value;
-				ResetBattleAgentProperties ();
-			}
-		}
+		private double maxHealthGainScaler;
+		private double maxManaGainScaler;
+		private double attackGainScaler;
+		private double attackSpeedGainScaler;
+		private double armorGainScaler;
+		private double manaResistGainScaler;
+		private double dodgeGainScaler;
+		private double critGainScaler;
 
-		private float mDodgeGainScaler;
-		public float dodgeGainScaler{
-			get{ return mDodgeGainScaler; }
-			set{
-				mDodgeGainScaler = value;
-				ResetBattleAgentProperties ();
-			}
-		}
 
-//		public int healthGainScaler;//力量对最大血量的加成系数
+
+//		private float mAttackGainScaler;
+//		public float attackGainScaler{
+//			get{ return mAttackGainScaler; }
+//			set{ 
+//				mAttackGainScaler = value;
+//				ResetBattleAgentProperties ();
+//			}
+//			
+//		}
+//
+//		private float mAttackSpeedGainScaler;
+//		public float attackSpeedGainScaler{
+//			get{ return mAttackSpeedGainScaler; }
+//			set{
+//				mAttackSpeedGainScaler = value;
+//				ResetBattleAgentProperties ();
+//			}
+//		}
+//
+//		private float mArmorGainScaler;
+//		public float armorGainScaler{
+//			get{ return mArmorGainScaler; }
+//			set{
+//				mArmorGainScaler = value; 
+//				ResetBattleAgentProperties ();
+//			}
+//				
+//		}
+//
+//		private float mManaResistGainScaler;
+//		public float manaResistGainScaler{
+//			get{ return mManaResistGainScaler; }
+//			set{
+//				mManaResistGainScaler = value;
+//				ResetBattleAgentProperties ();
+//			}
+//		}
+//
+//		private float mDodgeGainScaler;
+//		public float dodgeGainScaler{
+//			get{ return mDodgeGainScaler; }
+//			set{
+//				mDodgeGainScaler = value;
+//				ResetBattleAgentProperties ();
+//			}
+//		}
+//
+//		private float mCritGainScalser;
+//		public float critGainScaler{
+//			get{ return mCritGainScalser; }
+//			set{
+//				mCritGainScalser = value;
+//				ResetBattleAgentProperties ();
+//			}
+//		}
+
+
+
+
 
 		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
 
@@ -125,7 +165,7 @@ namespace WordJourney
 
 		public float magicalHurtScaler;//魔法伤害系数
 
-		public float critScaler;//暴击伤害系数
+		public float critHurtScaler;//暴击伤害系数
 
 		public float healthAbsorbScalser;//回血比例
 
@@ -203,7 +243,7 @@ namespace WordJourney
 
 			validActionType = ValidActionType.All;// 有效的行动类型
 
-			critScaler = 1.0f;//暴击伤害系数
+			critHurtScaler = 1.0f;//暴击伤害系数
 
 			healthAbsorbScalser = 0f;//回血比例
 
@@ -226,7 +266,7 @@ namespace WordJourney
 //			this.originalMana = ba.originalMana;
 //			this.originalCrit = ba.originalCrit;
 //			this.originaldodge = ba.originaldodge;
-//			this.originalarmour = ba.originalarmour;
+//			this.originalarmor = ba.originalarmor;
 //			this.originalManaResist = ba.originalManaResist;
 
 			this.maxHealth = ba.maxHealth;
@@ -238,7 +278,7 @@ namespace WordJourney
 			this.attackSpeed = ba.attackSpeed;//攻速
 			this.mana = ba.mana;//魔法
 			this.dodge = ba.dodge;//敏捷
-			this.armour = ba.armour;//护甲
+			this.armor = ba.armor;//护甲
 			this.manaResist = ba.manaResist;//魔抗
 			this.crit = ba.crit;//暴击
 
@@ -263,7 +303,7 @@ namespace WordJourney
 //			this.originalMana = ba.originalMana;
 //			this.originalCrit = ba.originalCrit;
 //			this.originaldodge = ba.originaldodge;
-//			this.originalarmour = ba.originalarmour;
+//			this.originalarmor = ba.originalarmor;
 //			this.originalManaResist = ba.originalManaResist;
 //
 //			this.maxHealth = ba.maxHealth;
@@ -277,7 +317,7 @@ namespace WordJourney
 //			this.power = ba.power;//力量
 //			this.mana = ba.mana;//魔法
 //			this.dodge = ba.dodge;//敏捷
-//			this.armour = ba.armour;//护甲
+//			this.armor = ba.armor;//护甲
 //			this.manaResist = ba.manaResist;//魔抗
 //			this.crit = ba.crit;//暴击
 //
@@ -285,64 +325,111 @@ namespace WordJourney
 //
 //		}
 
-//		//添加状态 
-//		public void AddState(StateSkillEffect sse){
-//			states.Add (sse);
-//			ResetBattleAgentProperties (false,false);
-//		}
-//		//删除状态
-//		public void RemoveState(StateSkillEffect sse){
-//			for(int i = 0;i<states.Count;i++){
-//				if (sse.effectName == states[i].effectName) {
-//					states.RemoveAt(i);
-//					Destroy (sse);
-//					ResetBattleAgentProperties (false,false);
-//					return;
-//				}
-//			}
-//		}
 
 
-
+		/// <summary>
+		/// 根据装备更新人物属性&属性加成
+		/// </summary>
+		/// <param name="equipment">Equipment.</param>
 		private void ResetPropertiesByEquipment(Equipment equipment){
 
 			if (equipment.itemName == null) {
 				return;
 			}
 
-//			health += equipment.healthGain;
-//			mana += equipment.manaGain;
+			// 装备的该项属性>=1时，更新人物的基础属性
+			// 装备的该项属性处于0～1之间时，说明是属性加成，更新人物的属性加成
+			if (equipment.attackGain >= 1) {
+				attack += (int)equipment.attackGain;
+			} else if (equipment.attackGain > 0){
+				attackGainScaler += equipment.attackGain;
+			}
 
-			attack += equipment.attackGain;
+			if (equipment.attackSpeedGain >= 1) {
+				attackSpeed += (int)equipment.attackSpeedGain;
+			} else if (equipment.attackSpeedGain > 0) {
+				attackSpeedGainScaler += equipment.attackSpeedGain;
+			}
 
-			attackSpeed = (int)((attackSpeed + equipment.attackSpeedGain) * (1 + attackSpeedGainScaler));
-			crit = (int)((crit + equipment.critGain) * (1 + critGainScaler));
-			armour = (int)((armour + equipment.armourGain) * (1 + armourGainScaler));
-			manaResist = (int)((manaResist + equipment.manaResistGain) * (1 + manaResistGainScaler));
-			dodge = (int)((dodge + equipment.dodgeGain) * (1 + dodgeGainScaler));
+			if (equipment.armorGain >= 1) {
+				armor += (int)equipment.armorGain;
+			} else if (equipment.armorGain > 0) {
+				armorGainScaler += equipment.armorGain;
+			}
+
+			if (equipment.manaResistGain >= 1) {
+				manaResist += (int)equipment.manaResistGain;
+			} else if (equipment.manaResistGain > 0) {
+				manaResistGainScaler += equipment.manaResistGain;
+			}
+
+			if (equipment.dodgeGain >= 1) {
+				dodge += (int)equipment.dodgeGain;
+			} else if (equipment.dodgeGain > 0) {
+				dodgeGainScaler += equipment.dodgeGain;
+			}
+
+			if (equipment.critGain >= 1) {
+				crit += (int)equipment.critGain;
+			} else if (equipment.critGain > 0) {
+				critGainScaler += equipment.critGain;
+			}
+
+			if (equipment.healthGain >= 1) {
+				maxHealth += (int)equipment.healthGain;
+			} else if (equipment.healthGain > 0) {
+				maxHealthGainScaler += equipment.healthGain;
+			}
+
+			if (equipment.manaGain >= 1) {
+				maxMana += (int)equipment.manaGain;
+			} else if (equipment.manaGain > 0) {
+				maxManaGainScaler += equipment.manaGain;
+			}
 
 		}
 
 		// 仅根据物品重新计人物的属性，其余属性重置为初始状态
 		public void ResetBattleAgentProperties (bool toOriginalState = false)
 		{
-			// 所有属性重置为初始值
+			// 属性重置为没有任何装备时的基础属性
 			attack = originalAttack;
-			mana = originalMana;
+			attackSpeed = originalAttackSpeed;
 			crit = originalCrit;
-			armour = originalarmour;
+			armor = originalArmor;
 			manaResist = originalManaResist;
-			dodge = originaldodge;
+			dodge = originalDodge;
+			maxHealth = originalMaxHealth;
+			maxMana = originalMaxMana;
 
-			// 根据装备更新属性
+			// 属性加成重置为只考虑技能时的属性加成
+			maxHealthGainScaler = baseMaxHealthGainScaler;
+			maxManaGainScaler = baseMaxManaGainScaler;
+			attackGainScaler = baseAttackGainScaler;
+			attackSpeedGainScaler = baseAttackSpeedGainScaler;
+			armorGainScaler = baseArmorGainScaler;
+			manaResistGainScaler = baseManaResistGainScaler;
+			dodgeGainScaler = baseDodgeGainScaler;
+			critGainScaler = baseCritGainScaler;
+
+			// 根据装备计算人物的总的基础属性和总的各项属性加成比例
 			foreach (Equipment equipment in allEquipedEquipments) {
 				if (equipment != null) {
 					ResetPropertiesByEquipment (equipment);
 				}
 			}
 
+			// 根据属性加成重新计算人物真实属性
+			attack = (int)(attack * (1 + attackGainScaler));
+			attackSpeed = (int)(attackSpeed * (1 + attackSpeedGainScaler));
+			armor = (int)(armor * (1 + armorGainScaler));
+			manaResist = (int)(manaResist * (1 + manaResistGainScaler));
+			dodge = (int)(dodge * (1 + dodgeGainScaler));
+			crit = (int)(crit * (1 + critGainScaler));
+			maxHealth = (int)(maxHealth * (1 + maxHealthGainScaler));
+			maxMana = (int)(maxMana * (1 + maxManaGainScaler));
 
-			critScaler = 1.0f;//暴击伤害系数
+			critHurtScaler = 1.0f;//暴击伤害系数
 			healthAbsorbScalser = 0f;//吸血比例
 			attackTime = 1;
 
@@ -355,28 +442,47 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 由技能设置基础属性加成比例,并更新对象属性
+		/// </summary>
+		/// <param name="baseAttackGainScaler">基础攻击加成比例.</param>
+		/// <param name="baseAttackSpeedGainScaler">基础攻速加成比例.</param>
+		/// <param name="baseArmorGainScaler">基础护甲加成比例.</param>
+		/// <param name="baseManaResistGainScaler">基础抗性加成比例.</param>
+		/// <param name="baseDodgeGainScaler">基础闪避加成比例.</param>
+		/// <param name="baseCritGainScaler">基础暴击加成比例.</param>
+		/// <param name="baseMaxHealthGainScaler">基础最大血量加成比例.</param>
+		/// <param name="baseMaxManaGainScaler">基础最大魔法加成比例.</param>
+		public void SetBasePropertyGainScalers(double baseAttackGainScaler,double baseAttackSpeedGainScaler,
+			double baseArmorGainScaler,double baseManaResistGainScaler,double baseDodgeGainScaler,
+			double baseCritGainScaler,double baseMaxHealthGainScaler,double baseMaxManaGainScaler){
 
-		//添加状态 
-//		public void AddState(StateSkillEffect sse){
-//			states.Add (sse);
-//			ResetBattleAgentProperties (false,false);
-//		}
-//		//删除状态
-//		public void RemoveState(StateSkillEffect sse){
-//			for(int i = 0;i<states.Count;i++){
-//				if (sse.effectName == states[i].effectName) {
-//					states.RemoveAt(i);
-//					Destroy (sse);
-//					ResetBattleAgentProperties (false,false);
-//					return;
-//				}
-//			}
-//		}
+			if (baseAttackGainScaler > 0) {
+				this.baseAttackGainScaler = baseAttackGainScaler;
+			}
+			if (baseAttackSpeedGainScaler > 0) {
+				this.baseAttackSpeedGainScaler = baseAttackSpeedGainScaler;
+			}
+			if (baseArmorGainScaler > 0) {
+				this.baseArmorGainScaler = baseArmorGainScaler;
+			}
+			if (baseManaResistGainScaler > 0) {
+				this.baseManaResistGainScaler = baseManaResistGainScaler;
+			}
+			if (baseDodgeGainScaler > 0) {
+				this.baseDodgeGainScaler = baseDodgeGainScaler;
+			}
+			if (baseMaxHealthGainScaler > 0) {
+				this.baseMaxHealthGainScaler = baseMaxHealthGainScaler;
+			}
+			if (baseManaResistGainScaler > 0) {
+				this.baseMaxManaGainScaler = baseMaxManaGainScaler;
+			}
 
+			ResetBattleAgentProperties (false);
 
-//		public void AgentDie(CallBack cb){
-//			baController.AgentDieAnim (cb);
-//		}
+		}
+
 
 		public override string ToString ()
 		{
@@ -384,7 +490,7 @@ namespace WordJourney
 				"\n[attack]:" + attack + 
 				"\n[mana]:" + mana +
 				"\n[crit]:" + crit +
-				"\n[armour]:" + armour +
+				"\n[armor]:" + armor +
 				"\n[manaResist]:" + manaResist +
 				"\n[agiglity]:" + dodge +
 				"\n[maxHealth]:" + maxHealth +
@@ -415,7 +521,7 @@ namespace WordJourney
 		public int originalMana;
 		public int originalCrit;
 		public int originaldodge;
-		public int originalarmour;
+		public int originalarmor;
 		public int originalManaResist;
 		//*****初始信息********//
 
@@ -429,7 +535,7 @@ namespace WordJourney
 		public int power;//力量
 		public int mana;//魔法
 		public int dodge;//敏捷
-		public int armour;//护甲
+		public int armor;//护甲
 		public int manaResist;//魔抗
 		public int crit;//暴击
 

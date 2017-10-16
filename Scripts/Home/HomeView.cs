@@ -47,6 +47,7 @@ namespace WordJourney
 			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
 			votexRotate.SetLoops(-1);
 			votexRotate.SetEase (Ease.Linear);
+			Debug.Log ("rotate");
 		}
 
 

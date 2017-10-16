@@ -13,7 +13,7 @@ namespace WordJourney
 		public int attackGain;//攻击力增益
 		public int attackSpeedGain;//攻速增益
 		public int critGain;//暴击增益
-		public int armourGain;//护甲增益
+		public int armorGain;//护甲增益
 		public int manaResistGain;//魔抗增益
 		public int dodgeGain;//闪避增益
 
@@ -72,7 +72,7 @@ namespace WordJourney
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public override string GetItemPropertiesString(){
+		public override string GetItemBasePropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
 
@@ -90,8 +90,8 @@ namespace WordJourney
 				string str = string.Format ("暴击: {0}", critGain);
 				propertiesList.Add (str);
 			}
-			if (armourGain > 0) {
-				string str = string.Format ("护甲: {0}", armourGain);
+			if (armorGain > 0) {
+				string str = string.Format ("护甲: {0}", armorGain);
 				propertiesList.Add (str);
 			}
 			if (manaResistGain > 0) {
@@ -146,7 +146,7 @@ namespace WordJourney
 					attackSpeedGain = Random.Range (1, 10);
 					break;
 				case 2:
-					armourGain = Random.Range (1, 10);
+					armorGain = Random.Range (1, 10);
 					break;
 				case 3:
 					manaResistGain = Random.Range (1, 10);
@@ -177,14 +177,7 @@ namespace WordJourney
 			return "类型: 铭文";
 		}
 
-		/// <summary>
-		/// 获取物品品质字符串
-		/// </summary>
-		/// <returns>The item quality string.</returns>
-		public override string GetItemQualityString ()
-		{
-			return string.Empty;
-		}
+
 
 	}
 }

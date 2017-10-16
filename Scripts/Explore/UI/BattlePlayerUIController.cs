@@ -107,7 +107,7 @@ namespace WordJourney
 				Text manaConsume = skillButton.transform.Find ("ManaConsume").GetComponent<Text> ();
 
 
-				Sprite sprite = GameManager.Instance.allSkillSprites.Find(delegate (Sprite s){
+				Sprite sprite = GameManager.Instance.dataCenter.allSkillSprites.Find(delegate (Sprite s){
 					return s.name == skill.skillIconName;
 				});
 
@@ -321,7 +321,7 @@ namespace WordJourney
 //
 //				Text itemCount = gainItem.FindChild ("ItemCount").GetComponent<Text> ();
 //
-//				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
+//				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
 //					return obj.name == item.spriteName;
 //				});
 //

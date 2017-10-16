@@ -28,7 +28,7 @@ namespace WordJourney
 			int originalDamage = (int)(self.agent.attack * hurtScaler * (1 + self.agent.physicalHurtScaler) + 0.5f);
 
 			//抵消护甲作用后的实际伤害值
-			int actualDamage = (int)(originalDamage / (1 + armourSeed * enemy.agent.armour) + 1f);
+			int actualDamage = (int)(originalDamage / (1 + armorSeed * enemy.agent.armor) + 1f);
 
 			enemy.agent.health -= actualDamage;
 

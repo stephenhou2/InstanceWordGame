@@ -35,7 +35,7 @@ namespace WordJourney
 
 		public float critSeed = 0.01f; //计算暴击时的种子数
 
-		public float armourSeed = 0.01f; //计算护甲抵消伤害的种子数
+		public float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
 
 		public float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
 

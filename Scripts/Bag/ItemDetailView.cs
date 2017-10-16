@@ -31,7 +31,7 @@ namespace WordJourney
 				
 				itemName.text = consumables.itemName;
 
-				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
+				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == consumables.spriteName;
 				});
 
@@ -39,7 +39,7 @@ namespace WordJourney
 					itemIcon.enabled = true;
 				}
 
-				detailDescText.GetComponent<Text> ().text = consumables.GetItemPropertiesString ();
+				detailDescText.GetComponent<Text> ().text = consumables.GetItemBasePropertiesString ();
 
 				detailDescText.gameObject.SetActive (true);
 
@@ -52,33 +52,43 @@ namespace WordJourney
 
 				itemName.text = equipment.itemName;
 
-				itemQuality.text = equipment.GetItemQualityString ();
-
-				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
+				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == equipment.spriteName;
 				});
 				if (itemIcon.sprite != null) {
 					itemIcon.enabled = true;
 				}
 
-				Sprite arrowSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 
 				Equipment compareEquipment = null;
-				int[] itemProperties = null;
-				int[] itemPropertiesDif = null;
+				double[] itemProperties = null;
+				double[] itemPropertiesDif = null;
 
 
 				switch (equipment.equipmentType) {
 				case EquipmentType.Weapon:
 					compareEquipment = Player.mainPlayer.allEquipedEquipments [0] as Equipment;
 					break;
-				case EquipmentType.Armour:
+				case EquipmentType.Cloth:
 					compareEquipment = Player.mainPlayer.allEquipedEquipments [1] as Equipment;
 					break;
-				case EquipmentType.Shoes:
+				case EquipmentType.Pants:
 					compareEquipment = Player.mainPlayer.allEquipedEquipments [2] as Equipment;
+					break;
+				case EquipmentType.Helmet:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [3] as Equipment;
+					break;
+				case EquipmentType.Shoes:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [4] as Equipment;
+					break;
+				case EquipmentType.Jewelry:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [5] as Equipment;
+					break;
+				case EquipmentType.Ring:
+					compareEquipment = Player.mainPlayer.allEquipedEquipments [6] as Equipment;
 					break;
 				default:
 					break;
@@ -88,19 +98,19 @@ namespace WordJourney
 					compareEquipment = new Equipment ();
 				}
 
-				itemProperties = new int[] {
+				itemProperties = new double[] {
 					equipment.attackGain,
 					equipment.attackSpeedGain,
-					equipment.armourGain,
+					equipment.armorGain,
 					equipment.manaResistGain,
 					equipment.critGain,
 					equipment.dodgeGain
 				};
 				
-				itemPropertiesDif = new int[] {
+				itemPropertiesDif = new double[] {
 					equipment.attackGain - compareEquipment.attackGain,
 					equipment.attackSpeedGain - compareEquipment.attackSpeedGain,
-					equipment.armourGain - compareEquipment.armourGain,
+					equipment.armorGain - compareEquipment.armorGain,
 					equipment.manaResistGain - compareEquipment.manaResistGain,
 					equipment.critGain - compareEquipment.critGain,
 					equipment.dodgeGain - compareEquipment.dodgeGain

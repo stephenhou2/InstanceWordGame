@@ -21,7 +21,7 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpRecordView(){
 
-			learnInfo = GameManager.Instance.learnInfo;
+			learnInfo = GameManager.Instance.dataCenter.learnInfo;
 
 			recordView.SetUpRecordView ();
 

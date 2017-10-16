@@ -414,6 +414,24 @@ namespace WordJourney{
 
 		}
 
+		/// <summary>
+		/// 查询表中数据数量
+		/// </summary>
+		/// <returns>The item count of table.</returns>
+		/// <param name="tableName">Table name.</param>
+		public int GetItemCountOfTable(string tableName){
+
+			string queryString = "SELECT COUNT(*) FROM " + tableName;
+
+			IDataReader reader = ExecuteQuery (queryString);
+
+			reader.Read ();
+
+			return reader.GetInt16 (0);
+
+
+		}
+
 
 		/// <summary>
 		/// 读取整张表的数据
@@ -426,13 +444,14 @@ namespace WordJourney{
 
 			return ExecuteQuery (queryString);
 		} 
+			
 
 		/// <summary>
 		/// 查询指定条件下的数据
 		/// </summary>
 		/// <returns>IDataReader.</returns>
 		/// <param name="tableName">表名.</param>
-		/// <param name="fieldName">字段名.</param>
+		/// <param name="fieldName">字段名,如果为null则读取指定条件下的条目中存储的所有数据项.</param>
 		/// <param name="condition">查询条件.</param>
 		public IDataReader ReadSpecificRowsAndColsOfTable(string tableName,string fieldName,string[] conditions,bool isLinkStrAND){
 

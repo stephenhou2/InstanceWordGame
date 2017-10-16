@@ -16,9 +16,7 @@ namespace WordJourney
 
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
-//			self.agent.armour = (int)(self.agent.armour * (1 + baseNum * skillLevel));
-			self.agent.armourGainScaler = baseNum * skillLevel;
-
+			self.agent.SetBasePropertyGainScalers (0, 0, baseNum * skillLevel, 0, 0, 0, 0, 0);
 		}
 
 	}

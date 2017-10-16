@@ -9,7 +9,6 @@ namespace WordJourney
 
 		public BagView bagView;
 
-
 		private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
 
 		private int currentSelectEquipIndex;
@@ -44,13 +43,13 @@ namespace WordJourney
 				equipmentType = EquipmentType.Weapon;
 				break;
 			case 1:
-				equipmentType = EquipmentType.Armour;
+				equipmentType = EquipmentType.Cloth;
 				break;
 			case 2:
-				equipmentType = EquipmentType.Helmet;
+				equipmentType = EquipmentType.Pants;
 				break;
 			case 3:
-				equipmentType = EquipmentType.Shield;
+				equipmentType = EquipmentType.Helmet;
 				break;
 			case 4:
 				equipmentType = EquipmentType.Shoes;
@@ -201,11 +200,11 @@ namespace WordJourney
 		}
 
 
-		public void StrengthenItem(){
+		public void FixEquipment(){
 
-			Item item = Player.mainPlayer.allItems [currentSelectItemIndex];
+			Equipment equipment = Player.mainPlayer.allItems [currentSelectItemIndex] as Equipment;
 
-			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (item.itemNameInEnglish);
+			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (equipment.itemNameInEnglish);
 
 			if (unsufficientCharacters.Count > 0) {
 
@@ -217,12 +216,14 @@ namespace WordJourney
 			} 
 				
 
-			// 玩家的字母碎片数量足够，进入强化界面
+			// 玩家的字母碎片数量足够，进入修复界面
 			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
 				
 				GameObject spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 
-				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForStrengthen(item);
+				Word word = Word.RandomWord();
+
+				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForFix(equipment,word);
 
 				OnQuitItemDetailHUD ();
 

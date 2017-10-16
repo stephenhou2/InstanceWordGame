@@ -28,6 +28,9 @@ namespace WordJourney
 		private ExploreUICotroller expUICtr;
 
 
+
+
+
 		void Awake()
 		{
 
@@ -38,6 +41,8 @@ namespace WordJourney
 			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (true);
 
 			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
+
+			battlePlayerCtr.ActiveBattlePlayer (true, false, false);
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
@@ -117,6 +122,7 @@ namespace WordJourney
 
 			// 以地图左下角为坐标原点时的点击位置
 			Vector3 targetPos = new Vector3(targetX, targetY, 0);
+
 
 //			Vector3 rayEndPos = targetPos + new Vector3(0,0,15);
 
@@ -206,7 +212,7 @@ namespace WordJourney
 
 			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
 
-			battlePlayerCtr.PlayRoleAnim ("battle", 1, () => {
+			battlePlayerCtr.PlayRoleAnim ("fightWithAxe", 1, () => {
 
 				obstacle.UnlockOrDestroyMapItem(()=>{
 

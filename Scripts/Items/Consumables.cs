@@ -16,8 +16,8 @@ namespace WordJourney
 
 	public class Consumables : Item {
 
-		public int healthGain;//血量增益
-		public int manaGain;//魔法增益
+		public double healthGain;//血量增益
+		public double manaGain;//魔法增益
 
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace WordJourney
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public override string GetItemPropertiesString(){
+		public override string GetItemBasePropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
 
@@ -81,14 +81,7 @@ namespace WordJourney
 			return "类型: 消耗品";
 		}
 
-		/// <summary>
-		/// 获取物品品质字符串
-		/// </summary>
-		/// <returns>The item quality string.</returns>
-		public override string GetItemQualityString ()
-		{
-			return string.Empty;
-		}
+
 
 	}
 }

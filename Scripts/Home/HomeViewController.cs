@@ -54,15 +54,20 @@ namespace WordJourney
 
 		public void OnThinkingButtonClick(){
 
-			Debug.Log ("单词界面");
+			ResourceManager.Instance.LoadAssetWithBundlePath ("material/canvas", () => {
+				
+				GameObject.Find(CommonData.instanceContainerName + "/MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
+			
+				homeView.OnQuitHomeView();
+			});
 
 		}
 
 		public void OnProduceButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("produce/canvas", () => {
+			ResourceManager.Instance.LoadAssetWithBundlePath ("item/canvas", () => {
 
-				GameObject.Find(CommonData.instanceContainerName + "/ProduceCanvas").GetComponent<ProduceViewController> ().SetUpProduceView();
+				GameObject.Find(CommonData.instanceContainerName + "/ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
 
 				homeView.OnQuitHomeView();
 			});
@@ -111,6 +116,18 @@ namespace WordJourney
 				homeView.OnQuitHomeView();
 			});
 		}
+
+		public void OnMaterialProduceButtonClick(){
+			
+			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
+
+				homeView.OnQuitHomeView();
+
+			});
+		}
+
 
 		private void QuitHomeView(){
 			homeView.OnQuitHomeView (DestroyInstances);

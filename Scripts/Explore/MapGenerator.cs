@@ -207,6 +207,11 @@ namespace WordJourney
 
 			#warning for test
 			LayoutObjectAtRandom (monsters, new Count(30,40),monstersContainer);
+
+			for (int i = 0; i < monstersContainer.transform.childCount; i++) {
+				Transform monsterTrans = monstersContainer.transform.GetChild (i);
+				monsterTrans.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0);
+			}
 //			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
 		}
 
@@ -257,7 +262,7 @@ namespace WordJourney
 
 						string tileName = string.Format ("{0}_{1}", mapImageName,tileIndex);
 
-						Sprite tileSprite = GameManager.Instance.allMapSprites.Find (delegate(Sprite s) {
+						Sprite tileSprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
 							return s.name == tileName;
 						});
 

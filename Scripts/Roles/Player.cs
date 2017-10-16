@@ -58,7 +58,7 @@ namespace WordJourney
 
 		public int skillPointsLeft;
 
-
+		public List<Material> allMaterialsInBag = new List<Material>();
 
 
 		public override void Awake(){
@@ -68,6 +68,8 @@ namespace WordJourney
 			#warning 这里用来玩家信息初始化
 
 		}
+
+
 
 
 		private void InitPlayerFromLocalData(){
@@ -187,27 +189,53 @@ namespace WordJourney
 
 					for (int j = i + 1; j < allItems.Count; j++) {
 
-						Item itemBackwords = allItems [j];
+						Item itemBackwards = allItems [j];
 
-						if (item.itemId == itemBackwords.itemId) {
+						if (item.itemId == itemBackwards.itemId) {
 
-							item.itemCount += itemBackwords.itemCount;
+							item.itemCount += itemBackwards.itemCount;
 
-							allItems.Remove (itemBackwords);
+							allItems.Remove (itemBackwards);
 
 							j--;
 
 						}
-
 					}
-
 				}
-
 			}
-
-
 		}
 
+
+		public void AddMaterial(Material material,int materialCount){
+			material.materialCount = materialCount;
+			AddMaterial (material);
+		}
+
+		/// <summary>
+		/// Adds the material.
+		/// </summary>
+		/// <param name="material">Material.</param>
+		public void AddMaterial(Material material){
+
+			Material materialInBag = allMaterialsInBag.Find(delegate(Material obj){
+				return obj.id == material.id;
+			});
+
+			if (materialInBag != null) {
+				// 如果玩家背包中存在对应材料 ＋＝ 材料数量
+				materialInBag.materialCount += material.materialCount;		
+			}else{
+				// 如果玩家背包中不存在对应材料，则背包中添加该材料
+				Player.mainPlayer.allMaterialsInBag.Add(material);
+			} 
+		}
+
+
+		/// <summary>
+		/// Checks the unsufficient characters.
+		/// </summary>
+		/// <returns>The unsufficient characters.</returns>
+		/// <param name="itemNameInEnglish">Item name in english.</param>
 		public List<char> CheckUnsufficientCharacters(string itemNameInEnglish){
 
 			char[] charactersArray = itemNameInEnglish.ToCharArray ();

@@ -1,14 +1,21 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-
+using DragonBones;
+using Transform = UnityEngine.Transform;
 
 
 namespace WordJourney
 {
 	public class BattlePlayerController : BattleAgentController {
+
+
+		public GameObject playerForward;
+		public GameObject playerBackWard;
+		public GameObject playerSide;
+
+
 
 		// 事件回调
 		public ExploreEventHandler enterMonster;
@@ -44,11 +51,14 @@ namespace WordJourney
 
 		public Trap trapTriggered;
 
+
 		protected override void Awake(){
+
+			ActiveBattlePlayer (true, false, false);
 
 			agent = GetComponentInParent<Player> ();
 
-			physicalAttack.selfAnimName = "battle";
+			physicalAttack.selfAnimName = "fightWithAxe";
 
 			base.Awake ();
 
@@ -173,6 +183,47 @@ namespace WordJourney
 //
 //		}
 
+
+
+		#warning for test----------------------------------
+		private void SoundListener<Transform>(string type,Transform t){
+
+//			DragonBones.ListenerDelegate<Transform> d;
+
+		}
+
+		#warning for test----------------------------------
+		private void test(){
+			armatureCom.AddEventListener (DragonBones.EventObject.SOUND_EVENT, SoundListener);
+			DragonBones.DataParser dp;
+			DragonBones.BaseFactory fa;
+//			fa.ReplaceSlotDisplay(
+		}
+
+
+		public void ActiveBattlePlayer(bool forward,bool backward,bool side){
+			
+			playerForward.SetActive (forward);
+			playerBackWard.SetActive (backward);
+			playerSide.SetActive (side);
+
+			if (forward) {
+				modelActive = playerForward;
+			} else if (backward) {
+				modelActive = playerBackWard;
+			} else if (side) {
+				modelActive = playerSide;
+			}
+		}
+
+		public override void PlayRoleAnim (string animName, int playTimes, CallBack cb)
+		{
+			armatureCom.animation.Play (animName,playTimes);
+			if (cb != null) {
+				StartCoroutine ("ExcuteCallBackAtEndOfAnim", cb);
+			}
+		}
+
 		/// <summary>
 		/// 移动到下一个节点
 		/// </summary>
@@ -185,10 +236,28 @@ namespace WordJourney
 				
 				nextPos = pathPosList [0];
 
-				if (nextPos.x > transform.position.x) {
-					transform.localScale = new Vector3 (1, 1, 1);
-				} else if (nextPos.x < transform.position.x) {
-					transform.localScale = new Vector3 (-1, 1, 1);
+				if (nextPos.x == transform.position.x && nextPos.y == transform.position.y) {
+					return;
+				}
+
+				if (nextPos.x == transform.position.x) {
+
+					if (nextPos.y < transform.position.y) {
+						ActiveBattlePlayer (true, false, false);
+					} else if (nextPos.y > transform.position.y) {
+						ActiveBattlePlayer (false, true, false);
+					}
+
+				}
+
+
+				if(nextPos.y == transform.position.y){
+					ActiveBattlePlayer (false, false, true);
+					if (nextPos.x > transform.position.x) {
+						playerSide.transform.localScale = new Vector3 (1, 1, 1);
+					} else if (nextPos.x < transform.position.x) {
+						playerSide.transform.localScale = new Vector3 (-1, 1, 1);
+					}
 				}
 
 			}
@@ -211,13 +280,25 @@ namespace WordJourney
 
 						moveTweener.Kill (false);
 
+						if (modelActive != playerSide) {
+							ActiveBattlePlayer (false, false, true);
+						}
+
+						r2d.transform.localScale = new Vector3 (-modelActive.transform.localScale.x, 1, 1);
+
 						enterMonster (r2d.transform);
+
+						boxCollider.enabled = true;
 
 						return;
 
 					case "item":
 
 						moveTweener.Kill (false);
+
+						if (modelActive != playerSide) {
+							ActiveBattlePlayer (false, false, true);
+						}
 
 						PlayRoleAnim ("stand", 0, null);
 
@@ -226,6 +307,8 @@ namespace WordJourney
 						inSingleMoving = false;
 
 						enterItem (r2d.transform);
+
+						boxCollider.enabled = true;
 
 						return;
 
@@ -241,15 +324,19 @@ namespace WordJourney
 
 						enterNpc (r2d.transform);
 
+						boxCollider.enabled = true;
+
 						return;
 
 					default:
 						break;
 
 					}
+
+					boxCollider.enabled = true;
 				}
 
-				boxCollider.enabled = true;
+
 			}
 
 
@@ -301,7 +388,7 @@ namespace WordJourney
 
 			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
 
-			bpUICtr.SetUpExplorePlayerView (agent as Player, GameManager.Instance.allSkillSprites, GameManager.Instance.allItemSprites,PlayerSelectSkill);
+			bpUICtr.SetUpExplorePlayerView (agent as Player, GameManager.Instance.dataCenter.allSkillSprites, GameManager.Instance.dataCenter.allItemSprites,PlayerSelectSkill);
 
 		}
 
@@ -463,8 +550,8 @@ namespace WordJourney
 
 		public void OnPlayerUseItem(Item item){
 
-			agent.health += (item as Consumables).healthGain;
-			agent.mana += (item as Consumables).manaGain;
+			agent.health += (int)((item as Consumables).healthGain * agent.maxHealth);
+			agent.mana += (int)((item as Consumables).manaGain * agent.maxMana);
 
 
 			item.itemCount--;

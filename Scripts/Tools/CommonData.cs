@@ -18,7 +18,8 @@ namespace WordJourney{
 		public static string effectsDataFilePath = persistDataPath + "/TestEffectString.txt";
 		public static string chaptersDataFilePath = persistDataPath + "/ChaptersJson.txt";
 		public static string chapterDataFilePath = persistDataPath + "/ChapterJson.txt";
-		public static string itemsDataFilePath = persistDataPath + "/AllItemsJson.txt";
+		public static string itemsDataFilePath = persistDataPath + "/Items.json";
+		public static string materialsDataFilePath = persistDataPath + "/Materials.json";
 		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";
 
 
@@ -57,7 +58,7 @@ namespace WordJourney{
 
 	public enum SpellPurpose{
 		Create,
-		Strengthen,
+		Fix,
 		Task
 	}
 
@@ -76,21 +77,11 @@ namespace WordJourney{
 		Random
 	}
 
-	public enum ItemType{
-		Equipment,
-		Consumables,
-		Task,
-		Inscription,
-		Map
-	}
-		
-
-
 
 	public enum PropertyType{
 		Attack,
 		Magic,
-		armour,
+		armor,
 		MagicResist,
 		Crit,
 		dodge,

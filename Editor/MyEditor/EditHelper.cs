@@ -20,8 +20,23 @@ namespace WordJourney{
 		[MenuItem("EditHelper/Test")]
 		public static void Test(){
 
+			GameObject go = GameObject.Find ("MaterialsContainer");
 
+			for (int i = 0; i < go.transform.childCount; i++) {
+				
+				Transform trans = go.transform.GetChild (i);
 
+				Transform plus = trans.Find ("PlusButton");
+				Transform minus = trans.Find ("MinusButton");
+
+				if (plus != null) {
+					GameObject.DestroyImmediate (plus.gameObject);	
+				}
+
+				if (minus != null) {
+					GameObject.DestroyImmediate (minus.gameObject);
+				}
+			}
 		}
 
 
@@ -34,6 +49,16 @@ namespace WordJourney{
 
 
 		}
+
+
+		[MenuItem("EditHelper/ItemHelper")]
+		public static void TransferItemAndMaterialData(){
+
+			ItemHandler ih = new ItemHandler ();
+			ih.CheckValence ();
+			ih.SaveData ();
+		}
+
 
 
 		private static void ModifyCharacterButtons(){
@@ -141,7 +166,7 @@ namespace WordJourney{
 				itemModel.itemNameInEnglish = itemStr[5];
 				itemModel.attackGain = System.Convert.ToInt16(itemStr[6]);
 				itemModel.attackSpeedGain = System.Convert.ToInt16(itemStr[7]);
-				itemModel.armourGain = System.Convert.ToInt16(itemStr[8]);
+				itemModel.armorGain = System.Convert.ToInt16(itemStr[8]);
 				itemModel.manaResistGain = System.Convert.ToInt16(itemStr[9]);
 				itemModel.critGain = System.Convert.ToInt16(itemStr[10]);
 				itemModel.dodgeGain = System.Convert.ToInt16(itemStr[11]);

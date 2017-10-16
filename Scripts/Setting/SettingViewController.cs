@@ -14,7 +14,7 @@ namespace WordJourney
 
 		public void SetUpSettingView(){
 
-			GameSettings settings = GameManager.Instance.gameSettings;
+			GameSettings settings = GameManager.Instance.dataCenter.gameSettings;
 
 			settingView.SetUpSettingView (settings);
 
@@ -23,13 +23,13 @@ namespace WordJourney
 
 		public void ChangeVolume(){
 
-			GameManager.Instance.gameSettings.systemVolume = (int)settingView.volumeControl.value;
+			GameManager.Instance.dataCenter.gameSettings.systemVolume = (int)settingView.volumeControl.value;
 
 		}
 
 		public void SetPronunciationEnable(bool enable){
 
-			GameManager.Instance.gameSettings.isPronunciationEnable = enable;
+			GameManager.Instance.dataCenter.gameSettings.isPronunciationEnable = enable;
 
 			settingView.UpdatePronounceControl (enable);
 
@@ -37,7 +37,7 @@ namespace WordJourney
 
 		public void SetDownloadEnable(bool enable){
 
-			GameManager.Instance.gameSettings.isDownloadEnable = enable;
+			GameManager.Instance.dataCenter.gameSettings.isDownloadEnable = enable;
 
 			settingView.UpdateDownloadControl (enable);
 
@@ -54,23 +54,23 @@ namespace WordJourney
 
 			switch (wordTypeIndex) {
 			case 0:
-				GameManager.Instance.gameSettings.wordType = WordType.CET4;
+				GameManager.Instance.dataCenter.gameSettings.wordType = WordType.CET4;
 				break;
 			case 1:
-				GameManager.Instance.gameSettings.wordType = WordType.CET6;
+				GameManager.Instance.dataCenter.gameSettings.wordType = WordType.CET6;
 				break;
 			case 2:
-				GameManager.Instance.gameSettings.wordType = WordType.Daily;
+				GameManager.Instance.dataCenter.gameSettings.wordType = WordType.Daily;
 				break;
 			case 3:
-				GameManager.Instance.gameSettings.wordType = WordType.Bussiness;
+				GameManager.Instance.dataCenter.gameSettings.wordType = WordType.Bussiness;
 				break;
 
 			}
 
 			GameManager.Instance.OnSettingsChanged ();
 
-			Debug.Log (GameManager.Instance.gameSettings.wordType);
+			Debug.Log (GameManager.Instance.dataCenter.gameSettings.wordType);
 		}
 
 		public void QuitSettingPlane(){
@@ -92,7 +92,7 @@ namespace WordJourney
 
 			#warning 其他一些要保存的数据操作
 
-			DataHandler.WriteModelDataToFile<GameSettings> (GameManager.Instance.gameSettings, CommonData.settingsFilePath);
+			DataHandler.WriteModelDataToFile<GameSettings> (GameManager.Instance.dataCenter.gameSettings, CommonData.settingsFilePath);
 
 		}
 

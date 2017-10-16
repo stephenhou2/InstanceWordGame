@@ -16,7 +16,7 @@ namespace WordJourney
 
 		public Text spellRequestText;
 
-		public Text[] characterTexts;
+//		public Text[] characterTexts;
 
 
 		public Button[] characterButtons;
@@ -24,6 +24,8 @@ namespace WordJourney
 		public Button onceButton;
 
 		public Button multiTimesButton;
+
+		public Text charactersEntered;
 
 
 		public GameObject createCountHUD;
@@ -37,76 +39,89 @@ namespace WordJourney
 		public Slider countSlider;
 
 
-		public GameObject createdItemsHUD;
+		public Transform createdMaterialHUD;
 
-		private InstancePool createdItemDetailPool;
+//		public Transform materialDetailsContainer;
 
-		public GameObject createdItemDetailModel;
+		public Image materialIcon;
+		public Text materialName;
+		public Text materialCount;
+		public Text materialProperty;
+		public Text materialValence;
 
-		public Transform itemDetailContainer;
 
 
-		public Transform strengthenItemDetailHUD;
+		public Transform fixedItemDetailHUD;
 
-		public Transform strengthenDetailContainer;
+		public Transform fixedItemDetailContainer;
 
-		public Text strengthenItemName;
 
-		public Text strengthenItemType;
+		public Text fixedItemName;
+		public Text fixedItemType;
+		public Text fixedItemDamagePercentage;
+		public Text fixedItemProperties;
+		public Image fixedItemIcon;
 
-		public Text strengthenItemQuality;
+		private InstancePool fixGainTextPool;
 
-		public Text strengthenItemProperties;
-
-		public Text strengthenTimes;
-
-		public Image strengthenItemIcon;
-
-		private InstancePool strengthenGainTextPool;
-
-		public GameObject strengthenGainTextModel;
+		public GameObject fixGainTextModel;
 
 	//	public void SetUpSpellView(){
 	//
 	//	}
-		public void SetUpSpellView(Item item){
+		public void SetUpSpellViewWith(string wordInChinese){
 
-			if (item != null && item.itemNameInEnglish != null) {
-				spellRequestText.text = string.Format ("请正确拼写 <color=orange>{0}</color>", item.itemName);
+			if (wordInChinese != null) {
+				spellRequestText.text = string.Format ("拼写 <color=orange>{0}</color>", wordInChinese);
+
 			} else {
-				spellRequestText.text = "请正确拼写任意物品";
-			}
-
-		}
-
-
-		public void SetUpSpellView(ItemModel itemModel){
-			
-			if (itemModel != null && itemModel.itemNameInEnglish != null) {
-				spellRequestText.text = string.Format ("请正确拼写 <color=orange>{0}</color>", itemModel.itemName);
-			} else {
-				spellRequestText.text = "请正确拼写任意物品";
+				spellRequestText.text = "拼写任意单词";
 			}
 
 			onceButton.gameObject.SetActive(true);
-			multiTimesButton.gameObject.SetActive(true);
+
+			multiTimesButton.gameObject.SetActive (true);
+
+			GetComponent<Canvas>().enabled = true;
+
 		}
+
+
+//		public void SetUpSpellView(ItemModel itemModel){
+//			
+//			if (itemModel != null && itemModel.itemNameInEnglish != null) {
+//				spellRequestText.text = string.Format ("请正确拼写 <color=orange>{0}</color>", itemModel.itemName);
+//			} else {
+//				spellRequestText.text = "请正确拼写任意物品";
+//			}
+//
+//			onceButton.gameObject.SetActive(true);
+//			multiTimesButton.gameObject.SetActive(true);
+//		}
 
 		public void ClearEnteredCharactersPlane(){
 
-			foreach (Text t in characterTexts) {
-				t.text = string.Empty;
-			}
+//			foreach (Text t in characterTexts) {
+//				t.text = string.Empty;
+//			}
+
+			charactersEntered.text = string.Empty;
 
 		}
 
-		public void OnEnterCharacter(StringBuilder enteredCharacters,string character){
+//		public void OnEnterCharacter(StringBuilder enteredCharacters,string character){
+//
+//			if (character == null) {
+//				return;
+//			}
+//			
+//			characterTexts [enteredCharacters.Length - 1].text = character;
+//
+//		}
 
-			if (character == null) {
-				return;
-			}
-			
-			characterTexts [enteredCharacters.Length - 1].text = character;
+		public void UpdateCharactersEntered(string charactersWithColor){
+
+			charactersEntered.text = charactersWithColor;
 
 		}
 
@@ -121,14 +136,6 @@ namespace WordJourney
 			Transform characterTintHUD = characterButton.transform.Find ("TintHUD");
 			characterTintHUD.gameObject.SetActive (false);
 		}
-
-
-
-		public void OnBackspace(int enteredStringLength){
-			
-			characterTexts [enteredStringLength].text = string.Empty;
-
-		}
 			
 
 
@@ -139,7 +146,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 
@@ -164,90 +171,67 @@ namespace WordJourney
 
 			createCount.text = "制作" + count.ToString() + "个";
 
-
-
 		}
 
-		public void SetUpCreateItemDetailHUD(List<Item> createItems){
-
-			createdItemDetailPool =  InstancePool.GetOrCreateInstancePool ("CreatedItemDetailPool");
-
-
-			foreach (Item item in createItems) {
-			
-				Transform itemTrans = createdItemDetailPool.GetInstance<Transform> (createdItemDetailModel, itemDetailContainer);
-
-				Image itemIcon = itemTrans.Find ("ItemIcon").GetComponent<Image> ();
-
-				Text itemName = itemTrans.Find ("ItemName").GetComponent<Text> ();
-
-				Text itemCount = itemTrans.Find ("ItemCount").GetComponent<Text> ();
-
-				Text itemQuality = itemTrans.Find ("ItemQuality").GetComponent<Text> ();
-
-				Text itemDesciption = itemTrans.Find ("ItemDescription").GetComponent<Text> ();
-
-				itemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == item.spriteName;	
-				});
-
-				if (itemIcon.sprite != null) {
-					itemIcon.enabled = true;
-				}
-
-				itemName.text = item.itemName;
-
-				itemQuality.text = item.GetItemQualityString ();
-
-				itemCount.text = item.itemCount.ToString ();
-
-				itemDesciption.text = item.GetItemPropertiesString ();
-
-			}
+		public void SetUpCreateMaterialDetailHUD(Material material){
 
 			QuitSpellCountHUD ();
 
-			createdItemsHUD.SetActive (true);
+			materialName.text = material.materialName;
+
+			materialCount.text = string.Format ("数量:{0}", material.materialCount);
+
+			materialProperty.text = material.propertyString;
+
+			materialValence.text = material.valence.ToString ();
+
+
+			Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				return obj.name == material.spriteName;
+			});
+
+			if (s != null) {
+				materialIcon.sprite = s;
+			}
+
+
+			createdMaterialHUD.gameObject.SetActive (true);
 
 			ClearEnteredCharactersPlane ();
 
-
 		}
 
-		public void SetUpStrengthenItemDetailHUD(Equipment equipment){
+		public void SetUpFixedItemDetailHUD(Equipment equipment){
 
-			strengthenItemName.text = equipment.itemName;
-			strengthenItemType.text = equipment.GetItemTypeString ();
-			strengthenItemQuality.text = equipment.GetItemQualityString ();
-			strengthenTimes.text = "强化次数: " + equipment.strengthenTimes.ToString() + "次";
-			strengthenItemProperties.text = equipment.GetItemPropertiesString ();
+			fixedItemName.text = equipment.itemName;
+			fixedItemType.text = equipment.GetItemTypeString ();
+			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
+			fixedItemDamagePercentage.text = string.Format ("损坏度:{0}%", (int)(equipment.damagePercentage * 100));
 
-			strengthenItemIcon.sprite = GameManager.Instance.allItemSprites.Find (delegate (Sprite obj) {
+
+			fixedItemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate (Sprite obj) {
 				return obj.name == equipment.spriteName;
 			});
 
-			if (strengthenItemIcon.sprite != null) {
-				strengthenItemIcon.enabled = true;
+			if (fixedItemIcon.sprite != null) {
+				fixedItemIcon.enabled = true;
 			}
 
-			strengthenGainTextPool = InstancePool.GetOrCreateInstancePool ("StrengthenGainTextPool");
+			fixGainTextPool = InstancePool.GetOrCreateInstancePool ("FixGainTextPool");
 
-			strengthenItemDetailHUD.gameObject.SetActive (true);
+			fixedItemDetailHUD.gameObject.SetActive (true);
 
 		}
 
-		public void UpdateStrengthenItemDetailHUD(Equipment equipment,string strengthenGainStr){
+		public void UpdateFixedItemDetailHUD(Equipment equipment){
 
-			strengthenTimes.text = "强化次数: " + equipment.strengthenTimes.ToString() + "次";
-			strengthenItemProperties.text = equipment.GetItemPropertiesString ();
+			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
 
-			Text strengthenGainText = strengthenGainTextPool.GetInstance<Text> (strengthenGainTextModel, strengthenDetailContainer);
+			Text strengthenGainText = fixGainTextPool.GetInstance<Text> (fixGainTextModel, fixedItemDetailContainer);
 
 			strengthenGainText.transform.localPosition = Vector3.zero;
 
 			strengthenGainText.gameObject.SetActive(true);
-
-			strengthenGainText.text = strengthenGainStr;
 
 			strengthenGainText.transform.DOLocalMoveY (200f, 0.5f).OnComplete (() => {
 
@@ -255,23 +239,22 @@ namespace WordJourney
 
 				strengthenGainText.text = string.Empty;
 
-				strengthenGainTextPool.AddInstanceToPool(strengthenGainText.gameObject);
+				fixGainTextPool.AddInstanceToPool(strengthenGainText.gameObject);
 
 			});
 				
 		}
 
-		public void QuitStrengthenItemDetailHUD(){
+		public void QuitFixedItemDetailHUD(){
 
-			strengthenItemName.text = string.Empty;
-			strengthenItemType.text = string.Empty;
-			strengthenTimes.text = string.Empty;
-			strengthenItemProperties.text = string.Empty;
+			fixedItemName.text = string.Empty;
+			fixedItemType.text = string.Empty;
+			fixedItemProperties.text = string.Empty;
 
-			strengthenItemIcon.sprite = null;
-			strengthenItemIcon.enabled = false;
+			fixedItemIcon.sprite = null;
+			fixedItemIcon.enabled = false;
 
-			strengthenItemDetailHUD.gameObject.SetActive (false);
+			fixedItemDetailHUD.gameObject.SetActive (false);
 
 		}
 
@@ -285,9 +268,7 @@ namespace WordJourney
 
 		public void OnQuitCreateDetailHUD(){
 
-			createdItemsHUD.SetActive (false);
-
-			createdItemDetailPool.AddChildInstancesToPool (itemDetailContainer);
+			createdMaterialHUD.gameObject.SetActive (false);
 
 		}
 

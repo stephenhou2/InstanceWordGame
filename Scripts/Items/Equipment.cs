@@ -10,43 +10,61 @@ namespace WordJourney
 	/// </summary>
 	public enum EquipmentType{
 		Weapon,//武器
-		Armour,//护甲
-		Helmet,//头盔
-		Shield,//盾
-		Shoes,//鞋
-		Ring,//饰品
+		Cloth,//衣服
+		Pants,//裤子
+		Helmet,//盔帽
+		Shoes,//鞋子
+		Jewelry,//项链和护符
+		Ring,//戒指
 	}
 
+//	/// <summary>
+//	/// 装备类型枚举
+//	/// </summary>
+//	public enum DetailEquipmentType{
+//		Sword,//剑
+//		Blade,//刀
+//		Axe,//斧子
+//		Harmer,//锤
+//		Staff,//法杖
+//		Knife,//匕首
+//		Cloth,//袍
+//		Armor,//盔甲
+//		Pants,//裤子
+//		Helmet,//盔帽
+//		Shoes,//鞋子
+//		Jewelry,//项链和护符
+//		Ring,//戒指
+//	}
 
 
 	public class Equipment : Item {
 
-		public int attackGain;//攻击力增益
-		public int attackSpeedGain;//攻速增益
-		public int critGain;//暴击增益
-		public int armourGain;//护甲增益
-		public int manaResistGain;//魔抗增益
-		public int dodgeGain;//闪避增益
+		public double attackGain;//攻击力增益
+		public double attackSpeedGain;//攻速增益
+		public double critGain;//暴击增益
+		public double armorGain;//护甲增益
+		public double manaResistGain;//魔抗增益
+		public double dodgeGain;//闪避增益
+		public double healthGain;//生命增益
+		public double manaGain;//魔法增益
 
-		//装备品质
-		public ItemQuality itemQuality;
+		public int maxAttachedProperties;//附加属性最大数量
+		public int attachedPropertyId;//附加属性id
+		public EquipmentType equipmentType;//装备类型
+		public string detailType;//详细装备类型
+		public int levelNeed;//装备等级要求
 
-		//装备的潜在属性字符串（装备根据品质不同属性上有差异）
-		public string potentialPropertiesString;
+		public List<Material> materials = new List<Material> ();//合成材料需求
+		public List<Material> failMaterials = new List<Material>();//合成失败时可能掉落的特殊材料
 
-		//装备已强化次数
-		public int strengthenTimes;
+
+
+		public double damagePercentage;//装备损坏程度
+		private double fixPercentage = 0.05d;//每次修复百分比
 
 		//装备是否已佩戴
 		public bool equiped;
-
-		//装备类型
-		public EquipmentType equipmentType;
-
-
-		//装备根据品质不同属性变化范围
-		private int minGain = -3;
-		private int maxGain = 8;
 
 
 		/// <summary>
@@ -59,9 +77,7 @@ namespace WordJourney
 		/// <summary>
 		/// 构造函数
 		/// </summary>
-		/// <param name="itemModel">Item model.</param>
-		/// </param> 装备品质［if＝＝ItemQuality.Random，则装备属性随机］</param>
-		public Equipment(ItemModel itemModel,ItemQuality iq){
+		public Equipment(ItemModel itemModel){
 
 			this.itemType = ItemType.Equipment;
 
@@ -72,25 +88,15 @@ namespace WordJourney
 			attackGain = itemModel.attackGain;
 			attackSpeedGain = itemModel.attackSpeedGain;
 			critGain = itemModel.critGain;
-			armourGain = itemModel.armourGain;
+			armorGain = itemModel.armorGain;
 			manaResistGain = itemModel.manaResistGain;
 			dodgeGain = itemModel.dodgeGain;
+			healthGain = itemModel.healthGain;
+			manaGain = itemModel.manaGain;
 
-
+			damagePercentage = 0d;
 			equipmentType = itemModel.equipmentType;
 
-			// 获取装备潜在属性范围字符串
-			this.potentialPropertiesString = GetItemPotentialPropertiesString ();
-
-			// 确定装备品质
-			if (iq == ItemQuality.Random) {
-				RandomQuility ();
-			} else {
-				this.itemQuality = iq;
-			}
-
-			// 根据装备品质在基础属性上重新设定装备属性
-			ResetBasePropertiesByQuality ();
 
 		}
 
@@ -101,189 +107,93 @@ namespace WordJourney
 		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
-			switch (equipmentType) {
-				case EquipmentType.Weapon:
-					return "类型: 武器";
-				case EquipmentType.Armour:
-					return "类型: 防具";
-				case EquipmentType.Shoes:
-					return "类型: 鞋子";
-				default:
-					return string.Empty;
+			string typeString = string.Empty;
+			switch (equipmentType) 
+			{
+			case EquipmentType.Weapon:
+				typeString = "类型: 武器";
+				break;
+			case EquipmentType.Cloth:
+				typeString = "类型: 衣服";
+				break;
+			case EquipmentType.Pants:
+				typeString = "类型: 裤子";
+				break;
+			case EquipmentType.Helmet:
+				typeString = "类型: 盔帽";
+				break;
+			case EquipmentType.Shoes:
+				typeString = "类型: 鞋子";
+				break;
+			case EquipmentType.Jewelry:
+				typeString = "类型: 挂饰";
+				break;
+			case EquipmentType.Ring:
+				typeString = "类型: 指环";
+				break;
 			}
+			return typeString;
 		}
+			
 
 		/// <summary>
-		/// 随机装备品质
+		/// 生成单个属性的描述字符串，并加入到属性描述列表中
 		/// </summary>
-		protected void RandomQuility(){
+		/// <param name="property">Property.</param>
+		/// <param name="gain">Gain.</param>
+		/// <param name="propertiesList">Properties list.</param>
+		private string GenerateSinglePropertyString(string property,double gain,List<string> propertiesList){
 
-			float seed = Random.Range (0f, 100f);
-			if (seed >= 0 && seed < 50f) {
-				itemQuality = ItemQuality.C;
-			} else if (seed >= 50f && seed < 80f) {
-				itemQuality = ItemQuality.B;
-			} else if (seed >= 80f && seed < 95f) {
-				itemQuality = ItemQuality.A;
-			} else {
-				itemQuality = ItemQuality.S;
+			string propertyStr = string.Empty;
+
+			if (gain >= 1) {
+				propertyStr = string.Format ("{0}+ {1}",gain);
+			}else{
+				propertyStr = string.Format ("{0}+ {1}%",(int)gain*100);
 			}
 
-		}
-
-
-		/// <summary>
-		/// 根据装备品质重设装备初始属性
-		/// </summary>
-		protected void ResetBasePropertiesByQuality(){
-
-			switch (itemQuality) {
-			case ItemQuality.C:
-				UpdateProperties (-3, 1);
-				break;
-			case ItemQuality.B:
-				UpdateProperties (-2, 3);
-				break;
-			case ItemQuality.A:
-				UpdateProperties (-1, 5);
-				break;
-			case ItemQuality.S:
-				UpdateProperties (1, 8);
-				break;
-
+			if (propertiesList != null) {
+				propertiesList.Add (propertyStr);
 			}
 
-		}
-
-		/// <summary>
-		/// 强化时更新装备属性
-		/// </summary>
-		/// <param name="minGain">Minimum gain.</param>
-		/// <param name="maxGain">Max gain.</param>
-		private void UpdateProperties(int minGain,int maxGain){
-
-			if (attackGain > 0) {
-				attackGain += Random.Range (minGain, maxGain);
-			}
-			if (attackSpeedGain > 0) {
-				attackSpeedGain += Random.Range (minGain, maxGain);
-			}
-			if (critGain > 0) {
-				critGain += Random.Range (minGain, maxGain);
-			}
-			if (armourGain > 0) {
-				armourGain += Random.Range (minGain, maxGain);
-			}
-			if (manaResistGain > 0) {
-				manaResistGain += Random.Range (minGain, maxGain);
-			}
-			if (dodgeGain > 0) {
-				dodgeGain += Random.Range (minGain, maxGain);
-			}
-		}
-
-
-		/// <summary>
-		/// 获取装备潜在属性范围字符串
-		/// </summary>
-		private string GetItemPotentialPropertiesString(){
-
-			StringBuilder itemProperties = new StringBuilder ();
-
-			List<string> propertiesList = new List<string> ();
-
-			if (attackGain > 0) {
-				string str = string.Format ("攻击: {0}~{1}", attackGain + minGain, attackGain + maxGain);
-				propertiesList.Add (str);
-			}
-			if (attackSpeedGain > 0) {
-				string str = string.Format ("攻速: {0}~{1}", attackSpeedGain + minGain, attackSpeedGain + maxGain);
-				propertiesList.Add (str);
-			}
-			if (critGain > 0) {
-				string str = string.Format ("暴击: {0}~{1}", critGain + minGain, critGain + maxGain);
-				propertiesList.Add (str);
-			}
-			if (armourGain > 0) {
-				string str = string.Format ("护甲: {0}~{1}", armourGain + minGain, armourGain + maxGain);
-				propertiesList.Add (str);
-			}
-			if (manaResistGain > 0) {
-				string str = string.Format ("抗性: {0}~{1}", manaResistGain + minGain, manaResistGain + maxGain);
-				propertiesList.Add (str);
-			}
-			if (dodgeGain > 0) {
-				string str = string.Format ("闪避: {0}~{1}", dodgeGain + minGain, dodgeGain + maxGain);
-				propertiesList.Add (str);
-			} 
-
-//			if (healthGain > 0) {
-//				string str = string.Format ("体力+{0}",healthGain);
-//				propertiesList.Add (str);
-//			}
-//			if (manaGain > 0) {
-//				string str = string.Format ("魔法+{0}",manaGain);
-//				propertiesList.Add (str);
-//			}
-
-			if (propertiesList.Count > 0) {
-				itemProperties.Append (propertiesList [0]);
-
-				for (int i = 1; i < propertiesList.Count; i++) {
-
-					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
-
-				}
-
-			}
-
-			return itemProperties.ToString ();
-
+			return propertyStr;
 		}
 
 		/// <summary>
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public override string GetItemPropertiesString(){
+		public override string GetItemBasePropertiesString(){
 
 			StringBuilder itemProperties = new StringBuilder ();
 
 			List<string> propertiesList = new List<string> ();
 
 			if (attackGain > 0) {
-				string str = string.Format ("攻击: {0}", attackGain);
-				propertiesList.Add (str);
+				GenerateSinglePropertyString ("攻击", attackGain, propertiesList);
 			}
 			if (attackSpeedGain > 0) {
-				string str = string.Format ("攻速: {0}", attackSpeedGain);
-				propertiesList.Add (str);
+				GenerateSinglePropertyString ("攻速", attackSpeedGain, propertiesList);
 			}
-			if (critGain > 0) {
-				string str = string.Format ("暴击: {0}", critGain);
-				propertiesList.Add (str);
-			}
-			if (armourGain > 0) {
-				string str = string.Format ("护甲: {0}", armourGain);
-				propertiesList.Add (str);
+			if (armorGain > 0) {
+				GenerateSinglePropertyString ("护甲", armorGain, propertiesList);
 			}
 			if (manaResistGain > 0) {
-				string str = string.Format ("抗性: {0}", manaResistGain);
-				propertiesList.Add (str);
+				GenerateSinglePropertyString ("抗性", manaResistGain, propertiesList);
 			}
 			if (dodgeGain > 0) {
-				string str = string.Format ("闪避: {0}", dodgeGain);
-				propertiesList.Add (str);
-			} 
+				GenerateSinglePropertyString ("闪避", dodgeGain, propertiesList);
+			}
+			if (critGain > 0) {
+				GenerateSinglePropertyString ("暴击", critGain, propertiesList);
+			}
+			if (healthGain > 0) {
+				GenerateSinglePropertyString ("生命", healthGain, propertiesList);
+			}
+			if (manaGain > 0) {
+				GenerateSinglePropertyString ("魔法", manaGain, propertiesList);
+			}
 
-//			if (healthGain > 0) {
-//				string str = string.Format ("体力+{0}",healthGain);
-//				propertiesList.Add (str);
-//			}
-//			if (manaGain > 0) {
-//				string str = string.Format ("魔法+{0}",manaGain);
-//				propertiesList.Add (str);
-//			}
 
 			if (propertiesList.Count > 0) {
 				itemProperties.Append (propertiesList [0]);
@@ -299,42 +209,53 @@ namespace WordJourney
 			return itemProperties.ToString ();
 
 		}
+			
 
-		/// <summary>
-		/// 获取物品品质字符串
-		/// </summary>
-		/// <returns>The item quality string.</returns>
-		public override string GetItemQualityString(){
 
-			string itemQualityStr = string.Empty;
-
-			if (itemQuality == ItemQuality.S) {
-				itemQualityStr = "<color=orange>品级: " + itemQuality.ToString () + "</color>";
-			} else {
-				itemQualityStr = "品级: " + itemQuality.ToString () + "级";
-			}
-
-			return itemQualityStr;
-
-		}
 
 
 		/// <summary>
 		/// 比较两个装备的给定属性，并返回比较后的字符串
 		/// </summary>
-		/// <param name="propertyValue0">Property value0.</param>
-		/// <param name="propertyValue1">Property value1.</param>
-		/// <param name="compare">Compare.</param>
-		/// <param name="linkSymbol">Link symbol.</param>
-		/// <param name="colorText">Color text.</param>
-		private void CompareItemsProperty(int propertyValue0,int propertyValue1,out int compare,out string linkSymbol,out string colorText){
+		/// <param name="property">比较的属性名称.</param>
+		/// <param name="compareValue">新装备属性值</param>
+		/// <param name="comparedValue">原装备属性值</param>
+		/// <param name="compareList">存储比较字符串的列表</param>
+		private string CompareItemsProperty(string property, double compareValue,double comparedValue,List<string> compareList){
 
-			compare = propertyValue0 - propertyValue1;
+			// 获得单个属性描述
+			string propertyString = GenerateSinglePropertyString (property, compareValue, null);
 
-			linkSymbol = compare < 0 ? "-" : "+";
+			// 该项属性数值对比 
+			double compare = compareValue - comparedValue;
 
-			colorText = compare < 0 ? "<color=red>" : "<color=green>";
+			// 比较后根据属性增减 决定连接符号用"-"还是"+"
+			string linkSymbol = compare < 0 ? "-" : "+";
+
+			// 比较后根据属性增加决定字体颜色
+			string colorText = compare < 0 ? "red" : "green";
+
+			// 比较后的描述字符串
+			string compareString = string.Empty;
+
+			if (compare >= 1) {
+				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,compare);
+			} else if (compare > 0 && compare < 1) {
+				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(compare * 100));
+			} else if (compare < 0 && compare > -1) {
+				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(-compare * 100));
+			} else if (compare <= -1) {
+				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,-compare);
+			}
+
+			if (compareList != null) {
+				compareList.Add (compareString);
+			}
+
+			return compareString;
+
 		}
+			
 
 		/// <summary>
 		/// 获取两件装备的对比字符串
@@ -345,68 +266,40 @@ namespace WordJourney
 
 			StringBuilder itemProperties = new StringBuilder ();
 
-			List<string> propertiesList = new List<string> ();
-
-			int compare = 0;
-			string linkSymbol = string.Empty;
-			string colorText = string.Empty;
+			List<string> comparesList = new List<string> ();
 
 			if (attackGain > 0) {
-
-				CompareItemsProperty (attackGain, compareEquipment.attackGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("攻击: {0}({1}{2}{3}</color>)", attackGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+				CompareItemsProperty ("攻击", attackGain, compareEquipment.attackGain, comparesList);
 			}
 			if (attackSpeedGain > 0) {
-
-				CompareItemsProperty (attackSpeedGain, compareEquipment.attackSpeedGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("攻速: {0}({1}{2}{3}</color>)", attackSpeedGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+				CompareItemsProperty ("攻速", attackSpeedGain, compareEquipment.attackSpeedGain, comparesList);
 			}
 			if (critGain > 0) {
-
-				CompareItemsProperty (critGain, compareEquipment.critGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("暴击: {0}({1}{2}{3}</color>)", critGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+				CompareItemsProperty ("暴击", critGain, compareEquipment.critGain, comparesList);
 			}
-			if (armourGain > 0) {
-
-				CompareItemsProperty (armourGain, compareEquipment.armourGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("护甲: {0}({1}{2}{3}</color>)", armourGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+			if (armorGain > 0) {
+				CompareItemsProperty ("护甲", armorGain, compareEquipment.armorGain, comparesList);
 			}
 			if (manaResistGain > 0) {
-
-				CompareItemsProperty (manaResistGain, compareEquipment.manaResistGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("抗性: {0}({1}{2}{3}</color>)", manaResistGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+				CompareItemsProperty ("抗性", manaResistGain, compareEquipment.manaResistGain, comparesList);
 			}
 			if (dodgeGain > 0) {
-
-				CompareItemsProperty (dodgeGain, compareEquipment.dodgeGain,out compare,out linkSymbol,out colorText);
-
-				string str = string.Format ("闪避: {0}({1}{2}{3}</color>)", dodgeGain,colorText,linkSymbol,Mathf.Abs(compare));
-
-				propertiesList.Add (str);
+				CompareItemsProperty ("闪避", dodgeGain, compareEquipment.dodgeGain, comparesList);
 			} 
+			if (healthGain > 0) {
+				CompareItemsProperty ("生命", healthGain, compareEquipment.healthGain, comparesList);
+			}
+			if (manaGain > 0) {
+				CompareItemsProperty ("魔法", manaGain, compareEquipment.manaGain, comparesList);
+			}
 
-			if (propertiesList.Count > 0) {
+			if (comparesList.Count > 0) {
 
-				itemProperties.Append (propertiesList [0]);
+				itemProperties.Append (comparesList [0]);
 
-				for (int i = 1; i < propertiesList.Count; i++) {
+				for (int i = 1; i < comparesList.Count; i++) {
 
-					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
+					itemProperties.AppendFormat ("\n{0}", comparesList [i]);
 
 				}
 
@@ -414,124 +307,17 @@ namespace WordJourney
 
 			return itemProperties.ToString ();
 
-
 		}
-
 
 		/// <summary>
-		/// Chances the of gain.
+		/// Fixs the equipment.
 		/// </summary>
-		/// <returns>The of gain.</returns>
-		/// <param name="chanceArray">Chance array.</param>
-		/// <param name="gain">Gain.</param>
-		protected float chanceOfGain(float[] chanceArray,int gain){
-			float totalChance = 0f;
-			for (int i = 0; i < gain; i++) {
-				totalChance += chanceArray [i];
+		public void FixEquipment(){
+			damagePercentage -= fixPercentage;
+			if (damagePercentage < 0) {
+				damagePercentage = 0;
 			}
-			return totalChance;
 		}
 
-
-
-		/// <summary>
-		/// 强化物品
-		/// </summary>
-		public string StrengthenItem(){
-
-			// 增加不同属性点的概率数组
-			float[] chanceArray = null;
-
-			switch (itemQuality) {
-			case ItemQuality.C:
-				chanceArray = new float[]{ 80f, 15f, 4f, 1f };
-				break;
-			case ItemQuality.B:
-				chanceArray = new float[]{ 60f, 25f, 12f, 3f };
-				break;
-			case ItemQuality.A:
-				chanceArray = new float[]{ 50f, 30f, 15f, 5f };
-				break;
-			case ItemQuality.S:
-				chanceArray = new float[]{ 30f, 30f, 30f, 10f };
-				break;
-			}
-
-			return StrengthenPropertyByQuality (chanceArray);
-
-
-		}
-
-
-		/// <summary>
-		/// 根据品质得到的属性增长概率数组，强化物品
-		/// </summary>
-		/// <returns>物品属性字符串</returns>
-		/// <param name="chanceArray">属性［＋1的概率，＋2的概率，＋3的概率，＋4的概率］</param>
-		private string StrengthenPropertyByQuality(float[] chanceArray){
-
-			int propertyGain = 0;
-			string strengthenGainStr = string.Empty;
-
-			if (chanceOfGain(chanceArray,4) != 100f) {
-				Debug.Log("概率和不等于1");
-				propertyGain = 0;
-			}
-
-			int seed = Random.Range (0, 100);
-			if (seed >= 0 && seed < chanceOfGain(chanceArray,1)) {
-				propertyGain = 1;
-			} else if (seed >= chanceOfGain(chanceArray,1) && seed < chanceOfGain(chanceArray,2)) {
-				propertyGain = 2;
-			} else if (seed >= chanceOfGain(chanceArray,2) && seed < chanceOfGain(chanceArray,3)) {
-				propertyGain = 3;
-			} else {
-				propertyGain = 4;
-			}
-
-			if (propertiesArray == null) {
-
-				propertiesArray = new int[]{ attackGain, attackSpeedGain, armourGain, manaResistGain, critGain, dodgeGain };
-
-			}
-
-			int propertyIndex = Random.Range(0,propertiesArray.Length);
-
-			while (propertiesArray [propertyIndex] <= 0) {
-				propertyIndex = Random.Range(0,propertiesArray.Length);
-			}
-
-			switch (propertyIndex) {
-			case 0:
-				attackGain += propertyGain;
-				strengthenGainStr = "攻击+" + propertyGain.ToString ();
-				break;
-			case 1:
-				attackSpeedGain += propertyGain;
-				strengthenGainStr = "攻速+" + propertyGain.ToString ();
-				break;
-			case 2:
-				armourGain += propertyGain;
-				strengthenGainStr = "护甲+" + propertyGain.ToString ();
-				break;
-			case 3:
-				manaResistGain += propertyGain;
-				strengthenGainStr = "抗性+" + propertyGain.ToString ();
-				break;
-			case 4:
-				critGain += propertyGain;
-				strengthenGainStr = "暴击+" + propertyGain.ToString ();
-				break;
-			case 5:
-				dodgeGain += propertyGain;
-				strengthenGainStr = "闪避+" + propertyGain.ToString ();
-				break;
-			}
-
-			strengthenTimes++;
-
-			return strengthenGainStr;
-		}
-			
 	}
 }

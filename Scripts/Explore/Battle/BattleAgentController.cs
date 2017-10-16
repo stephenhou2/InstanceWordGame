@@ -25,10 +25,18 @@ namespace WordJourney
 		public LayerMask collosionLayer;			//Layer on which collision will be checked.
 
 		// 碰撞检测包围盒
-		protected BoxCollider2D boxCollider; 		//The BoxCollider2D component attached to this object.
+		protected BoxCollider2D boxCollider;
 	
+
+
+		protected GameObject modelActive;
+
 		// 骨骼动画控制器
-		protected UnityArmatureComponent armature;
+		protected UnityArmatureComponent armatureCom{
+			get{
+				return modelActive.GetComponent<UnityArmatureComponent> ();
+			}
+		}
 
 		// 攻击特效动画控制器
 		protected Animator effectAnimator;
@@ -36,10 +44,8 @@ namespace WordJourney
 
 
 		protected virtual void Awake(){
-			
-			armature = GetComponent<UnityArmatureComponent> ();
 
-			effectAnimator = GetComponentInChildren<Animator> ();
+			effectAnimator = modelActive.GetComponentInChildren<Animator> ();
 
 			boxCollider = GetComponent <BoxCollider2D> ();
 		}
@@ -71,8 +77,8 @@ namespace WordJourney
 		/// <param name="animName">播放的动画名称</param>
 		/// <param name="playTimes">播放次数 [-1: 使用动画数据默认值, 0: 无限循环播放, [1~N]: 循环播放 N 次]</param>
 		/// <param name="cb">动画完成回调.</param>
-		public void PlayRoleAnim(string animName,int playTimes,CallBack cb = null){
-			armature.animation.Play (animName,playTimes);
+		public virtual void PlayRoleAnim(string animName,int playTimes,CallBack cb = null){
+			armatureCom.animation.Play (animName,playTimes);
 			if (cb != null) {
 				StartCoroutine ("ExcuteCallBackAtEndOfAnim", cb);
 			}
@@ -140,7 +146,7 @@ namespace WordJourney
 		/// <returns>The call back at end of animation.</returns>
 		/// <param name="cb">Cb.</param>
 		private IEnumerator ExcuteCallBackAtEndOfAnim(CallBack cb){
-			yield return new WaitUntil (() => armature.animation.isCompleted);
+			yield return new WaitUntil (() => armatureCom.animation.isCompleted);
 			cb ();
 		}
 	}

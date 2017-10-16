@@ -15,7 +15,7 @@ namespace WordJourney
 
 		public Text attackText;
 		public Text attackSpeedText;
-		public Text armourText;
+		public Text armorText;
 		public Text manaResistText;
 		public Text critText;
 		public Text dodgeText;
@@ -61,26 +61,28 @@ namespace WordJourney
 
 			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 
-			Vector3 originPos = Vector3.zero;
+			Vector3 originHurtPos = Vector3.zero;
 			Vector3 offset = Vector3.zero;
 			Vector3 originTintPos = Vector3.zero;
 
 			switch(towards){
 			case Towards.Left:
-				originPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (0, 100, 0);
+				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (-50, 50, 0);
 				offset = new Vector3 (-100, 0, 0);
-				originTintPos = originPos + new Vector3 (-100, 100, 0);
+				originTintPos = originHurtPos + new Vector3 (-100, 100, 0);
 				break;
 			case Towards.Right:
-				originPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (100, 100, 0);
+				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (50, 50, 0);
 				offset = new Vector3(100, 0, 0);
-				originTintPos = originPos + new Vector3 (100, 100, 0);
+				originTintPos = originHurtPos + new Vector3 (100, 100, 0);
 				break;
 			}
 
-			hurtText.transform.localPosition = originPos;
+			Debug.Log (Camera.main.WorldToScreenPoint (agentPos));
 
-			Vector3 newPos = hurtText.transform.localPosition + offset;
+			hurtText.transform.localPosition = originHurtPos;
+
+			Vector3 newPos = originHurtPos + offset;
 
 			hurtText.text = hurtStr;
 

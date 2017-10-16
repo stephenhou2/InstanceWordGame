@@ -14,7 +14,7 @@ namespace WordJourney
 
 		}
 
-		public override string GetItemPropertiesString ()
+		public override string GetItemBasePropertiesString ()
 		{
 			return string.Empty;
 		}
@@ -24,10 +24,6 @@ namespace WordJourney
 			return string.Empty;
 		}
 
-		public override string GetItemQualityString ()
-		{
-			return string.Empty;
-		}
 
 
 	}

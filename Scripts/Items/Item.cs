@@ -7,27 +7,33 @@ using System.Data;
 namespace WordJourney{
 	
 
+	public enum ItemType{
+		Equipment,
+		Consumables,
+		Task,
+		Inscription,
+		Map
+	}
+
 	public abstract class Item {
 
 		public string itemName;
 		public string itemDescription;
 		public string spriteName;
-
 		public string itemNameInEnglish;
 		public int itemId;
-		public int itemCount;
-
 		public ItemType itemType;
 
+		public int itemCount;
 
 		// 物品属性数组
-		protected int[] propertiesArray;
+		protected double[] propertiesArray;
 
 
 //		public int attackGain;//攻击力增益
 //		public int attackSpeedGain;//攻速增益
 //		public int critGain;//暴击增益
-//		public int armourGain;//护甲增益
+//		public int armorGain;//护甲增益
 //		public int manaResistGain;//魔抗增益
 //		public int dodgeGain;//闪避增益
 //
@@ -50,7 +56,7 @@ namespace WordJourney{
 		/// <param name="itemNameInEnglish">Item name in english.</param>
 		public static Item NewItemWithName(string itemNameInEnglish){
 
-			ItemModel itemModel = GameManager.Instance.allItemModels.Find(delegate (ItemModel item){
+			ItemModel itemModel = GameManager.Instance.dataCenter.allItemModels.Find(delegate (ItemModel item){
 				return item.itemNameInEnglish == itemNameInEnglish;
 			});
 
@@ -58,7 +64,7 @@ namespace WordJourney{
 
 			switch (itemModel.itemType) {
 			case ItemType.Equipment:
-				newItem = new Equipment (itemModel,ItemQuality.Random);
+				newItem = new Equipment (itemModel);
 				break;
 			case ItemType.Consumables:
 				newItem = new Consumables (itemModel);
@@ -99,7 +105,7 @@ namespace WordJourney{
 		/// </summary>
 		public static List<Equipment> GetAllEquipments(){
 
-			List<ItemModel> allItemModels = GameManager.Instance.allItemModels;
+			List<ItemModel> allItemModels = GameManager.Instance.dataCenter.allItemModels;
 
 			List<Equipment> allEquipment = new List<Equipment> ();
 
@@ -108,7 +114,7 @@ namespace WordJourney{
 				ItemModel itemModel = allItemModels [i];
 
 				if (itemModel.itemType == ItemType.Equipment) {
-					Equipment equipment = new Equipment (itemModel,ItemQuality.Random);
+					Equipment equipment = new Equipment (itemModel);
 					allEquipment.Add (equipment);
 				}
 					
@@ -137,13 +143,7 @@ namespace WordJourney{
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public abstract string GetItemPropertiesString ();
-
-		/// <summary>
-		/// 获取物品品质字符串
-		/// </summary>
-		/// <returns>The item quality string.</returns>
-		public abstract string GetItemQualityString ();
+		public abstract string GetItemBasePropertiesString ();
 
 
 		public override string ToString ()
@@ -161,28 +161,30 @@ namespace WordJourney{
 	public class ItemModel{
 
 		public string itemName;
+		public string itemNameInEnglish;
 		public string itemDescription;
 		public string spriteName;
-
 		public ItemType itemType;
-
-
-		public string itemNameInEnglish;
 		public int itemId;
 
+		public float attackGain;//攻击力增益
+		public float attackSpeedGain;//攻速增益
+		public float critGain;//暴击增益
+		public float armorGain;//护甲增益
+		public float manaResistGain;//魔抗增益
+		public float dodgeGain;//闪避增益
+		public float healthGain;//血量增益
+		public float manaGain;//魔法增益
 
-		public int attackGain;//攻击力增益
-		public int attackSpeedGain;//攻速增益
-		public int critGain;//暴击增益
-		public int armourGain;//护甲增益
-		public int manaResistGain;//魔抗增益
-		public int dodgeGain;//闪避增益
+		public int maxAttachedProperties;//附加属性最大数量
+		public int attachedPropertyId;//附加属性id
+		public EquipmentType equipmentType;//装备类型
+		public string detailType;//详细装备类型
+		public int levelRequired;//装备等级要求
 
+		public List<Material> materials = new List<Material> ();
+		public List<Material> failMaterials = new List<Material>();
 
-		public int healthGain;//血量增益
-		public int manaGain;//魔法增益
-
-		public EquipmentType equipmentType; //装备类型
 
 	}
 

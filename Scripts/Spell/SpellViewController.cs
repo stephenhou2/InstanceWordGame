@@ -12,26 +12,28 @@ namespace WordJourney
 		public SpellView spellView;
 
 		// 已输入的所有字母
-		private StringBuilder enteredCharacters = new StringBuilder();
+		private StringBuilder charactersEntered = new StringBuilder();
 
-
+		// 制造还是修复
 		private SpellPurpose spellPurpose;
 
 		// 容器，记录所有输入的字母及数量
-		private int[] enteredCharactersArray = new int[26];
-	//	// 容器，记录字母碎片不足的字母以及缺少的数量
-	//	private int[] unsufficientCharacters = new int[26];
+		private int[] charactersEnteredArray = new int[26];
 
 		// 最小制造数量
 		private int minCreateCount = 1;
 
-		// 目标物品的英文名称（仅当从图鉴界面进入时不为空）
-		private string itemNameInEnglish;
+		// 指定拼写的单词（材料图鉴进入或者修复装备进入时不为null）
+		private string spell;
 
 		// 目标物品（从图鉴系统中选择的物品）
-		private ItemModel itemToSpell;
+		private Material materialToCreate;
 
-		private Equipment equipmentToStrengthen;
+		// 制造出的材料
+		private Material materialCreated;
+
+		// 想要修复的装备
+		private Equipment equipmentToFix;
 
 		// 根据玩家已有字母碎片数量计算出得目标物品最大制造数
 		private int maxCreateCount{
@@ -39,9 +41,9 @@ namespace WordJourney
 			get{
 				int myMaxCreateCount = int.MaxValue;
 
-				for(int i = 0;i<enteredCharacters.Length;i++){
+				for(int i = 0;i<charactersEntered.Length;i++){
 
-					char character = enteredCharacters [i];
+					char character = charactersEntered [i];
 
 					int characterIndex = (int)character - CommonData.aInASCII;
 
@@ -61,25 +63,20 @@ namespace WordJourney
 		// 目标物品制造数量，默认为1个
 		private int createCount = 1;
 
-		// 要制造的物品列表（因为武器装备的属性各不相同，每个物品制造后需单独存储数据，故使用列表作为容器）
-		// 列表中相同类型的消耗品放在同一个条目中
-		private List<Item> createdItems = new List<Item> ();
-
 
 		/// <summary>
 		/// 初始化拼写界面（制造）
 		/// </summary>
-		public void SetUpSpellViewForCreate(ItemModel itemModel){
+		public void SetUpSpellViewForCreate(Material material){
 
-			if (itemModel != null) {
-				this.itemNameInEnglish = itemModel.itemNameInEnglish;
+			if (material != null) {
+				this.spell = material.spell;
+				spellView.SetUpSpellViewWith (material.materialName);
+			} else {
+				spellView.SetUpSpellViewWith (null);
 			}
 
 			this.spellPurpose = SpellPurpose.Create;
-
-			spellView.SetUpSpellView (itemModel);
-
-			GetComponent<Canvas>().enabled = true;
 
 			ClearUnsufficientCharacters ();
 
@@ -89,17 +86,15 @@ namespace WordJourney
 		/// 初始化拼写界面（强化）
 		/// </summary>
 		/// <param name="item">Item.</param>
-		public void SetUpSpellViewForStrengthen(Item item){
+		public void SetUpSpellViewForFix(Equipment equipment, Word word){
 			
-			this.spellPurpose = SpellPurpose.Strengthen;
+			this.spellPurpose = SpellPurpose.Fix;
 
-			this.itemNameInEnglish = item.itemNameInEnglish;
+			this.spell = word.spell;
 
-			this.equipmentToStrengthen = item as Equipment;
+			this.equipmentToFix = equipment;
 
-			spellView.SetUpSpellView (item);
-
-			GetComponent<Canvas>().enabled = true;
+			spellView.SetUpSpellViewWith (word.explaination);
 
 			ClearUnsufficientCharacters ();
 		}
@@ -108,8 +103,8 @@ namespace WordJourney
 		/// Clears the unsufficient characters.
 		/// </summary>
 		private void ClearUnsufficientCharacters(){
-			for(int i = 0; i<enteredCharactersArray.Length;i++){
-				enteredCharactersArray [i] = 0;
+			for(int i = 0; i<charactersEnteredArray.Length;i++){
+				charactersEnteredArray [i] = 0;
 			}
 		}
 
@@ -117,31 +112,39 @@ namespace WordJourney
 		/// 拼写界面输入字母时响应方法
 		/// </summary>
 		/// <param name="character">输入的字母</param>
-		public void EnterCharacter(string character){
+		public void EnterCharacter(string charEntered){
 
-			if (enteredCharacters.Length < spellView.characterTexts.Length) {
+			if (charactersEntered.Length < 15) {
 
-				int characterIndex = (int)character[0] - CommonData.aInASCII;
+				int characterIndex = (int)charEntered[0] - CommonData.aInASCII;
 
-				enteredCharacters.Append (character);
+				charactersEntered.Append (charEntered);
 
-				enteredCharactersArray [characterIndex]++;
+				charactersEnteredArray [characterIndex]++;
 
-				string characterWithColor = null;
+				StringBuilder charactersWithColor = new StringBuilder();
 
-				// 字母碎片足够的字母使用绿色，不足的字母使用红色
-				if (Player.mainPlayer.charactersCount [characterIndex] >= enteredCharactersArray[characterIndex]) {
-					characterWithColor = "<color=green>" + character + "</color>";
-				} else {
-					characterWithColor = "<color=red>" + character + "</color>";
+				for (int i = 0; i < charactersEntered.Length; i++) {
+
+					int index = (int)charactersEntered[i] - CommonData.aInASCII;
+
+					// 字母碎片足够的字母使用绿色，不足的字母使用红色
+					if (Player.mainPlayer.charactersCount [index] >= charactersEnteredArray[index]) {
+						charactersWithColor.AppendFormat("<color=green>{0}</color>",charactersEntered[i]);
+					} else {
+						charactersWithColor.AppendFormat("<color=red>{0}</color>",charactersEntered[i]);
+					}
+
 				}
+
+
 					
 				// 更新拼写界面已输入字母界面ui
-				spellView.OnEnterCharacter (enteredCharacters, characterWithColor);
+				spellView.UpdateCharactersEntered(charactersWithColor.ToString());
 
-				if (spellPurpose == SpellPurpose.Strengthen) {
+				if (spellPurpose == SpellPurpose.Fix) {
 
-					if (enteredCharacters.ToString () != equipmentToStrengthen.itemNameInEnglish) {
+					if (charactersEntered.ToString () != equipmentToFix.itemNameInEnglish) {
 						return;
 					}
 
@@ -149,7 +152,7 @@ namespace WordJourney
 						return;
 					}
 
-					StartCoroutine ("StrengthenItem");
+					StartCoroutine ("FixItem");
 				}
 
 			}
@@ -169,13 +172,13 @@ namespace WordJourney
 		/// </summary>
 		public void Backspace(){
 
-			if (enteredCharacters.Length > 0) {
+			if (charactersEntered.Length > 0) {
 				
 				// 记录删除的字母对应在字母表中的位置
-				int removedCharacterIndex = (int)enteredCharacters[enteredCharacters.Length - 1] - CommonData.aInASCII;
+				int removedCharacterIndex = (int)charactersEntered[charactersEntered.Length - 1] - CommonData.aInASCII;
 
 				// 删除已输入字母数组的最后一位
-				enteredCharacters.Remove (enteredCharacters.Length - 1, 1);
+				charactersEntered.Remove (charactersEntered.Length - 1, 1);
 
 
 				// 如果删除的字母在不足数组中，对应字母的不足数－1
@@ -183,14 +186,32 @@ namespace WordJourney
 	//				unsufficientCharacters [removedCharacterIndex]--;
 	//			}
 
-				enteredCharactersArray[removedCharacterIndex]--;
-				if (enteredCharactersArray [removedCharacterIndex] < 0) {
+				charactersEnteredArray[removedCharacterIndex]--;
+
+
+				if (charactersEnteredArray [removedCharacterIndex] < 0) {
 					throw new System.Exception ("字母删除越界");
 				}
 
+				StringBuilder charactersWithColor = new StringBuilder();
 
-				// 更新ui
-				spellView.OnBackspace (enteredCharacters.Length);
+				for (int i = 0; i < charactersEntered.Length; i++) {
+
+					int index = (int)charactersEntered[i] - CommonData.aInASCII;
+
+					// 字母碎片足够的字母使用绿色，不足的字母使用红色
+					if (Player.mainPlayer.charactersCount [index] >= charactersEnteredArray[index]) {
+						charactersWithColor.AppendFormat("<color=green>{0}</color>",charactersEntered[i]);
+					} else {
+						charactersWithColor.AppendFormat("<color=red>{0}</color>",charactersEntered[i]);
+					}
+
+				}
+
+
+				// 更新拼写界面已输入字母界面ui
+				spellView.UpdateCharactersEntered(charactersWithColor.ToString());
+
 			}
 		}
 
@@ -206,13 +227,13 @@ namespace WordJourney
 				return;
 			}
 
-			itemToSpell = CheckEnteredWord ();
+			materialToCreate = CheckEnteredWord ();
 
-			if (itemToSpell == null) {
+			if (materialToCreate == null) {
 				return;
 			}
 
-			CreateItem (itemToSpell);
+			CreateMaterial (materialToCreate,createCount);
 
 		}
 
@@ -221,9 +242,9 @@ namespace WordJourney
 		/// </summary>
 		public void SelectCreateCount(){
 
-			itemToSpell = CheckEnteredWord ();
+			materialToCreate = CheckEnteredWord ();
 
-			if (itemToSpell == null) {
+			if (materialToCreate == null) {
 				return;
 			}
 				
@@ -241,7 +262,7 @@ namespace WordJourney
 				return;
 			}
 
-			CreateItem (itemToSpell);
+			CreateMaterial (materialToCreate,createCount);
 		
 		}
 
@@ -250,29 +271,29 @@ namespace WordJourney
 		/// 检查拼写的单词是否存在
 		/// </summary>
 		/// return 返回对应的物品，不一致或不存在返回null，其余返回对应的item
-		private ItemModel CheckEnteredWord(){
+		private Material CheckEnteredWord(){
 
 			// 从图鉴接口进入，目标物品名称不为空
-			if (itemNameInEnglish != null) {
+			if (spell != null) {
 				
-				if (!enteredCharacters.ToString ().Equals (itemNameInEnglish)) {
+				if (!charactersEntered.ToString ().Equals (spell)) {
 					Debug.Log ("请输入正确的单词");
 					return null;
 				} 
 
 			}
 
-			ItemModel itemModel = GameManager.Instance.allItemModels.Find (delegate(ItemModel obj) {
+			Material material = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
 				
-				return obj.itemNameInEnglish == enteredCharacters.ToString ();
+				return obj.spell == charactersEntered.ToString ();
 
 			});
 
-			if (itemModel == null) {
-				Debug.Log("没有这种物品");
+			if (material == null) {
+				Debug.Log("没有这种材料");
 			}
 
-			return itemModel;
+			return material;
 
 		}
 			
@@ -286,9 +307,9 @@ namespace WordJourney
 
 			StringBuilder unsufficientCharactesStr= new StringBuilder ();
 
-			for (int i = 0; i < enteredCharactersArray.Length; i++) {
+			for (int i = 0; i < charactersEnteredArray.Length; i++) {
 
-				int numNeed = enteredCharactersArray [i] * count;
+				int numNeed = charactersEnteredArray [i] * count;
 
 				if (Player.mainPlayer.charactersCount [i] < numNeed) {
 
@@ -318,88 +339,57 @@ namespace WordJourney
 		/// Creats the item.
 		/// </summary>
 		/// <param name="item">Item.</param>
-		private void CreateItem(ItemModel itemModel){
+		private void CreateMaterial(Material material,int createCount){
 
-			Item itemInBag = null;
+			// 生成材料
+			materialCreated = new Material (material, createCount);
 
-			// 如果制造的物品是消耗品
-			if (itemModel.itemType == ItemType.Consumables) {
+			// 更新玩家材料数据
+			Player.mainPlayer.AddMaterial (materialCreated);
 
-				Consumables newConsumables = new Consumables (itemModel);
+			// 更新剩余字母碎片
+			UpdateOwnedCharacters ();
 
-				newConsumables.itemCount = createCount;
+			// 初始化制造的物品列表界面
+			spellView.SetUpCreateMaterialDetailHUD (materialCreated);
 
-				// 在玩家所有已有物品中查找指定名称的物品
-				itemInBag = Player.mainPlayer.allItems.Find (delegate(Item obj) {
-					return obj.itemNameInEnglish == enteredCharacters.ToString ();	
-				});
+			// 清除制造信息
+			ClearSpellInfos ();
 
-				if (itemInBag != null) {
+//			// 如果制造的物品不是消耗品，则每个物品都不一样，根据制造数量单独生成每一个物品
+//			else {
+//
+//				for (int i = 0; i < createCount; i++) {
+//
+//					Item newItem = null;
+//					switch(itemModel.itemType){
+//					case ItemType.Equipment:
+//						newItem = new Equipment (itemModel);
+//						break;
+//					case ItemType.Inscription:
+//						newItem = new Inscription (itemModel);
+//						break;
+//					case ItemType.Task:
+//						newItem = new TaskItem (itemModel);
+//						break;
+//
+//					}
+//
+//					newItem.itemCount = 1;
+//
+//					Player.mainPlayer.allItems.Add (newItem);
+//
+//					createdItems.Add (newItem);
+//
+//				}
 
-					// 如果玩家背包中存在对应消耗品，则对应消耗品数量 ＋＝ 制造数量
-					itemInBag.itemCount += createCount;
-
-					createdItems.Add (newConsumables);		
-
-					// 更新剩余字母碎片
-					UpdateOwnedCharacters ();
-
-					// 初始化制造的物品列表界面
-					spellView.SetUpCreateItemDetailHUD (createdItems);
-
-					// 清除制造信息
-					ClearSpellInfos ();
-
-					return;
-
-				}
-
-				// 如果玩家背包中不存在对应消耗品，则背包中添加该物品
-				Player.mainPlayer.allItems.Add (newConsumables);
-
-				createdItems.Add (newConsumables);
-
-				UpdateOwnedCharacters ();
-
-				spellView.SetUpCreateItemDetailHUD (createdItems);
-
-				ClearSpellInfos ();
-
-			} 
-			// 如果制造的物品不是消耗品，则每个物品都不一样，根据制造数量单独生成每一个物品
-			else {
-
-				for (int i = 0; i < createCount; i++) {
-
-					Item newItem = null;
-					switch(itemModel.itemType){
-					case ItemType.Equipment:
-						newItem = new Equipment (itemModel,ItemQuality.Random);
-						break;
-					case ItemType.Inscription:
-						newItem = new Inscription (itemModel);
-						break;
-					case ItemType.Task:
-						newItem = new TaskItem (itemModel);
-						break;
-
-					}
-
-					newItem.itemCount = 1;
-
-					Player.mainPlayer.allItems.Add (newItem);
-
-					createdItems.Add (newItem);
-
-				}
-
-				UpdateOwnedCharacters ();
-
-				spellView.SetUpCreateItemDetailHUD (createdItems);
-
-				ClearSpellInfos ();
-
-			}
+//				UpdateOwnedCharacters ();
+//
+//				spellView.SetUpCreateItemDetailHUD (createdItems);
+//
+//				ClearSpellInfos ();
+//
+//			}
 
 		}
 
@@ -407,30 +397,30 @@ namespace WordJourney
 		/// Strengthens the item.
 		/// </summary>
 		/// <returns>The item.</returns>
-		private IEnumerator StrengthenItem(){
+		private IEnumerator FixItem(){
 
 			yield return new WaitForSeconds (0.05f);
 
-			spellView.SetUpStrengthenItemDetailHUD (equipmentToStrengthen);
+			spellView.SetUpFixedItemDetailHUD (equipmentToFix);
 
 		}
 
 		/// <summary>
 		/// 玩家点击强化按钮的响应方法
 		/// </summary>
-		public void ConfirmStrengthenItem(){
+		public void ConfirmFixItem(){
 
 			// 检查字母碎片是否足够1次强化
 			if (CheckCharactersSufficient (1)) {
 
-				// 强化1次
-				string strengthenGainStr = equipmentToStrengthen.StrengthenItem ();
+				// 修复1次
+				equipmentToFix.FixEquipment();
 
 				// 更新玩家字母碎片数量
 				UpdateOwnedCharacters ();
 
 				// 更新UI
-				spellView.UpdateStrengthenItemDetailHUD (equipmentToStrengthen, strengthenGainStr);
+				spellView.UpdateFixedItemDetailHUD (equipmentToFix);
 			}
 		}
 
@@ -439,19 +429,19 @@ namespace WordJourney
 		/// </summary>
 		private void ClearSpellInfos(){
 
-			enteredCharacters = new StringBuilder ();
+			charactersEntered = new StringBuilder ();
 
-			for (int i = 0; i < enteredCharactersArray.Length; i++) {
+			for (int i = 0; i < charactersEnteredArray.Length; i++) {
 
-				enteredCharactersArray [i] = 0;
+				charactersEnteredArray [i] = 0;
 
 			}
 
-			createdItems.Clear ();
+			materialCreated = null;
 
 			createCount = 1;
 
-			equipmentToStrengthen = null;
+			equipmentToFix = null;
 		}
 
 
@@ -492,8 +482,8 @@ namespace WordJourney
 		// 制造出新物品后更新玩家剩余字母碎片
 		private void UpdateOwnedCharacters(){
 			
-			for (int i = 0; i < enteredCharacters.Length; i++) {
-				int characterIndex = (int)enteredCharacters [i] - CommonData.aInASCII;
+			for (int i = 0; i < charactersEntered.Length; i++) {
+				int characterIndex = (int)charactersEntered [i] - CommonData.aInASCII;
 				Player.mainPlayer.charactersCount [characterIndex] -= createCount;
 			}
 		}
@@ -512,7 +502,7 @@ namespace WordJourney
 		/// </summary>
 		public void QuitStrengthenItemDetailHUD(){
 			ClearSpellInfos ();
-			spellView.QuitStrengthenItemDetailHUD();
+			spellView.QuitFixedItemDetailHUD();
 			QuitSpellPlane ();
 		}
 
@@ -524,11 +514,11 @@ namespace WordJourney
 			spellView.OnQuitSpellPlane ();
 
 
-			if (itemNameInEnglish == null) {
+			if (spell == null) {
 
 				// 如果从制造接口的任意制造接口进入
-				GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
-				produceCanvas.GetComponent<ProduceViewController> ().QuitProduceView ();
+//				GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
+//				produceCanvas.GetComponent<ItemDisplayViewController> ().QuitItemDisplayView ();
 
 				GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
 				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
@@ -541,7 +531,7 @@ namespace WordJourney
 					GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
 					produceCanvas.GetComponent<Canvas> ().enabled = true;
 					break;
-				case SpellPurpose.Strengthen:
+				case SpellPurpose.Fix:
 					GameObject bagCanvas = GameObject.Find (CommonData.instanceContainerName + "/BagCanvas");
 					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
 					break;
@@ -561,10 +551,8 @@ namespace WordJourney
 		private void DestroyInstances(){
 			
 			TransformManager.DestroyTransform (gameObject.transform);
-			TransformManager.DestroyTransfromWithName ("CreatedItemDetailModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("CreatedItemDetailPool", TransformRoot.PoolContainer);
-			TransformManager.DestroyTransfromWithName ("StrengthenGainTextModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("StrengthenGainTextPool", TransformRoot.PoolContainer);
+//			TransformManager.DestroyTransfromWithName ("FixGainTextModel", TransformRoot.InstanceContainer);
+//			TransformManager.DestroyTransfromWithName ("FixGainTextPool", TransformRoot.PoolContainer);
 
 			Resources.UnloadUnusedAssets ();
 

@@ -27,6 +27,8 @@ namespace WordJourney
 
 			physicalAttack.selfAnimName = "fight";
 
+			modelActive = this.gameObject;
+
 			base.Awake ();
 
 		}

@@ -2,160 +2,131 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
-
 
 
 namespace WordJourney
 {
 	public class ProduceView : MonoBehaviour {
 
-		public Button[] itemTypeButtons;
+		public Image itemIcon;
+		public Text itemName;
+		public Text levelRequired;
+		public Text itemBaseProperties;
+		public Text itemAttachedProperties;
 
-		public GameObject itemDetailsModel;
+		public Transform[] materialDetailViews;
 
-		public Transform allItemsContainer;
+		public Transform totalView;
 
-		public Transform produceViewContainer;
+		private List<int> indexGrid = new List<int> ();
 
-		private InstancePool itemDetailsPool;
+		private List<Transform> randomMaterialDetailViews = new List<Transform>();
 
-		public Transform[] charactersOwned;
 
-		public Transform producePlane;
 
-		private List<Sprite> itemSprites;
+		public void SetUpProduceView(ItemModel itemModel,List<Material> materialsForProduce){
 
-		public Transform charactersContainer;
+			SetUpItemDetails (itemModel);
 
-		private int currentSelectItemIndex;
+			GetRandomMaterialButtons (materialsForProduce);
 
-		private Sprite typeBtnNormalSprite;
-		private Sprite typeBtnSelectedSprite;
-
-		// 初始化制造界面
-		public void SetUpProduceView(List<Sprite> itemSprites){
-
-			this.itemSprites = itemSprites;
-
-			itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
-
-			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonNormal";
-			});
-
-			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
-				return obj.name == "typeButtonSelected";
-			});
+			SetUpMaterialButtons (materialsForProduce);
 
 		}
 
-		// 初始化物品图鉴
-		public void SetUpItemDetailsPlane(List<ItemModel> itemModelsOfCurrentType, int buttonIndex){
+		private void GetRandomMaterialButtons(List<Material> materials){
 
-			itemDetailsPool.AddChildInstancesToPool (allItemsContainer);
+			indexGrid.Clear ();
 
-			Sprite itemTypeButtonNormalIcon = typeBtnNormalSprite;
+			randomMaterialDetailViews.Clear();
 
-			Sprite itemTypeButtonSelectedIcon = typeBtnSelectedSprite;
-
-			for (int i = 0; i < itemTypeButtons.Length; i++) {
-
-				Image buttonImage = itemTypeButtons [i].GetComponent<Image> ();
-				buttonImage.sprite = i == buttonIndex ? itemTypeButtonSelectedIcon : itemTypeButtonNormalIcon;
-
-				buttonImage.SetNativeSize ();
-
+			for (int i = 0; i < materialDetailViews.Length; i++) {
+				indexGrid.Add (i);
 			}
 
+			for (int i = 0; i < materials.Count; i++) {
 
-			for (int i = 0; i < itemModelsOfCurrentType.Count; i++) {
+				int index = materials[i].id % indexGrid.Count;
 
-				ItemModel itemModel = itemModelsOfCurrentType [i];
+				randomMaterialDetailViews.Add (materialDetailViews [index]);
 
-				Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel, allItemsContainer);
+			}
+		}
 
-				Image itemIcon = itemDetails.Find ("ItemIcon").GetComponent<Image>();
+		private void SetUpMaterialButtons(List<Material> materials){
 
-				Text itemName = itemDetails.Find ("ItemName").GetComponent<Text> ();
+			int totalValence = 0;
+			float totalUnstableness = 0f;
 
-				Text itemDescText = itemDetails.Find ("ItemDescText").GetComponent<Text> ();
+			for (int i = 0; i < randomMaterialDetailViews.Count; i++) {
 
-				Text itemPropertiesText = itemDetails.Find ("ItemPropertiesText").GetComponent<Text> ();
+				Material material = materials [i];
+				Transform materialDetailView = randomMaterialDetailViews [i];
 
-				Button produceButton = itemDetails.Find ("ProduceButton").GetComponent<Button> ();
+				Image materialIcon = materialDetailView.Find ("MaterialIcon").GetComponent<Image> ();
+				Text materialName = materialDetailView.Find ("MaterialName").GetComponent<Text> ();
+				Text materialValence = materialDetailView.Find ("MaterialValence").GetComponent<Text> ();
+				Text materialProperty = materialDetailView.Find ("MaterialProperty").GetComponent<Text> ();
+				Text materialCount = materialDetailView.Find ("MaterialCount").GetComponent<Text> ();
 
-				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
-					return obj.name == itemModel.spriteName;
+
+				Button plusButton = materialDetailView.Find ("PlusButton").GetComponent<Button> ();
+				Button minusButton = materialDetailView.Find ("MinusButton").GetComponent<Button> ();
+
+				materialName.text = material.materialName;
+				materialValence.text = material.valence.ToString ();
+				materialProperty.text = material.propertyString;
+				materialCount.text = material.materialCount.ToString ();
+
+				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == material.spriteName;
 				});
 
-				if (itemIcon.sprite != null) {
-					itemIcon.enabled = true;
+				if (s != null) {
+					materialIcon.sprite = s;
 				}
 
-				itemName.text = itemModel.itemName;
+				plusButton.onClick.RemoveAllListeners ();
+				minusButton.onClick.RemoveAllListeners ();
 
-				itemDescText.text = itemModel.itemDescription;
+				plusButton.onClick.AddListener (delegate {
 
-				if (itemModel.itemType == ItemType.Equipment) {
-					Equipment equipment = new Equipment (itemModel,ItemQuality.Random);
-					itemPropertiesText.text = equipment.potentialPropertiesString;
-				}
+					GetComponent<ProduceViewController>().MaterialCountPlusOne(material);
 
-				produceButton.onClick.RemoveAllListeners ();
-
-				produceButton.onClick.AddListener (delegate() {
-					GetComponent<ProduceViewController>().OnGenerateButtonClick(itemModel);
 				});
 
+				minusButton.onClick.AddListener (delegate {
+					
+					GetComponent<ProduceViewController>().MaterialCountMinusOne(material);
+
+				});
+
+				materialDetailView.gameObject.SetActive (true);
+
+				totalValence += material.valence * material.materialCount;
+				totalUnstableness += material.unstableness * material.materialCount;
 			}
+
+
+			totalView.Find ("TotalValence").GetComponent<Text> ().text = totalValence.ToString();
+			totalView.Find ("TotalUnstableness").GetComponent<Text> ().text = string.Format ("{0}%", (int)(totalUnstableness * 100));
+
+			totalView.gameObject.SetActive (true);
 
 		}
 
+		private void SetUpItemDetails(ItemModel itemModel){
 
-
-		public void SetUpCharactersPlane(){
-
-			Player player = Player.mainPlayer;
-
-			for (int i = 0; i < charactersOwned.Length; i++) {
-
-				Text characterCount = charactersOwned [i].Find("Count").GetComponent<Text>();
-
-				characterCount.text = player.charactersCount [i].ToString ();
-
-			}
-
-			charactersContainer.gameObject.SetActive (true);
-
-		}
-
-		public void OnQuitCharactersPlane(){
-
-			for (int i = 0; i < charactersOwned.Length; i++) {
-
-				Text characterCount = charactersOwned [i].Find("Count").GetComponent<Text>();
-
-				characterCount.text = string.Empty;
-
-			}
+			itemName.text = itemModel.itemName;
+			levelRequired.text = string.Format ("等级要求:{0}", itemModel.levelRequired);
 				
-			charactersContainer.gameObject.SetActive (false);
+//			if (itemModel.itemType == ItemType.Equipment) {
+//				Equipment equipment = new Equipment (itemModel);
+//			}
+
 
 		}
 
-		public void QuitProduceView(CallBack cb){
 
-			produceViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
-
-			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-
-			producePlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-				
-				cb();
-
-			});
-
-		}
 	}
 }

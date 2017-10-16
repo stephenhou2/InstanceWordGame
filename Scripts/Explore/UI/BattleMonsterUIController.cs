@@ -31,7 +31,7 @@ namespace WordJourney
 			healthText.text = string.Format ("{0}/{1}", monster.health, monster.maxHealth);
 			attackText.text = string.Format ("攻击:{0}", monster.attack);
 			attackSpeedText.text = string.Format ("攻速:{0}", monster.attackSpeed);;
-			armourText.text = string.Format ("护甲:{0}", monster.armour);
+			armorText.text = string.Format ("护甲:{0}", monster.armor);
 			manaResistText.text = string.Format ("抗性:{0}", monster.manaResist);
 			critText.text = string.Format ("暴击:{0}", monster.crit);
 			dodgeText.text = string.Format ("闪避:{0}", monster.dodge);

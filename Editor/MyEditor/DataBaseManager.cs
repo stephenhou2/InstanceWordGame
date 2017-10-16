@@ -23,7 +23,7 @@ namespace WordJourney{
 
 	//		sql.CreatTable (CommonData.itemsTable,
 	//			new string[] {"itemId","itemName","itemDescription","spriteName","itemType","itemNameInEnglish",
-	//				"attackGain","powerGain","magicGain","critGain","armourGain","manaResistGain",
+	//				"attackGain","powerGain","magicGain","critGain","armorGain","manaResistGain",
 	//				"dodgeGain","healthGain","strengthGain"},
 	//			new string[] {"PRIMARY Key","UNIQUE NOT NULL","NOT NULL","NOT NULL","","UNIQUE","","","","","","","","",""},
 	//			new string[] {"INTEGER","TEXT","TEXT","TEXT","INTEGER","TEXT","INTEGER","INTEGER","INTEGER",

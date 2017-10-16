@@ -23,13 +23,13 @@ namespace WordJourney
 
 		public Text attackText;
 		public Text attackSpeedText;
-		public Text armourText;
+		public Text armorText;
 		public Text manaResistText;
 		public Text critText;
 		public Text dodgeText;
 
 	//	public Image weaponImage;
-	//	public Image armourImage;
+	//	public Image armorImage;
 	//	public Image shoesImage;
 		public Button[] allEquipedItemBtns;
 
@@ -79,14 +79,14 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpBagView(){
 
-			this.sprites = GameManager.Instance.allItemSprites;
+			this.sprites = GameManager.Instance.dataCenter.allItemSprites;
 			this.player = Player.mainPlayer;
 
-//			typeBtnNormalSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+//			typeBtnNormalSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
 //				return obj.name == "typeButtonNormal";
 //			});
 //
-//			typeBtnSelectedSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+//			typeBtnSelectedSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
 //				return obj.name == "typeButtonSelected";
 //			});
 
@@ -124,7 +124,7 @@ namespace WordJourney
 
 			attackText.text = "攻击:" + player.attack.ToString ();
 			attackSpeedText.text = "攻速:" + player.attackSpeed.ToString ();
-			armourText.text = "护甲:" + player.armour.ToString();
+			armorText.text = "护甲:" + player.armor.ToString();
 			manaResistText.text = "抗性:" + player.manaResist.ToString();
 			critText.text = "暴击:" + (player.crit / (1 + 0.01f * player.crit)).ToString("F0") + "%";
 			dodgeText.text = "闪避:" + (player.dodge / (1 + 0.01f * player.dodge)).ToString("F0") + "%";
@@ -212,28 +212,36 @@ namespace WordJourney
 				
 				choicePanelWithTwoBtns.gameObject.SetActive (true);
 
-				itemQualityText.text = equipment.GetItemQualityString ();
-
-				itemStrengthenTimesText.text = "已强化次数:" + (item as Equipment).strengthenTimes.ToString () + "次";
-
 				Equipment currentEquipment = null;
 
 				switch (equipment.equipmentType) {
 				case EquipmentType.Weapon:
 					currentEquipment = player.allEquipedEquipments [0] as Equipment;
 					break;
-				case EquipmentType.Armour:
+				case EquipmentType.Cloth:
 					currentEquipment = player.allEquipedEquipments [1] as Equipment;
 					break;
-				case EquipmentType.Shoes:
+				case EquipmentType.Pants:
 					currentEquipment = player.allEquipedEquipments [2] as Equipment;
+					break;
+				case EquipmentType.Helmet:
+					currentEquipment = player.allEquipedEquipments [3] as Equipment;
+					break;
+				case EquipmentType.Shoes:
+					currentEquipment = player.allEquipedEquipments [4] as Equipment;
+					break;
+				case EquipmentType.Jewelry:
+					currentEquipment = player.allEquipedEquipments [5] as Equipment;
+					break;
+				case EquipmentType.Ring:
+					currentEquipment = player.allEquipedEquipments [6] as Equipment;
 					break;
 				}
 
 				if (currentEquipment != null) {
 					itemPropertiesText.text = equipment.GetComparePropertiesStringWithItem (currentEquipment);
 				} else {
-					itemPropertiesText.text = equipment.GetItemPropertiesString ();
+					itemPropertiesText.text = equipment.GetItemBasePropertiesString ();
 				}
 
 
@@ -242,7 +250,7 @@ namespace WordJourney
 			// 如果不是装备
 			else{
 				
-				itemPropertiesText.text = item.GetItemPropertiesString ();
+				itemPropertiesText.text = item.GetItemBasePropertiesString ();
 				choicePanelWithOneBtn.gameObject.SetActive (true);
 
 			}
@@ -258,7 +266,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.allUIIcons.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 

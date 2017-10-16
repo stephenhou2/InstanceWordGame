@@ -10,6 +10,8 @@ namespace WordJourney
 		public string question;
 		public string answer;
 
+		public bool unlocked;
+
 
 	}
 }

@@ -28,18 +28,18 @@ namespace WordJourney
 			bool isCrit = isEffective (critSeed * self.agent.crit / (1 + critSeed * self.agent.crit));
 
 			if (isCrit) {
-				self.agent.critScaler = 2.0f;
+				self.agent.critHurtScaler = 2.0f;
 				tintTextType = TintTextType.Crit;
 			}
 
 			//原始物理伤害值
-			int originalDamage = (int)(self.agent.attack * (1 + self.agent.physicalHurtScaler) * self.agent.critScaler);
+			int originalDamage = (int)(self.agent.attack * (1 + self.agent.physicalHurtScaler) * self.agent.critHurtScaler);
 
 			// 攻击之后将暴击伤害率重新设定为1
-			self.agent.critScaler = 1.0f;
+			self.agent.critHurtScaler = 1.0f;
 
 			//抵消护甲作用后的实际伤害值
-			int actualDamage = (int)(originalDamage / (1 + armourSeed * enemy.agent.armour) + 0.5f);
+			int actualDamage = (int)(originalDamage / (1 + armorSeed * enemy.agent.armor) + 0.5f);
 
 			int damageOffset = originalDamage - actualDamage;
 

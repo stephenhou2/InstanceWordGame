@@ -16,9 +16,9 @@ namespace WordJourney
 
 		public void SetUpSkillsView(){
 
-			mSkills = GameManager.Instance.allSkills;
+			mSkills = GameManager.Instance.dataCenter.allSkills;
 
-			mSkillSprites = GameManager.Instance.allSkillSprites;
+			mSkillSprites = GameManager.Instance.dataCenter.allSkillSprites;
 
 			skillsView.SetUpSkillsView (mSkills,mSkillSprites);
 
