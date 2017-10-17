@@ -28,14 +28,13 @@ namespace WordJourney
 		public Text critText;
 		public Text dodgeText;
 
-	//	public Image weaponImage;
-	//	public Image armorImage;
-	//	public Image shoesImage;
-		public Button[] allEquipedItemBtns;
+		public Button[] bagTypeButtons;
+		public Button[] allEquipedEquipmentsButtons;
 
-		public Button[] bags;
+		private InstancePool itemDisplayButtonsPool;
+		public Transform itemDisplayButtonsContainer;
+		private Transform itemDisplayButtonModel;
 
-		public Button[] allItemsBtns;
 
 
 		private Player player;
@@ -71,8 +70,12 @@ namespace WordJourney
 		public Slider resolveCountSlider;
 		public Text resolveCount;
 
-//		private Sprite typeBtnNormalSprite;
-//		private Sprite typeBtnSelectedSprite;
+
+		void Awake(){
+			itemDisplayButtonsPool = InstancePool.GetOrCreateInstancePool ("ItemDisplayButtonsPool");
+			itemDisplayButtonModel = TransformManager.FindTransform ("ItemDisplayButtonModel");
+		}
+
 
 		/// <summary>
 		/// 初始化背包界面
@@ -96,15 +99,12 @@ namespace WordJourney
 
 			SetUpEquipedItemPlane ();
 
-			SetUpAllItemsPlane ();
-
-			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 200);
-
-			bagPlane.transform.localPosition = Vector3.zero;
+			SetUpItemsDiaplayPlane (player.allEquipmentsInBag);
 
 			this.GetComponent<Canvas> ().enabled = true;
 
 		}
+
 
 		/// <summary>
 		/// 初始化玩家属性界面
@@ -131,17 +131,18 @@ namespace WordJourney
 
 		}
 
-		// 初始化已装备物品界面
+		/// <summary>
+		/// 初始化已装备物品界面
+		/// </summary>
 		private void SetUpEquipedItemPlane(){
-
-//			for (int i = 0; i < player.allEquipedEquipments.Length; i++) {
-//				Equipment equipment = player.allEquipedEquipments [i];
-//				SetUpItemButton (equipment, allEquipedItemBtns [i]);
-//			}
 			
 			for(int i = 0;i<player.allEquipedEquipments.Count;i++){
-				Item item = player.allEquipedEquipments[i];
-				SetUpItemButton (item, allEquipedItemBtns [i]);
+				
+				Equipment equipment = player.allEquipedEquipments[i];
+
+				int buttonIndex = (int)(equipment.equipmentType);
+
+				SetUpItemButton (equipment, allEquipedEquipmentsButtons[buttonIndex]);
 			}
 
 		}
@@ -149,52 +150,47 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化背包物品界面
 		/// </summary>
-		#warning 现在用所有物品做测试，后面按照类型进行分
-		public void SetUpAllItemsPlane(){
-			
-			for (int i = 0; i < allItemsBtns.Length; i++) {
+		public void SetUpItemsDiaplayPlane<T>(List<T> items)
+			where T:Item
+		{
 
-				Button itemBtn = allItemsBtns [i];
+			itemDisplayButtonsPool.AddChildInstancesToPool (itemDisplayButtonsContainer);
 
-				Text extraInfo = allItemsBtns [i].transform.Find ("ExtraInfo").GetComponent<Text> ();
+			for (int i = 0; i < items.Count; i++) {
 
-				if (i < player.allItems.Count) {
+				Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
 
-					Item item = player.allItems [i];
+				Item item = items [i] as Item;
 
-					SetUpItemButton (player.allItems [i], itemBtn);
+				Text extraInfo = itemDisplayButton.transform.Find ("ExtraInfo").GetComponent<Text> ();
 
-					if (item.itemType == ItemType.Equipment && (item as Equipment).equiped) {
-						extraInfo.text = "<color=green>已装备</color>";
-					} else if (item.itemType == ItemType.Consumables) {
-						extraInfo.text = item.itemCount.ToString ();
-					} else {
-						extraInfo.text = string.Empty;
-					}
+				SetUpItemButton (item, itemDisplayButton);
+
+				if (item.itemType == ItemType.Equipment && (item as Equipment).equiped) {
+					extraInfo.text = "<color=green>已装备</color>";
+				} else if (item.itemType == ItemType.Consumables || item.itemType == ItemType.Material) {
+					extraInfo.text = item.itemCount.ToString ();
 				} else {
-					
-					SetUpItemButton (null, itemBtn);
-
-					Image selectedBorder = itemBtn.transform.Find ("SelectedBorder").GetComponent<Image> ();
-					selectedBorder.enabled = false;
-
 					extraInfo.text = string.Empty;
-
 				}
 			}
 
 		}
+
+		public void SetUpItemsDiaplayPlane(List<Material> materials){
 			
+			itemDisplayButtonsPool.AddChildInstancesToPool (itemDisplayButtonsContainer);
+
+		}
+
+
 		/// <summary>
 		/// 初始化物品详细介绍页面
 		/// </summary>
 		/// <param name="item">Item.</param>
 		private void SetUpItemDetailHUD(Item item){
 
-//			bool canStrengthen = item.CheckCanStrengthen();
-
 			itemDetailHUD.gameObject.SetActive (true);
-
 
 			itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
@@ -214,29 +210,9 @@ namespace WordJourney
 
 				Equipment currentEquipment = null;
 
-				switch (equipment.equipmentType) {
-				case EquipmentType.Weapon:
-					currentEquipment = player.allEquipedEquipments [0] as Equipment;
-					break;
-				case EquipmentType.Cloth:
-					currentEquipment = player.allEquipedEquipments [1] as Equipment;
-					break;
-				case EquipmentType.Pants:
-					currentEquipment = player.allEquipedEquipments [2] as Equipment;
-					break;
-				case EquipmentType.Helmet:
-					currentEquipment = player.allEquipedEquipments [3] as Equipment;
-					break;
-				case EquipmentType.Shoes:
-					currentEquipment = player.allEquipedEquipments [4] as Equipment;
-					break;
-				case EquipmentType.Jewelry:
-					currentEquipment = player.allEquipedEquipments [5] as Equipment;
-					break;
-				case EquipmentType.Ring:
-					currentEquipment = player.allEquipedEquipments [6] as Equipment;
-					break;
-				}
+				int index = (int)(equipment.equipmentType);
+
+				currentEquipment = player.allEquipedEquipments [index] as Equipment;
 
 				if (currentEquipment != null) {
 					itemPropertiesText.text = equipment.GetComparePropertiesStringWithItem (currentEquipment);
@@ -363,22 +339,20 @@ namespace WordJourney
 
 			SetUpEquipedItemPlane ();
 
-			SetUpAllItemsPlane ();
-
 		}
 
 
 		public void OnResolveButtonOfDetailHUDClick(){
 
-			OnQuitResolveCountHUD ();
-
-			OnQuitItemDetailHUD ();
-
-			SetUpPlayerStatusPlane ();
-
-			SetUpEquipedItemPlane ();
-
-			SetUpAllItemsPlane ();
+//			OnQuitResolveCountHUD ();
+//
+//			OnQuitItemDetailHUD ();
+//
+//			SetUpPlayerStatusPlane ();
+//
+//			SetUpEquipedItemPlane ();
+//
+//			SetUpAllItemsPlane ();
 
 		}
 
@@ -390,21 +364,18 @@ namespace WordJourney
 
 		public void OnItemButtonClick(int index){
 
-			if (index >= player.allItems.Count) {
-				return;
-			}
-
-				Item item = player.allItems [index];
-
-			for(int i = 0;i<allItemsBtns.Length;i++){
-				Button btn = allItemsBtns [i];
-				btn.transform.Find ("SelectedBorder").GetComponent<Image> ().enabled = i == index;
-			}
-				
-
-
-
-			SetUpItemDetailHUD (item);
+//			if (index >= player.allItems.Count) {
+//				return;
+//			}
+//
+//				Item item = player.allItems [index];
+//
+//			for(int i = 0;i<allItemsBtns.Length;i++){
+//				Button btn = allItemsBtns [i];
+//				btn.transform.Find ("SelectedBorder").GetComponent<Image> ().enabled = i == index;
+//			}
+//
+//			SetUpItemDetailHUD (item);
 
 		}
 

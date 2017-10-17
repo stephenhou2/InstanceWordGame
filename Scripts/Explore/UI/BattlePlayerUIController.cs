@@ -184,15 +184,15 @@ namespace WordJourney
 
 		public void UpdateItemButtons(){
 
-			Item healthBottle = player.allItems.Find (delegate(Item obj) {
+			Item healthBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemNameInEnglish == "health";
 			});
 
-			Item manaBottle = player.allItems.Find (delegate(Item obj) {
+			Item manaBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemNameInEnglish == "mana";
 			});
 
-			Item antiDebuffBottle = player.allItems.Find (delegate(Item obj) {
+			Item antiDebuffBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemNameInEnglish == "antiDebuff";
 			});
 
@@ -230,21 +230,21 @@ namespace WordJourney
 
 		public void OnItemButtonClick(int buttonIndex){
 
-			Item item = null;
+			Consumables consumable = null;
 
 			switch (buttonIndex) {
 			case 0:
-				item = player.allItems.Find (delegate (Item obj) {
+				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
 					return obj.itemNameInEnglish == "health";
 				});
 				break;
 			case 1:
-				item = player.allItems.Find (delegate (Item obj) {
+				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
 					return obj.itemNameInEnglish == "mana";
 				});
 				break;
 			case 2:
-				item = player.allItems.Find (delegate (Item obj) {
+				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
 					return obj.itemNameInEnglish == "antiDebuff";
 				});
 				break;
@@ -253,13 +253,13 @@ namespace WordJourney
 
 			}
 				
-			if (item == null) {
+			if (consumable == null) {
 				return;
 			}
 
 			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 
-			bpCtr.OnPlayerUseItem (item);
+			bpCtr.OnPlayerUseItem (consumable);
 
 		}
 

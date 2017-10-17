@@ -177,11 +177,11 @@ namespace WordJourney
 
 			QuitSpellCountHUD ();
 
-			materialName.text = material.materialName;
+			materialName.text = material.itemName;
 
-			materialCount.text = string.Format ("数量:{0}", material.materialCount);
+			materialCount.text = string.Format ("数量:{0}", material.itemCount);
 
-			materialProperty.text = material.propertyString;
+			materialProperty.text = material.itemDescription;
 
 			materialValence.text = material.valence.ToString ();
 

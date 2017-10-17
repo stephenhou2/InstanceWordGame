@@ -96,7 +96,7 @@ namespace WordJourney
 				for (int j = 0; j < materialStrings.Length; j++) {
 
 					MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-						return obj.materialName == materialStrings [j];
+						return obj.itemName == materialStrings [j];
 					});
 
 					if (m == null) {
@@ -110,7 +110,7 @@ namespace WordJourney
 
 				for (int k = 0; k < failMaterialStrings.Length; k++) {
 					MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-						return obj.materialName == failMaterialStrings [k];
+						return obj.itemName == failMaterialStrings [k];
 					});
 					if (m == null) {
 						Debug.Log(string.Format("fail-null:{0}-{1}",item.itemName,failMaterialStrings [k]));
@@ -209,12 +209,18 @@ namespace WordJourney
 	public class MyMaterial{
 
 		//材料id	材料名称	灵势	材料属性	攻击	攻速	护甲	抗性	闪避	暴击	生命	魔法	材料拼写
+		public int itemId;
+		public string itemName;
+		public string itemDescription;
+		public string spriteName;
+		public string itemNameInEnglish;
+		public ItemType itemType;
 
-		public int id;
-		public string materialName;
+//		public int id;
+//		public string materialName;
 		public MaterialType materialType;
 		public int valence;
-		public string propertyString;
+//		public string propertyString;
 		public int attackGain;
 		public int attackSpeedGain;
 		public int armorGain;
@@ -223,19 +229,19 @@ namespace WordJourney
 		public int critGain;
 		public int healthGain;
 		public int manaGain;
-		public string spell;
-		public string spriteName;
-		public float unstableness;
+//		public string spell;
+//		public string spriteName;
+		public int unstableness;
 
 		public MyMaterial(string materialString){
 
 			string[] materialStrings = materialString.Split (new char[]{ ',' });
 
-			id = Convert.ToInt16(materialStrings[0]);
-			materialName = materialStrings[1];
+			itemId = Convert.ToInt16(materialStrings[0]);
+			itemName = materialStrings[1];
 			materialType = (MaterialType)(Convert.ToInt16(materialStrings[2]));
 			valence = Convert.ToInt16(materialStrings[3]);
-			propertyString = materialStrings[4];
+			itemDescription = materialStrings[4];
 			attackGain = Convert.ToInt16(materialStrings[5]);
 			attackSpeedGain = Convert.ToInt16(materialStrings[6]);
 			armorGain = Convert.ToInt16(materialStrings[7]);
@@ -244,16 +250,21 @@ namespace WordJourney
 			critGain = Convert.ToInt16(materialStrings[10]);
 			healthGain = Convert.ToInt16(materialStrings[11]);
 			manaGain = Convert.ToInt16(materialStrings[12]);
-			spell = materialStrings[13];
+			itemNameInEnglish = materialStrings[13];
 			spriteName = materialStrings [14];
-			unstableness = Mathf.Abs(valence) / 100f;
+			unstableness = Math.Abs (valence);
+			itemType = ItemType.Material;
+
+			if (itemDescription == "-1") {
+				itemDescription = string.Empty;
+			}
 
 		}
 
 		public override string ToString ()
 		{
 			return string.Format ("[Material]\nid:{0},name:{1},materialType:{2},valence:{3},propertyString:{4},spell:{5}",
-				id,materialName,materialType,valence,propertyString,spell);
+				itemId,itemName,materialType,valence,itemDescription,itemNameInEnglish);
 		}
 
 	}

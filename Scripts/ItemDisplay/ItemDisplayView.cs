@@ -156,23 +156,7 @@ namespace WordJourney
 
 					Transform materialPlane = materialPool.GetInstance<Transform> (materialModel.gameObject, materialsContainer);
 
-					Image materialIcon = materialPlane.Find ("MaterialIcon").GetComponent<Image> ();
-
-					Text materialName = materialPlane.Find ("MaterialName").GetComponent<Text> ();
-
-					Text materialValence = materialPlane.Find ("MaterialValence").GetComponent<Text> ();
-
-					Sprite s = materialSprites.Find (delegate(Sprite obj) {
-						return obj.name == material.spriteName;
-					});
-
-					if (s != null) {
-						materialIcon.sprite = s;
-					}
-
-					materialName.text = material.materialName;
-
-					materialValence.text = material.valence.ToString();
+					SetUpMaterialPlane (materialPlane, material);
 
 				}
 
@@ -184,7 +168,47 @@ namespace WordJourney
 
 		}
 
+		private void SetUpMaterialPlane(Transform materialPlane,Material material){
+			
+			Image materialIcon = materialPlane.Find ("MaterialIcon").GetComponent<Image> ();
 
+			Text materialName = materialPlane.Find ("MaterialName").GetComponent<Text> ();
+
+			Text materialValence = materialPlane.Find ("MaterialValence").GetComponent<Text> ();
+
+			Text materialProperty = materialPlane.Find ("MaterialProperty").GetComponent<Text> ();
+
+			Text materialUnstableness = materialPlane.Find ("MaterialUnstableness").GetComponent<Text> ();
+
+			Text materialPossessionCount = materialPlane.Find ("MaterialPossessionCount").GetComponent<Text> ();
+
+
+			materialName.text = material.itemName;
+
+			materialValence.text = material.valence.ToString();
+
+			materialProperty.text = material.itemDescription;
+
+			materialUnstableness.text = string.Format ("{0}%", material.unstableness);
+
+			Material materialInBag = Player.mainPlayer.GetMaterialInBagWithId (material.itemId);
+
+			if (materialInBag != null) {
+				materialPossessionCount.text = materialInBag.itemCount.ToString ();
+			} else {
+				materialPossessionCount.text = "<color=red>0</color>";
+			}
+
+
+			Sprite s = materialSprites.Find (delegate(Sprite obj) {
+				return obj.name == material.spriteName;
+			});
+
+			if (s != null) {
+				materialIcon.sprite = s;
+			}
+
+		}
 
 		public void SetUpCharactersPlane(){
 
@@ -260,23 +284,7 @@ namespace WordJourney
 
 				Transform materialPlane = materialPool.GetInstance<Transform> (materialModel.gameObject, materialsContainer);
 
-				Image materialIcon = materialPlane.Find ("MaterialIcon").GetComponent<Image> ();
-
-				Text materialName = materialPlane.Find ("MaterialName").GetComponent<Text> ();
-
-				Text materialValence = materialPlane.Find ("MaterialValence").GetComponent<Text> ();
-
-				Sprite s = materialSprites.Find (delegate(Sprite obj) {
-					return obj.name == material.spriteName;
-				});
-
-				if (s != null) {
-					materialIcon.sprite = s;
-				}
-
-				materialName.text = material.materialName;
-
-				materialValence.text = material.valence.ToString();
+				SetUpMaterialPlane (materialPlane, material);
 
 			}
 

@@ -36,33 +36,14 @@ namespace WordJourney
 
 			currentSelectEquipIndex = index;
 
-			EquipmentType equipmentType = EquipmentType.Weapon;
+			EquipmentType equipmentType = (EquipmentType)index;
 
-			switch (index) {
-			case 0:
-				equipmentType = EquipmentType.Weapon;
-				break;
-			case 1:
-				equipmentType = EquipmentType.Cloth;
-				break;
-			case 2:
-				equipmentType = EquipmentType.Pants;
-				break;
-			case 3:
-				equipmentType = EquipmentType.Helmet;
-				break;
-			case 4:
-				equipmentType = EquipmentType.Shoes;
-				break;
-			case 5:
-				equipmentType = EquipmentType.Ring;
-				break;
-			}
+			List<Equipment> allEquipmentsOfSelectType = Player.mainPlayer.allEquipmentsInBag.FindAll (delegate(Equipment obj) {
+				return obj.equipmentType == equipmentType;
+			});
 
-			foreach (Item i in Player.mainPlayer.allItems) {
-				if (i.itemType == ItemType.Equipment && (i as Equipment).equipmentType == equipmentType) {
-					allItemsOfCurrentSelcetType.Add (i);
-				}
+			for (int i = 0; i < allEquipmentsOfSelectType.Count; i++) {
+				allItemsOfCurrentSelcetType.Add (allEquipmentsOfSelectType [i]);
 			}
 
 			bagView.OnEquipedItemButtonsClick (allItemsOfCurrentSelcetType);
@@ -121,55 +102,55 @@ namespace WordJourney
 
 		public void ResolveItem(){
 			
-			Player player = Player.mainPlayer;
-
-			Item item = player.allItems [currentSelectItemIndex];
-
-			maxResolveCount = item.itemCount;
-			minResolveCount = 1;
-
-			if (item.itemType == ItemType.Consumables && item.itemCount > 1) {
-
-				bagView.SetUpResolveCountHUD (1, item.itemCount);
-
-				return;
-			}
-
-			List<char> charactersReturn =  player.ResolveItem (item,1);
-
-			// 返回的有字母，相应处理
-			if (charactersReturn.Count > 0) {
-
-				foreach (char c in charactersReturn) {
-					Debug.Log (c.ToString ());
-				}
-
-			}
-
-			bagView.OnResolveButtonOfDetailHUDClick ();
+//			Player player = Player.mainPlayer;
+//
+//			Item item = player.allItems [currentSelectItemIndex];
+//
+//			maxResolveCount = item.itemCount;
+//			minResolveCount = 1;
+//
+//			if (item.itemType == ItemType.Consumables && item.itemCount > 1) {
+//
+//				bagView.SetUpResolveCountHUD (1, item.itemCount);
+//
+//				return;
+//			}
+//
+//			List<char> charactersReturn =  player.ResolveItem (item,1);
+//
+//			// 返回的有字母，相应处理
+//			if (charactersReturn.Count > 0) {
+//
+//				foreach (char c in charactersReturn) {
+//					Debug.Log (c.ToString ());
+//				}
+//
+//			}
+//
+//			bagView.OnResolveButtonOfDetailHUDClick ();
 
 		}
 
 		public void OnConfirmResolveCount(){
 
-			Player player = Player.mainPlayer;
-
-			Item item = player.allItems [currentSelectItemIndex];
-
-			int resolveCount = (int)bagView.resolveCountSlider.value;
-
-			List<char> charactersReturn =  player.ResolveItem (item,resolveCount);
-
-			// 返回的有字母，相应处理
-			if (charactersReturn.Count > 0) {
-
-				foreach (char c in charactersReturn) {
-					Debug.Log (c.ToString ());
-				}
-
-			}
-
-			bagView.OnResolveButtonOfDetailHUDClick ();
+//			Player player = Player.mainPlayer;
+//
+//			Item item = player.allItems [currentSelectItemIndex];
+//
+//			int resolveCount = (int)bagView.resolveCountSlider.value;
+//
+//			List<char> charactersReturn =  player.ResolveItem (item,resolveCount);
+//
+//			// 返回的有字母，相应处理
+//			if (charactersReturn.Count > 0) {
+//
+//				foreach (char c in charactersReturn) {
+//					Debug.Log (c.ToString ());
+//				}
+//
+//			}
+//
+//			bagView.OnResolveButtonOfDetailHUDClick ();
 
 		}
 
@@ -202,7 +183,7 @@ namespace WordJourney
 
 		public void FixEquipment(){
 
-			Equipment equipment = Player.mainPlayer.allItems [currentSelectItemIndex] as Equipment;
+			Equipment equipment = Player.mainPlayer.allEquipmentsInBag [currentSelectItemIndex] as Equipment;
 
 			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (equipment.itemNameInEnglish);
 

@@ -37,23 +37,22 @@ namespace WordJourney
 //		Ring,//戒指
 //	}
 
-
+	[System.Serializable]
 	public class Equipment : Item {
 
-		public double attackGain;//攻击力增益
-		public double attackSpeedGain;//攻速增益
-		public double critGain;//暴击增益
-		public double armorGain;//护甲增益
-		public double manaResistGain;//魔抗增益
-		public double dodgeGain;//闪避增益
-		public double healthGain;//生命增益
-		public double manaGain;//魔法增益
+		public float attackGain;//攻击力增益
+		public float attackSpeedGain;//攻速增益
+		public float critGain;//暴击增益
+		public float armorGain;//护甲增益
+		public float manaResistGain;//魔抗增益
+		public float dodgeGain;//闪避增益
+		public float healthGain;//生命增益
+		public float manaGain;//魔法增益
 
 		public int maxAttachedProperties;//附加属性最大数量
 		public int attachedPropertyId;//附加属性id
 		public EquipmentType equipmentType;//装备类型
-		public string detailType;//详细装备类型
-		public int levelNeed;//装备等级要求
+//		public int levelRequired;//装备等级要求
 
 		public List<Material> materials = new List<Material> ();//合成材料需求
 		public List<Material> failMaterials = new List<Material>();//合成失败时可能掉落的特殊材料
@@ -147,9 +146,9 @@ namespace WordJourney
 			string propertyStr = string.Empty;
 
 			if (gain >= 1) {
-				propertyStr = string.Format ("{0}+ {1}",gain);
+				propertyStr = string.Format ("{0} + {1}",property,gain);
 			}else{
-				propertyStr = string.Format ("{0}+ {1}%",(int)gain*100);
+				propertyStr = string.Format ("{0} + {1}%",property,(int)gain*100);
 			}
 
 			if (propertiesList != null) {

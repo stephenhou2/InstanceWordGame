@@ -44,9 +44,6 @@ namespace WordJourney{
 		public static void Execute(){
 
 
-			ModifyCharacterButtons ();
-
-
 
 		}
 

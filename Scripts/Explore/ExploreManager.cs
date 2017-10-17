@@ -258,7 +258,7 @@ namespace WordJourney
 			// 如果该地图物品需要使用特殊物品开启
 			if (tb.unlockItemName != string.Empty) {
 
-				Item unlockItem = Player.mainPlayer.allItems.Find(delegate(Item item) {
+				Consumables unlockItem = Player.mainPlayer.allConsumablesInBag.Find(delegate(Consumables item) {
 					return item.itemName == tb.unlockItemName;
 				});
 

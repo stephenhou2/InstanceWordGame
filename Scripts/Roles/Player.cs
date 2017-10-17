@@ -60,6 +60,12 @@ namespace WordJourney
 
 		public List<Material> allMaterialsInBag = new List<Material>();
 
+		public List<Equipment> allEquipmentsInBag = new List<Equipment> ();
+		public List<Consumables> allConsumablesInBag = new List<Consumables> ();
+		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
+		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
+
+
 
 		public override void Awake(){
 
@@ -101,45 +107,58 @@ namespace WordJourney
 			return s;
 		}
 
-		public void AddItems(List<Item> items){
+		public void AddItem(Item item){
 
-			for (int i = 0; i < items.Count; i++) {
+			switch(item.itemType){
 
-				Item item = items [i];
+			case ItemType.Equipment:
 
-				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
-				if (item.itemType == ItemType.Consumables) {
+				allEquipmentsInBag.Add (item as Equipment);
 
-					Item itemInBag = allItems.Find (delegate(Item obj) {
-						return obj.itemId == item.itemId;	
-					});
+				break;
 
-					if (itemInBag != null) {
-						itemInBag.itemCount += item.itemCount;
-						continue;
-					} 
-				}
+			// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
+			case ItemType.Consumables:
 
-				// 其他情况，背包中添加该物品
-				allItems.Add (item);
+				Consumables comsumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
+					return obj.itemId == item.itemId;	
+				});
 
+				if (comsumablesInBag != null) {
+					comsumablesInBag.itemCount += item.itemCount;
+				} 
+
+				allConsumablesInBag.Add (item as Consumables);
+
+				break;
+
+			case ItemType.FuseStone:
+
+				allFuseStonesInBag.Add (item as FuseStone);
+
+				break;
+
+			case ItemType.Task:
+
+				allTaskItemsInBag.Add (item as TaskItem);
+
+				break;
 			}
-
-
+				
 		}
 
 		/// <summary>
-		/// 分解物品
+		/// 分解材料
 		/// </summary>
 		/// <returns>分解后获得的字母碎片</returns>
-		/// <param name="item">Item.</param>
-		public List<char> ResolveItem(Item item,int resolveCount){
+		public List<char> ResolveMaterial(Material material,int resolveCount){
 
+			//分解后得到的字母碎片
 			List<char> charactersReturn = new List<char> ();
 
-			int charactersReturnCount = item.itemNameInEnglish.Length / 2;
+			int charactersReturnCount = 1;
 
-			char[] charArray = item.itemNameInEnglish.ToCharArray ();
+			char[] charArray = material.itemNameInEnglish.ToCharArray ();
 
 			List<char> charList = new List<char> ();
 
@@ -161,53 +180,45 @@ namespace WordJourney
 				}
 			}
 
-			item.itemCount -= resolveCount;
+			material.itemCount -= resolveCount;
 
-			if (item.itemCount <= 0) {
-				allItems.Remove (item);
-
-				if (item is Equipment && (item as Equipment).equiped) {
-					
-					int itemIndex = allEquipedEquipments.IndexOf (item as Equipment);
-
-					allEquipedEquipments [itemIndex] = null;
-				}
-
+			if (material.itemCount <= 0) {
+				allMaterialsInBag.Remove (material);
 			}
 
 			return charactersReturn;
 
 		}
 
-		public void ArrangeAllItems(){
-
-			for (int i = 0; i < allItems.Count - 1; i++) {
-
-				Item item = allItems [i];
-
-				if (item.itemType == ItemType.Consumables) {
-
-					for (int j = i + 1; j < allItems.Count; j++) {
-
-						Item itemBackwards = allItems [j];
-
-						if (item.itemId == itemBackwards.itemId) {
-
-							item.itemCount += itemBackwards.itemCount;
-
-							allItems.Remove (itemBackwards);
-
-							j--;
-
-						}
-					}
-				}
-			}
-		}
+//		public void ArrangeItems(List<Item> items){
+//
+//			for (int i = 0; i < items.Count; i++) {
+//
+//				Item item = allItems [i];
+//
+//				if (item.itemType == ItemType.Consumables) {
+//
+//					for (int j = i + 1; j < allItems.Count; j++) {
+//
+//						Item itemBackwards = allItems [j];
+//
+//						if (item.itemId == itemBackwards.itemId) {
+//
+//							item.itemCount += itemBackwards.itemCount;
+//
+//							allItems.Remove (itemBackwards);
+//
+//							j--;
+//
+//						}
+//					}
+//				}
+//			}
+//		}
 
 
 		public void AddMaterial(Material material,int materialCount){
-			material.materialCount = materialCount;
+			material.itemCount = materialCount;
 			AddMaterial (material);
 		}
 
@@ -218,18 +229,23 @@ namespace WordJourney
 		public void AddMaterial(Material material){
 
 			Material materialInBag = allMaterialsInBag.Find(delegate(Material obj){
-				return obj.id == material.id;
+				return obj.itemId == material.itemId;
 			});
 
 			if (materialInBag != null) {
 				// 如果玩家背包中存在对应材料 ＋＝ 材料数量
-				materialInBag.materialCount += material.materialCount;		
+				materialInBag.itemCount += material.itemCount;		
 			}else{
 				// 如果玩家背包中不存在对应材料，则背包中添加该材料
 				Player.mainPlayer.allMaterialsInBag.Add(material);
 			} 
 		}
 
+		public Material GetMaterialInBagWithId(int materialId){
+			return allMaterialsInBag.Find(delegate(Material obj) {
+				return obj.itemId == materialId;
+			});
+		}
 
 		/// <summary>
 		/// Checks the unsufficient characters.

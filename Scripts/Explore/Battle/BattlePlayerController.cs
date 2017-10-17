@@ -548,16 +548,16 @@ namespace WordJourney
 		}
 
 
-		public void OnPlayerUseItem(Item item){
+		public void OnPlayerUseItem(Consumables consumable){
 
-			agent.health += (int)((item as Consumables).healthGain * agent.maxHealth);
-			agent.mana += (int)((item as Consumables).manaGain * agent.maxMana);
+			agent.health += (int)(consumable.healthGain * agent.maxHealth);
+			agent.mana += (int)(consumable.manaGain * agent.maxMana);
 
 
-			item.itemCount--;
+			consumable.itemCount--;
 
-			if (item.itemCount <= 0) {
-				agent.allItems.Remove (item);
+			if (consumable.itemCount <= 0) {
+				(agent as Player).allConsumablesInBag.Remove (consumable);
 			}
 
 			bpUICtr.UpdateItemButtonsAndStatusPlane ();

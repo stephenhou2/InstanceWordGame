@@ -241,7 +241,7 @@ namespace WordJourney
 
 		public void PickUpSelected(){
 
-			player.AddItems (itemsToPickUp);
+//			player.AddItems (itemsToPickUp);
 
 			OnQuitRewardPlane ();
 

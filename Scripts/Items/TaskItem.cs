@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace WordJourney
 {
+
+	[System.Serializable]
 	public class TaskItem : Item {
 
 		public TaskItem(ItemModel itemModel){

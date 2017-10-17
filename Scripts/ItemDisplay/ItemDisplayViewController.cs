@@ -51,18 +51,18 @@ namespace WordJourney
 		private void TestMaterials(){
 
 			Material wood = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
-				return obj.materialName == "木";
+				return obj.itemName == "木";
 			});
 			Material iron = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
-				return obj.materialName == "铁锭";
+				return obj.itemName == "铁锭";
 			});
 			Material bandage = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
-				return obj.materialName == "绷带";
+				return obj.itemName == "绷带";
 			});
 
-			Player.mainPlayer.AddMaterial (wood, 1);
-			Player.mainPlayer.AddMaterial (iron, 1);
-			Player.mainPlayer.AddMaterial (bandage, 1);
+			Player.mainPlayer.AddMaterial (wood, 5);
+			Player.mainPlayer.AddMaterial (iron, 5);
+			Player.mainPlayer.AddMaterial (bandage, 5);
 		}
 
 		/// <summary>
@@ -170,12 +170,10 @@ namespace WordJourney
 
 				Material m = itemModel.materials [i];
 
-				Material materialInBag = Player.mainPlayer.allMaterialsInBag.Find (delegate(Material obj) {
-					return obj.id == m.id;
-				});
+				Material materialInBag = Player.mainPlayer.GetMaterialInBagWithId (m.itemId);
 
 				if (materialInBag == null) {
-					Debug.Log(string.Format("缺少材料{0}",m.materialName));
+					Debug.Log(string.Format("缺少材料{0}",m.itemName));
 					return;
 				}
 

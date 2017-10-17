@@ -171,18 +171,20 @@ namespace WordJourney
 
 		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
-		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
-		public List<Equipment> allEquipedEquipments{
-			get{
-				if (mAllEquipedEquipments.Count == 0) {
-					mAllEquipedEquipments.AddRange (new Equipment[3]{ null, null, null});
-				}
-				return mAllEquipedEquipments;
-			}
-			set{
-				mAllEquipedEquipments = value;
-			}
-		}
+		public List<Equipment> allEquipedEquipments = new List<Equipment>();
+
+//		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
+//		public List<Equipment> allEquipedEquipments{
+//			get{
+//				if (mAllEquipedEquipments.Count == 0) {
+//					mAllEquipedEquipments.AddRange (new Equipment[3]{ null, null, null});
+//				}
+//				return mAllEquipedEquipments;
+//			}
+//			set{
+//				mAllEquipedEquipments = value;
+//			}
+//		}
 
 
 //		private List<Consumable> mAllEquipedConsumables = new List<Consumable>();
@@ -211,15 +213,8 @@ namespace WordJourney
 //			}
 //		}
 
-		public List<Item> allItems = new List<Item> (); // 所有物品
+//		public List<Item> allItems = new List<Item> (); // 所有物品
 
-//		[HideInInspector]public Item healthBottle;
-//
-//		[HideInInspector]public Item manaBottle;
-//
-//		[HideInInspector]public Item antiDebuffBottle;
-
-//		public List<StateSkillEffect> states = new List<StateSkillEffect>();//状态数组
 
 		public int attackTime;//攻击次数
 
@@ -269,24 +264,23 @@ namespace WordJourney
 //			this.originalarmor = ba.originalarmor;
 //			this.originalManaResist = ba.originalManaResist;
 
-			this.maxHealth = ba.maxHealth;
-			this.maxMana = ba.maxMana;
+//			this.maxHealth = ba.maxHealth;
+//			this.maxMana = ba.maxMana;
+//
+//			this.health = ba.health;
+//
+//			this.attack = ba.attack;//攻击力
+//			this.attackSpeed = ba.attackSpeed;//攻速
+//			this.mana = ba.mana;//魔法
+//			this.dodge = ba.dodge;//敏捷
+//			this.armor = ba.armor;//护甲
+//			this.manaResist = ba.manaResist;//魔抗
+//			this.crit = ba.crit;//暴击
+//
+//			this.equipedSkills = ba.equipedSkills;
 
-			this.health = ba.health;
+//			this. = ba.allEquipedEquipments;
 
-			this.attack = ba.attack;//攻击力
-			this.attackSpeed = ba.attackSpeed;//攻速
-			this.mana = ba.mana;//魔法
-			this.dodge = ba.dodge;//敏捷
-			this.armor = ba.armor;//护甲
-			this.manaResist = ba.manaResist;//魔抗
-			this.crit = ba.crit;//暴击
-
-			this.equipedSkills = ba.equipedSkills;
-
-			this.allEquipedEquipments = ba.allEquipedEquipments;
-
-			this.allItems = ba.allItems;
 
 		}
 

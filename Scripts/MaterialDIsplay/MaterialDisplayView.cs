@@ -62,11 +62,11 @@ namespace WordJourney
 					materialIcon.sprite = s;
 				}
 
-				materialName.text = m.materialName;
+				materialName.text = m.itemName;
 
 				materialValence.text = m.valence.ToString ();
 
-				materialProperty.text = m.propertyString;
+				materialProperty.text = m.itemDescription;
 
 				materialBtn.GetComponent<Button> ().onClick.RemoveAllListeners ();
 

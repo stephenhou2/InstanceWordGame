@@ -7,8 +7,8 @@ using System.Text;
 
 namespace WordJourney
 {
-	
-	public class Inscription : Item {
+	[System.Serializable]
+	public class FuseStone : Item {
 
 		public int attackGain;//攻击力增益
 		public int attackSpeedGain;//攻速增益
@@ -21,9 +21,9 @@ namespace WordJourney
 		/// 构造函数
 		/// </summary>
 		/// <param name="itemModel">Item model.</param>
-		public Inscription(ItemModel itemModel){
+		public FuseStone(ItemModel itemModel){
 
-			this.itemType = ItemType.Inscription;
+			this.itemType = ItemType.FuseStone;
 
 
 			/************从单词数据库中获取物品名称**************/
@@ -174,7 +174,7 @@ namespace WordJourney
 		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
-			return "类型: 铭文";
+			return "类型: 融合石";
 		}
 
 

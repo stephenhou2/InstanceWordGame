@@ -70,8 +70,8 @@ namespace WordJourney
 		public void SetUpSpellViewForCreate(Material material){
 
 			if (material != null) {
-				this.spell = material.spell;
-				spellView.SetUpSpellViewWith (material.materialName);
+				this.spell = material.itemDescription;
+				spellView.SetUpSpellViewWith (material.itemName);
 			} else {
 				spellView.SetUpSpellViewWith (null);
 			}
@@ -285,7 +285,7 @@ namespace WordJourney
 
 			Material material = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
 				
-				return obj.spell == charactersEntered.ToString ();
+				return obj.itemNameInEnglish == charactersEntered.ToString ();
 
 			});
 

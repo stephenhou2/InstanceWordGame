@@ -11,10 +11,12 @@ namespace WordJourney{
 		Equipment,
 		Consumables,
 		Task,
-		Inscription,
+		FuseStone,
+		Material,
 		Map
 	}
 
+	[System.Serializable]
 	public abstract class Item {
 
 		public string itemName;
@@ -24,10 +26,12 @@ namespace WordJourney{
 		public int itemId;
 		public ItemType itemType;
 
+		public int levelRequired;
+
 		public int itemCount;
 
 		// 物品属性数组
-		protected double[] propertiesArray;
+//		protected double[] propertiesArray;
 
 
 //		public int attackGain;//攻击力增益
@@ -69,8 +73,8 @@ namespace WordJourney{
 			case ItemType.Consumables:
 				newItem = new Consumables (itemModel);
 				break;
-			case ItemType.Inscription:
-				newItem = new Inscription (itemModel);
+			case ItemType.FuseStone:
+				newItem = new FuseStone (itemModel);
 				break;
 			case ItemType.Task:
 				newItem = new TaskItem(itemModel);

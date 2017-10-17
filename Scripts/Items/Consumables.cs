@@ -14,6 +14,7 @@ namespace WordJourney
 		Tool
 	}
 
+	[System.Serializable]
 	public class Consumables : Item {
 
 		public double healthGain;//血量增益
