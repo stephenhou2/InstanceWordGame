@@ -10,10 +10,8 @@ namespace WordJourney
 	public class ItemDetailView : MonoBehaviour {
 
 		public Text itemName;
-		public Text itemQuality;
 		public Image itemIcon;
 
-		public Image[] arrowsImages;
 		public Text[] itemDetailPropTexts;
 		public Text[] itemDetailPropDifTexts;
 
@@ -22,137 +20,110 @@ namespace WordJourney
 		public Transform propertiesPlane;
 		public Transform detailDescText;
 
-		public void SetUpItemDetailView(Item item,BagViewController bagViewCtr){
+		public void SetUpItemDetailView(Equipment equipedEquipment,Equipment equipmentInBag,BagViewController bagViewCtr){
 
 
-			if (item.itemType == ItemType.Consumables) {
+//			if (item.itemType == ItemType.Consumables) {
+//
+//				Consumables consumables = item as Consumables;
+//				
+//				itemName.text = consumables.itemName;
+//
+//				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+//					return obj.name == consumables.spriteName;
+//				});
+//
+//				if (itemIcon.sprite != null) {
+//					itemIcon.enabled = true;
+//				}
+//
+//				detailDescText.GetComponent<Text> ().text = consumables.GetItemBasePropertiesString ();
+//
+//				detailDescText.gameObject.SetActive (true);
+//
+//				return;
+//			}
 
-				Consumables consumables = item as Consumables;
-				
-				itemName.text = consumables.itemName;
 
-				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == consumables.spriteName;
-				});
+			itemName.text = equipmentInBag.itemName;
 
-				if (itemIcon.sprite != null) {
-					itemIcon.enabled = true;
-				}
-
-				detailDescText.GetComponent<Text> ().text = consumables.GetItemBasePropertiesString ();
-
-				detailDescText.gameObject.SetActive (true);
-
-				return;
+			itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == equipmentInBag.spriteName;
+			});
+			if (itemIcon.sprite != null) {
+				itemIcon.enabled = true;
 			}
 
-			if (item is Equipment) {
 
-				Equipment equipment = item as Equipment;
+			float[] itemProperties = null;
+			float[] itemPropertiesDif = null;
 
-				itemName.text = equipment.itemName;
-
-				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == equipment.spriteName;
-				});
-				if (itemIcon.sprite != null) {
-					itemIcon.enabled = true;
-				}
-
-				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
-					return obj.name == "arrowIcon";
-				});
-
-				Equipment compareEquipment = null;
-				double[] itemProperties = null;
-				double[] itemPropertiesDif = null;
-
-
-				switch (equipment.equipmentType) {
-				case EquipmentType.Weapon:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [0] as Equipment;
-					break;
-				case EquipmentType.Cloth:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [1] as Equipment;
-					break;
-				case EquipmentType.Pants:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [2] as Equipment;
-					break;
-				case EquipmentType.Helmet:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [3] as Equipment;
-					break;
-				case EquipmentType.Shoes:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [4] as Equipment;
-					break;
-				case EquipmentType.Jewelry:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [5] as Equipment;
-					break;
-				case EquipmentType.Ring:
-					compareEquipment = Player.mainPlayer.allEquipedEquipments [6] as Equipment;
-					break;
-				default:
-					break;
-				}
-
-				if (compareEquipment == null) {
-					compareEquipment = new Equipment ();
-				}
-
-				itemProperties = new double[] {
-					equipment.attackGain,
-					equipment.attackSpeedGain,
-					equipment.armorGain,
-					equipment.manaResistGain,
-					equipment.critGain,
-					equipment.dodgeGain
-				};
-				
-				itemPropertiesDif = new double[] {
-					equipment.attackGain - compareEquipment.attackGain,
-					equipment.attackSpeedGain - compareEquipment.attackSpeedGain,
-					equipment.armorGain - compareEquipment.armorGain,
-					equipment.manaResistGain - compareEquipment.manaResistGain,
-					equipment.critGain - compareEquipment.critGain,
-					equipment.dodgeGain - compareEquipment.dodgeGain
-				};
-
-
-
-				for (int i = 0; i < itemDetailPropTexts.Length; i++) {
-				
-					Text propText = itemDetailPropTexts [i];
-					propText.text = itemProperties [i].ToString ();
-
-
-					Image arrowImage = arrowsImages [i];
-					Text propDifText = itemDetailPropDifTexts [i];
-
-					if (itemPropertiesDif [i] < 0) {
-						arrowImage.sprite = arrowSprite;
-						arrowImage.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
-						arrowImage.color = Color.red;
-						arrowImage.enabled = true;
-						propDifText.text = "<color=red>" + (-itemPropertiesDif [i]).ToString () + "</color>";
-					} else if (itemPropertiesDif [i] == 0 && itemProperties [i] > 0) {
-						arrowImage.sprite = arrowSprite;
-						arrowImage.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, -90));
-						arrowImage.enabled = true;
-						propDifText.text = string.Empty;
-					} else if (itemPropertiesDif [i] > 0) {
-						arrowImage.sprite = arrowSprite;
-						arrowImage.color = Color.green;
-						arrowImage.enabled = true;
-						propDifText.text = "<color=green>" + itemPropertiesDif [i].ToString () + "</color>";
-					}
-
-				}
-					
-				equipButton.onClick.RemoveAllListeners ();
-
-				equipButton.onClick.AddListener (delegate() {
-					bagViewCtr.EquipItem (equipment);	
-				});
+			if (equipedEquipment == null) {
+				equipedEquipment = new Equipment ();
 			}
+
+			itemProperties = new float[] {
+				equipmentInBag.attackGain,
+				equipmentInBag.attackSpeedGain,
+				equipmentInBag.armorGain,
+				equipmentInBag.manaResistGain,
+				equipmentInBag.critGain,
+				equipmentInBag.dodgeGain,
+				equipmentInBag.healthGain,
+				equipmentInBag.manaGain
+			};
+			
+			itemPropertiesDif = new float[] {
+				equipmentInBag.attackGain - equipedEquipment.attackGain,
+				equipmentInBag.attackSpeedGain - equipedEquipment.attackSpeedGain,
+				equipmentInBag.armorGain - equipedEquipment.armorGain,
+				equipmentInBag.manaResistGain - equipedEquipment.manaResistGain,
+				equipmentInBag.critGain - equipedEquipment.critGain,
+				equipmentInBag.dodgeGain - equipedEquipment.dodgeGain,
+				equipmentInBag.healthGain - equipedEquipment.healthGain,
+				equipmentInBag.manaGain - equipedEquipment.manaGain
+			};
+
+
+
+			for (int i = 0; i < itemDetailPropTexts.Length; i++) {
+			
+				Text propText = itemDetailPropTexts [i];
+
+				propText.text = itemProperties [i] > 0 ? itemProperties[i].ToString () : string.Empty;
+
+				Text propDifText = itemDetailPropDifTexts [i];
+
+				float compare = itemPropertiesDif [i];
+
+				// 比较后根据属性增减 决定连接符号用"-"还是"+"
+				string linkSymbol = compare < 0 ? "-" : "+";
+
+				// 比较后根据属性增加决定字体颜色
+				string colorText = compare < 0 ? "red" : "green";
+
+				// 比较后的描述字符串
+				string compareString = string.Empty;
+
+				if (compare >= 1) {
+					compareString = string.Format ("(<color={0}>{1}{2}</color>)",colorText,linkSymbol,compare);
+				} else if (compare > 0 && compare < 1) {
+					compareString = string.Format ("(<color={0}>{1}{2}%</color>)",colorText,linkSymbol,(int)(compare * 100));
+				} else if (compare < 0 && compare > -1) {
+					compareString = string.Format ("(<color={0}>{1}{2}%</color>)",colorText,linkSymbol,(int)(-compare * 100));
+				} else if (compare <= -1) {
+					compareString = string.Format ("(<color={0}>{1}{2}</color>)",colorText,linkSymbol,-compare);
+				}
+
+				propDifText.text = compareString;
+
+			}
+				
+			equipButton.onClick.RemoveAllListeners ();
+
+			equipButton.onClick.AddListener (delegate() {
+				bagViewCtr.EquipEquipment (equipmentInBag);	
+			});
 
 			propertiesPlane.gameObject.SetActive (true);
 
@@ -161,7 +132,6 @@ namespace WordJourney
 		public void ResetItemDetail(){
 
 			itemName.text = string.Empty;
-			itemQuality.text = string.Empty;
 			itemIcon.sprite = null;
 			itemIcon.enabled = false;
 
@@ -173,11 +143,6 @@ namespace WordJourney
 			for (int i = 0; i < itemDetailPropTexts.Length; i++) {
 
 				itemDetailPropTexts [i].text = string.Empty;
-
-				arrowsImages [i].sprite = null;
-				arrowsImages [i].transform.localRotation = Quaternion.Euler (Vector3.zero);
-				arrowsImages [i].color = Color.white;
-				arrowsImages [i].enabled = false;
 
 				itemDetailPropDifTexts [i].text = string.Empty;
 			}

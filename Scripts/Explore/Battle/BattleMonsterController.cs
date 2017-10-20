@@ -55,7 +55,7 @@ namespace WordJourney
 		protected override void UseSkill (Skill skill)
 		{
 			
-			GameManager.Instance.soundManager.PlaySkillEffectClip (skill);
+			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Skill, skill.sfxName);
 
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
 				skill.AffectAgents(this,bpCtr);

@@ -25,6 +25,8 @@ namespace WordJourney
 
 		public Button multiTimesButton;
 
+		public Button confirmButton;
+
 		public Text charactersEntered;
 
 
@@ -69,7 +71,7 @@ namespace WordJourney
 	//	public void SetUpSpellView(){
 	//
 	//	}
-		public void SetUpSpellViewWith(string wordInChinese){
+		public void SetUpSpellViewWith(string wordInChinese,SpellPurpose spellPurpose){
 
 			if (wordInChinese != null) {
 				spellRequestText.text = string.Format ("拼写 <color=orange>{0}</color>", wordInChinese);
@@ -78,9 +80,22 @@ namespace WordJourney
 				spellRequestText.text = "拼写任意单词";
 			}
 
-			onceButton.gameObject.SetActive(true);
+			switch (spellPurpose) {
+			case SpellPurpose.CreateMaterial:
+				onceButton.gameObject.SetActive (true);
+				multiTimesButton.gameObject.SetActive (true);
+				break;
+			case SpellPurpose.CreateFuseStone:
+				confirmButton.GetComponentInChildren<Text> ().text = "生成";
+				confirmButton.gameObject.SetActive (true);
+				break;
+			case SpellPurpose.Fix:
+				confirmButton.GetComponentInChildren<Text> ().text = "修复";
+				confirmButton.gameObject.SetActive (true);
+				break; 
+			}
 
-			multiTimesButton.gameObject.SetActive (true);
+
 
 			GetComponent<Canvas>().enabled = true;
 
@@ -109,35 +124,41 @@ namespace WordJourney
 
 		}
 
-//		public void OnEnterCharacter(StringBuilder enteredCharacters,string character){
-//
-//			if (character == null) {
-//				return;
-//			}
-//			
-//			characterTexts [enteredCharacters.Length - 1].text = character;
-//
-//		}
 
-		public void UpdateCharactersEntered(string charactersWithColor){
+		public void UpdateCharactersEntered(string characters,int[] charactersInsufficientArray){
 
-			charactersEntered.text = charactersWithColor;
+			charactersEntered.text = characters;
+
+			for (int i = 0; i < characterButtons.Length; i++) {
+
+				characterButtons [i].interactable = charactersInsufficientArray [i] == 0 
+					&& Player.mainPlayer.charactersCount[i] > 0;
+
+
+
+			}
 
 		}
 
-		public void ShowCharacterTintHUD(int buttonIndex){
-			Button characterButton = characterButtons [buttonIndex];
-			Transform characterTintHUD = characterButton.transform.Find ("TintHUD");
-			characterTintHUD.gameObject.SetActive (true);
+		public void ShowCharacterTintHUD(int index){
+			Button characterButton = characterButtons [index];
+			if (characterButton.interactable) {
+				characterButton.transform.Find ("TintHUD").gameObject.SetActive (true);
+			}
 		}
 
-		public void HideCharacterTintHUD(int buttonIndex){
-			Button characterButton = characterButtons [buttonIndex];
-			Transform characterTintHUD = characterButton.transform.Find ("TintHUD");
-			characterTintHUD.gameObject.SetActive (false);
+		public void HideCharacterTintHUD(int index){
+			Button characterButton = characterButtons [index];
+			if (characterButton.interactable) {
+				characterButton.transform.Find ("TintHUD").gameObject.SetActive (false);
+			}
 		}
-			
 
+		public void UpdateCharactersPlane(){
+			for (int i = 0; i < characterButtons.Length; i++) {
+				characterButtons [i].interactable = Player.mainPlayer.charactersCount[i] > 0;
+			}
+		}
 
 		public void SetUpCreateCountHUD(int minValue,int maxValue){
 
@@ -173,25 +194,43 @@ namespace WordJourney
 
 		}
 
-		public void SetUpCreateMaterialDetailHUD(Material material){
+		public void SetUpCreateMaterialDetailHUD(Item item){
 
 			QuitSpellCountHUD ();
 
-			materialName.text = material.itemName;
+			materialName.text = item.itemName;
+			materialProperty.text = item.itemDescription;
 
-			materialCount.text = string.Format ("数量:{0}", material.itemCount);
+			switch (item.itemType) {
 
-			materialProperty.text = material.itemDescription;
+			case ItemType.Material:
 
-			materialValence.text = material.valence.ToString ();
+				materialCount.text = string.Format ("数量:{0}", item.itemCount);
 
+				materialValence.text = (item as Material).valence.ToString ();
 
-			Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
-				return obj.name == material.spriteName;
-			});
+				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
 
-			if (s != null) {
-				materialIcon.sprite = s;
+				if (s != null) {
+					materialIcon.sprite = s;
+				}
+				break;
+			case ItemType.FuseStone:
+				materialCount.text = string.Empty;
+				materialValence.text = string.Empty;
+
+				s = GameManager.Instance.dataCenter.allItemSprites.Find(delegate(Sprite obj){
+					return obj.name == item.spriteName;
+				});
+
+				if (s != null) {
+					materialIcon.sprite = s;
+				}
+				break;
+			default:
+				break;
 			}
 
 

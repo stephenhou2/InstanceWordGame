@@ -110,38 +110,27 @@ namespace WordJourney
 		public void AddItem(Item item){
 
 			switch(item.itemType){
-
 			case ItemType.Equipment:
-
 				allEquipmentsInBag.Add (item as Equipment);
-
 				break;
-
 			// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
-
 				Consumables comsumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
 					return obj.itemId == item.itemId;	
 				});
-
 				if (comsumablesInBag != null) {
 					comsumablesInBag.itemCount += item.itemCount;
 				} 
-
 				allConsumablesInBag.Add (item as Consumables);
-
 				break;
-
 			case ItemType.FuseStone:
-
 				allFuseStonesInBag.Add (item as FuseStone);
-
 				break;
-
 			case ItemType.Task:
-
 				allTaskItemsInBag.Add (item as TaskItem);
-
+				break;
+			case ItemType.Material:
+				AddMaterial (item as Material);
 				break;
 			}
 				
@@ -220,6 +209,26 @@ namespace WordJourney
 		public void AddMaterial(Material material,int materialCount){
 			material.itemCount = materialCount;
 			AddMaterial (material);
+		}
+
+		public void RemoveMaterials(List<Material> materials){
+			
+			for(int i = 0;i<materials.Count;i++){
+
+				Material material = materials [i];
+
+				Material materialInBag = allMaterialsInBag.Find (delegate(Material obj) {
+					return obj.itemId == material.itemId;
+				});
+
+				materialInBag.itemCount -= material.itemCount;
+
+				if (materialInBag.itemCount <= 0) {
+					allMaterialsInBag.Remove (materialInBag);
+				}
+
+			}
+
 		}
 
 		/// <summary>

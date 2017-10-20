@@ -359,7 +359,7 @@ namespace WordJourney
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
 
-				GameManager.Instance.soundManager.PlayStepClips ();
+				GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Steps, null);
 
 
 				// 记录下一节点位置
@@ -468,7 +468,7 @@ namespace WordJourney
 		protected override void UseSkill (Skill skill)
 		{
 
-			GameManager.Instance.soundManager.PlaySkillEffectClip (skill);
+			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Skill, skill.sfxName);
 			// 技能对应的角色动画，动画结束后执行技能效果并更新角色状态栏
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
 				skill.AffectAgents(this,bmCtr);

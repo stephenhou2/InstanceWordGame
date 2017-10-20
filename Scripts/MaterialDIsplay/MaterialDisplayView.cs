@@ -76,7 +76,7 @@ namespace WordJourney
 
 						SpellViewController spellViewController = TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>();
 
-						spellViewController.SetUpSpellViewForCreate(m);
+						spellViewController.SetUpSpellViewForCreateMaterial(m);
 
 					},true);
 

@@ -73,10 +73,12 @@ namespace WordJourney
 			
 		}
 
+
+
 		/// <summary>
 		/// 构造函数
 		/// </summary>
-		public Equipment(ItemModel itemModel){
+		public Equipment(ItemModel itemModel,FuseStone fuseStone = null){
 
 			this.itemType = ItemType.Equipment;
 
@@ -96,6 +98,9 @@ namespace WordJourney
 			damagePercentage = 0d;
 			equipmentType = itemModel.equipmentType;
 
+			if (fuseStone != null) {
+				itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
+			}
 
 		}
 
@@ -220,13 +225,13 @@ namespace WordJourney
 		/// <param name="compareValue">新装备属性值</param>
 		/// <param name="comparedValue">原装备属性值</param>
 		/// <param name="compareList">存储比较字符串的列表</param>
-		private string CompareItemsProperty(string property, double compareValue,double comparedValue,List<string> compareList){
+		private string CompareItemsProperty(string property, float compareValue,float comparedValue,List<string> compareList){
 
 			// 获得单个属性描述
 			string propertyString = GenerateSinglePropertyString (property, compareValue, null);
 
 			// 该项属性数值对比 
-			double compare = compareValue - comparedValue;
+			float compare = compareValue - comparedValue;
 
 			// 比较后根据属性增减 决定连接符号用"-"还是"+"
 			string linkSymbol = compare < 0 ? "-" : "+";

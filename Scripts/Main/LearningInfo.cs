@@ -103,7 +103,7 @@ namespace WordJourney
 				string example = reader.GetString (3);
 				bool learned = reader.GetBoolean (4);
 
-				Word w = new Word (wordId, spell, explaination, example);
+				Word w = new Word (wordId, spell, explaination, example,true);
 
 				if (learned) {
 					learnedWords.Add (w);
@@ -115,73 +115,4 @@ namespace WordJourney
 
 	}
 
-
-
-	// 单词模型  
-	[System.Serializable]
-	public class Word{
-
-		public int wordId;
-
-		public string spell;
-
-		public string explaination;
-
-		public string example;
-
-
-		public Word(int wordId,string spell,string explaination,string example){
-			this.wordId = wordId;
-			this.spell = spell;
-			this.explaination = explaination;
-			this.example = example;
-		}
-
-		public static Word RandomWord(){
-
-			string tableName = string.Empty;
-
-			WordType wt = GameManager.Instance.dataCenter.learnInfo.wordType;
-
-			switch (wt) {
-			case WordType.CET4:
-				tableName = "CET4";
-				break;
-			case WordType.CET6:
-				tableName = "CET6";
-				break;
-			case WordType.Daily:
-				tableName = "Daily";
-				break;
-			case WordType.Bussiness:
-				tableName = "Bussiness";
-				break;
-			}
-
-			MySQLiteHelper sql = MySQLiteHelper.Instance;
-
-			// 连接数据库
-			sql.GetConnectionWith (CommonData.dataBaseName);
-
-			int wordsCount = sql.GetItemCountOfTable (tableName);
-
-			int wordId = Random.Range (0, wordsCount - 1);
-
-			string[] conditions = new string[]{string.Format ("ID={0}", wordId)};
-
-			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
-
-			reader.Read ();
-
-			string spell = reader.GetString (1);
-
-			string explaination = reader.GetString (2);
-
-			string example = reader.GetString (3);
-
-			return new Word (wordId, spell, explaination, example);
-
-		}
-
-	}
 }

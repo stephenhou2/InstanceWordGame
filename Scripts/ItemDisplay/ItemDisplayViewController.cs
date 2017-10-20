@@ -70,7 +70,6 @@ namespace WordJourney
 		/// </summary:
 		public void SetUpItemDisplayView(){
 
-
 			allItemModels = GameManager.Instance.dataCenter.allItemModels;
 
 //			for (int i = 0; i < allItemModels.Count; i++) {
@@ -103,7 +102,6 @@ namespace WordJourney
 			OnItemTypeButtonClick (0);
 
 			GetComponent<Canvas>().enabled = true; 
-
 
 		}
 

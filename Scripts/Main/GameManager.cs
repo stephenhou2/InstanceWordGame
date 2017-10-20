@@ -103,7 +103,7 @@ namespace WordJourney
 		}
 
 		void Start(){
-			soundManager.InitAudioClips ();
+//			soundManager.InitUIAudioClips ();
 		}
 
 		// 系统设置更改后更新相关设置
@@ -120,18 +120,9 @@ namespace WordJourney
 			DataHandler.WriteModelDataToFile <GameSettings>(dataCenter.gameSettings, CommonData.settingsFilePath);
 
 		}
+			
 
 
-
-
-		public void SetUpHomeView(Player player){
-
-			ResourceManager.Instance.LoadAssetWithBundlePath ("home/canvas", () => {
-
-				ResourceManager.Instance.gos[0].GetComponent<HomeViewController> ().SetUpHomeView ();
-
-			});
-		}
 
 	}
 }

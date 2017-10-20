@@ -78,8 +78,6 @@ namespace WordJourney{
 
 				newTintHUD.gameObject.SetActive (false);
 
-				btn.gameObject.AddComponent<CharacterButton> ();
-
 //				EventTrigger et = btn.gameObject.GetComponent<EventTrigger> ();
 //
 //				EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry ();

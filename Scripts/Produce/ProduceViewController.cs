@@ -15,11 +15,13 @@ namespace WordJourney
 
 		private FuseStone fuseStoneSelected;
 
+		private int totalValence;
+		private int totalUnstableness;
+
 		void Awake(){
 
 			produceView = GetComponent<ProduceView> ();
-		
-
+	
 		}
 			
 
@@ -29,12 +31,15 @@ namespace WordJourney
 
 			for (int i = 0; i < itemModel.materials.Count; i++) {
 				
-				Material m = itemModel.materials [i];
+				Material material = itemModel.materials [i];
 
-				materialsForProduce.Add (new Material (m, 0));
+				materialsForProduce.Add (new Material (material, 0));
+
 			}
 
-			produceView.SetUpProduceView (itemModel,materialsForProduce);
+			CalculateTotalValenceAndUnstableness ();
+
+			produceView.SetUpProduceView (itemModel,materialsForProduce,totalValence,totalValence);
 
 		}
 
@@ -47,32 +52,33 @@ namespace WordJourney
 				return;
 			}
 			material.itemCount += 1;
-			produceView.SetUpProduceView (itemModel, materialsForProduce);
+
+			CalculateTotalValenceAndUnstableness ();
+
+			produceView.SetUpProduceView (itemModel, materialsForProduce, totalValence, totalUnstableness);
+
 			CheckProduceQualification ();
 		}
 
 		public void MaterialCountMinusOne(Material material){
-			if (material.itemCount <= 1) {
+			if (material.itemCount <= 0) {
 				return;
 			}
 			material.itemCount -= 1;
-			produceView.SetUpProduceView (itemModel, materialsForProduce);
+
+			CalculateTotalValenceAndUnstableness ();
+
+			produceView.SetUpProduceView (itemModel, materialsForProduce, totalValence, totalUnstableness);
+
 			CheckProduceQualification ();
 		}
 
 		private void CheckProduceQualification(){
-			
-			int totalValence = 0;
 
 			for (int i = 0; i < materialsForProduce.Count; i++) {
 				if (materialsForProduce [i].itemCount < 1) {
 					return;
 				}
-			}
-
-			for (int i = 0; i < materialsForProduce.Count; i++) {
-				Material material = materialsForProduce [i];
-				totalValence += material.valence * material.itemCount;
 			}
 
 			if(totalValence == 0){
@@ -85,25 +91,32 @@ namespace WordJourney
 			produceView.SetUpFuseStonesDisplayPlane ();
 		}
 
-		public void OnFuseStoneButtonClick(FuseStone fuseStone,Transform fuseStoneTrans){
-
+		public void SelectFuseStone(FuseStone fuseStone){
 			fuseStoneSelected = fuseStone;
-
-			produceView.UpdateFuseStonesDisplayPlane (fuseStoneTrans);
-
+			CalculateTotalValenceAndUnstableness ();
+			produceView.UpdateTotalUnstableness (totalUnstableness);
 		}
 
 		public void OnConfirmFuseStoneButtonClick(){
-
 			produceView.QuitFuseStonesDisplayPlane ();
-
 		}
 
 		private void UseFuseStone(){
-			Player.mainPlayer.allFuseStonesInBag.Remove (fuseStoneSelected);
-			fuseStoneSelected = null;
+			if (fuseStoneSelected != null){
+				Player.mainPlayer.allFuseStonesInBag.Remove (fuseStoneSelected);
+				fuseStoneSelected = null;
+			}
 		}
 
+
+		private bool ProduceSuccess(int unstableness){
+			return Random.Range (0, 100) > unstableness;
+		}
+
+		private Material RandomFailMaterial(List<Material> materials){
+			int index = Random.Range (0, materials.Count - 1);
+			return materials [index];
+		}
 
 		/// <summary>
 		/// 制造按钮点击响应
@@ -112,34 +125,29 @@ namespace WordJourney
 
 			Item item = null;
 
+			if (fuseStoneSelected != null) {
+				totalUnstableness -= fuseStoneSelected.successGain;
+			}
+
 			switch (itemModel.itemType) {
 			case ItemType.Equipment:
-				item = new Equipment (itemModel);
+				if (ProduceSuccess(totalUnstableness)) {
+					item = new Equipment (itemModel,fuseStoneSelected);
+				} else {
+					Material failMaterial = RandomFailMaterial (itemModel.failMaterials);
+					item = new Material (failMaterial, 1);
+				}
 				break;
-			case ItemType.Consumables:
-				item = new Consumables (itemModel);
-				break;
+//			case ItemType.Consumables:
+//				item = new Consumables (itemModel);
+//				break;
 			default:
 				break;
 			}
 
 			Player.mainPlayer.AddItem (item);
 
-			for(int i = 0;i<materialsForProduce.Count;i++){
-
-				Material material = materialsForProduce [i];
-				
-				Material materialInBag = Player.mainPlayer.allMaterialsInBag.Find (delegate(Material obj) {
-					return obj.itemId == material.itemId;
-				});
-
-				materialInBag.itemCount -= material.itemCount;
-
-				if (materialInBag.itemCount <= 0) {
-					Player.mainPlayer.allMaterialsInBag.Remove (materialInBag);
-				}
-
-			}
+			Player.mainPlayer.RemoveMaterials (materialsForProduce);
 
 			UseFuseStone ();
 
@@ -155,14 +163,38 @@ namespace WordJourney
 				materialsForProduce [i].itemCount = 0;
 			}
 
-			produceView.SetUpProduceView (itemModel, materialsForProduce);
+			produceView.SetUpProduceView (itemModel, materialsForProduce,totalValence,totalUnstableness);
 
 		}
 
+		public void QuitFailMaterialHUD(){
+
+			produceView.QuitFailMaterialHUD ();
+
+		}
+
+		private void CalculateTotalValenceAndUnstableness(){
+
+			totalValence = 0;
+			totalUnstableness = 0;
+			
+			for (int i = 0; i < materialsForProduce.Count; i++) {
+				Material material = materialsForProduce [i];
+				totalValence += material.valence * material.itemCount;
+				totalUnstableness += material.unstableness * material.itemCount;
+			}
+
+			if (fuseStoneSelected != null) {
+				totalUnstableness -= fuseStoneSelected.successGain;
+			}
+
+		}
 
 		public void QuitProduceView(){
 			
-			produceView.QuitProduceView (DestroyInstances);
+//			produceView.QuitProduceView (DestroyInstances);
+
+			DestroyInstances ();
 
 			TransformManager.FindTransform ("ItemDisplayCanvas").GetComponent<Canvas> ().enabled = true;
 

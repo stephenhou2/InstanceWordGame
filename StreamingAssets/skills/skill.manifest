@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 872165785
+CRC: 1098068998
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6c3dc7b78f745726e021fdb938a0a459
+    Hash: babe8650c4ec5672adc67116284e621c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e58b4bfb337c1a1015225c49a433b9da
+    Hash: 9279a8d3a65a28d092db93583bde8f8d
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -44,7 +44,7 @@ ClassTypes:
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Skill/NewSkills/DecreaseArmour.prefab
+- Assets/Prefabs/Skill/NewSkills/DecreaseArmor.prefab
 - Assets/Prefabs/Skill/NewSkills/ElementBody.prefab
 - Assets/Prefabs/Skill/NewSkills/IronSkin.prefab
 - Assets/Prefabs/Skill/NewSkills/WeaponExpert.prefab

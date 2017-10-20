@@ -11,6 +11,8 @@ namespace WordJourney
 
 		public string skillEngName;
 
+		public string sfxName;//音效名称
+
 		public int skillId;
 
 		public string skillIconName;

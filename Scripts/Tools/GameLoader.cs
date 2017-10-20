@@ -10,8 +10,6 @@ namespace WordJourney
 
 		private int maxCaching = 100;
 
-		public GameManager gameManager;
-
 		void Awake(){
 
 			StartCoroutine ("PersistDataAlways");
@@ -26,11 +24,19 @@ namespace WordJourney
 
 			DontDestroyOnLoad (GameManager.Instance.gameObject);
 
-			GameManager.Instance.SetUpHomeView (Player.mainPlayer);
-
-
+			SetUpHomeView (Player.mainPlayer);
 
 		}
+
+		private void SetUpHomeView(Player player){
+
+			ResourceManager.Instance.LoadAssetWithBundlePath ("home/canvas", () => {
+
+				ResourceManager.Instance.gos[0].GetComponent<HomeViewController> ().SetUpHomeView ();
+
+			},true);
+		}
+
 
 		/// <summary>
 		/// 初始化系统设置

@@ -266,5 +266,36 @@ namespace WordJourney
 			battlePlane.gameObject.SetActive (false);
 		}
 
+		public void QuitExplore(){
+
+			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().OnQuitExplore();
+
+			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+
+			if (homeCanvas != null) {
+				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
+			}
+				
+			Destroy (this.gameObject);
+
+			Destroy (TransformManager.FindTransform ("TintTextModel").gameObject);
+
+			DestroyInstancePools ();
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
+
+		}
+
+		private void DestroyInstancePools(){
+
+			Destroy (TransformManager.FindTransform ("ChoiceButtonPool").gameObject);
+			Destroy (TransformManager.FindTransform ("RewardButtonPool").gameObject);
+			Destroy (TransformManager.FindTransform ("SkillButtonPool").gameObject);
+			Destroy (TransformManager.FindTransform ("TintTextPool").gameObject);
+
+		}
+
 	}
 }

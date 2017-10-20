@@ -11,14 +11,39 @@ namespace WordJourney
 
 		private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
 
-		private int currentSelectEquipIndex;
+//		private List<Equipment> allEquipmentsOfSelectType = new List<Equipment>();
 
-		private int currentSelectItemIndex;
+		private ItemType currentSelectItemType;
+
+		private EquipmentType currentSelectEquipmentType;
+
+//		private int currentSelectEquipIndex;
+
+		private Item currentSelectItem;
 
 		private int resolveCount;
 
 		private int minResolveCount;
 		private int maxResolveCount;
+
+
+		#warning forTest init some equipments for test
+		void Awake(){
+			
+			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
+				for (int i = 0; i < 128; i++) {
+
+					ItemModel im = GameManager.Instance.dataCenter.allItemModels.Find (delegate (ItemModel obj) {
+						return obj.itemId == i;
+					});
+
+					Equipment e = new Equipment (im);
+
+					Player.mainPlayer.allEquipmentsInBag.Add (e);
+
+				}
+			}
+		}
 
 		public void SetUpBagView(){
 
@@ -30,71 +55,106 @@ namespace WordJourney
 			
 
 		// 已装备界面上按钮点击响应
-		public void OnEquipedItemButtonsClick(int index){
+		public void OnEquipedEquipmentButtonClick(int index){
 
-			allItemsOfCurrentSelcetType.Clear ();
+			currentSelectEquipmentType = (EquipmentType)index;
 
-			currentSelectEquipIndex = index;
-
-			EquipmentType equipmentType = (EquipmentType)index;
-
-			List<Equipment> allEquipmentsOfSelectType = Player.mainPlayer.allEquipmentsInBag.FindAll (delegate(Equipment obj) {
-				return obj.equipmentType == equipmentType;
+			Equipment equipedEquipment = Player.mainPlayer.allEquipedEquipments.Find (delegate(Equipment obj) {
+				return obj.equipmentType == currentSelectEquipmentType;
 			});
 
-			for (int i = 0; i < allEquipmentsOfSelectType.Count; i++) {
-				allItemsOfCurrentSelcetType.Add (allEquipmentsOfSelectType [i]);
+			List<Equipment> allEquipmentsOfSelectType = Player.mainPlayer.allEquipmentsInBag.FindAll (delegate(Equipment obj) {
+				return obj.equipmentType == currentSelectEquipmentType;
+			});
+
+			bagView.SetUpAllEquipmentsPlaneOfEquipmentType (equipedEquipment,allEquipmentsOfSelectType);
+
+		}
+
+		public void OnItemTypeButtonClick(int index){
+
+			ItemType itemType = (ItemType)index;
+
+			if (itemType == currentSelectItemType) {
+				return;
 			}
 
-			bagView.OnEquipedItemButtonsClick (allItemsOfCurrentSelcetType);
+			currentSelectItemType = itemType;
 
+			switch (itemType) {
+			case ItemType.Equipment:
+				InitItemsOfCurrentSelectType(Player.mainPlayer.allEquipmentsInBag);
+				break;
+			case ItemType.Consumables:
+				InitItemsOfCurrentSelectType(Player.mainPlayer.allConsumablesInBag);
+				break;
+			case ItemType.Task:
+				InitItemsOfCurrentSelectType(Player.mainPlayer.allTaskItemsInBag);
+				break;
+			case ItemType.FuseStone:
+				InitItemsOfCurrentSelectType(Player.mainPlayer.allFuseStonesInBag);
+				break;
+			case ItemType.Material:
+				InitItemsOfCurrentSelectType(Player.mainPlayer.allMaterialsInBag);
+				break;
+			}
+
+			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelcetType);
+
+		}
+
+		/// <summary>
+		/// 将指定类型的物品加入到 <所有当前选择类型的物品> 列表中
+		/// </summary>
+		/// <param name="itemsInBag">Items in bag.</param>
+		private void InitItemsOfCurrentSelectType<T>(List<T> itemsInBag)
+			where T:Item
+		{
+			
+			allItemsOfCurrentSelcetType.Clear ();
+
+			for (int i = 0; i < itemsInBag.Count; i++) {
+				allItemsOfCurrentSelcetType.Add (itemsInBag [i]);
+			}
 		}
 
 		public void OnItemButtonOfSpecificItemPlaneClick(int index){
 
 			Item item = allItemsOfCurrentSelcetType [index];
 
-			bagView.OnItemButtonOfSpecificItemPlaneClick (item, currentSelectEquipIndex);
+			bagView.OnItemButtonOfSpecificItemPlaneClick (item);
 
 		}
 
-		public void OnItemButtonClick(int index){
+		public void SelectItem(Item item){
 
-			currentSelectItemIndex = index;
+			if (currentSelectItem == item) {
+				return;
+			}
 
-			bagView.OnItemButtonClick (index);
+			currentSelectItem = item;
 
 		}
 
-		public void EquipItem(Equipment equipment){
+		public void EquipEquipment(Equipment equipment){
 
-			Player player = Player.mainPlayer;
+			List<Equipment> allEquipedEquipments = Player.mainPlayer.allEquipedEquipments;
 
-			if (player.allEquipedEquipments [currentSelectEquipIndex] != null) {
+			Equipment equipedEquipmentOfSelectType = allEquipedEquipments.Find (delegate(Equipment obj) {
+				return obj.equipmentType == equipment.equipmentType;
+			});
+
+			if (equipedEquipmentOfSelectType != null) {
 				
-				player.allEquipedEquipments [currentSelectEquipIndex].equiped = false;
+				equipedEquipmentOfSelectType.equiped = false;
 
 			}
 
-//			for (int i = 3; i < player.allEquipedEquipments.Count; i++) {
-//
-//				Item equipedConsumable = player.allEquipedEquipments [i];
-//
-//				if (equipedConsumable != null && equipedConsumable.itemId == item.itemId) {
-//
-//					equipedConsumable.equiped = false;
-//
-//					player.allEquipedEquipments [i] = null;
-//
-//				}
-//
-//			}
-
 			equipment.equiped = true;
 
-			player.allEquipedEquipments [currentSelectEquipIndex] = equipment;
+			allEquipedEquipments.Add(equipment);
 
-			player.ResetBattleAgentProperties (false);
+			Player.mainPlayer.ResetBattleAgentProperties (false);
 
 			bagView.OnEquipButtonOfDetailHUDClick ();
 
@@ -183,7 +243,7 @@ namespace WordJourney
 
 		public void FixEquipment(){
 
-			Equipment equipment = Player.mainPlayer.allEquipmentsInBag [currentSelectItemIndex] as Equipment;
+			Equipment equipment = currentSelectItem as Equipment;
 
 			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (equipment.itemNameInEnglish);
 

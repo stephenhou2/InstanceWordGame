@@ -6,6 +6,31 @@ namespace WordJourney
 {
 	public class DataCenter {
 
+//		public Dictionary<string,List<object>> cacheDic = new Dictionary<string, List<object>> ();
+
+//		public void UnloadCaches(string[] cacheNames,Transform[] cacheContainers){
+//
+//			for(int i = 0;i<cacheNames.Length;i++){
+//				string cacheName = cacheNames [i];
+//				cacheDic [cacheName].Clear ();
+//				cacheDic.Remove (cacheName);
+//			}
+//
+//			if (cacheContainers != null) {
+//				for (int i = 0; i < cacheContainers.Length; i++) {
+//					GameObject.Destroy (cacheContainers[i]);
+//
+//				}
+//			}
+//
+//			Resources.UnloadUnusedAssets ();
+//
+//			System.GC.Collect ();
+//
+//
+//		}
+
+
 		private GameSettings mGameSettings;
 		public GameSettings gameSettings{
 
@@ -45,6 +70,8 @@ namespace WordJourney
 					for (int i = 0; i < materials.Length; i++) {
 						mAllMaterials.Add (materials [i]);
 					}
+
+//					cacheDic.Add ("allMaterials",mAllMaterials);
 				}
 				return mAllMaterials;
 			}
@@ -59,6 +86,7 @@ namespace WordJourney
 							mAllMaterialSprites.Add(ResourceManager.Instance.sprites[i]);
 						}
 					},true);
+//					cacheDic.Add ("allMaterialSprites", mAllMaterialSprites);
 				}
 				return mAllMaterialSprites;
 			}
@@ -72,6 +100,7 @@ namespace WordJourney
 					for (int i = 0; i < itemModels.Length; i++) {
 						mAllItemModels.Add (itemModels [i]);
 					}
+//					cacheDic.Add ("allItemModels", mAllItemModels);
 				}
 				return mAllItemModels;
 			}
@@ -89,6 +118,7 @@ namespace WordJourney
 							mAllItemSprites.Add(ResourceManager.Instance.sprites[i]);
 						}
 					},true);
+//					cacheDic.Add ("allItemSprites", mAllItemSprites);
 				}
 
 				return mAllItemSprites;
@@ -110,7 +140,7 @@ namespace WordJourney
 							mAllMapSprites.Add (s);
 						}
 					},true);
-
+//					cacheDic.Add ("allMapSprites", mAllMapSprites);
 				}
 				return mAllMapSprites;
 			}
@@ -134,9 +164,11 @@ namespace WordJourney
 						}
 					},true);
 
-				}
+					SortSkillsById (mAllSkills);
 
-				SortSkillsById (mAllSkills);
+//					cacheDic.Add ("allSkills", mAllSkills);
+
+				}
 
 				return mAllSkills;
 			}
@@ -170,6 +202,7 @@ namespace WordJourney
 							mAllSkillSprites.Add(ResourceManager.Instance.sprites[i]);
 						}
 					},true);
+//					cacheDic.Add ("allSkillSprites", mAllSkillSprites);
 				}
 
 				return mAllSkillSprites;
@@ -185,6 +218,7 @@ namespace WordJourney
 							mAllUIIcons.Add(ResourceManager.Instance.sprites[i]);
 						}
 					},true);
+//					cacheDic.Add ("allUIIcons", mAllUIIcons);
 				}
 				return mAllUIIcons;
 			}
@@ -200,10 +234,10 @@ namespace WordJourney
 							mAllMonsters.Add(monster);
 						};
 					}, true);
+//					cacheDic.Add ("allMonsters", allMonsters);
 				}
 				return mAllMonsters;
 			}
 		}
-
 	}
 }

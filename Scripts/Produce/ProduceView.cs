@@ -27,7 +27,7 @@ namespace WordJourney
 		private InstancePool fuseStonesPool;
 		private Transform fuseStoneModel;
 
-
+		public Transform failMaterialHUD;
 
 
 		private Tweener produceButtonAnim;
@@ -42,17 +42,25 @@ namespace WordJourney
 		}
 
 
-
-		public void SetUpProduceView(ItemModel itemModel,List<Material> materialsForProduce){
+		/// <summary>
+		/// 初始化制造界面
+		/// </summary>
+		/// <param name="itemModel">Item model.</param>
+		/// <param name="materialsForProduce">Materials for produce.</param>
+		public void SetUpProduceView(ItemModel itemModel,List<Material> materialsForProduce,int totalValence,int totalUnstableness){
 
 			itemNameInProduceView.text = itemModel.itemName;
 
 			GetRandomMaterialButtons (materialsForProduce);
 
-			SetUpMaterialButtons (materialsForProduce);
+			SetUpMaterialButtons (materialsForProduce,totalValence,totalUnstableness);
 
 		}
 
+		/// <summary>
+		/// 获得材料在炼成阵中对应的按钮位置
+		/// </summary>
+		/// <param name="materials">Materials.</param>
 		private void GetRandomMaterialButtons(List<Material> materials){
 
 			indexGrid.Clear ();
@@ -72,10 +80,11 @@ namespace WordJourney
 			}
 		}
 
-		private void SetUpMaterialButtons(List<Material> materials){
-
-			int totalValence = 0;
-			int totalUnstableness = 0;
+		/// <summary>
+		/// 初始化炼金阵中的材料按钮
+		/// </summary>
+		/// <param name="materials">Materials.</param>
+		private void SetUpMaterialButtons(List<Material> materials,int totalValence,int totalUnstableness){
 
 			for (int i = 0; i < randomMaterialDetailViews.Count; i++) {
 
@@ -122,44 +131,76 @@ namespace WordJourney
 
 				materialDetailView.gameObject.SetActive (true);
 
-				totalValence += material.valence * material.itemCount;
-				totalUnstableness += material.unstableness * material.itemCount;
+
 			}
 
 
 			totalView.Find ("TotalValence").GetComponent<Text> ().text = totalValence.ToString();
-			totalView.Find ("TotalUnstableness").GetComponent<Text> ().text = string.Format ("{0}%", totalUnstableness);
+			UpdateTotalUnstableness (totalUnstableness);
 
 			totalView.gameObject.SetActive (true);
 
 		}
 
 		/// <summary>
-		/// Sets up item details.
+		/// 初始化制造出的物品显示界面
 		/// </summary>
 		/// <param name="equipment">Equipment.</param>
 		public void SetUpItemDetailsPlane(Item item){
 
-			Text itemName = itemDetailsContainer.Find ("ItemName").GetComponent<Text> ();
-			Text levelRequired = itemDetailsContainer.Find ("LevelRequired").GetComponent<Text> ();
-			Text itemBaseProperties = itemDetailsContainer.Find ("ItemBaseProperties").GetComponent<Text> ();
-			Text itemAttachedProperties = itemDetailsContainer.Find("ItemAttachedProperties").GetComponent<Text> ();
-			Image itemIcon = itemDetailsContainer.Find("ItemIcon").GetComponent<Image> ();
+			if (item.itemType == ItemType.Equipment) {
+				Text itemName = itemDetailsContainer.Find ("ItemName").GetComponent<Text> ();
+				Text levelRequired = itemDetailsContainer.Find ("LevelRequired").GetComponent<Text> ();
+				Text itemBaseProperties = itemDetailsContainer.Find ("ItemBaseProperties").GetComponent<Text> ();
+				Text itemAttachedProperties = itemDetailsContainer.Find ("ItemAttachedProperties").GetComponent<Text> ();
+				Image itemIcon = itemDetailsContainer.Find ("ItemIcon").GetComponent<Image> ();
 
-			itemName.text = item.itemName;
-			itemBaseProperties.text = item.GetItemBasePropertiesString ();
+				itemName.text = item.itemName;
+				itemBaseProperties.text = item.GetItemBasePropertiesString ();
 
-			Sprite s = GameManager.Instance.dataCenter.allItemSprites.Find(delegate(Sprite obj){
-				return obj.name == item.spriteName;
-			});
+				Sprite s = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
 
-			if (s != null) {
-				itemIcon.sprite = s;
-			}
+				if (s != null) {
+					itemIcon.sprite = s;
+				}
 				
-			levelRequired.text = string.Format ("等级要求:{0}", item.levelRequired);
+				levelRequired.text = string.Format ("等级要求:{0}", item.levelRequired);
 
-			itemDetailsPlane.gameObject.SetActive (true);
+				itemDetailsPlane.gameObject.SetActive (true);
+
+			} else {
+
+				Material failMaterial = item as Material;
+
+				Text materialName = failMaterialHUD.Find ("MaterialName").GetComponent<Text> ();
+				Text materialProperty = failMaterialHUD.Find ("MaterialProperty").GetComponent<Text> ();
+				Text materialValence = failMaterialHUD.Find ("MaterialValence").GetComponent<Text> ();
+				Text materialCount = failMaterialHUD.Find ("MaterialCount").GetComponent<Text> ();
+				Image materialIcon = failMaterialHUD.Find ("MaterialIcon").GetComponent<Image> ();
+
+				materialName.text = failMaterial.itemName;
+				materialProperty.text = failMaterial.itemDescription;
+				materialValence.text = failMaterial.valence.ToString ();
+				materialCount.text = string.Format ("数量：{0}", failMaterial.itemCount);
+
+				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == failMaterial.spriteName;
+				});
+
+				if (s != null) {
+					materialIcon.sprite = s;
+				}
+
+				failMaterialHUD.gameObject.SetActive (true);
+			}
+
+		}
+
+		public void QuitFailMaterialHUD (){
+
+			failMaterialHUD.gameObject.SetActive (false);
 
 		}
 
@@ -178,7 +219,7 @@ namespace WordJourney
 			Transform produceButton = totalView.Find ("ProduceButton");
 
 			produceButtonAnim = produceButton.GetComponent<Image> ().DOFade (0.5f, 2f).OnComplete (() => {
-					produceButton.GetComponent<Image> ().DOFade (1f, 2f);
+				produceButton.GetComponent<Image> ().DOFade (1f, 2f);
 			});
 				
 			produceButtonAnim.SetLoops (-1);
@@ -186,6 +227,9 @@ namespace WordJourney
 			produceButton.gameObject.SetActive (true);
 		}
 
+		/// <summary>
+		/// 隐藏制造按钮
+		/// </summary>
 		private void DisableProduceButton(){
 			
 			Transform produceButton = totalView.Find ("ProduceButton");
@@ -201,7 +245,9 @@ namespace WordJourney
 			produceButton.gameObject.SetActive (false);
 		}
 
-
+		/// <summary>
+		/// 初始化融合石选择界面
+		/// </summary>
 		public void SetUpFuseStonesDisplayPlane(){
 
 			fuseStonesPool.AddChildInstancesToPool (fuseStonesContainer);
@@ -212,14 +258,26 @@ namespace WordJourney
 
 				Button fuseStoneButton = fuseStonesPool.GetInstance<Button> (fuseStoneModel.gameObject,fuseStonesContainer);
 
-				fuseStoneButton.GetComponent<Text> ().text = fuseStone.itemName;
+				Text fusetStoneName = fuseStoneButton.transform.Find ("FuseStoneName").GetComponent<Text> ();
 
-				fuseStoneButton.transform.Find ("SelectedBorder").gameObject.SetActive (false);
+				fusetStoneName.text = fuseStone.itemName;
 
 				fuseStoneButton.onClick.RemoveAllListeners ();
 
 				fuseStoneButton.onClick.AddListener (delegate {
-					GetComponent<ProduceViewController>().OnFuseStoneButtonClick(fuseStone,fuseStoneButton.transform);
+
+					for (int j = 0; j < fuseStonesContainer.childCount; j++) {
+
+						Transform trans = fuseStonesContainer.GetChild (j);
+
+						if(trans != fuseStoneButton.transform){
+							trans.Find ("SelectedBorder").GetComponent<Image>().enabled = false;
+						}else{
+							Image selectBorder = trans.Find ("SelectedBorder").GetComponent<Image>();
+							selectBorder.enabled = !selectBorder.enabled;
+							GetComponent<ProduceViewController>().SelectFuseStone(selectBorder.enabled ? fuseStone : null);
+						}
+					}
 				});
 
 			}
@@ -228,21 +286,37 @@ namespace WordJourney
 
 		}
 
-		public void UpdateFuseStonesDisplayPlane(Transform selectedFuseStoneTrans){
+		public void UpdateTotalUnstableness(int totalUnstableness){
 
-			for (int i = 0; i < fuseStonesContainer.childCount; i++) {
-				
-				Transform trans = fuseStonesContainer.GetChild (i).Find ("SelectedBorder");
-					
-				trans.gameObject.SetActive (trans == selectedFuseStoneTrans);
+			totalView.Find ("TotalUnstableness").GetComponent<Text> ().text = string.Format ("{0}%", totalUnstableness < 0 ? 0 : totalUnstableness);
 
-			}
 		}
 
+//		/// <summary>
+//		/// 更新所有融合石的选框
+//		/// </summary>
+//		/// <param name="selectedFuseStoneTrans">Selected fuse stone trans.</param>
+//		public void UpdateFuseStonesDisplayPlane(Transform selectedFuseStoneTrans){
+//
+//			for (int i = 0; i < fuseStonesContainer.childCount; i++) {
+//				
+//				Transform trans = fuseStonesContainer.GetChild (i);
+//					
+//				trans.Find ("SelectedBorder").gameObject.SetActive (trans == selectedFuseStoneTrans);
+//
+//			}
+//		}
+
+		/// <summary>
+		/// 退出融合石选择界面
+		/// </summary>
 		public void QuitFuseStonesDisplayPlane(){
 			fuseStonesDisplayPlane.gameObject.SetActive (false);
 		}
 
+		/// <summary>
+		/// 退出制造出的物品显示界面
+		/// </summary>
 		public void QuitItemDetailsPlane(){
 
 			DisableProduceButton ();
@@ -251,11 +325,11 @@ namespace WordJourney
 
 		}
 
-		public void QuitProduceView(CallBack cb){
-
-
-
-		}
+//		public void QuitProduceView(CallBack cb){
+//
+//
+//
+//		}
 
 	}
 }

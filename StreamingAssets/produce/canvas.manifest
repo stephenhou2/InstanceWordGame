@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3002985399
+CRC: 1993794466
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2e3994f006e06430bf0636d6f97a192b
+    Hash: 2e58abc8376c26acf91d0fb021395ef9
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a7cc5784534df15308685476fb2d37cc
+    Hash: 457a230455ec9ea8000d65fac0905289
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -23,6 +23,8 @@ ClassTypes:
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
@@ -53,4 +55,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Produce/ProduceCanvas.prefab
+- Assets/Prefabs/Produce/FuseStoneModel.prefab
 Dependencies: []

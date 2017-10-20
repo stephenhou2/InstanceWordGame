@@ -57,9 +57,9 @@ namespace WordJourney{
 	}
 
 	public enum SpellPurpose{
-		Create,
+		CreateMaterial,
+		CreateFuseStone,
 		Fix,
-		Task
 	}
 
 

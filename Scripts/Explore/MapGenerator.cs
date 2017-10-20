@@ -27,7 +27,6 @@ namespace WordJourney
 
 		public GameObject wallModel;
 		public GameObject floorModel;
-		public TreasureBox treasureBoxModel;
 		public MapNPC mapNpcModel;
 
 		private List<MapItem> mapItems = new List<MapItem> ();
@@ -58,7 +57,9 @@ namespace WordJourney
 		public int[,] mapWalkableInfoArray;
 
 
-		void Awake(){
+		//SetupScene initializes our level and calls the previous functions to lay out the game board
+		public void SetUpMap (ChapterDetailInfo chapterDetail)
+		{
 
 			outerWallPool = InstancePool.GetOrCreateInstancePool ("OuterWallPool");
 			floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool");
@@ -68,13 +69,6 @@ namespace WordJourney
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
 
-		}
-
-
-
-		//SetupScene initializes our level and calls the previous functions to lay out the game board
-		public void SetUpMap (ChapterDetailInfo chapterDetail)
-		{
 			this.chapterDetail = chapterDetail;
 
 			mapInfo = DataHandler.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFilePath);
@@ -122,11 +116,17 @@ namespace WordJourney
 
 			player.rotation = Quaternion.identity;
 
-			Camera.main.transform.position = new Vector3 (0, 0, -10);
+
+//			Camera.main.transform.position = new Vector3 (0, 0, -10);
+
+//			Camera.main.transform.rotation = Quaternion.identity;
+
+
+			Camera.main.transform.SetParent (player, false);
 
 			Camera.main.transform.rotation = Quaternion.identity;
 
-			Camera.main.transform.SetParent (player,false);
+			Camera.main.transform.localPosition = new Vector3 (0, 0, -10);
 
 			bpCtr.PlayRoleAnim ("stand", 0, null);
 
@@ -428,6 +428,16 @@ namespace WordJourney
 			npcPool.AddChildInstancesToPool (npcsContainer);
 			itemPool.AddChildInstancesToPool (itemsContainer);
 			monsterPool.AddChildInstancesToPool (monstersContainer);
+		}
+
+		public void DestroyInstancePools(){
+
+			Destroy (outerWallPool.gameObject);
+			Destroy (floorPool.gameObject);
+			Destroy (npcPool.gameObject);
+			Destroy (itemPool.gameObject);
+			Destroy (monsterPool.gameObject);
+
 		}
 
 	}

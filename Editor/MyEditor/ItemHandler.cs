@@ -189,13 +189,26 @@ namespace WordJourney
 			levelRequired = Convert.ToInt16 (itemStrings [19]);
 			spriteName = itemStrings [20];
 
-
-
-
 			itemDescription = itemDescription.Replace ("_", "\n"); 
 
 
+			AdjustData (attackGain,out attackGain);
+			AdjustData (attackSpeedGain,out attackSpeedGain);
+			AdjustData (armorGain,out armorGain);
+			AdjustData (manaResistGain,out manaResistGain);
+			AdjustData (dodgeGain,out dodgeGain);
+			AdjustData (critGain,out critGain);
+			AdjustData (healthGain,out healthGain);
+			AdjustData (manaGain,out manaGain);
+
+
+
 		}
+
+		private void AdjustData(float v,out float value){
+			value = v < 0 ? 0 : v;
+		}
+
 
 		public override string ToString ()
 		{
@@ -260,6 +273,7 @@ namespace WordJourney
 			}
 
 		}
+
 
 		public override string ToString ()
 		{

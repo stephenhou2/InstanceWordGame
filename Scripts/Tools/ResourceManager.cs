@@ -42,6 +42,9 @@ namespace WordJourney
 		private AssetBundle myLoadedAssetBundle;
 
 		private Object[] assetsLoaded;
+
+		private bool loadDone;
+
 	
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();
 
@@ -89,6 +92,7 @@ namespace WordJourney
 		/// <param name="bundlePath">Bundle path.</param>
 		private void LoadFromFileSync (string bundlePath)
 		{
+			loadDone = false;
 
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
@@ -119,6 +123,10 @@ namespace WordJourney
 		/// <param name="bundlePath">Bundle path.</param>
 		private IEnumerator LoadFromFileAsync (string bundlePath)
 		{
+
+			yield return new WaitUntil (() => loadDone);
+
+			loadDone = false;
 
 			string targetPath = Path.Combine (Application.streamingAssetsPath, bundlePath);
 
@@ -217,15 +225,24 @@ namespace WordJourney
 			}
 
 			// 从内存中删除资源
+			ClearCache();
+
+			Resources.UnloadUnusedAssets ();
+
+			GC.Collect ();
+
+			loadDone = true;
+		
+		}
+
+		private void ClearCache(){
+
 			gos.Clear();
 
 			sprites.Clear();
 
 			audioClips.Clear();
 
-			Resources.UnloadUnusedAssets ();
-
-			GC.Collect ();
 		}
 	}
 }

@@ -27,6 +27,7 @@ namespace WordJourney
 			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
 
 
+
 		}
 
 		public void GetCurrentSelectInfo(Skill skill){

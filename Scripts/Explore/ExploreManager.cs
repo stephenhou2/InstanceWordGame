@@ -28,9 +28,6 @@ namespace WordJourney
 		private ExploreUICotroller expUICtr;
 
 
-
-
-
 		void Awake()
 		{
 
@@ -63,6 +60,8 @@ namespace WordJourney
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);
+
+			GameManager.Instance.soundManager.InitExploreAudioClips ();
 
 		}
 
@@ -210,7 +209,7 @@ namespace WordJourney
 
 			Obstacle obstacle = mapItem as Obstacle;
 
-			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
 
 			battlePlayerCtr.PlayRoleAnim ("fightWithAxe", 1, () => {
 
@@ -237,7 +236,7 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
 
 			trapSwitch.SwitchOffTrap ();
 
@@ -270,7 +269,7 @@ namespace WordJourney
 
 					unlockItem.itemCount--;
 
-					GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+					GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
 
 					tb.UnlockOrDestroyMapItem (()=>{
 
@@ -286,7 +285,7 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayMapItemClip (mapItem);
+			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
 
 			// 如果该地图物品不需要使用特殊物品开启
 			tb.UnlockOrDestroyMapItem (()=>{
@@ -332,6 +331,24 @@ namespace WordJourney
 		private void BattlePlayerLose(){
 
 			Debug.Log ("dead");
+
+		}
+
+		public void OnQuitExplore(){
+
+			GameManager.Instance.dataCenter.allMaterials.Clear ();
+			GameManager.Instance.dataCenter.allMaterialSprites.Clear ();
+			GameManager.Instance.dataCenter.allMapSprites.Clear ();
+			GameManager.Instance.dataCenter.allSkillSprites.Clear ();
+			GameManager.Instance.dataCenter.allMonsters.Clear ();
+
+			GameManager.Instance.soundManager.UnloadClips (SoundType.Explore);
+
+//			new string[]{"allMaterials","allMaterialSprites","allMapSprites",,"allSkillSprites","allMonsters"}
+		
+			Destroy (this.gameObject);
+
+			mapGenerator.DestroyInstancePools ();
 
 		}
 

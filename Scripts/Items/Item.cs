@@ -74,7 +74,7 @@ namespace WordJourney{
 				newItem = new Consumables (itemModel);
 				break;
 			case ItemType.FuseStone:
-				newItem = new FuseStone (itemModel);
+				newItem = FuseStone.CreateFuseStoneIfExist(itemNameInEnglish);
 				break;
 			case ItemType.Task:
 				newItem = new TaskItem(itemModel);

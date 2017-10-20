@@ -5,6 +5,17 @@ using UnityEngine;
 
 namespace WordJourney
 {
+	public enum SoundType{
+		UI,
+		Explore
+	}
+
+	public enum SoundDetailTypeName{
+		Steps,
+		Map,
+		Skill
+	}
+
 	public class SoundManager : MonoBehaviour {
 
 		public AudioSource bgmAS;
@@ -14,36 +25,74 @@ namespace WordJourney
 		public AudioSource pronunciationAS;
 
 
-		private List<AudioClip> stepClips;
+		public List<AudioClip> exploreClips = new List<AudioClip> ();
 
-		private List<AudioClip> mapItemClips;
+		public List<AudioClip> UIClips = new List<AudioClip>();
 
-		private List<AudioClip> skillEffectClips;
+//		public List<AudioClip> skillEffectClips = new List<AudioClip> ();
 
 		public float lowPitchRange = 0.95f;				
 		public float highPitchRange = 1.05f;
 
+		public void InitExploreAudioClips(){
 
-
-		public void InitAudioClips(){
-
-			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/steps", () => {
-				stepClips = CopyClips(ResourceManager.Instance.audioClips);
+			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/explore", () => {
+				CopyClips(ResourceManager.Instance.audioClips,exploreClips,false);
 			}, true);
 
-			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/map_items", () => {
-				mapItemClips = CopyClips(ResourceManager.Instance.audioClips);
-			}, true);
+		}
 
-			ResourceManager.Instance.LoadAssetWithBundlePath <AudioClip>("audio/skill_effects",()=>{
-				skillEffectClips = CopyClips(ResourceManager.Instance.audioClips);
-			},true);
+
+		public void InitUIAudioClips(){
+			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/ui", () => {
+				CopyClips(ResourceManager.Instance.audioClips,UIClips,true);
+			}, true);
 		}
 			
 
-		public void PlayStepClips(){
+		public void PlayClips(SoundType type,SoundDetailTypeName name,string soundDetailName = null){
 
-			AudioClip clip = RandomAudioClip (stepClips);
+			string detailType = string.Empty;
+
+			switch (name) {
+			case SoundDetailTypeName.Steps:
+				detailType = "steps";
+				break;
+			case SoundDetailTypeName.Map:
+				detailType = "map";
+				break;
+			case SoundDetailTypeName.Skill:
+				detailType = "skill";
+				break;
+			}
+
+			AudioClip clip = null;
+
+			switch (type) {
+			case SoundType.Explore:
+
+				if (soundDetailName == string.Empty) {
+					break;
+				}
+
+				List<AudioClip> clips = exploreClips.FindAll (delegate(AudioClip obj) {
+					return obj.name.Contains (detailType);
+				});
+
+				if (soundDetailName != null) {
+					clips = clips.FindAll (delegate(AudioClip obj) {
+						return obj.name.Contains(soundDetailName);
+					});
+				}
+
+				clip = RandomAudioClip (clips);
+
+				break;
+			case SoundType.UI:
+
+				break;
+
+			}
 
 			if (clip == null) {
 				return;
@@ -57,44 +106,15 @@ namespace WordJourney
 
 		}
 
-		public void PlayMapItemClip(MapItem mapItem){
 
-			AudioClip clip = mapItemClips.Find (delegate(AudioClip obj) {
-				return obj.name.Contains(mapItem.mapItemName);
-			});
-
-			if (clip == null) {
-				return;
-			}
-
-			effectAS.clip = clip;
-
-			effectAS.pitch = Random.Range (lowPitchRange, highPitchRange);
-
-			effectAS.Play ();
-
-		}
-
-		public void PlaySkillEffectClip(Skill skill){
-
-			AudioClip clip = skillEffectClips.Find (delegate(AudioClip obj) {
-				return obj.name.Contains(skill.skillEngName);
-			});
-
-			if (clip == null) {
-				return;
-			}
-
-			effectAS.clip = clip;
-
-			effectAS.pitch = Random.Range (lowPitchRange, highPitchRange);
-
-			effectAS.Play ();
-
-		}
 
 
 		private AudioClip RandomAudioClip(List<AudioClip> clips){
+
+			if (clips.Count == 0) {
+				Debug.Log ("clip not found");
+				return null;
+			}
 
 			int index = Random.Range (0, clips.Count);
 
@@ -102,12 +122,36 @@ namespace WordJourney
 
 		}
 
-		private List<AudioClip> CopyClips(List<AudioClip> clips){
-			List<AudioClip> copiedClips = new List<AudioClip> ();
-			for(int i = 0;i<clips.Count;i++){
-				copiedClips.Add(clips[i]);
+
+		public void UnloadClips(SoundType soundType){
+
+			switch (soundType) {
+			case SoundType.Explore:
+				for (int i = 0; i < exploreClips.Count; i++) {
+					exploreClips [i].UnloadAudioData();
+				}
+				exploreClips.Clear ();
+				break;
+			case SoundType.UI:
+				for (int i = 0; i < UIClips.Count; i++) {
+					UIClips [i].UnloadAudioData();
+				}
+				UIClips.Clear ();
+				break;
 			}
-			return copiedClips;
+
 		}
+
+		private void CopyClips(List<AudioClip> originClips,List<AudioClip> targetClips,bool dontUnload){
+
+			for(int i = 0;i<originClips.Count;i++){
+				targetClips.Add(originClips[i]);
+				if (dontUnload) {
+					originClips [i].hideFlags = HideFlags.DontUnloadUnusedAsset;
+				}
+			}
+
+		}
+			
 	}
 }

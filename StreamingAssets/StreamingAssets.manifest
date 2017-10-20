@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3298730346
+CRC: 73799236
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -43,23 +43,17 @@ AssetBundleManifest:
       Name: main
       Dependencies: {}
     Info_13:
-      Name: audio/steps
-      Dependencies: {}
-    Info_14:
-      Name: audio/map_items
-      Dependencies: {}
-    Info_15:
-      Name: audio/skill_effects
-      Dependencies: {}
-    Info_16:
       Name: material/canvas
       Dependencies: {}
-    Info_17:
+    Info_14:
       Name: material/icons
       Dependencies: {}
-    Info_18:
+    Info_15:
       Name: item/canvas
       Dependencies: {}
-    Info_19:
+    Info_16:
       Name: produce/canvas
+      Dependencies: {}
+    Info_17:
+      Name: audio/explore
       Dependencies: {}

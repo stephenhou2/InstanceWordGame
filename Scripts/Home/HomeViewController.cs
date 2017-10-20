@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 
 
-
 namespace WordJourney
 {
 	public class HomeViewController : MonoBehaviour {
@@ -34,7 +33,7 @@ namespace WordJourney
 
 				GameObject.Find("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
-				QuitHomeView();
+				homeView.OnQuitHomeView();
 
 			},true);
 
@@ -73,6 +72,7 @@ namespace WordJourney
 			});
 
 		}
+
 
 
 
@@ -121,7 +121,18 @@ namespace WordJourney
 			
 			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
 
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(null);
+
+				homeView.OnQuitHomeView();
+
+			});
+		}
+
+		public void OnFuseStoneButtonClick(){
+			
+			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
 
 				homeView.OnQuitHomeView();
 
@@ -136,6 +147,10 @@ namespace WordJourney
 		private void DestroyInstances(){
 
 			TransformManager.DestroyTransfromWithName ("HomeCanvas", TransformRoot.InstanceContainer);
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
 
 		}
 
