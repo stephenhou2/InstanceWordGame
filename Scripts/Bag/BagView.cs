@@ -32,6 +32,7 @@ namespace WordJourney
 
 
 		public Transform specificTypeItemHUD;
+		public Transform specificTypeItemsScrollView;
 		public Transform specificTypeItemDetailsContainer;
 
 		private Transform itemDetailsModel;
@@ -45,16 +46,17 @@ namespace WordJourney
 
 		private float itemDetailModelHeight;
 		private float paddingY;
-		private float spaceY;
-		public int maxPreloadCount = 8;
+		public int maxPreloadCount = 6;
 
 		private int currentMinItemIndex;
 		private int currentMaxItemIndex;
 
-		private float scrollViewLastPosY;
+//		private float scrollViewLastPosY;
+		private bool changeScrollViewPos;
 
 		private List<Equipment> allEquipmentsOfCurrentSelectTypeInBag;
 		private Equipment compareEquipment;
+
 
 		/// <summary>
 		/// 初始化背包界面
@@ -75,9 +77,6 @@ namespace WordJourney
 			VerticalLayoutGroup vLayoutGroup = specificTypeItemDetailsContainer.GetComponent<VerticalLayoutGroup> ();
 
 			paddingY = vLayoutGroup.padding.top;
-
-			spaceY = vLayoutGroup.spacing;
-
 
 
 			SetUpPlayerStatusPlane ();
@@ -360,83 +359,102 @@ namespace WordJourney
 
 		}
 
+		private int count;
+		private bool isDragging;
+
+		private List<Transform> itemDetailsInvisible = new List<Transform>();
+
+		public void OnBeginDrag(){
+			count = 0;
+			isDragging = true;
+		}
+
+		public void OnEndDrag(){
+
+			int cellCount = itemDetailsInvisible.Count;
+
+			for (int i = 0; i < itemDetailsInvisible.Count; i++) {
+				itemDetailsPool.AddInstanceToPool (itemDetailsInvisible [i].gameObject);
+			}
+
+			float newPosY = specificTypeItemDetailsContainer.localPosition.y - cellCount * (itemDetailModelHeight + paddingY);
+
+			Debug.Log (newPosY);
+
+			specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
+
+
+			itemDetailsInvisible.Clear ();
+
+			isDragging = false;
+		}
+
+
 		public void OnValueChanged(){
-			
+
 			float scrollRectPosY = specificTypeItemDetailsContainer.localPosition.y;
+			float velocityY = specificTypeItemsScrollView.GetComponent<ScrollRect> ().velocity.y;
+
+			if (isDragging) {
+
+				int delta = (int)((scrollRectPosY - paddingY) / (itemDetailModelHeight + paddingY));
+
+				if (delta > count) {
+					Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject, specificTypeItemDetailsContainer);
+					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxItemIndex + 1];
+					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
+					itemDetailsInvisible.Add (specificTypeItemDetailsContainer.GetChild (count));
+					count++;
+				}
+
+				return;
+
+			}
 
 			// 向下滚动
-			if (scrollRectPosY > scrollViewLastPosY) {
+			if (velocityY > 0) {
 
-				scrollViewLastPosY = scrollRectPosY;
-				
 				if (currentMaxItemIndex >= allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
+					Debug.Log ("所有物品加载完毕");
 					return;
 				}
 
-				int minVisibleItemIndex = (int)((scrollRectPosY - paddingY) / (itemDetailModelHeight + spaceY));
+				int minVisibleCellIndex = (int)(scrollRectPosY / (itemDetailModelHeight + paddingY));
 
-				if (minVisibleItemIndex > 1) {
+				if (minVisibleCellIndex >= 1) {
 
-					Transform itemDetail = specificTypeItemDetailsContainer.GetChild (0);
+				Transform itemDetail = specificTypeItemDetailsContainer.GetChild (0);
 
-					itemDetail.SetAsLastSibling ();
+				itemDetail.SetAsLastSibling ();
 
-					float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - spaceY;
+				Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxItemIndex + 1];
 
-					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
+				itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
 
+				float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - paddingY;
 
-					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxItemIndex + 1];
+				specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
 
-					itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(compareEquipment,equipmentInBag,GetComponent<BagViewController> ());
+				currentMaxItemIndex++;
+				currentMinItemIndex++;
 
-					currentMinItemIndex += 1;
-					currentMaxItemIndex += 1;
-				}
+				} 
 
-			} else if(scrollRectPosY < scrollViewLastPosY){// 向上滚动
+			}
 
-				scrollViewLastPosY = scrollRectPosY;
+		}
+			
 
-				if (currentMinItemIndex <= 0) {
-					return;
-				}
+		public void OnScrollViewEndDrag(){
 
-				if(scrollRectPosY  <= paddingY + itemDetailModelHeight){
-					
-					Transform itemDetail = specificTypeItemDetailsContainer.GetChild(specificTypeItemDetailsContainer.childCount - 1);
+			if (currentMinItemIndex > 0) {
 
-					itemDetail.SetAsFirstSibling();
-
-					float newPosY = specificTypeItemDetailsContainer.localPosition.y + itemDetailModelHeight + spaceY;
-
-					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
-
-					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMinItemIndex - 1];
-
-					itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(compareEquipment,equipmentInBag,GetComponent<BagViewController> ());
-
-					currentMinItemIndex -= 1;
-					currentMaxItemIndex -= 1;
-
-				}
 			}
 
 
 
-
-//			int maxDisplayItemIndex = (int)(minDisplayItemIndex + maxPreloadCount - 1);
-//
-//			if (maxDisplayItemIndex >= allEquipmentsOfCurrentSelectType.Count) {
-//				maxDisplayItemIndex = allEquipmentsOfCurrentSelectType.Count;
-//			}
-
-
-
-
-
-
 		}
+
 
 		public void OnItemButtonOfSpecificItemPlaneClick(Item item){
 

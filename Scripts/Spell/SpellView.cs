@@ -130,12 +130,8 @@ namespace WordJourney
 			charactersEntered.text = characters;
 
 			for (int i = 0; i < characterButtons.Length; i++) {
-
 				characterButtons [i].interactable = charactersInsufficientArray [i] == 0 
 					&& Player.mainPlayer.charactersCount[i] > 0;
-
-
-
 			}
 
 		}

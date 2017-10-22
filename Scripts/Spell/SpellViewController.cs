@@ -129,6 +129,7 @@ namespace WordJourney
 			}
 
 			if(charEntered != null){
+				
 				int characterIndex = (int)charEntered[0] - CommonData.aInASCII;
 
 				charactersEntered.Append (charEntered);
@@ -145,7 +146,7 @@ namespace WordJourney
 				int index = (int)charactersEntered[i] - CommonData.aInASCII;
 
 				// 将字母碎片不足的字母记录到不足字母列表中
-				if (Player.mainPlayer.charactersCount [index] < charactersEnteredArray[index]) {
+				if (Player.mainPlayer.charactersCount [index] <= charactersEnteredArray[index]) {
 
 					charactersInsufficientArray [index] = 1;
 
@@ -473,7 +474,10 @@ namespace WordJourney
 			case SpellPurpose.CreateFuseStone:
 				FuseStone fuseStone = FuseStone.CreateFuseStoneIfExist (charactersEntered.ToString ());
 				if (fuseStone != null) {
+					
 					Player.mainPlayer.allFuseStonesInBag.Add (fuseStone);
+
+
 				
 					// 更新剩余字母碎片
 					UpdateOwnedCharacters ();

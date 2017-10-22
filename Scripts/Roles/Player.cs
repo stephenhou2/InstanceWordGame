@@ -39,7 +39,7 @@ namespace WordJourney
 
 		[SerializeField]private int[] mCharactersCount;
 
-		[HideInInspector]public int[] charactersCount{
+		public int[] charactersCount{
 
 			get{
 				if (mCharactersCount == null || mCharactersCount.Length == 0) {
