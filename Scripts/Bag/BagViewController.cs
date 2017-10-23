@@ -235,7 +235,7 @@ namespace WordJourney
 		/// </summary>
 		public void ResolveCountSliderDrag(){
 
-			resolveCount = (int)bagView.resolveCountSlider.value;
+			resolveCount = bagView.GetResolveCountBySlider ();
 
 			bagView.UpdateResolveCountHUD (resolveCount);
 		}

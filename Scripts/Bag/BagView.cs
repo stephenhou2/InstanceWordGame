@@ -39,44 +39,58 @@ namespace WordJourney
 		private InstancePool itemDetailsPool;
 
 		public Transform resolveCountHUD;
-		public Button minusBtn;
-		public Button plusBtn;
-		public Slider resolveCountSlider;
-		public Text resolveCount;
+	
 
-		private float itemDetailModelHeight;
-		private float paddingY;
-		public int maxPreloadCount = 6;
+		private float itemDetailModelHeight;//单个cell的高度
+		private float itemDetailViewPortHeight;//scrollView的可视窗口高度
+		private float paddingY;//scrollView顶部间距&cell之间的间距（设定顶部间距和cell间距一致）
+		private int maxCellsVisible;//最多同时显示的cell数量
+		private int preloadCount;//预加载cell数量
 
-		private int currentMinItemIndex;
-		private int currentMaxItemIndex;
+		private int currentMinEquipmentIndex;//当前最上部（包括不可见）equipment在背包中当前选中类型equipments的序号
+		private int currentMaxEquipmentIndex;//当前最底部（包括不可见）equipment在背包中当前选中类型equipments的序号
 
-//		private float scrollViewLastPosY;
-		private bool changeScrollViewPos;
+		private List<Equipment> allEquipmentsOfCurrentSelectTypeInBag;//背包中当前选中类型的所有equipments
+		private Equipment compareEquipment;//用来比较的equipment
 
-		private List<Equipment> allEquipmentsOfCurrentSelectTypeInBag;
-		private Equipment compareEquipment;
+		// 拖拽过程中的cell重用计数（底部cell移至顶部count++，顶部cell移至底部count--）
+		// scrollRect在拖拽过程中，content的localPosition由onDrag传入的PointerEventData计算而来，
+		// 无法直接更改localPosition（更改后也会被从PointerEventData计算的position替换掉），因此需要自己传入PointerEventData
+		// 记录拖拽过程的重用计数，获取原始PointerEventData后根据count更改其中的position后传入onDrag接口
+		// 只有拖拽过程中会有content的localposition无法更改的问题 自由滑动过程中没有这个问题
+		private int reuseCount;
 
 
 		/// <summary>
 		/// 初始化背包界面
 		/// </summary>
 		public void SetUpBagView(){
-			
+
+			//获取所有item的图片
 			this.sprites = GameManager.Instance.dataCenter.allItemSprites;
 			this.player = Player.mainPlayer;
 
+			//创建缓存池
 			itemDisplayButtonsPool = InstancePool.GetOrCreateInstancePool ("ItemDisplayButtonsPool");
 			itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
 
+			// 获取模型
 			itemDisplayButtonModel = TransformManager.FindTransform ("ItemDisplayButtonModel");
 			itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModel");
 
+			//获取装备更换页面cell的高度
 			itemDetailModelHeight = (itemDetailsModel as RectTransform).rect.height;
+			//获取装备更换页面可视区域高度
+			itemDetailViewPortHeight = (specificTypeItemsScrollView as RectTransform).rect.height;
 
+			//获取装备更换页面的顶部间距&cell间距
 			VerticalLayoutGroup vLayoutGroup = specificTypeItemDetailsContainer.GetComponent<VerticalLayoutGroup> ();
-
 			paddingY = vLayoutGroup.padding.top;
+
+			//计算装备更换页面cell最大显示数量
+			maxCellsVisible = (int)(itemDetailViewPortHeight / (itemDetailModelHeight + paddingY)) + 1;
+			//计算装备更换页面cell预加载数量
+			preloadCount = maxCellsVisible + 1;
 
 
 			SetUpPlayerStatusPlane ();
@@ -248,6 +262,14 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpResolveCountHUD(int minValue,int maxValue){
 
+			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
+
+			Button minusBtn = resolveCountContainer.Find("MinusButton").GetComponent<Button>();
+			Button plusBtn = resolveCountContainer.Find("PlusButton").GetComponent<Button>();
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
+
+
 			resolveCountHUD.gameObject.SetActive (true);
 
 			if (minusBtn.GetComponent<Image> ().sprite == null 
@@ -268,7 +290,21 @@ namespace WordJourney
 
 		}
 
+		public int GetResolveCountBySlider(){
+			
+			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
+
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+
+			return (int)resolveCountSlider.value;
+		}
+
 		public void UpdateResolveCountHUD(int count){
+
+			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
+
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
 
 			resolveCountSlider.value = count;
 
@@ -341,120 +377,142 @@ namespace WordJourney
 
 			specificTypeItemDetailsContainer.localPosition = new Vector3 (specificTypeItemDetailsContainer.localPosition.x, 0, 0);
 
-			int maxCount = maxPreloadCount < allEquipmentsOfCurrentSelectTypeInBag.Count ? maxPreloadCount : allEquipmentsOfCurrentSelectTypeInBag.Count;
+			//如果当前选中类的所有装备数量小于预加载数量，则只加载实际装备数量的cell
+			int maxCount = preloadCount < allEquipmentsOfCurrentSelectTypeInBag.Count ? preloadCount : allEquipmentsOfCurrentSelectTypeInBag.Count;
 
-			for(int i =0;i<maxPreloadCount;i++){
+			for(int i =0;i<preloadCount;i++){
 				
 				Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag[i];
 
 				Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject,specificTypeItemDetailsContainer);
 
 				itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(equipedEquipment,equipmentInBag,GetComponent<BagViewController> ());
+
 			}
 
-			currentMinItemIndex = 0;
-			currentMaxItemIndex = maxCount < 1 ? 0 : maxCount - 1;
+			//初始化当前顶部和底部的equipment序号
+			currentMinEquipmentIndex = 0;
+			currentMaxEquipmentIndex = maxCount < 1 ? 0 : maxCount - 1;
 
 			specificTypeItemHUD.gameObject.SetActive (true);
 
 		}
 
-		private int count;
-		private bool isDragging;
 
-		private List<Transform> itemDetailsInvisible = new List<Transform>();
 
-		public void OnBeginDrag(){
-			count = 0;
-			isDragging = true;
+		/// <summary>
+		/// 装备更换页面开始进行拖拽时，重置拖拽过程中cell重用计数
+		/// </summary>
+		public void ResetReuseCount(){
+			reuseCount = 0;
 		}
 
-		public void OnEndDrag(){
+		/// <summary>
+		/// 拖拽过程中根据cell重用计数更改PointerEventData
+		/// </summary>
+		public void UpdatePointerEventData(){
 
-			int cellCount = itemDetailsInvisible.Count;
+			// content的位置移动（cell重用数量 * （cell高度+cell间距））
+			// 为了方便这里计算，需要设定cell间距和scrollView顶部间距保持一致
+			float offset = reuseCount * (itemDetailModelHeight + paddingY);
 
-			for (int i = 0; i < itemDetailsInvisible.Count; i++) {
-				itemDetailsPool.AddInstanceToPool (itemDetailsInvisible [i].gameObject);
+			UnityEngine.EventSystems.PointerEventData newData = specificTypeItemsScrollView.GetComponent<DragRecorder> ().GetPointerEventData (offset);
+
+			// 传入更新后的PointerEventData
+			if (newData != null) {
+				specificTypeItemsScrollView.GetComponent<ScrollRect> ().OnDrag (newData);
 			}
 
-			float newPosY = specificTypeItemDetailsContainer.localPosition.y - cellCount * (itemDetailModelHeight + paddingY);
-
-			Debug.Log (newPosY);
-
-			specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
-
-
-			itemDetailsInvisible.Clear ();
-
-			isDragging = false;
 		}
 
 
-		public void OnValueChanged(){
 
+		/// <summary>
+		/// scrollView滑动过程中根据位置回收重用cell
+		/// </summary>
+		public void ReuseCellAndUpdateContentPosition(){
+
+			// 获得content的localPosition
 			float scrollRectPosY = specificTypeItemDetailsContainer.localPosition.y;
+			// 获得content的滚动速度
 			float velocityY = specificTypeItemsScrollView.GetComponent<ScrollRect> ().velocity.y;
-
-			if (isDragging) {
-
-				int delta = (int)((scrollRectPosY - paddingY) / (itemDetailModelHeight + paddingY));
-
-				if (delta > count) {
-					Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject, specificTypeItemDetailsContainer);
-					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxItemIndex + 1];
-					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
-					itemDetailsInvisible.Add (specificTypeItemDetailsContainer.GetChild (count));
-					count++;
-				}
-
-				return;
-
-			}
 
 			// 向下滚动
 			if (velocityY > 0) {
 
-				if (currentMaxItemIndex >= allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
+				// 如果最底部equipment是当前选中类型equipments中的最后一个
+				if (currentMaxEquipmentIndex >= allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
 					Debug.Log ("所有物品加载完毕");
 					return;
 				}
 
-				int minVisibleCellIndex = (int)(scrollRectPosY / (itemDetailModelHeight + paddingY));
+				// 判断最顶部cell是否已经不可见
+				bool firstCellInvisible = (int)(scrollRectPosY / (itemDetailModelHeight + paddingY))  >= 1;
 
-				if (minVisibleCellIndex >= 1) {
+				// 顶部cell移至底部并更新显示数据
+				if (firstCellInvisible) {
 
-				Transform itemDetail = specificTypeItemDetailsContainer.GetChild (0);
+					// 获得顶部cell
+					Transform itemDetail = specificTypeItemDetailsContainer.GetChild (0);
 
-				itemDetail.SetAsLastSibling ();
+					// 移至底部
+					itemDetail.SetAsLastSibling ();
 
-				Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxItemIndex + 1];
+					// 获得将显示的euipment数据
+					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxEquipmentIndex + 1];
 
-				itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
+					// 更新该cell的显示数据
+					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
 
-				float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - paddingY;
+					// 计算content新的位置信息
+					float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - paddingY;
 
-				specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
+					// 移动content，确保屏幕显示和cell重用前一致
+					//（cell重用时由于autoLayout，cell位置会产生变化，整体移动content的位置确保每个cell回到重用前的位置）
+					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
 
-				currentMaxItemIndex++;
-				currentMinItemIndex++;
+					// 最顶部和最底部equipment的序号++
+					currentMaxEquipmentIndex++;
+					currentMinEquipmentIndex++;
+
+					// 重用数量++
+					reuseCount++;
 
 				} 
 
+			} else if (velocityY < 0) {//向下滚动
+
+				// 如果最顶部equipment是当前选中类型equipments中的第一个
+				if (currentMinEquipmentIndex <= 0) {
+					Debug.Log ("所有物品加载完毕");
+					return;
+				}
+
+				// 判断最底部cell是否可见
+				bool lastCellInvisble = maxCellsVisible * (itemDetailModelHeight + paddingY) - scrollRectPosY >= itemDetailViewPortHeight;
+
+				if (lastCellInvisble) {
+
+					Transform itemDetail = specificTypeItemDetailsContainer.GetChild (specificTypeItemDetailsContainer.childCount - 1);
+
+					itemDetail.SetAsFirstSibling ();
+
+					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMinEquipmentIndex - 1];
+
+					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
+
+					float newPosY = specificTypeItemDetailsContainer.localPosition.y + itemDetailModelHeight + paddingY;
+
+					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
+
+					currentMaxEquipmentIndex--;
+					currentMinEquipmentIndex--;
+
+					reuseCount--;
+
+				}
 			}
-
 		}
-			
-
-		public void OnScrollViewEndDrag(){
-
-			if (currentMinItemIndex > 0) {
-
-			}
-
-
-
-		}
-
 
 		public void OnItemButtonOfSpecificItemPlaneClick(Item item){
 
