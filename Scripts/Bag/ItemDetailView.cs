@@ -20,7 +20,7 @@ namespace WordJourney
 		public Transform propertiesPlane;
 		public Transform detailDescText;
 
-		public void SetUpItemDetailView(Equipment equipedEquipment,Equipment equipmentInBag,BagViewController bagViewCtr){
+		public void SetUpItemDetailView(Equipment equipedEquipment,Equipment equipmentInBag){
 
 
 //			if (item.itemType == ItemType.Consumables) {
@@ -121,8 +121,10 @@ namespace WordJourney
 				
 			equipButton.onClick.RemoveAllListeners ();
 
+
+
 			equipButton.onClick.AddListener (delegate() {
-				bagViewCtr.EquipEquipment (equipmentInBag);	
+				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().EquipEquipment (equipmentInBag);	
 			});
 
 			propertiesPlane.gameObject.SetActive (true);

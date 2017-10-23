@@ -22,9 +22,6 @@ namespace WordJourney
 
 		private Transform player;
 
-//		public List<Transform> floorTiles;
-//		public List<Transform> outerWallTiles;
-
 		public GameObject wallModel;
 		public GameObject floorModel;
 		public MapNPC mapNpcModel;
@@ -115,11 +112,6 @@ namespace WordJourney
 			bpCtr.singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
-
-
-//			Camera.main.transform.position = new Vector3 (0, 0, -10);
-
-//			Camera.main.transform.rotation = Quaternion.identity;
 
 
 			Camera.main.transform.SetParent (player, false);
@@ -296,9 +288,7 @@ namespace WordJourney
 
 							wall.transform.SetParent (outerWallsContainer, true);
 			
-
 						} 
-
 						// 其他
 						else {
 							GameObject floor = Instantiate (floorModel, tilePos, Quaternion.identity);

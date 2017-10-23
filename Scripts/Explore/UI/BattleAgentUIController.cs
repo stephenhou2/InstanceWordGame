@@ -36,11 +36,15 @@ namespace WordJourney
 		public bool firstSetHealthBar = true;
 		public bool firstSetManaBar = true;
 
-
+		private float scalerToPresetResulotion;
 
 		protected virtual void Awake(){
 
 			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
+		
+			scalerToPresetResulotion = 1920f / Camera.main.pixelHeight;
+
+//			Debug.Log (string.Format ("{0},{1}", Camera.main.pixelWidth, Camera.main.pixelHeight));
 
 		}
 
@@ -56,6 +60,74 @@ namespace WordJourney
 		}
 			
 
+//		// 受到伤害文本动画
+//		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards, TintTextType tintTextType){
+//
+//			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
+//
+//			Vector3 originHurtPos = Vector3.zero;
+//			Vector3 offset = Vector3.zero;
+//			Vector3 originTintPos = Vector3.zero;
+//
+//			switch(towards){
+//			case Towards.Left:
+//				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (-50f, 50f, 0);
+//				offset = new Vector3 (-100f, 0, 0);
+//				originTintPos = originHurtPos + new Vector3 (-100f, 100f, 0);
+//				break;
+//			case Towards.Right:
+//				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (50f, 50f, 0);
+//				offset = new Vector3(100f, 0, 0);
+//				originTintPos = originHurtPos + new Vector3 (100f, 100f, 0);
+//				break;
+//			}
+//
+//			Debug.Log (Camera.main.WorldToScreenPoint (agentPos));
+//
+//			hurtText.transform.localPosition = originHurtPos;
+//
+//			Vector3 newPos = originHurtPos + offset;
+//
+//			hurtText.text = hurtStr;
+//
+//			hurtText.gameObject.SetActive (true);
+//
+//			switch (tintTextType) {
+//			case TintTextType.None:
+//				break;
+//			case TintTextType.Crit:
+//				string tintStr = "<color=red>暴击</color>";
+//				PlayTintTextAnim (tintStr, originTintPos);
+//				break;
+//			case TintTextType.Miss:
+//				tintStr = "<color=gray>miss</color>";
+//				PlayTintTextAnim (tintStr, originTintPos);
+//				return;
+//			}
+//					
+//			hurtText.transform.DOLocalJump (newPos, 100ff, 1, 0.35f).OnComplete(()=>{
+//
+//				switch(towards){
+//				case Towards.Left:
+//					offset = new Vector3 (-30, 0, 0);
+//					break;
+//				case Towards.Right:
+//					offset = new Vector3(30, 0, 0);
+//					break;
+//				}
+//
+//				newPos = hurtText.transform.localPosition + offset;
+//
+//				hurtText.transform.DOLocalJump (newPos, 20f, 1, 0.15f).OnComplete(()=>{
+//					hurtText.gameObject.SetActive(false);
+//					tintTextPool.AddInstanceToPool(hurtText.gameObject);
+//				});
+//
+//			});
+//
+//		}
+
+
 		// 受到伤害文本动画
 		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards, TintTextType tintTextType){
 
@@ -65,20 +137,27 @@ namespace WordJourney
 			Vector3 offset = Vector3.zero;
 			Vector3 originTintPos = Vector3.zero;
 
+
+			Vector3 agentPosToScreenPoint = Camera.main.WorldToScreenPoint (agentPos);
+			Vector3 agentPosInCanvas = new Vector3 (agentPosToScreenPoint.x * scalerToPresetResulotion, 
+													agentPosToScreenPoint.y * scalerToPresetResulotion, 
+													agentPosToScreenPoint.z);
+
+
 			switch(towards){
 			case Towards.Left:
-				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (-50, 50, 0);
-				offset = new Vector3 (-100, 0, 0);
-				originTintPos = originHurtPos + new Vector3 (-100, 100, 0);
+				originHurtPos = agentPosInCanvas + new Vector3 (-50f, 50f, 0);
+				offset = new Vector3 (-100f, 0, 0);
+				originTintPos = originHurtPos + new Vector3 (-100f, 100f, 0);
 				break;
 			case Towards.Right:
-				originHurtPos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3 (50, 50, 0);
-				offset = new Vector3(100, 0, 0);
-				originTintPos = originHurtPos + new Vector3 (100, 100, 0);
+				originHurtPos = agentPosInCanvas + new Vector3 (50f, 50f, 0);
+				offset = new Vector3(100f, 0, 0);
+				originTintPos = originHurtPos + new Vector3 (100f, 100f, 0);
 				break;
 			}
 
-			Debug.Log (Camera.main.WorldToScreenPoint (agentPos));
+			Debug.Log (agentPosInCanvas);
 
 			hurtText.transform.localPosition = originHurtPos;
 
@@ -100,15 +179,15 @@ namespace WordJourney
 				PlayTintTextAnim (tintStr, originTintPos);
 				return;
 			}
-					
+
 			hurtText.transform.DOLocalJump (newPos, 100f, 1, 0.35f).OnComplete(()=>{
 
 				switch(towards){
 				case Towards.Left:
-					offset = new Vector3 (-30, 0, 0);
+					offset = new Vector3 (-30f, 0, 0);
 					break;
 				case Towards.Right:
-					offset = new Vector3(30, 0, 0);
+					offset = new Vector3(30f, 0, 0);
 					break;
 				}
 
@@ -125,7 +204,7 @@ namespace WordJourney
 
 		public void PlayGainTextAnim(string gainStr, Vector3 agentPos){
 
-			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3(50,100,0);
+			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3(50f,100f,0);
 
 			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 

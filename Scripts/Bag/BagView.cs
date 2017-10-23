@@ -386,7 +386,7 @@ namespace WordJourney
 
 				Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject,specificTypeItemDetailsContainer);
 
-				itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(equipedEquipment,equipmentInBag,GetComponent<BagViewController> ());
+				itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(equipedEquipment,equipmentInBag);
 
 			}
 
@@ -462,7 +462,7 @@ namespace WordJourney
 					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxEquipmentIndex + 1];
 
 					// 更新该cell的显示数据
-					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
+					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag);
 
 					// 计算content新的位置信息
 					float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - paddingY;
@@ -499,7 +499,7 @@ namespace WordJourney
 
 					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMinEquipmentIndex - 1];
 
-					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag, GetComponent<BagViewController> ());
+					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag);
 
 					float newPosY = specificTypeItemDetailsContainer.localPosition.y + itemDetailModelHeight + paddingY;
 

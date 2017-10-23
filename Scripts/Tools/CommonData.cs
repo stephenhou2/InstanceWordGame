@@ -204,8 +204,6 @@ namespace WordJourney{
 		public int tileheight;
 		public Layer[] layers;
 
-//		public TileInfo tileInfo;
-
 
 	}
 
