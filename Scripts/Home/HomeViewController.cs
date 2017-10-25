@@ -28,10 +28,12 @@ namespace WordJourney
 			yield return null;
 
 			int currentExploreLevel = GameManager.Instance.unlockedMaxChapterIndex;
-			
-			ResourceManager.Instance.LoadAssetWithBundlePath ("explore/scene", () => {
 
-				GameObject.Find("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
+			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (exploreSceneLoader, "explore/scene", () => {
+
+				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
 				homeView.OnQuitHomeView();
 
@@ -41,9 +43,11 @@ namespace WordJourney
 
 		public void OnRecordButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("record/canvas", () => {
+			ResourceLoader recordCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos[0].GetComponent<RecordViewController> ().SetUpRecordView();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (recordCanvasLoader, "record/canvas", () => {
+
+				TransformManager.FindTransform("RecordCanvas").GetComponent<RecordViewController> ().SetUpRecordView();
 
 				homeView.OnQuitHomeView();
 			});
@@ -53,9 +57,11 @@ namespace WordJourney
 
 		public void OnThinkingButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("material/canvas", () => {
+			ResourceLoader materialDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (materialDisplayCanvasLoader,"material/canvas", () => {
 				
-				GameObject.Find(CommonData.instanceContainerName + "/MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
+				TransformManager.FindTransform("MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
 			
 				homeView.OnQuitHomeView();
 			});
@@ -64,9 +70,11 @@ namespace WordJourney
 
 		public void OnProduceButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("item/canvas", () => {
+			ResourceLoader itemDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				GameObject.Find(CommonData.instanceContainerName + "/ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (itemDisplayCanvasLoader, "item/canvas", () => {
+
+				TransformManager.FindTransform("ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
 
 				homeView.OnQuitHomeView();
 			});
@@ -74,13 +82,13 @@ namespace WordJourney
 		}
 
 
-
-
 		public void OnSkillButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("skills/canvas", () => {
+			ResourceLoader skillCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos[0].GetComponent<SkillsViewController>().SetUpSkillsView();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (skillCanvasLoader, "skills/canvas", () => {
+
+				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
 
 				homeView.OnQuitHomeView();
 			});
@@ -89,7 +97,7 @@ namespace WordJourney
 
 		public void OnBagButtonClick(){
 
-			GameObject bagCanvas = GameObject.Find ("BagCanvas");
+			Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
 
 			if (bagCanvas != null) {
 				
@@ -98,9 +106,11 @@ namespace WordJourney
 				homeView.OnQuitHomeView();
 			}
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("bag/canvas", () => {
+			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
+
+				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
 
 				homeView.OnQuitHomeView();
 
@@ -109,17 +119,21 @@ namespace WordJourney
 
 		public void OnSettingButtonClick(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("setting/canvas", () => {
+			ResourceLoader settingCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos [0].GetComponent<SettingViewController> ().SetUpSettingView ();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (settingCanvasLoader, "setting/canvas", () => {
+
+				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController> ().SetUpSettingView ();
 
 				homeView.OnQuitHomeView();
 			});
 		}
 
 		public void OnMaterialProduceButtonClick(){
-			
-			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+
+			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, "spell/canvas", () => {
 
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(null);
 
@@ -129,8 +143,10 @@ namespace WordJourney
 		}
 
 		public void OnFuseStoneButtonClick(){
-			
-			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+
+			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, "spell/canvas", () => {
 
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
 

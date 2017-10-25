@@ -60,7 +60,7 @@ namespace WordJourney
 		}
 
 
-		public void SetUpExplorePlayerView(Player player,List<Sprite> skillSprites,List<Sprite> itemSprites,CallBack<int> skillSelectCallBack){
+		public void SetUpExplorePlayerView(Player player,CallBack<int> skillSelectCallBack){
 
 			this.player = player;
 			this.skillSelectCallBack = skillSelectCallBack;

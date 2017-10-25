@@ -26,8 +26,6 @@ namespace WordJourney
 
 			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
 
-
-
 		}
 
 		public void GetCurrentSelectInfo(Skill skill){
@@ -101,9 +99,15 @@ namespace WordJourney
 
 			mSkillSprites = null;
 
+			GameManager.Instance.dataCenter.allSkills.Clear ();
+
+			GameManager.Instance.dataCenter.allSkillSprites.Clear ();
+
 			TransformManager.DestroyTransform (gameObject.transform);
 
-			TransformManager.DestroyTransfromWithName ("Skills", TransformRoot.InstanceContainer);
+			TransformManager.DestroyTransfromWithName ("AllSkills", TransformRoot.InstanceContainer);
+
+			TransformManager.DestroyTransfromWithName ("ResourceLoader", TransformRoot.Plain);
 
 			Resources.UnloadUnusedAssets ();
 

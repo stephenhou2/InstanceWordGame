@@ -8,8 +8,6 @@ namespace WordJourney
 {
 	public class NavigationHelper : MonoBehaviour {
 
-
-
 		// 地图上可行走位置的二维数组
 		// －1表示是墙或者地图中的镂空区域，不可到达
 		// 0表示障碍物,不可行走

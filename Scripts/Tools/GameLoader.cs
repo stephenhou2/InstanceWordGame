@@ -30,9 +30,13 @@ namespace WordJourney
 
 		private void SetUpHomeView(Player player){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("home/canvas", () => {
+			ResourceLoader homeCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos[0].GetComponent<HomeViewController> ().SetUpHomeView ();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (homeCanvasLoader, "home/canvas", () => {
+
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+
+				TransformManager.DestroyTransform(transform);
 
 			},true);
 		}

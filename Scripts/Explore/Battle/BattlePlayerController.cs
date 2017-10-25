@@ -388,7 +388,7 @@ namespace WordJourney
 
 			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
 
-			bpUICtr.SetUpExplorePlayerView (agent as Player, GameManager.Instance.dataCenter.allSkillSprites, GameManager.Instance.dataCenter.allItemSprites,PlayerSelectSkill);
+			bpUICtr.SetUpExplorePlayerView (agent as Player, PlayerSelectSkill);
 
 		}
 
@@ -573,9 +573,11 @@ namespace WordJourney
 				return;
 			}
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("bag/canvas", () => {
+			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-				ResourceManager.Instance.gos [0].GetComponent<BagViewController> ().SetUpBagView ();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
+
+				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
 
 			});
 

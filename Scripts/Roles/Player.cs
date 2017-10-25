@@ -24,8 +24,11 @@ namespace WordJourney
 								Destroy (existPlayers [i].gameObject);
 							}
 						}
-						ResourceManager.Instance.LoadAssetWithBundlePath<GameObject> ("main", () => {
-							mPlayerSingleton = ResourceManager.Instance.gos[0].GetComponent<Player> ();
+
+						ResourceLoader playerLoader = ResourceLoader.CreateNewResourceLoader ();
+
+						ResourceManager.Instance.LoadAssetsWithBundlePath<GameObject> (playerLoader, "main", () => {
+							mPlayerSingleton = playerLoader.gos[0].GetComponent<Player> ();
 							mPlayerSingleton.transform.SetParent (null);
 							mPlayerSingleton.ResetBattleAgentProperties (true);
 						},true,"Player");

@@ -64,15 +64,15 @@ namespace WordJourney
 
 		private void LoadMonsters(){
 
-//			ResourceManager.Instance.gos.Clear ();
+//			ResourceLoader.CreateNewResourceLoader().gos.Clear ();
 //
 //			for (int i = 0; i < monsterIds.Length; i++) {
 //
 //				string monsterName = string.Format ("Monster_{0}", monsterIds [i]);
 //
-//				ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
+//				ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("monsters", () => {
 //
-//					monsters.Add(ResourceManager.Instance.gos[0].GetComponent<Monster>());
+//					monsters.Add(ResourceLoader.CreateNewResourceLoader().gos[0].GetComponent<Monster>());
 //
 //				}, true, monsterName);
 //					

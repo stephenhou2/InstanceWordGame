@@ -51,6 +51,18 @@ namespace WordJourney{
 		public static string spellCanvas = "SpellCanvas";
 
 
+//		public static string gameSettingsCacheName = "gameSettings";
+//		public static string learnInfoCacheName = "learnInfo";
+//		public static string allMaterialsCacheName = "allMaterials";
+//		public static string allMaterialSpritesCacheName = "AllMaterialSprites";
+//		public static string allItemModelsCacheName = "AllItemModels";
+//		public static string allItemSpritesCacheName = "AllItemSprites";
+//		public static string allMapSpritesCacheName = "AllMapSprites";
+//		public static string allSkillsCacheName = "AllSkills";
+//		public static string allSkillSpritesCacheName = "AllSkillSprites";
+//		public static string allUISpritesCacheName = "AllUISprites";
+//		public static string allMonstersCacheName = "AllMonsters";
+
 
 		public static int aInASCII = (int)('a');
 

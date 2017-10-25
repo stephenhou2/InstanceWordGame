@@ -27,8 +27,6 @@ namespace WordJourney
 		// 碰撞检测包围盒
 		protected BoxCollider2D boxCollider;
 	
-
-
 		protected GameObject modelActive;
 
 		// 骨骼动画控制器

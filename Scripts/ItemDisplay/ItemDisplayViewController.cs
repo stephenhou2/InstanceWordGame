@@ -178,7 +178,9 @@ namespace WordJourney
 
 			}
 
-			ResourceManager.Instance.LoadAssetWithBundlePath ("produce/canvas", () => {
+			ResourceLoader produceCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (produceCanvasLoader, "produce/canvas", () => {
 
 				TransformManager.FindTransform("ProduceCanvas").GetComponent<ProduceViewController>().SetUpProduceView(itemModel);
 

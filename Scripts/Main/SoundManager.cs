@@ -36,16 +36,21 @@ namespace WordJourney
 
 		public void InitExploreAudioClips(){
 
-			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/explore", () => {
-				CopyClips(ResourceManager.Instance.audioClips,exploreClips,false);
+			ResourceLoader exploreAudioLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (exploreAudioLoader, "audio/explore", () => {
+				CopyClips(exploreAudioLoader.audioClips,exploreClips,false);
 			}, true);
 
 		}
 
 
 		public void InitUIAudioClips(){
-			ResourceManager.Instance.LoadAssetWithBundlePath<AudioClip> ("audio/ui", () => {
-				CopyClips(ResourceManager.Instance.audioClips,UIClips,true);
+
+			ResourceLoader UIAudioLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (UIAudioLoader, "audio/ui", () => {
+				CopyClips(UIAudioLoader.audioClips,UIClips,true);
 			}, true);
 		}
 			

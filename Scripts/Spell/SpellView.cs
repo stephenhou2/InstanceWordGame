@@ -163,7 +163,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.dataCenter.allUISprites.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 

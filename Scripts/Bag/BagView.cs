@@ -275,7 +275,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.dataCenter.allUIIcons.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.dataCenter.allUISprites.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 
@@ -578,6 +578,8 @@ namespace WordJourney
 
 		// 关闭背包界面
 		public void OnQuitBagPlane(CallBack cb){
+
+			this.sprites = null;
 			
 			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 

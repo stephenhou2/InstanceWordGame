@@ -20,14 +20,12 @@ namespace WordJourney
 
 		public Transform exit;	
 
-		private Transform player;
-
 		public GameObject wallModel;
 		public GameObject floorModel;
 		public MapNPC mapNpcModel;
 
 		private List<MapItem> mapItems = new List<MapItem> ();
-		private List<MapNPC>mapNpcs = new List<MapNPC>();
+		private List<MapNPC> mapNpcs = new List<MapNPC>();
 		private List<Transform>monsters;
 
 		public Transform monsterModelsContainer;
@@ -101,7 +99,7 @@ namespace WordJourney
 			
 		private void SetUpPlayer(){
 
-			player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
+			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 
 			BattlePlayerController bpCtr = player.GetComponent<BattlePlayerController> ();
 			
@@ -112,7 +110,6 @@ namespace WordJourney
 			bpCtr.singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
-
 
 			Camera.main.transform.SetParent (player, false);
 
@@ -220,6 +217,7 @@ namespace WordJourney
 		private void SetUpWallAndFloor ()
 		{
 
+			// 获得地图图集名称
 			string mapImageName = mapInfo.tilesets[0].image;
 
 			// 创建地面和墙体
@@ -291,6 +289,7 @@ namespace WordJourney
 						} 
 						// 其他
 						else {
+							
 							GameObject floor = Instantiate (floorModel, tilePos, Quaternion.identity);
 
 							floor.name = tileName;
@@ -412,15 +411,23 @@ namespace WordJourney
 		}
 
 		public void QuitCurrentMap(){
-			chapterDetail = null;
+
 			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
 			floorPool.AddChildInstancesToPool (floorsContainer);
 			npcPool.AddChildInstancesToPool (npcsContainer);
 			itemPool.AddChildInstancesToPool (itemsContainer);
 			monsterPool.AddChildInstancesToPool (monstersContainer);
+
 		}
 
 		public void DestroyInstancePools(){
+
+			mapItems = null;
+			mapNpcs = null;
+			monsters = null;
+
+//			ReleaseReference (outerWallsContainer);
+//			ReleaseReference (floorsContainer);
 
 			Destroy (outerWallPool.gameObject);
 			Destroy (floorPool.gameObject);
@@ -429,6 +436,19 @@ namespace WordJourney
 			Destroy (monsterPool.gameObject);
 
 		}
+
+
+//		private void ReleaseReference(Transform parentTrans){
+//
+//			for (int i = 0; i < parentTrans.childCount; i++) {
+//
+//				Transform child = parentTrans.GetChild (i);
+//
+//				child.GetComponent<SpriteRenderer> ().sprite = null;
+//
+//			}
+//
+//		}
 
 	}
 		

@@ -20,8 +20,11 @@ namespace WordJourney
 								Destroy (instances [i].gameObject);  
 							}  
 						} 
-						ResourceManager.Instance.LoadAssetWithBundlePath ("main", ()=>{
-							instance = ResourceManager.Instance.gos[0].GetComponent<GameManager>();
+
+						ResourceLoader gameManagerLoader = ResourceLoader.CreateNewResourceLoader ();
+
+						ResourceManager.Instance.LoadAssetsWithBundlePath (gameManagerLoader, "main", ()=>{
+							instance = gameManagerLoader.gos[0].GetComponent<GameManager>();
 							instance.transform.SetParent(null);
 						}, true,"GameManager");
 					}  
@@ -47,9 +50,9 @@ namespace WordJourney
 //		public List<MapNPC> allMapNpcs{
 //			get{
 //				if (mAllMapNpcs.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithBundlePath ("mapnpcs", () => {
+//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("mapnpcs", () => {
 //
-//						foreach (GameObject mapNpc in ResourceManager.Instance.gos) {
+//						foreach (GameObject mapNpc in ResourceLoader.CreateNewResourceLoader().gos) {
 //							mAllMapNpcs.Add (mapNpc.GetComponent<MapNPC>());
 //						}
 //
@@ -63,9 +66,9 @@ namespace WordJourney
 //		public List<Monster> allMonsters{
 //			get{
 //				if (mAllMonsters.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
-//						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
-//						mAllMonsters.Add(ResourceManager.Instance.gos[i].GetComponent<Monster>());
+//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("monsters", () => {
+//						for(int i = 0;i<ResourceLoader.CreateNewResourceLoader().gos.Count;i++){
+//						mAllMonsters.Add(ResourceLoader.CreateNewResourceLoader().gos[i].GetComponent<Monster>());
 //						}
 //					},true);
 //				}
@@ -77,9 +80,9 @@ namespace WordJourney
 //		public List<NPC> allNPCs{
 //			get{
 //				if (mAllNPCs.Count == 0) {
-//					ResourceManager.Instance.LoadAssetWithBundlePath ("npcs", () => {
-//						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
-//							mAllNPCs.Add(ResourceManager.Instance.gos[i].GetComponent<NPC>());
+//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("npcs", () => {
+//						for(int i = 0;i<ResourceLoader.CreateNewResourceLoader().gos.Count;i++){
+//							mAllNPCs.Add(ResourceLoader.CreateNewResourceLoader().gos[i].GetComponent<NPC>());
 //						}
 //					},true);
 //				}

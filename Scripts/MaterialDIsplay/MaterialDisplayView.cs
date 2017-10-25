@@ -72,7 +72,9 @@ namespace WordJourney
 
 				materialBtn.GetComponent<Button> ().onClick.AddListener (delegate {
 
-					ResourceManager.Instance.LoadAssetWithBundlePath("spell/canvas",()=>{
+					ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath(spellCanvasLoader, "spell/canvas",()=>{
 
 						SpellViewController spellViewController = TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>();
 

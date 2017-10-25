@@ -37,17 +37,11 @@ namespace WordJourney
 			maskImage.gameObject.SetActive (false);
 		}
 
-		public void VotexRotate(){
-
-			if (votexRotate != null) {
-				votexRotate.Play ();
-				return;
-			}
-
+		private void VotexRotate(){
+			votexImage.localRotation = Quaternion.identity;
 			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
-			votexRotate.SetLoops(-1);
+			votexRotate.SetLoops (-1);
 			votexRotate.SetEase (Ease.Linear);
-			Debug.Log ("rotate");
 		}
 
 
@@ -66,16 +60,13 @@ namespace WordJourney
 
 		public void OnQuitHomeView(CallBack cb = null){
 
-			if (cb == null) {
-				GetComponent<Canvas> ().enabled = false;
+			GetComponent<Canvas> ().enabled = false;
 
-				if (votexRotate != null) {
-					votexRotate.Pause ();
-				}
+			votexRotate.Kill (false);
 
-				HideMaskImage ();
-			} else {
-				votexRotate.Kill (false);
+			HideMaskImage ();
+
+			if (cb != null) {
 				cb ();
 			}
 

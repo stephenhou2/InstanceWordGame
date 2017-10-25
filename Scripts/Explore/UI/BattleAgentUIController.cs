@@ -36,6 +36,7 @@ namespace WordJourney
 		public bool firstSetHealthBar = true;
 		public bool firstSetManaBar = true;
 
+		// 当前屏幕分辨率和预设屏幕分辨率之间的转换比例
 		private float scalerToPresetResulotion;
 
 		protected virtual void Awake(){
@@ -43,8 +44,6 @@ namespace WordJourney
 			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
 		
 			scalerToPresetResulotion = 1920f / Camera.main.pixelHeight;
-
-//			Debug.Log (string.Format ("{0},{1}", Camera.main.pixelWidth, Camera.main.pixelHeight));
 
 		}
 
@@ -59,46 +58,61 @@ namespace WordJourney
 			}
 		}
 			
+		/// <summary>
+		/// 世界坐标转2D画布中的坐标
+		/// </summary>
+		/// <returns>The point in canvas.</returns>
+		/// <param name="worldPos">World position.</param>
+		private Vector3 ToPointInCanvas(Vector3 worldPos){
+
+			Vector3 posInScreen = Camera.main.WorldToScreenPoint (worldPos);
+
+			Vector3 posInCanvas = new Vector3 (posInScreen.x * scalerToPresetResulotion, posInScreen.y * scalerToPresetResulotion, posInScreen.z);
+
+			return posInCanvas;
+
+		}
 
 		// 受到伤害文本动画
 		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards, TintTextType tintTextType){
 
+			// 从缓存池获取文本模型
 			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 
+		
 			Vector3 originHurtPos = Vector3.zero;
-			Vector3 offset = Vector3.zero;
+			Vector3 finalHurtPos = Vector3.zero;
 			Vector3 originTintPos = Vector3.zero;
+			Vector3 finalTintPos = Vector3.zero;
 
 
-			Vector3 agentPosToScreenPoint = Camera.main.WorldToScreenPoint (agentPos);
-			Vector3 agentPosInCanvas = new Vector3 (agentPosToScreenPoint.x * scalerToPresetResulotion, 
-													agentPosToScreenPoint.y * scalerToPresetResulotion, 
-													agentPosToScreenPoint.z);
+			// 获得人物在画布中的位置
+			Vector3 agentPosInCanvas = ToPointInCanvas (agentPos);
 
 
+			// originHurtPos: 伤害文本的初始位置
+			// finalHurtPos: 伤害文本的最终位置
+			// originTintPos: 效果文本的初始位置
 			switch(towards){
 			case Towards.Left:
 				originHurtPos = agentPosInCanvas + new Vector3 (-50f, 50f, 0);
-				offset = new Vector3 (-100f, 0, 0);
+				finalHurtPos = originHurtPos + new Vector3 (-100f, 0, 0);
 				originTintPos = originHurtPos + new Vector3 (-100f, 100f, 0);
 				break;
 			case Towards.Right:
 				originHurtPos = agentPosInCanvas + new Vector3 (50f, 50f, 0);
-				offset = new Vector3(100f, 0, 0);
+				finalHurtPos = originHurtPos + new Vector3 (100f, 0, 0);
 				originTintPos = originHurtPos + new Vector3 (100f, 100f, 0);
 				break;
 			}
-
-			Debug.Log (agentPosInCanvas);
-
+				
 			hurtText.transform.localPosition = originHurtPos;
-
-			Vector3 newPos = originHurtPos + offset;
 
 			hurtText.text = hurtStr;
 
 			hurtText.gameObject.SetActive (true);
 
+			// 根据效果类型播放效果文本动画
 			switch (tintTextType) {
 			case TintTextType.None:
 				break;
@@ -112,20 +126,20 @@ namespace WordJourney
 				return;
 			}
 
-			hurtText.transform.DOLocalJump (newPos, 100f, 1, 0.35f).OnComplete(()=>{
+			// 伤害文本跳跃动画
+			hurtText.transform.DOLocalJump (finalHurtPos, 100f, 1, 0.35f).OnComplete(()=>{
 
 				switch(towards){
 				case Towards.Left:
-					offset = new Vector3 (-30f, 0, 0);
+					finalHurtPos += new Vector3 (-30f, 0, 0);
 					break;
 				case Towards.Right:
-					offset = new Vector3(30f, 0, 0);
+					finalHurtPos += new Vector3 (30f, 0, 0);
 					break;
 				}
 
-				newPos = hurtText.transform.localPosition + offset;
-
-				hurtText.transform.DOLocalJump (newPos, 20f, 1, 0.15f).OnComplete(()=>{
+				// 伤害文本二次跳跃
+				hurtText.transform.DOLocalJump (finalHurtPos, 20f, 1, 0.15f).OnComplete(()=>{
 					hurtText.gameObject.SetActive(false);
 					tintTextPool.AddInstanceToPool(hurtText.gameObject);
 				});
@@ -134,9 +148,14 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 吸血文本动画
+		/// </summary>
+		/// <param name="gainStr">Gain string.</param>
+		/// <param name="agentPos">Agent position.</param>
 		public void PlayGainTextAnim(string gainStr, Vector3 agentPos){
 
-			Vector3 pos = Camera.main.WorldToScreenPoint (agentPos) + new Vector3(50f,100f,0);
+			Vector3 pos = ToPointInCanvas(agentPos) + new Vector3(50f,100f,0);
 
 			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
 
@@ -155,6 +174,11 @@ namespace WordJourney
 				
 		}
 			
+		/// <summary>
+		/// 效果提示文本动画（暴击，闪避）
+		/// </summary>
+		/// <param name="tintStr">Tint string.</param>
+		/// <param name="originPos">Origin position.</param>
 		private void PlayTintTextAnim(string tintStr, Vector3 originPos){
 			
 			Text tintText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);

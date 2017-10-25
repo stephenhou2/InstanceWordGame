@@ -258,13 +258,14 @@ namespace WordJourney
 				
 
 			// 玩家的字母碎片数量足够，进入修复界面
-			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
-				
-				GameObject spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 
+			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader,"spell/canvas", () => {
+	
 				Word word = Word.RandomWord();
 
-				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForFix(equipment,word);
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForFix(equipment,word);
 
 				OnQuitItemDetailHUD ();
 

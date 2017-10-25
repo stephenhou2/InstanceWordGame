@@ -35,11 +35,15 @@ namespace WordJourney
 
 			navHelper = GetComponent<NavigationHelper> ();
 
-			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (true);
+			Transform battlePlayer = Player.mainPlayer.transform.Find ("BattlePlayer");
+
+			battlePlayer.gameObject.SetActive (true);
 
 			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
 			battlePlayerCtr.ActiveBattlePlayer (true, false, false);
+
+//			battlePlayerCtr.transform.Find ("SkillEffect").gameObject.SetActive (true);
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
@@ -182,8 +186,6 @@ namespace WordJourney
 			expUICtr.ShowMask ();
 
 			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
-
-
 
 			switch (mapItem.mapItemType) {
 
@@ -336,23 +338,54 @@ namespace WordJourney
 
 		public void OnQuitExplore(){
 
+			Camera.main.transform.SetParent (null);
+
+			battlePlayerCtr.gameObject.SetActive(false);
+
 			GameManager.Instance.dataCenter.allMaterials.Clear ();
 			GameManager.Instance.dataCenter.allMaterialSprites.Clear ();
 			GameManager.Instance.dataCenter.allMapSprites.Clear ();
+			GameManager.Instance.dataCenter.allSkills.Clear ();
 			GameManager.Instance.dataCenter.allSkillSprites.Clear ();
 			GameManager.Instance.dataCenter.allMonsters.Clear ();
 
 			GameManager.Instance.soundManager.UnloadClips (SoundType.Explore);
 
-//			new string[]{"allMaterials","allMaterialSprites","allMapSprites",,"allSkillSprites","allMonsters"}
-		
-			Destroy (this.gameObject);
+//			GameManager.Instance.dataCenter.UnloadCaches (new string[] {
+//				CommonData.allMaterialsCacheName,
+//				CommonData.allMaterialSpritesCacheName,
+//				CommonData.allMapSpritesCacheName,
+//				CommonData.allSkillsCacheName,
+//				CommonData.allSkillSpritesCacheName,
+//				CommonData.allMonstersCacheName
+//			});
+
+			ResourceManager.Instance.UnloadCaches ("monsters");
+			ResourceManager.Instance.UnloadCaches ("mapicons");
+
+			Destroy (TransformManager.FindTransform ("AllSkills").gameObject);
 
 			mapGenerator.DestroyInstancePools ();
 
+//			ResourceLoader exploreSceneLoader = TransformManager.FindTransform ("ExploreSceneLoader").GetComponent<ResourceLoader> ();
+
+			ReleaseReference ();
+
+			Destroy (this.gameObject);
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
+
 		}
 
+		private void ReleaseReference(){
 
+			battlePlayerCtr.enterNpc = null;
+			battlePlayerCtr.enterItem = null;
+			battlePlayerCtr.enterMonster = null;
+
+		}
 
 	}
 }

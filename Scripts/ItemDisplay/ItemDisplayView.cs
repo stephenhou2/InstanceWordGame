@@ -32,10 +32,7 @@ namespace WordJourney
 
 		public Transform allItemsPlane;
 
-
-
 		public Transform itemDetailsPlane;
-
 
 		private List<Sprite> itemSprites;
 		private List<Sprite> materialSprites;
@@ -310,6 +307,9 @@ namespace WordJourney
 		}
 
 		public void QuitItemDisplayView(CallBack cb){
+
+			this.itemSprites = null;
+			this.materialSprites = null;
 
 			ItemDisplayViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 

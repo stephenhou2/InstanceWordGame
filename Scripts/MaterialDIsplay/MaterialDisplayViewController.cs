@@ -95,7 +95,7 @@ namespace WordJourney
 		private void backup(){
 
 //			if (material == null) {
-//				ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+//				ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("spell/canvas", () => {
 //					spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 //					spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
 //				});
@@ -113,7 +113,7 @@ namespace WordJourney
 //			}
 //
 //			// 如果玩家字母碎片足够，则进入拼写界面
-//			ResourceManager.Instance.LoadAssetWithBundlePath ("spell/canvas", () => {
+//			ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("spell/canvas", () => {
 //				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
 //				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(material);
 //			});

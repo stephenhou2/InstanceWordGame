@@ -6,29 +6,6 @@ namespace WordJourney
 {
 	public class DataCenter {
 
-//		public Dictionary<string,List<object>> cacheDic = new Dictionary<string, List<object>> ();
-
-//		public void UnloadCaches(string[] cacheNames,Transform[] cacheContainers){
-//
-//			for(int i = 0;i<cacheNames.Length;i++){
-//				string cacheName = cacheNames [i];
-//				cacheDic [cacheName].Clear ();
-//				cacheDic.Remove (cacheName);
-//			}
-//
-//			if (cacheContainers != null) {
-//				for (int i = 0; i < cacheContainers.Length; i++) {
-//					GameObject.Destroy (cacheContainers[i]);
-//
-//				}
-//			}
-//
-//			Resources.UnloadUnusedAssets ();
-//
-//			System.GC.Collect ();
-//
-//
-//		}
 
 
 		private GameSettings mGameSettings;
@@ -70,7 +47,6 @@ namespace WordJourney
 					for (int i = 0; i < materials.Length; i++) {
 						mAllMaterials.Add (materials [i]);
 					}
-
 //					cacheDic.Add ("allMaterials",mAllMaterials);
 				}
 				return mAllMaterials;
@@ -81,12 +57,15 @@ namespace WordJourney
 		public List<Sprite> allMaterialSprites{
 			get{
 				if (mAllMaterialSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite>("material/icons",()=>{
-						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-							mAllMaterialSprites.Add(ResourceManager.Instance.sprites[i]);
+
+					ResourceLoader materialSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(materialSpritesLoader,"material/icons",()=>{
+						for(int i = 0;i<materialSpritesLoader.sprites.Count;i++){
+							mAllMaterialSprites.Add(materialSpritesLoader.sprites[i]);
 						}
 					},true);
-//					cacheDic.Add ("allMaterialSprites", mAllMaterialSprites);
+
 				}
 				return mAllMaterialSprites;
 			}
@@ -112,10 +91,14 @@ namespace WordJourney
 
 			get{
 				if (mAllItemSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("item/icons", () => {
+
+
+					ResourceLoader itemSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (itemSpritesLoader, "item/icons", () => {
 						// 获取所有游戏物品的图片
-						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-							mAllItemSprites.Add(ResourceManager.Instance.sprites[i]);
+						for(int i = 0;i<itemSpritesLoader.sprites.Count;i++){
+							mAllItemSprites.Add(itemSpritesLoader.sprites[i]);
 						}
 					},true);
 //					cacheDic.Add ("allItemSprites", mAllItemSprites);
@@ -134,10 +117,12 @@ namespace WordJourney
 			get{
 				if (mAllMapSprites.Count == 0) {
 
-					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("mapicons", () => {
+					ResourceLoader mapSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-						foreach (Sprite s in ResourceManager.Instance.sprites) {
-							mAllMapSprites.Add (s);
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (mapSpritesLoader, "mapicons", () => {
+
+						for(int i = 0;i<mapSpritesLoader.sprites.Count;i++){
+							mAllMapSprites.Add (mapSpritesLoader.sprites[i]);
 						}
 					},true);
 //					cacheDic.Add ("allMapSprites", mAllMapSprites);
@@ -152,13 +137,14 @@ namespace WordJourney
 
 			get{
 				if(mAllSkills.Count == 0){
-					Transform allSkillsContainer = TransformManager.NewTransform("AllSkills",GameObject.Find(CommonData.instanceContainerName).transform);
 
-					ResourceManager.Instance.gos.Clear ();
+					Transform allSkillsContainer = TransformManager.FindOrCreateTransform ("AllSkills");
 
-					ResourceManager.Instance.LoadAssetWithBundlePath ("skills/skill", () => {
-						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
-							Skill skill = ResourceManager.Instance.gos[i].GetComponent<Skill>();
+					ResourceLoader skillsLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath (skillsLoader, "skills/skill", () => {
+						for(int i = 0;i<skillsLoader.gos.Count;i++){
+							Skill skill = skillsLoader.gos[i].GetComponent<Skill>();
 							mAllSkills.Add(skill);
 							skill.transform.SetParent(allSkillsContainer);
 						}
@@ -196,10 +182,13 @@ namespace WordJourney
 		public List<Sprite> allSkillSprites{
 			get{
 				if (mAllSkillSprites.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite> ("skills/icons", () => {
+
+					ResourceLoader skillSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (skillSpritesLoader, "skills/icons", () => {
 						// 获取所有游戏物品的图片
-						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-							mAllSkillSprites.Add(ResourceManager.Instance.sprites[i]);
+						for(int i = 0;i<skillSpritesLoader.sprites.Count;i++){
+							mAllSkillSprites.Add(skillSpritesLoader.sprites[i]);
 						}
 					},true);
 //					cacheDic.Add ("allSkillSprites", mAllSkillSprites);
@@ -209,18 +198,21 @@ namespace WordJourney
 			}
 		}
 
-		private List<Sprite> mAllUIIcons = new List<Sprite> ();
-		public List<Sprite> allUIIcons{
+		private List<Sprite> mAllUISprites = new List<Sprite> ();
+		public List<Sprite> allUISprites{
 			get{
-				if (mAllUIIcons.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath<Sprite>("ui_icons",()=>{
-						for(int i = 0;i<ResourceManager.Instance.sprites.Count;i++){
-							mAllUIIcons.Add(ResourceManager.Instance.sprites[i]);
+				if (mAllUISprites.Count == 0) {
+
+					ResourceLoader UISpritesLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(UISpritesLoader, "ui_icons",()=>{
+						for(int i = 0;i<UISpritesLoader.sprites.Count;i++){
+							mAllUISprites.Add(UISpritesLoader.sprites[i]);
 						}
 					},true);
 //					cacheDic.Add ("allUIIcons", mAllUIIcons);
 				}
-				return mAllUIIcons;
+				return mAllUISprites;
 			}
 		}
 
@@ -228,9 +220,12 @@ namespace WordJourney
 		public List<Transform> allMonsters{
 			get{
 				if (mAllMonsters.Count == 0) {
-					ResourceManager.Instance.LoadAssetWithBundlePath ("monsters", () => {
-						for(int i = 0;i<ResourceManager.Instance.gos.Count;i++){
-							Transform monster = ResourceManager.Instance.gos[i].transform;
+
+					ResourceLoader monstersLoader = ResourceLoader.CreateNewResourceLoader ();
+
+					ResourceManager.Instance.LoadAssetsWithBundlePath (monstersLoader, "monsters", () => {
+						for(int i = 0;i<monstersLoader.gos.Count;i++){
+							Transform monster = monstersLoader.gos[i].transform;
 							mAllMonsters.Add(monster);
 						};
 					}, true);
