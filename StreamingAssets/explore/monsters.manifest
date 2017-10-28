@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2269050468
+CRC: 3299599916
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2513a52909dce975563187bc51b41ad7
+    Hash: a3bbe1b0c8e3ddddcd00397ef873fe14
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a4afff6e20054ccd0995f67785685a58
+    Hash: b446b389cbac7479f6053f39dd5a651e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,12 +29,6 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 61
   Script: {instanceID: 0}
-- Class: 74
-  Script: {instanceID: 0}
-- Class: 91
-  Script: {instanceID: 0}
-- Class: 95
-  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 1a64e5b0e436d4bed9780211ae245f7b, type: 3}
 - Class: 114
@@ -46,12 +40,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: cdb2adfce6e55433d9ebd843d448bb0a, type: 3}
 - Class: 115
-  Script: {instanceID: 0}
-- Class: 212
-  Script: {instanceID: 0}
-- Class: 213
-  Script: {instanceID: 0}
-- Class: 221
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Explore/Monsters/Monster.prefab

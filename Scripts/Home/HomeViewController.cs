@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 
 namespace WordJourney
@@ -21,6 +22,9 @@ namespace WordJourney
 			homeView.ShowMaskImage ();
 
 			StartCoroutine ("LoadExploreData");
+
+//			SceneManager.LoadSceneAsync ("ExploreScene", LoadSceneMode.Single);
+
 		}
 
 		private IEnumerator LoadExploreData(){
@@ -31,11 +35,11 @@ namespace WordJourney
 
 			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (exploreSceneLoader, "explore/scene", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (exploreSceneLoader, CommonData.exploreSceneBundleName, () => {
 
 				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
 
-				homeView.OnQuitHomeView();
+				QuitHomeView();
 
 			},true);
 
@@ -45,7 +49,7 @@ namespace WordJourney
 
 			ResourceLoader recordCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (recordCanvasLoader, "record/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (recordCanvasLoader, CommonData.recordCanvasBundleName, () => {
 
 				TransformManager.FindTransform("RecordCanvas").GetComponent<RecordViewController> ().SetUpRecordView();
 
@@ -59,7 +63,7 @@ namespace WordJourney
 
 			ResourceLoader materialDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (materialDisplayCanvasLoader,"material/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (materialDisplayCanvasLoader,CommonData.materialDiaplayCanvasBundleName, () => {
 				
 				TransformManager.FindTransform("MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
 			
@@ -72,7 +76,7 @@ namespace WordJourney
 
 			ResourceLoader itemDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (itemDisplayCanvasLoader, "item/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (itemDisplayCanvasLoader, CommonData.itemDisplayCanvasBundleName, () => {
 
 				TransformManager.FindTransform("ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
 
@@ -86,7 +90,7 @@ namespace WordJourney
 
 			ResourceLoader skillCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (skillCanvasLoader, "skills/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (skillCanvasLoader, CommonData.skillCanvasBundleName, () => {
 
 				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
 
@@ -108,7 +112,7 @@ namespace WordJourney
 
 			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, CommonData.bagCanvasBundleName, () => {
 
 				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
 
@@ -121,7 +125,7 @@ namespace WordJourney
 
 			ResourceLoader settingCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (settingCanvasLoader, "setting/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (settingCanvasLoader, CommonData.settingCanvasBundleName, () => {
 
 				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController> ().SetUpSettingView ();
 
@@ -133,7 +137,7 @@ namespace WordJourney
 
 			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, "spell/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
 
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(null);
 
@@ -146,7 +150,7 @@ namespace WordJourney
 
 			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, "spell/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
 
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
 
@@ -162,7 +166,9 @@ namespace WordJourney
 
 		private void DestroyInstances(){
 
-			TransformManager.DestroyTransfromWithName ("HomeCanvas", TransformRoot.InstanceContainer);
+			ResourceManager.Instance.UnloadCaches (CommonData.homeCanvasBundleName, true);
+
+			Destroy (this.gameObject);
 
 			Resources.UnloadUnusedAssets ();
 

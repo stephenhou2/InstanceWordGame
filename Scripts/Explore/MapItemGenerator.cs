@@ -18,7 +18,7 @@ namespace WordJourney
 
 
 
-		public List<MapItem> RandomMapItems(List<Item> currentChapterItems,int mapItemCount){
+		public List<MapItem> RandomMapItems(List<Item> currentChapterItems,InstancePool itemPool, Transform itemsContainer, int mapItemCount){
 
 			List<MapItem> mapItems = new List<MapItem> ();
 
@@ -35,7 +35,13 @@ namespace WordJourney
 
 					int modelIndex = Random.Range (0, obstacleModels.Length);
 
-					Obstacle obstacle = Instantiate (obstacleModels [modelIndex]);
+					Obstacle randomModel = (obstacleModels [modelIndex]);
+
+					Obstacle obstacle = itemPool.GetInstanceWithName<Obstacle> (randomModel.name, randomModel.gameObject, itemsContainer);
+
+					obstacle.mapItemName = randomModel.mapItemName;
+
+					obstacle.GetComponent<BoxCollider2D> ().enabled = true;
 
 					mapItems.Add (obstacle);
 
@@ -43,11 +49,15 @@ namespace WordJourney
 
 				case MapItemType.Trap:
 
-					Trap trap = Instantiate (trapModel);
+					Trap trap = itemPool.GetInstanceWithName<Trap> (trapModel.name, trapModel.gameObject, itemsContainer);
 
-					TrapSwitch trapSwitch = Instantiate (trapSwitchModel);
+					TrapSwitch trapSwitch = itemPool.GetInstanceWithName<TrapSwitch> (trapSwitchModel.name, trapSwitchModel.gameObject, itemsContainer);
 
 					trapSwitch.trap = trap;
+
+					trap.GetComponent<BoxCollider2D> ().enabled = true;
+
+					trapSwitch.GetComponent<BoxCollider2D> ().enabled = true;
 
 					mapItems.Add (trap);
 
@@ -59,7 +69,11 @@ namespace WordJourney
 
 					modelIndex = Random.Range (0, treasureBoxModels.Length);
 
-					TreasureBox tb = Instantiate (treasureBoxModels [modelIndex]);
+					TreasureBox randomTreasureBoxModel = treasureBoxModels [modelIndex];
+
+					TreasureBox tb = itemPool.GetInstanceWithName<TreasureBox> (randomTreasureBoxModel.name, randomTreasureBoxModel.gameObject, itemsContainer);
+
+					tb.GetComponent<BoxCollider2D> ().enabled = true;
 
 					tb.rewardItems = new Item[rewardItemCount];
 

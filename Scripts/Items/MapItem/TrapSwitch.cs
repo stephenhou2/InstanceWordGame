@@ -17,7 +17,7 @@ namespace WordJourney
 				return;
 			}
 
-			transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
+			transform.GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
 
 			trap.OnSwitchOff ();
 

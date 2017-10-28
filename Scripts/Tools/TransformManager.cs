@@ -95,21 +95,18 @@ namespace WordJourney{
 			}
 
 
-			Transform trans = FindOrCreateTransform (transInHierarchy);
+			Transform trans = FindTransform (transInHierarchy);
 
 			if (trans == null) {
 				Debug.Log ("游戏物体不存在，无法删除");
-			} else {
-
-				try{
-					Destroy(trans.gameObject);
-				}catch(System.Exception e){
-					Debug.Log ("删除游戏物体失败" + e.ToString ());
-				}
-
-
+				return;
 			}
 
+			try{
+				Destroy(trans.gameObject);
+			}catch(System.Exception e){
+				Debug.Log ("删除游戏物体失败" + e.ToString ());
+			}
 
 		}
 

@@ -17,7 +17,7 @@ namespace WordJourney
 		public Text manaText;
 
 		public Transform skillsContainer;
-		public GameObject skillButtonModel;
+		private Transform skillButtonModel;
 	
 
 		public Button healthBottleButton;
@@ -54,6 +54,8 @@ namespace WordJourney
 			player = Player.mainPlayer;
 
 			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
+
+			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 
 			base.Awake ();
 
@@ -100,7 +102,7 @@ namespace WordJourney
 
 				Skill skill = player.equipedSkills [i];
 
-				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel, skillsContainer);
+				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel.gameObject, skillsContainer);
 
 				Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
 				Text skillName = skillButton.transform.Find ("SkillName").GetComponent<Text> ();

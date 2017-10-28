@@ -27,7 +27,7 @@ namespace WordJourney
 
 						ResourceLoader playerLoader = ResourceLoader.CreateNewResourceLoader ();
 
-						ResourceManager.Instance.LoadAssetsWithBundlePath<GameObject> (playerLoader, "main", () => {
+						ResourceManager.Instance.LoadAssetsWithBundlePath<GameObject> (playerLoader, CommonData.mainStaticBundleName, () => {
 							mPlayerSingleton = playerLoader.gos[0].GetComponent<Player> ();
 							mPlayerSingleton.transform.SetParent (null);
 							mPlayerSingleton.ResetBattleAgentProperties (true);

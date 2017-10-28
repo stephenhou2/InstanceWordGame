@@ -20,9 +20,10 @@ namespace WordJourney
 
 		public Transform exit;	
 
-		public GameObject wallModel;
-		public GameObject floorModel;
-		public MapNPC mapNpcModel;
+		public Transform wallModel;
+		public Transform floorModel;
+		public Transform mapNpcModel;
+		public Transform skillEffectModel;
 
 		private List<MapItem> mapItems = new List<MapItem> ();
 		private List<MapNPC> mapNpcs = new List<MapNPC>();
@@ -41,11 +42,13 @@ namespace WordJourney
 		private InstancePool npcPool;
 		private InstancePool itemPool;
 		private InstancePool monsterPool;
-
+		private InstancePool skillEffectPool;
 
 		public Animator destinationAnimator;
 
 		private ChapterDetailInfo chapterDetail;
+
+		public UnityEngine.Material spriteMaterial; 
 
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
@@ -61,6 +64,7 @@ namespace WordJourney
 			npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool");
 			itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool");
 			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool");
+			skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool");
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
 
@@ -97,12 +101,24 @@ namespace WordJourney
 
 		}
 			
+		public void CreateSkillEffect(Transform parentTrans){
+
+			skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, parentTrans);
+
+		}
+
+		public void AddSkillEffectToPool(Transform skillEffect){
+			skillEffectPool.AddInstanceToPool (skillEffect.gameObject);
+		}
+
 		private void SetUpPlayer(){
 
 			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 
 			BattlePlayerController bpCtr = player.GetComponent<BattlePlayerController> ();
-			
+
+//			CreateSkillEffect (bpCtr.transform);
+
 			Vector3 playerOriginPos = RandomPosition ();
 
 			player.position = playerOriginPos;
@@ -129,7 +145,7 @@ namespace WordJourney
 
 			int mapItemCount = 50;
 
-			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (currentChapterItems, mapItemCount);
+			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (currentChapterItems, itemPool, itemsContainer, mapItemCount);
 
 			for (int i = 0; i < randomMapItems.Count; i++) {
 
@@ -139,17 +155,11 @@ namespace WordJourney
 
 				mapItem.transform.position = pos;
 
-				mapItem.transform.rotation = Quaternion.identity;
-
-				mapItem.transform.localScale = Vector3.one;
-
 				if (mapItem.mapItemType == MapItemType.Trap) {
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 1;
 				} else {
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 				}
-
-				mapItem.transform.SetParent (itemsContainer);
 
 
 				if (mapItem != null) {
@@ -172,13 +182,21 @@ namespace WordJourney
 
 				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
-				MapNPC mapNpc = Instantiate (mapNpcModel, pos, Quaternion.identity);
+				MapNPC mapNpc = npcPool.GetInstance<MapNPC> (mapNpcModel.gameObject, npcsContainer);
 
-				mapNpc.transform.SetParent (npcsContainer, true);
+				mapNpc.transform.position = pos;
 
 				mapNpc.npc = npc;
 
 				mapNpc.name = npc.npcName;
+
+//				SpriteRenderer sr = mapNpc.GetComponent<SpriteRenderer> ();
+//
+//				sr.sprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite obj) {
+//					return obj.name == mapNpc.npc.
+//				});
+
+				mapNpc.GetComponent<BoxCollider2D> ().enabled = true;
 
 				mapNpcs.Add (mapNpc);
 
@@ -224,7 +242,6 @@ namespace WordJourney
 			// x代表列
 			// y代表行
 			// i代表地图层
-
 			for (int i = 0; i < mapInfo.layers.Length; i++) {
 
 				Layer layer = mapInfo.layers [i];
@@ -258,14 +275,20 @@ namespace WordJourney
 
 						// 如果是遮罩层
 						if (layer.name == "Mask") {
-							
-							GameObject wall = Instantiate (wallModel, tilePos, Quaternion.identity);
+
+							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
+
+							wall.position = tilePos;
 
 							wall.name = tileName;
 
-							wall.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
 
-							wall.transform.SetParent (outerWallsContainer, true);
+							sr.sprite = tileSprite;
+
+							sr.material = spriteMaterial;
+
+							wall.SetParent (outerWallsContainer, true);
 
 							wall.GetComponent<SpriteRenderer> ().sortingOrder = 2;
 
@@ -278,25 +301,41 @@ namespace WordJourney
 						// 非遮罩层的墙体
 						if (walkableInfo == -1) {
 							
-							GameObject wall = Instantiate (wallModel, tilePos, Quaternion.identity);
-						
+							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
+
+							wall.position = tilePos;
+
 							wall.name = tileName;
 
-							wall.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
 
-							wall.transform.SetParent (outerWallsContainer, true);
+							sr.sprite = tileSprite;
+
+							sr.material = spriteMaterial;
+
+							wall.SetParent (outerWallsContainer, true);
+
+							wall.GetComponent<SpriteRenderer> ().sortingOrder = 0;
+
+							wall.GetComponent<BoxCollider2D> ().enabled = true;
 			
 						} 
 						// 其他
 						else {
 							
-							GameObject floor = Instantiate (floorModel, tilePos, Quaternion.identity);
+							Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
+
+							floor.position = tilePos;
 
 							floor.name = tileName;
 
-							floor.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+							SpriteRenderer sr = floor.GetComponent<SpriteRenderer> ();
 
-							floor.transform.SetParent (floorsContainer, true);
+							sr.sprite = tileSprite;
+
+							sr.material = spriteMaterial;
+
+							floor.SetParent (floorsContainer, true);
 						}
 							
 					}
@@ -410,24 +449,13 @@ namespace WordJourney
 			}
 		}
 
-		public void QuitCurrentMap(){
 
-			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
-			floorPool.AddChildInstancesToPool (floorsContainer);
-			npcPool.AddChildInstancesToPool (npcsContainer);
-			itemPool.AddChildInstancesToPool (itemsContainer);
-			monsterPool.AddChildInstancesToPool (monstersContainer);
-
-		}
 
 		public void DestroyInstancePools(){
 
 			mapItems = null;
 			mapNpcs = null;
 			monsters = null;
-
-//			ReleaseReference (outerWallsContainer);
-//			ReleaseReference (floorsContainer);
 
 			Destroy (outerWallPool.gameObject);
 			Destroy (floorPool.gameObject);
@@ -438,13 +466,61 @@ namespace WordJourney
 		}
 
 
-//		private void ReleaseReference(Transform parentTrans){
+		/// <summary>
+		/// 将场景中的墙体，地板，npc，地图物品，怪物加入缓存池中
+		/// </summary>
+		public void ResetAllGosAndPushToPool(){
+
+			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
+			floorPool.AddChildInstancesToPool (floorsContainer);
+			npcPool.AddChildInstancesToPool (npcsContainer);
+			itemPool.AddChildInstancesToPool (itemsContainer);
+			monsterPool.AddChildInstancesToPool (monstersContainer);
+
+//			ResetGosAndPushToPool (outerWallsContainer, outerWallPool);
+//			ResetGosAndPushToPool (floorsContainer, floorPool);
+//			ResetGosAndPushToPool (npcsContainer, npcPool);
+//			ResetMapItemsAndPushToPool (itemsContainer, itemPool);
+
+
+		}
+
+//		private void ResetGosAndPushToPool(Transform container,InstancePool pool){
+//			
+//			while(container.childCount > 0){
+//				
+//				Transform trans = container.GetChild(0);
 //
-//			for (int i = 0; i < parentTrans.childCount; i++) {
+//				SpriteRenderer sr = trans.GetComponent<SpriteRenderer> ();
+//				if (sr != null) {
+//					sr.sprite = null;
+//				}
 //
-//				Transform child = parentTrans.GetChild (i);
+//				BoxCollider2D bc2d = trans.GetComponent<BoxCollider2D> ();
+//				if(bc2d != null){
+//					bc2d.enabled = false;
+//				}
 //
-//				child.GetComponent<SpriteRenderer> ().sprite = null;
+//				trans.position = Vector3.zero;
+//				pool.AddInstanceToPool (trans.gameObject);
+//			}
+//				
+//		}
+
+//		private void ResetMapItemsAndPushToPool(Transform container,InstancePool pool){
+//
+//			while(container.childCount > 0){
+//
+//				Transform mapItem = container.GetChild (0);
+//
+//				mapItem.GetComponent<BoxCollider2D> ().enabled = false;
+//
+//				SpriteRenderer sr = mapItem.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
+//
+//				sr.sprite = null;
+//				sr.enabled = false;
+//
+//				pool.AddInstanceToPool (mapItem.gameObject);
 //
 //			}
 //

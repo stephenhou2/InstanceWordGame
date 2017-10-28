@@ -33,23 +33,23 @@ namespace WordJourney
 
 			mapItemAnimator = GetComponent<Animator> ();
 
-			SetUpItemIcon ();
+//			SetUpItemIcon ();
 
 		}
 
-		private void SetUpItemIcon(){
-			
-			if (originSprite != null) {
-
-				SpriteRenderer sr = transform.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
-
-				sr.sprite = originSprite;
-
-				sr.enabled = true;
-
-			}
-
-		}
+//		private void SetUpItemIcon(){
+//			
+//			if (originSprite != null) {
+//
+//				SpriteRenderer sr = transform.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
+//
+//				sr.sprite = originSprite;
+//
+//				sr.enabled = true;
+//
+//			}
+//
+//		}
 
 		public void UnlockOrDestroyMapItem(CallBack cb){
 
@@ -57,10 +57,10 @@ namespace WordJourney
 
 			mapItemAnimator.SetBool ("Play", true);
 
-			StartCoroutine ("SetUpUnlockOrDestroyIconAfterAnim");
+			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}
 
-		protected IEnumerator SetUpUnlockOrDestroyIconAfterAnim(){
+		protected IEnumerator ResetMapItemOnAnimFinished(){
 
 			float animTime = mapItemAnimator.GetCurrentAnimatorStateInfo (0).normalizedTime;
 
@@ -76,9 +76,9 @@ namespace WordJourney
 				GetComponent<BoxCollider2D> ().enabled = false;
 			}
 
-			SpriteRenderer sr = transform.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
-
-			sr.sprite = unlockedOrDestroyedSprite;
+//			SpriteRenderer sr = transform.GetComponent<SpriteRenderer> ();
+//
+//			sr.sprite = unlockedOrDestroyedSprite;
 
 			AnimEnd ();
 

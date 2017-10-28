@@ -109,6 +109,12 @@ namespace WordJourney
 
 			TransformManager.DestroyTransfromWithName ("ResourceLoader", TransformRoot.Plain);
 
+			Destroy (this.gameObject);
+
+			ResourceManager.Instance.UnloadCaches (CommonData.skillCanvasBundleName,true);
+			ResourceManager.Instance.UnloadCaches (CommonData.allSkillsBundleName,true);
+			ResourceManager.Instance.UnloadCaches (CommonData.allSkillSpritesBundleName,true);
+
 			Resources.UnloadUnusedAssets ();
 
 			System.GC.Collect ();

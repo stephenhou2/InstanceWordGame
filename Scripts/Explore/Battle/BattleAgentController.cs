@@ -37,13 +37,19 @@ namespace WordJourney
 		}
 
 		// 攻击特效动画控制器
-		protected Animator effectAnimator;
+		protected Animator mEffectAnimaor;
+		protected Animator effectAnimator{
+			get{
+				if (mEffectAnimaor == null) {
+					mEffectAnimaor = modelActive.GetComponentInChildren<Animator> ();
+				}
+				return mEffectAnimaor;
+			}
+		}
 
 
 
 		protected virtual void Awake(){
-
-			effectAnimator = modelActive.GetComponentInChildren<Animator> ();
 
 			boxCollider = GetComponent <BoxCollider2D> ();
 		}

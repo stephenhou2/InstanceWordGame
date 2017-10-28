@@ -23,7 +23,10 @@ namespace WordJourney
 
 			GetComponent<BoxCollider2D> ().enabled = false;
 
-			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItemName);
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.dataCenter.allExploreAudioClips, 
+				SoundDetailTypeName.Map, 
+				mapItemName);
 
 			col.GetComponent<BattlePlayerController> ().trapTriggered = this;
 
@@ -35,7 +38,7 @@ namespace WordJourney
 
 			this.trapOff = true;
 
-			transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
+			transform.GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
 
 		}
 

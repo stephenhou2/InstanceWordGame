@@ -55,7 +55,10 @@ namespace WordJourney
 		protected override void UseSkill (Skill skill)
 		{
 			
-			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Skill, skill.sfxName);
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.dataCenter.allExploreAudioClips,
+				SoundDetailTypeName.Skill, 
+				skill.sfxName);
 
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
 				skill.AffectAgents(this,bpCtr);
@@ -161,6 +164,8 @@ namespace WordJourney
 			PlayRoleAnim ("death", 1, () => {
 				playerWinCallBack (new Transform[]{ transform });
 				expUICtr.QuitFight ();
+				Transform skillEffect = transform.Find("SkillEffect");
+				TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().AddSkillEffectToPool(skillEffect);
 				gameObject.SetActive(false);
 			});
 

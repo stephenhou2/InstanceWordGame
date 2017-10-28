@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public enum SoundType{
-		UI,
-		Explore
-	}
 
 	public enum SoundDetailTypeName{
 		Steps,
@@ -25,37 +21,13 @@ namespace WordJourney
 		public AudioSource pronunciationAS;
 
 
-		public List<AudioClip> exploreClips = new List<AudioClip> ();
-
-		public List<AudioClip> UIClips = new List<AudioClip>();
-
-//		public List<AudioClip> skillEffectClips = new List<AudioClip> ();
-
 		public float lowPitchRange = 0.95f;				
 		public float highPitchRange = 1.05f;
 
-		public void InitExploreAudioClips(){
 
-			ResourceLoader exploreAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (exploreAudioLoader, "audio/explore", () => {
-				CopyClips(exploreAudioLoader.audioClips,exploreClips,false);
-			}, true);
-
-		}
-
-
-		public void InitUIAudioClips(){
-
-			ResourceLoader UIAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (UIAudioLoader, "audio/ui", () => {
-				CopyClips(UIAudioLoader.audioClips,UIClips,true);
-			}, true);
-		}
 			
 
-		public void PlayClips(SoundType type,SoundDetailTypeName name,string soundDetailName = null){
+		public void PlayClips(List<AudioClip> clips,SoundDetailTypeName name,string soundDetailName = null){
 
 			string detailType = string.Empty;
 
@@ -73,33 +45,21 @@ namespace WordJourney
 
 			AudioClip clip = null;
 
-			switch (type) {
-			case SoundType.Explore:
+			List<AudioClip> detailClips = GameManager.Instance.dataCenter.allExploreAudioClips.FindAll (delegate(AudioClip obj) {
+				return obj.name.Contains (detailType);
+			});
 
-				if (soundDetailName == string.Empty) {
-					break;
-				}
-
-				List<AudioClip> clips = exploreClips.FindAll (delegate(AudioClip obj) {
-					return obj.name.Contains (detailType);
+			if (soundDetailName != null) {
+				detailClips = detailClips.FindAll (delegate(AudioClip obj) {
+					return obj.name.Contains(soundDetailName);
 				});
-
-				if (soundDetailName != null) {
-					clips = clips.FindAll (delegate(AudioClip obj) {
-						return obj.name.Contains(soundDetailName);
-					});
-				}
-
-				clip = RandomAudioClip (clips);
-
-				break;
-			case SoundType.UI:
-
-				break;
-
 			}
 
+			clip = RandomAudioClip (detailClips);
+
+
 			if (clip == null) {
+				Debug.LogError("未找到音频文件");
 				return;
 			}
 
@@ -124,37 +84,6 @@ namespace WordJourney
 			int index = Random.Range (0, clips.Count);
 
 			return clips [index];
-
-		}
-
-
-		public void UnloadClips(SoundType soundType){
-
-			switch (soundType) {
-			case SoundType.Explore:
-				for (int i = 0; i < exploreClips.Count; i++) {
-					exploreClips [i].UnloadAudioData();
-				}
-				exploreClips.Clear ();
-				break;
-			case SoundType.UI:
-				for (int i = 0; i < UIClips.Count; i++) {
-					UIClips [i].UnloadAudioData();
-				}
-				UIClips.Clear ();
-				break;
-			}
-
-		}
-
-		private void CopyClips(List<AudioClip> originClips,List<AudioClip> targetClips,bool dontUnload){
-
-			for(int i = 0;i<originClips.Count;i++){
-				targetClips.Add(originClips[i]);
-				if (dontUnload) {
-					originClips [i].hideFlags = HideFlags.DontUnloadUnusedAsset;
-				}
-			}
 
 		}
 			

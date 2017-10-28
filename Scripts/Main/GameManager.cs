@@ -6,6 +6,9 @@ using System.Data;
 
 namespace WordJourney
 {
+
+	using UnityEngine.SceneManagement;
+
 	public class GameManager : MonoBehaviour {
 
 		private static volatile GameManager instance;  
@@ -23,7 +26,7 @@ namespace WordJourney
 
 						ResourceLoader gameManagerLoader = ResourceLoader.CreateNewResourceLoader ();
 
-						ResourceManager.Instance.LoadAssetsWithBundlePath (gameManagerLoader, "main", ()=>{
+						ResourceManager.Instance.LoadAssetsWithBundlePath (gameManagerLoader, CommonData.mainStaticBundleName, ()=>{
 							instance = gameManagerLoader.gos[0].GetComponent<GameManager>();
 							instance.transform.SetParent(null);
 						}, true,"GameManager");
@@ -124,7 +127,35 @@ namespace WordJourney
 
 		}
 			
-
+		#warning 如果决定使用scene来进行场景转换打开下面的代码
+//		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+//		static public void CallbackInitialization()
+//		{
+//			//register the callback to be called everytime the scene is loaded
+//			SceneManager.sceneLoaded += OnSceneLoaded;
+//		}
+//
+//		static private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+//		{
+//			switch (arg0.name) {
+//			case "GameScene":
+//				TransformManager.FindTransform ("GameLoader").GetComponent<GameLoader> ().SetUpHomeView ();
+//				break;
+//			case "ExploreScene":
+//				int currentExploreLevel = GameManager.Instance.unlockedMaxChapterIndex;
+//
+//				ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
+//
+//				ResourceManager.Instance.LoadAssetsWithBundlePath (exploreSceneLoader, "explore/scene", () => {
+//
+//					TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView (currentExploreLevel);
+//
+//				}, true);
+//				break;
+//
+//			}
+//
+//		}
 
 
 	}

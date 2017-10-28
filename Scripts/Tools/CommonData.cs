@@ -37,31 +37,36 @@ namespace WordJourney{
 		public static string BussinessEnglishTable = "Bussiness";
 		public static string DailyEnglishTable = "Daily";
 
-
-
-
 		public static string instanceContainerName = "InstanceContainer";
 		public static string poolContainerName = "PoolContainer";
 
 
-		public static string homeCanvas = "HomeCanvas";
-		public static string bagCanvas = "BagCanvas";
-		public static string skillCanvas = "SkillCanvas";
-		public static string settingCanvas = "SettingCanvas";
-		public static string spellCanvas = "SpellCanvas";
+//		public static string gameSettingsBundleName = "gameSettings";
+//		public static string learnInfoBundleName = "learnInfo";
+//		public static string allMaterialsBundleName = "allMaterials";
+//		public static string allItemModelsBundleName = "AllItemModels";
+
+		public static string mainStaticBundleName = "main/static";
+		public static string homeCanvasBundleName = "home/canvas";
+		public static string recordCanvasBundleName = "record/canvas";
+		public static string materialDiaplayCanvasBundleName = "material/canvas";
+		public static string itemDisplayCanvasBundleName = "item/canvas";
+		public static string skillCanvasBundleName = "skills/canvas";
+		public static string bagCanvasBundleName = "bag/canvas";
+		public static string settingCanvasBundleName = "setting/canvas";
+		public static string spellCanvasBundleName = "spell/canvas";
+		public static string exploreSceneBundleName = "explore/scene";
 
 
-//		public static string gameSettingsCacheName = "gameSettings";
-//		public static string learnInfoCacheName = "learnInfo";
-//		public static string allMaterialsCacheName = "allMaterials";
-//		public static string allMaterialSpritesCacheName = "AllMaterialSprites";
-//		public static string allItemModelsCacheName = "AllItemModels";
-//		public static string allItemSpritesCacheName = "AllItemSprites";
-//		public static string allMapSpritesCacheName = "AllMapSprites";
-//		public static string allSkillsCacheName = "AllSkills";
-//		public static string allSkillSpritesCacheName = "AllSkillSprites";
-//		public static string allUISpritesCacheName = "AllUISprites";
-//		public static string allMonstersCacheName = "AllMonsters";
+		public static string allMaterialSpritesBundleName = "material/icons";
+		public static string allItemSpritesBundleName = "item/icons";
+		public static string allMapSpritesBundleName = "explore/mapicons";
+		public static string allSkillsBundleName = "skills/skills";
+		public static string allSkillSpritesBundleName = "skills/icons";
+		public static string allUISpritesBundleName = "ui/icons";
+		public static string allMonstersBundleName = "explore/monsters";
+		public static string allExploreAudioClipsBundleName = "audio/explore";
+		public static string allUIAudioClipsBundleName = "audio/ui";
 
 
 		public static int aInASCII = (int)('a');

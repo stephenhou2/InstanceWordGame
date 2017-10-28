@@ -14,11 +14,6 @@ namespace WordJourney
 		// 加载进度
 		public float loadProgress;
 
-		// 从本地加载出的资源包
-		private AssetBundle myLoadedAssetBundle;
-
-		private string bundleName;
-
 		// 指定加载的文件名
 		private string fileName;
 
@@ -45,10 +40,7 @@ namespace WordJourney
 	
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();		
 		public static ResourceLoader CreateNewResourceLoader(){
-
-			ResourceLoader rm = new GameObject ().AddComponent<ResourceLoader> ();
-
-			return rm;		
+			return new GameObject ().AddComponent<ResourceLoader> ();	
 		}
 
 		/// <summary>
@@ -60,7 +52,6 @@ namespace WordJourney
 		/// <param name="fileName">指定文件名（指定后只加载指定名称的文件镜像）.</param>
 		public void LoadAssetsWithBundleName (string bundleName, CallBack callBack,  bool isSync = false, string fileName = null)
 		{
-			this.bundleName = bundleName;
 			this.fileName = fileName;
 			this.callBack = callBack;
 
@@ -88,6 +79,8 @@ namespace WordJourney
 
 		}
 
+
+
 			
 		/// <summary>
 		/// 同步加载资源
@@ -97,13 +90,16 @@ namespace WordJourney
 		{
 			string targetPath = string.Format("{0}/{1}",Application.streamingAssetsPath, bundleName);
 
-			myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
+			AssetBundle myLoadedAssetBundle = AssetBundle.LoadFromFile (targetPath);
 
 			ResourceManager.Instance.AddCache (bundleName, myLoadedAssetBundle);
 
 			LoadAssetWithAssetBundle (myLoadedAssetBundle,true,callBack,fileName);
 
 		}
+
+
+
 
 		/// <summary>
 		/// 异步加载资源
@@ -121,7 +117,7 @@ namespace WordJourney
 
 			yield return bundleLoadRequest;
 
-			myLoadedAssetBundle = bundleLoadRequest.assetBundle;
+			AssetBundle myLoadedAssetBundle = bundleLoadRequest.assetBundle;
 
 			if (myLoadedAssetBundle == null) {
 				Debug.Log ("Failed to load AssetBundle!");
@@ -149,6 +145,14 @@ namespace WordJourney
 			} else {
 				StartCoroutine ("LoadAssetsAsync", myLoadedAssetBundle);
 			}
+
+		}
+
+		public void LoadAssetWithAssetBundle<T>(AssetBundle myLoadedAssetBundle,bool isSync,CallBack callback,string fileName){
+
+			this.type = typeof(T);
+
+			LoadAssetWithAssetBundle (myLoadedAssetBundle, isSync, callback, fileName);
 
 		}
 

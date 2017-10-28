@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2900964402
+CRC: 3140275857
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0e7a83cbc819c15ebd26c90e9ec0ebdd
+    Hash: dbb0801bf3700cf60f7991ee185d22f2
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -14,7 +14,6 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Sprites/MapIcons/map1.png
 - "Assets/Resources/Sprites/MapIcons/CG\u8292\u679C\u52A8\u753B\u7D20\u6750\u5E97
   (208).png"
 - Assets/Resources/Sprites/MapIcons/npc_monster.png

@@ -40,6 +40,38 @@ namespace WordJourney
 			return mInstance.GetComponent<T>();
 		}
 
+		public T GetInstanceWithName<T>(string instanceName, GameObject instanceModel,Transform instanceParent)
+			where T:Component
+		{
+			GameObject mInstance = null;
+
+			if (mInstancePool.Count != 0) {
+
+				mInstance = mInstancePool.Find (delegate(GameObject obj) {
+					return obj.name == instanceName;
+				});
+
+				if (mInstance != null) {
+					mInstancePool.Remove (mInstance);
+				} else {
+					mInstance = Instantiate (instanceModel,instanceParent);
+					ResetInstance (mInstance);
+					mInstance.name = instanceModel.name;
+				}
+
+				mInstance.transform.SetParent (instanceParent,false);
+
+				ResetInstance (mInstance);
+			} else {
+				mInstance = Instantiate (instanceModel,instanceParent);
+				ResetInstance (mInstance);
+				mInstance.name = instanceModel.name;
+			}
+
+			return mInstance.GetComponent<T>();
+
+		}
+
 		public void AddChildInstancesToPool(Transform originalParent){
 
 			while (originalParent.childCount > 0) {

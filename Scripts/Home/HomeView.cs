@@ -20,6 +20,8 @@ namespace WordJourney
 
 		public Image maskImage;
 
+
+
 		public void SetUpHomeView(){
 
 			GetComponent<Canvas> ().enabled = true;

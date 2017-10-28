@@ -24,15 +24,15 @@ namespace WordJourney
 
 			DontDestroyOnLoad (GameManager.Instance.gameObject);
 
-			SetUpHomeView (Player.mainPlayer);
+			SetUpHomeView ();
 
 		}
 
-		private void SetUpHomeView(Player player){
+		public void SetUpHomeView(){
 
 			ResourceLoader homeCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (homeCanvasLoader, "home/canvas", () => {
+			ResourceManager.Instance.LoadAssetsWithBundlePath (homeCanvasLoader, CommonData.homeCanvasBundleName, () => {
 
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 

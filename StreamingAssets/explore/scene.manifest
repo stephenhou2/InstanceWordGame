@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1683980474
+CRC: 1645169964
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1f2d366acb00fc9bce7fb51f2bbed96b
+    Hash: 3b22ff1be1802a939ec972a1ab627a48
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 49c0bf82422c3191c6c570d07ae3adb1
+    Hash: 086d24d079f90704c0dc26a54317fbe9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -88,8 +88,11 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
+- Assets/Prefabs/Explore/RewardButtonModel.prefab
+- Assets/Prefabs/Explore/ChoiceButtonModel.prefab
+- Assets/Prefabs/Explore/SkillButtonModel.prefab
 - Assets/Prefabs/Explore/ExploreManager.prefab
 - Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
 Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/mapicons
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons

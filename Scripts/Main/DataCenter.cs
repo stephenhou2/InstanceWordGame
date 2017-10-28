@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace WordJourney
 {
+
 	public class DataCenter {
-
-
 
 		private GameSettings mGameSettings;
 		public GameSettings gameSettings{
@@ -25,7 +24,6 @@ namespace WordJourney
 		}
 
 		private LearningInfo mLearnInfo;
-
 		public LearningInfo learnInfo{
 			get{
 				if (mLearnInfo == null) {
@@ -47,7 +45,7 @@ namespace WordJourney
 					for (int i = 0; i < materials.Length; i++) {
 						mAllMaterials.Add (materials [i]);
 					}
-//					cacheDic.Add ("allMaterials",mAllMaterials);
+
 				}
 				return mAllMaterials;
 			}
@@ -60,7 +58,7 @@ namespace WordJourney
 
 					ResourceLoader materialSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(materialSpritesLoader,"material/icons",()=>{
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(materialSpritesLoader,CommonData.allMaterialSpritesBundleName,()=>{
 						for(int i = 0;i<materialSpritesLoader.sprites.Count;i++){
 							mAllMaterialSprites.Add(materialSpritesLoader.sprites[i]);
 						}
@@ -79,7 +77,6 @@ namespace WordJourney
 					for (int i = 0; i < itemModels.Length; i++) {
 						mAllItemModels.Add (itemModels [i]);
 					}
-//					cacheDic.Add ("allItemModels", mAllItemModels);
 				}
 				return mAllItemModels;
 			}
@@ -95,21 +92,19 @@ namespace WordJourney
 
 					ResourceLoader itemSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (itemSpritesLoader, "item/icons", () => {
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (itemSpritesLoader, CommonData.allItemSpritesBundleName, () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<itemSpritesLoader.sprites.Count;i++){
 							mAllItemSprites.Add(itemSpritesLoader.sprites[i]);
 						}
 					},true);
-//					cacheDic.Add ("allItemSprites", mAllItemSprites);
+
 				}
 
 				return mAllItemSprites;
 			}
 
 		}
-
-
 
 
 		private List<Sprite> mAllMapSprites = new List<Sprite> ();
@@ -119,13 +114,13 @@ namespace WordJourney
 
 					ResourceLoader mapSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (mapSpritesLoader, "mapicons", () => {
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (mapSpritesLoader, CommonData.allMapSpritesBundleName, () => {
 
 						for(int i = 0;i<mapSpritesLoader.sprites.Count;i++){
 							mAllMapSprites.Add (mapSpritesLoader.sprites[i]);
 						}
 					},true);
-//					cacheDic.Add ("allMapSprites", mAllMapSprites);
+
 				}
 				return mAllMapSprites;
 			}
@@ -138,11 +133,11 @@ namespace WordJourney
 			get{
 				if(mAllSkills.Count == 0){
 
-					Transform allSkillsContainer = TransformManager.FindOrCreateTransform ("AllSkills");
+					Transform allSkillsContainer = TransformManager.FindOrCreateTransform ("InstanceContainer/AllSkills");
 
 					ResourceLoader skillsLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath (skillsLoader, "skills/skill", () => {
+					ResourceManager.Instance.LoadAssetsWithBundlePath (skillsLoader, CommonData.allSkillsBundleName, () => {
 						for(int i = 0;i<skillsLoader.gos.Count;i++){
 							Skill skill = skillsLoader.gos[i].GetComponent<Skill>();
 							mAllSkills.Add(skill);
@@ -151,8 +146,6 @@ namespace WordJourney
 					},true);
 
 					SortSkillsById (mAllSkills);
-
-//					cacheDic.Add ("allSkills", mAllSkills);
 
 				}
 
@@ -176,8 +169,7 @@ namespace WordJourney
 				}
 			}
 		}
-
-
+			
 		private List<Sprite> mAllSkillSprites = new List<Sprite>();
 		public List<Sprite> allSkillSprites{
 			get{
@@ -185,13 +177,13 @@ namespace WordJourney
 
 					ResourceLoader skillSpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (skillSpritesLoader, "skills/icons", () => {
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite> (skillSpritesLoader, CommonData.allSkillSpritesBundleName, () => {
 						// 获取所有游戏物品的图片
 						for(int i = 0;i<skillSpritesLoader.sprites.Count;i++){
 							mAllSkillSprites.Add(skillSpritesLoader.sprites[i]);
 						}
 					},true);
-//					cacheDic.Add ("allSkillSprites", mAllSkillSprites);
+
 				}
 
 				return mAllSkillSprites;
@@ -205,12 +197,12 @@ namespace WordJourney
 
 					ResourceLoader UISpritesLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(UISpritesLoader, "ui_icons",()=>{
+					ResourceManager.Instance.LoadAssetsWithBundlePath<Sprite>(UISpritesLoader, CommonData.allUISpritesBundleName,()=>{
 						for(int i = 0;i<UISpritesLoader.sprites.Count;i++){
 							mAllUISprites.Add(UISpritesLoader.sprites[i]);
 						}
 					},true);
-//					cacheDic.Add ("allUIIcons", mAllUIIcons);
+
 				}
 				return mAllUISprites;
 			}
@@ -223,16 +215,123 @@ namespace WordJourney
 
 					ResourceLoader monstersLoader = ResourceLoader.CreateNewResourceLoader ();
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath (monstersLoader, "monsters", () => {
+					ResourceManager.Instance.LoadAssetsWithBundlePath (monstersLoader, CommonData.allMonstersBundleName, () => {
 						for(int i = 0;i<monstersLoader.gos.Count;i++){
 							Transform monster = monstersLoader.gos[i].transform;
 							mAllMonsters.Add(monster);
 						};
 					}, true);
-//					cacheDic.Add ("allMonsters", allMonsters);
+
 				}
 				return mAllMonsters;
 			}
 		}
+			
+
+		private List<AudioClip> mAllExploreAudioClips = new List<AudioClip>();
+		public List<AudioClip> allExploreAudioClips{
+			get{
+				if (mAllExploreAudioClips.Count == 0) {
+					ResourceLoader exploreAudioLoader = ResourceLoader.CreateNewResourceLoader ();
+					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (exploreAudioLoader, CommonData.allExploreAudioClipsBundleName, () => {
+						CopyClips(exploreAudioLoader.audioClips,mAllExploreAudioClips,false);
+					}, true);
+				}
+				return mAllExploreAudioClips;
+			}
+		}
+
+		private List<AudioClip> mAllUIAudioClips = new List<AudioClip> ();
+		public List<AudioClip> allUIClips{
+			get{
+				if (mAllUIAudioClips.Count == 0) {
+					ResourceLoader UIAudioLoader = ResourceLoader.CreateNewResourceLoader ();
+					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (UIAudioLoader, CommonData.allUIAudioClipsBundleName, () => {
+						CopyClips(UIAudioLoader.audioClips,mAllUIAudioClips,true);
+					}, true);
+				}
+				return mAllUIAudioClips;
+			}
+		}
+
+		private void CopyClips(List<AudioClip> originClips,List<AudioClip> targetClips,bool dontUnload){
+
+			for(int i = 0;i<originClips.Count;i++){
+				targetClips.Add(originClips[i]);
+				if (dontUnload) {
+					originClips [i].hideFlags = HideFlags.DontUnloadUnusedAsset;
+				}
+			}
+
+		}
+			
+
+		public void ReleaseDataWithNames(string[] dataNames){
+
+			for (int i = 0; i < dataNames.Length; i++) {
+				ReleaseDataWithName (dataNames [i]);
+			}
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
+
+		}
+
+		private void ReleaseDataWithName(string dataName){
+
+			switch (dataName) {
+			case "GameSettings":
+				mGameSettings = null;
+				break;
+			case "LearnInfo":
+				mLearnInfo = null;
+				break;
+			case "AllMaterials":
+				mAllMaterials.Clear ();
+				break;
+			case "AllMaterialSprites":
+				mAllMaterialSprites.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allMaterialSpritesBundleName, true);
+				break;
+			case "AllItemModels":
+				mAllItemModels.Clear ();
+				break;
+			case "AllItemSprites":
+				mAllItemSprites.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allItemSpritesBundleName, true);
+				break;
+			case "AllMapSprites":
+				mAllMapSprites.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allMapSpritesBundleName, true);
+				break;
+			case "AllSkills":
+				mAllSkills.Clear ();
+				TransformManager.DestroyTransfromWithName("AllSkills",TransformRoot.InstanceContainer);
+				ResourceManager.Instance.UnloadCaches (CommonData.allSkillsBundleName, true);
+				break;
+			case "AllSkillSprites":
+				mAllSkillSprites.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allSkillSpritesBundleName, true);
+				break;
+			case "AllMonsters":
+				mAllMonsters.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allMonstersBundleName, false);
+				break;
+			case "AllExploreAudioClips":
+				mAllExploreAudioClips.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allExploreAudioClipsBundleName, true);
+				break;
+			case "AllUIAudioClips":
+				mAllUIAudioClips.Clear ();
+				ResourceManager.Instance.UnloadCaches (CommonData.allUIAudioClipsBundleName, true);
+				break;
+			default:
+				Debug.LogErrorFormat ("{0} is not data managed by data center", dataName);
+				break;
+			}
+
+		}
+
 	}
 }

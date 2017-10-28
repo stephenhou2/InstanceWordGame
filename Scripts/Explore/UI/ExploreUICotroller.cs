@@ -27,7 +27,7 @@ namespace WordJourney
 		public Transform choiceContainer;
 		public Image npcIcon;
 		public Text dialogText;
-		public GameObject choiceButtonModel;
+		private Transform choiceButtonModel;
 		public Button nextDialogButton;
 		/**********  dialogPlane UI *************/
 
@@ -35,7 +35,7 @@ namespace WordJourney
 		/**********  RewardPlane UI *************/
 		public Transform rewardPlane;
 		public Transform rewardContainer;
-		public GameObject rewardButtonModel;
+		private Transform rewardButtonModel;
 		/**********  RewardPlane UI *************/
 
 		private InstancePool choiceButtonPool;
@@ -45,18 +45,23 @@ namespace WordJourney
 		private Choice[] choices;
 
 		private List<Item> itemsToPickUp = new List<Item>();
-		private Player player;
 
-		void Awake(){
 
-			player = Player.mainPlayer;
+			
+		public void InitializePoolsAndModels(){
 
 			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
 
 			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
 
+			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
+
+			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
+
+
 		}
-			
+
+
 
 		public void ShowFightPlane(){
 
@@ -121,7 +126,7 @@ namespace WordJourney
 
 				Choice choice = choices [choiceId];
 
-				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel, choiceContainer);
+				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 
 				choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
 
@@ -191,7 +196,7 @@ namespace WordJourney
 
 				Item rewardItem = rewardItems [i];
 				
-				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel, rewardContainer);
+				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
 
 				Sprite rewardSprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite s) {
 					return s.name == rewardItem.spriteName;
@@ -268,23 +273,35 @@ namespace WordJourney
 
 		public void QuitExplore(){
 
-			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().OnQuitExplore();
-
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
-
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			}
-				
-			Destroy (this.gameObject);
-
-			Destroy (TransformManager.FindTransform ("TintTextModel").gameObject);
+			DestroyInstances ();
 
 			DestroyInstancePools ();
+
+			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().OnQuitExplore();
 
 			Resources.UnloadUnusedAssets ();
 
 			System.GC.Collect ();
+
+			ResourceLoader homeCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+
+			ResourceManager.Instance.LoadAssetsWithBundlePath (homeCanvasLoader, CommonData.homeCanvasBundleName, () => {
+
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+
+				TransformManager.DestroyTransform(transform);
+
+			},true);
+		}
+
+
+		private void DestroyInstances(){
+
+			Destroy (this.gameObject);
+			TransformManager.DestroyTransfromWithName ("TintTextModel", TransformRoot.InstanceContainer);
+			TransformManager.DestroyTransfromWithName ("SkillButtonModel", TransformRoot.InstanceContainer);
+			TransformManager.DestroyTransfromWithName ("RewardButtonModel", TransformRoot.InstanceContainer);
+			TransformManager.DestroyTransfromWithName ("ChoiceButtonModel", TransformRoot.InstanceContainer);
 
 		}
 

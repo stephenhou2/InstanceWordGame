@@ -2,8 +2,13 @@
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
+
+
 namespace WordJourney
 {
+	
+	using UnityEngine.SceneManagement;
+
 	public class ExploreManager : MonoBehaviour
 	{
 		// 地图生成器
@@ -43,8 +48,6 @@ namespace WordJourney
 
 			battlePlayerCtr.ActiveBattlePlayer (true, false, false);
 
-//			battlePlayerCtr.transform.Find ("SkillEffect").gameObject.SetActive (true);
-
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
@@ -53,6 +56,7 @@ namespace WordJourney
 
 			expUICtr = exploreCanvas.GetComponent<ExploreUICotroller> ();
 
+
 		}
 			
 		//Initializes the game for each level.
@@ -60,12 +64,12 @@ namespace WordJourney
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
+			TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ().InitializePoolsAndModels ();
+
 			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex-1];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);
-
-			GameManager.Instance.soundManager.InitExploreAudioClips ();
 
 		}
 
@@ -202,16 +206,16 @@ namespace WordJourney
 				break;
 			}
 
-
-
-
 		}
 
 		private void EnterObstacle(MapItem mapItem){
 
 			Obstacle obstacle = mapItem as Obstacle;
 
-			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.dataCenter.allExploreAudioClips, 
+				SoundDetailTypeName.Map, 
+				mapItem.mapItemName);
 
 			battlePlayerCtr.PlayRoleAnim ("fightWithAxe", 1, () => {
 
@@ -238,7 +242,10 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.dataCenter.allExploreAudioClips,
+				SoundDetailTypeName.Map, 
+				mapItem.mapItemName);
 
 			trapSwitch.SwitchOffTrap ();
 
@@ -271,7 +278,10 @@ namespace WordJourney
 
 					unlockItem.itemCount--;
 
-					GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
+					GameManager.Instance.soundManager.PlayClips (
+						GameManager.Instance.dataCenter.allExploreAudioClips, 
+						SoundDetailTypeName.Map, 
+						mapItem.mapItemName);
 
 					tb.UnlockOrDestroyMapItem (()=>{
 
@@ -287,7 +297,10 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayClips (SoundType.Explore, SoundDetailTypeName.Map, mapItem.mapItemName);
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.dataCenter.allExploreAudioClips,
+				SoundDetailTypeName.Map, 
+				mapItem.mapItemName);
 
 			// 如果该地图物品不需要使用特殊物品开启
 			tb.UnlockOrDestroyMapItem (()=>{
@@ -341,41 +354,22 @@ namespace WordJourney
 			Camera.main.transform.SetParent (null);
 
 			battlePlayerCtr.gameObject.SetActive(false);
-
-			GameManager.Instance.dataCenter.allMaterials.Clear ();
-			GameManager.Instance.dataCenter.allMaterialSprites.Clear ();
-			GameManager.Instance.dataCenter.allMapSprites.Clear ();
-			GameManager.Instance.dataCenter.allSkills.Clear ();
-			GameManager.Instance.dataCenter.allSkillSprites.Clear ();
-			GameManager.Instance.dataCenter.allMonsters.Clear ();
-
-			GameManager.Instance.soundManager.UnloadClips (SoundType.Explore);
-
-//			GameManager.Instance.dataCenter.UnloadCaches (new string[] {
-//				CommonData.allMaterialsCacheName,
-//				CommonData.allMaterialSpritesCacheName,
-//				CommonData.allMapSpritesCacheName,
-//				CommonData.allSkillsCacheName,
-//				CommonData.allSkillSpritesCacheName,
-//				CommonData.allMonstersCacheName
-//			});
-
-			ResourceManager.Instance.UnloadCaches ("monsters");
-			ResourceManager.Instance.UnloadCaches ("mapicons");
-
-			Destroy (TransformManager.FindTransform ("AllSkills").gameObject);
-
+		
 			mapGenerator.DestroyInstancePools ();
-
-//			ResourceLoader exploreSceneLoader = TransformManager.FindTransform ("ExploreSceneLoader").GetComponent<ResourceLoader> ();
 
 			ReleaseReference ();
 
-			Destroy (this.gameObject);
+			Destroy(this.gameObject);
 
-			Resources.UnloadUnusedAssets ();
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[] {
+				"AllMaterials", "AllMaterialSprites", "AllMapSprites", 
+				"AllSkills", "AllSkillSprites", "AllMonsters","AllExploreAudioClips"
+			});
 
-			System.GC.Collect ();
+			ResourceManager.Instance.UnloadCaches (CommonData.exploreSceneBundleName,true);
+
+
+//			SceneManager.LoadScene ("GameScene",LoadSceneMode.Single);
 
 		}
 

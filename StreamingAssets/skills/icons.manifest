@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3002179599
+CRC: 895706933
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e8f63b8960791a221c29ffafd7943d5b
+    Hash: 3abcae6bd94c22331ff9aaedbe3a7dc8
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4774d6da9b606debf00b5a5d61c4487c
+    Hash: 36c33a819640bead83b84b1645a12e6d
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -14,12 +14,12 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Sprites/Skills/skillIcon7.png
-- Assets/Resources/Sprites/Skills/skillIcon3.png
 - Assets/Resources/Sprites/Skills/skillIcon5.png
 - Assets/Resources/Sprites/Skills/skillIcon1.png
+- Assets/Resources/Sprites/Skills/skillIcon6.png
 - Assets/Resources/Sprites/Skills/skillIcon2.png
+- Assets/Resources/Sprites/Skills/skillIcon7.png
+- Assets/Resources/Sprites/Skills/skillIcon3.png
 - Assets/Resources/Sprites/Skills/skillIcon8.png
 - Assets/Resources/Sprites/Skills/skillIcon4.png
-- Assets/Resources/Sprites/Skills/skillIcon6.png
 Dependencies: []

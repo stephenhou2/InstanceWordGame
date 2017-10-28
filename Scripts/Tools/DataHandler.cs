@@ -55,7 +55,7 @@ namespace WordJourney
 			try{
 				sr = File.OpenText (fileName);
 				string dataString = sr.ReadToEnd ();
-				Debug.Log(dataString);
+				sr.Dispose();
 				return dataString;
 
 			}catch(System.Exception e){

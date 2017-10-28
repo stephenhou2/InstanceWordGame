@@ -9,23 +9,26 @@ namespace WordJourney
 
 		public Dictionary<string,AssetBundle> cacheDic = new Dictionary<string, AssetBundle> ();
 
-		public void AddCache(string name,AssetBundle ab){
-			cacheDic.Add (name, ab);
+		public void AddCache(string bundleName,AssetBundle ab){
+			cacheDic.Add (bundleName, ab);
 		}
 
 
-		public void UnloadCaches(string cacheName){
+		public void UnloadCaches(string bundleName,bool completeUnload){
 
-			if (cacheDic [cacheName] != null) {
-				cacheDic [cacheName].Unload (true);
-				Resources.UnloadUnusedAssets ();
-				System.GC.Collect ();
+			if (cacheDic.ContainsKey(bundleName)) {
+				cacheDic [bundleName].Unload (completeUnload);
+				cacheDic.Remove (bundleName);
+			}else{
+				Debug.LogFormat ("缓存中未找到{0}", bundleName);
 			}
 
 		}
 
 		public void LoadAssetsWithBundlePath (ResourceLoader resourceLoader, string bundleName, CallBack callBack, bool isSync = false, string fileName = null)
 		{
+
+			LoadDependencyAssets (bundleName);
 
 			if (cacheDic.ContainsKey (bundleName)) {
 
@@ -51,6 +54,8 @@ namespace WordJourney
 		public void LoadAssetsWithBundlePath<T> (ResourceLoader resourceLoader, string bundleName, CallBack callBack, bool isSync = false, string fileName = null)
 		{
 
+			LoadDependencyAssets (bundleName);
+
 			if (cacheDic.ContainsKey (bundleName)) {
 
 				if (cacheDic [bundleName] == null) {
@@ -62,12 +67,39 @@ namespace WordJourney
 
 				AssetBundle myLoadedAssetBundle = cacheDic [bundleName];
 
-				resourceLoader.LoadAssetWithAssetBundle (myLoadedAssetBundle, isSync, callBack, fileName);
+				resourceLoader.LoadAssetWithAssetBundle<T> (myLoadedAssetBundle, isSync, callBack, fileName);
 
 				return;
 			}
 
 			resourceLoader.LoadAssetsWithBundleName<T> (bundleName, callBack, isSync, fileName);
+		}
+
+
+
+		// 加载Manifest
+		private void LoadDependencyAssets(string bundleName)
+		{
+			string manifestPath = string.Format ("{0}/{1}", Application.streamingAssetsPath, "StreamingAssets");
+
+			var bundle = AssetBundle.LoadFromFile(manifestPath);
+
+			AssetBundleManifest manifest = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+
+			string[] dependencies = manifest.GetAllDependencies (bundleName);
+
+			for (int i = 0; i < dependencies.Length; i++) {
+				string dependency = dependencies [i];
+				if (!ResourceManager.Instance.cacheDic.ContainsKey (dependency)) {
+					ResourceLoader dependencyLoader = ResourceLoader.CreateNewResourceLoader ();
+					dependencyLoader.LoadAssetsWithBundleName (dependency, null, true, null);
+				}
+			}
+
+			// 压缩包释放掉
+			bundle.Unload(false);
+
+			bundle = null;
 		}
 
 	}
