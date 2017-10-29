@@ -36,14 +36,11 @@ namespace WordJourney
 		public bool firstSetHealthBar = true;
 		public bool firstSetManaBar = true;
 
-		// 当前屏幕分辨率和预设屏幕分辨率之间的转换比例
-		private float scalerToPresetResulotion;
+
 
 		protected virtual void Awake(){
 
 			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
-		
-			scalerToPresetResulotion = 1920f / Camera.main.pixelHeight;
 
 		}
 
@@ -67,7 +64,7 @@ namespace WordJourney
 
 			Vector3 posInScreen = Camera.main.WorldToScreenPoint (worldPos);
 
-			Vector3 posInCanvas = new Vector3 (posInScreen.x * scalerToPresetResulotion, posInScreen.y * scalerToPresetResulotion, posInScreen.z);
+			Vector3 posInCanvas = new Vector3 (posInScreen.x * CommonData.scalerToPresetResulotion, posInScreen.y * CommonData.scalerToPresetResulotion, posInScreen.z);
 
 			return posInCanvas;
 

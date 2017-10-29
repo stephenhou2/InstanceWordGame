@@ -71,6 +71,9 @@ namespace WordJourney{
 
 		public static int aInASCII = (int)('a');
 
+		// 当前屏幕分辨率和预设屏幕分辨率之间的转换比例
+		public static float scalerToPresetResulotion = 1920f / Camera.main.pixelHeight;
+
 	}
 
 	public enum SpellPurpose{

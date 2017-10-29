@@ -66,6 +66,19 @@ namespace WordJourney
 
 		public static Word RandomWord(){
 
+			LearningInfo learnInfo = GameManager.Instance.dataCenter.learnInfo;
+
+			int wordId = 0;
+
+			if (learnInfo.learnedWords.Count != 0) {
+
+				wordId = Random.Range (0, learnInfo.learnedWords.Count - 1);
+
+				return learnInfo.learnedWords [wordId];
+
+			}
+
+
 			string tableName = string.Empty;
 
 			WordType wt = GameManager.Instance.dataCenter.learnInfo.wordType;
@@ -92,9 +105,9 @@ namespace WordJourney
 
 			int wordsCount = sql.GetItemCountOfTable (tableName);
 
-			int wordId = Random.Range (0, wordsCount - 1);
+			wordId = Random.Range (0, wordsCount - 1);
 
-			string[] conditions = new string[]{string.Format ("ID={0}", wordId)};
+			string[] conditions = new string[]{string.Format ("wordId={0}", wordId)};
 
 			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
 
@@ -106,7 +119,7 @@ namespace WordJourney
 
 			string example = reader.GetString (3);
 
-			return new Word (wordId, spell, explaination, example,true);
+			return new Word (wordId, spell, explaination, example, true);
 
 		}
 			

@@ -21,15 +21,14 @@ namespace WordJourney
 
 		private Item currentSelectItem;
 
-		private int resolveCount;
-
 		private int minResolveCount;
 		private int maxResolveCount;
+		private int resolveCount;
 
 
-		#warning forTest init some equipments for test
 		void Awake(){
-			
+
+			#warning forTest init some equipments for test
 			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 				for (int i = 0; i < 128; i++) {
 
@@ -43,6 +42,9 @@ namespace WordJourney
 
 				}
 			}
+
+			resolveCount = 1;
+
 		}
 
 		public void SetUpBagView(){
@@ -126,7 +128,7 @@ namespace WordJourney
 
 		}
 
-		public void SelectItem(Item item){
+		public void OnSelectItemInBag(Item item){
 
 			if (currentSelectItem == item) {
 				return;
@@ -160,59 +162,82 @@ namespace WordJourney
 
 		}
 
-		public void ResolveItem(){
-			
-//			Player player = Player.mainPlayer;
-//
-//			Item item = player.allItems [currentSelectItemIndex];
-//
-//			maxResolveCount = item.itemCount;
-//			minResolveCount = 1;
-//
-//			if (item.itemType == ItemType.Consumables && item.itemCount > 1) {
-//
-//				bagView.SetUpResolveCountHUD (1, item.itemCount);
-//
-//				return;
-//			}
-//
-//			List<char> charactersReturn =  player.ResolveItem (item,1);
-//
-//			// 返回的有字母，相应处理
-//			if (charactersReturn.Count > 0) {
-//
-//				foreach (char c in charactersReturn) {
-//					Debug.Log (c.ToString ());
-//				}
-//
-//			}
-//
-//			bagView.OnResolveButtonOfDetailHUDClick ();
+		public void OnResolveButtonClick(){
+
+			switch (currentSelectItem.itemType) {
+			case ItemType.Equipment:
+				ResolveAndGetMaterials (currentSelectItem);
+				break;
+			case ItemType.Consumables:
+				maxResolveCount = currentSelectItem.itemCount;
+				minResolveCount = 1;
+				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
+				break;
+			case ItemType.Material:
+				maxResolveCount = currentSelectItem.itemCount;
+				minResolveCount = 1;
+				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
+				break;
+			case ItemType.FuseStone:
+				ResolveAndGetCharacters (currentSelectItem);
+				break;
+			}
 
 		}
 
-		public void OnConfirmResolveCount(){
+		public void OnConfirmResolveButtonClick(){
 
-//			Player player = Player.mainPlayer;
-//
-//			Item item = player.allItems [currentSelectItemIndex];
-//
-//			int resolveCount = (int)bagView.resolveCountSlider.value;
-//
-//			List<char> charactersReturn =  player.ResolveItem (item,resolveCount);
-//
-//			// 返回的有字母，相应处理
-//			if (charactersReturn.Count > 0) {
-//
-//				foreach (char c in charactersReturn) {
-//					Debug.Log (c.ToString ());
-//				}
-//
-//			}
-//
-//			bagView.OnResolveButtonOfDetailHUDClick ();
+			resolveCount = bagView.GetResolveCountBySlider();
+
+			switch (currentSelectItem.itemType) {
+			case ItemType.Material:
+				ResolveAndGetCharacters (currentSelectItem);
+				break;
+			case ItemType.Consumables:
+				ResolveAndGetMaterials (currentSelectItem);
+				break;
+			}
+
+			bagView.QuitResolveCountHUD ();
 
 		}
+
+		/// <summary>
+		/// 分解物品（材料和融合石）并获得字母碎片
+		/// </summary>
+		/// <param name="item">Item.</param>
+		private void ResolveAndGetCharacters(Item item){
+
+			List<char> charactersReturn = Player.mainPlayer.GetCharactersFromItem (item, resolveCount);
+
+			// 返回的有字母，相应处理
+			if (charactersReturn.Count > 0) {
+
+				foreach (char c in charactersReturn) {
+					Debug.Log (c.ToString ());
+				}
+
+			}
+			switch(item.itemType){
+			case ItemType.Material:
+				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag);
+				break;
+			case ItemType.FuseStone:
+				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag);
+				break;
+			}
+
+		}
+
+		/// <summary>
+		/// 分解物品（装备和消耗品）并获得材料
+		/// </summary>
+		/// <param name="item">Item.</param>
+		private void ResolveAndGetMaterials(Item item){
+
+		}
+
+
 
 		// 数量加减按钮点击响应
 		public void ResolveCountPlus(int plus){
@@ -233,19 +258,14 @@ namespace WordJourney
 		/// <summary>
 		/// 选择数量的slider拖动时响应方法
 		/// </summary>
-		public void ResolveCountSliderDrag(){
 
-			resolveCount = bagView.GetResolveCountBySlider ();
-
-			bagView.UpdateResolveCountHUD (resolveCount);
-		}
-
-
-		public void FixEquipment(){
+		public void OnFixButtonClick(){
 
 			Equipment equipment = currentSelectItem as Equipment;
 
-			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (equipment.itemNameInEnglish);
+			Word word = Word.RandomWord();
+
+			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (word.spell);
 
 			if (unsufficientCharacters.Count > 0) {
 
@@ -256,14 +276,10 @@ namespace WordJourney
 
 			} 
 				
-
 			// 玩家的字母碎片数量足够，进入修复界面
-
 			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader,"spell/canvas", () => {
-	
-				Word word = Word.RandomWord();
+			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader,CommonData.spellCanvasBundleName, () => {
 
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForFix(equipment,word);
 
@@ -271,24 +287,21 @@ namespace WordJourney
 
 			});
 
-
-
 		}
-
-
+			
 
 		public void OnQuitResolveCountHUD(){
 
 			resolveCount = 1;
 
-			bagView.OnQuitResolveCountHUD ();
+			bagView.QuitResolveCountHUD ();
 		}
 
 
 		// 退出物品详细页HUD
 		public void OnQuitItemDetailHUD(){
 
-			bagView.OnQuitItemDetailHUD ();
+			bagView.QuitItemDetailHUD ();
 
 		}
 

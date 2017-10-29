@@ -80,6 +80,7 @@ namespace WordJourney
 
 			//获取装备更换页面cell的高度
 			itemDetailModelHeight = (itemDetailsModel as RectTransform).rect.height;
+
 			//获取装备更换页面可视区域高度
 			itemDetailViewPortHeight = (specificTypeItemsScrollView as RectTransform).rect.height;
 
@@ -201,8 +202,6 @@ namespace WordJourney
 		/// <param name="item">Item.</param>
 		private void SetUpItemDetailHUD(Item item){
 
-
-
 			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
 			Text itemName = itemDetailsContainer.Find("ItemName").GetComponent<Text>();
 			Text itemType = itemDetailsContainer.Find("ItemType").GetComponent<Text>();
@@ -223,15 +222,13 @@ namespace WordJourney
 			itemType.text = item.GetItemTypeString ();
 
 			// 如果物品是装备
-			if (item is Equipment) {
+			switch(item.itemType){
+
+			case ItemType.Equipment:
 
 				Equipment equipment = item as Equipment;
 				
 				choiceHUDWithTwoBtns.gameObject.SetActive (true);
-
-//				Equipment currentEquipment = null;
-//
-//				int index = (int)(equipment.equipmentType);
 
 				Equipment currentEquipment = player.allEquipedEquipments.Find (delegate(Equipment obj) {
 					return obj.equipmentType == equipment.equipmentType;
@@ -242,20 +239,27 @@ namespace WordJourney
 				} else {
 					itemProperties.text = equipment.GetItemBasePropertiesString ();
 				}
-
-
-			} 
-			#warning 不是装备的情况后面再补充一下
-			// 如果不是装备
-			else{
-				
+				break;
+			case ItemType.Consumables:
 				itemProperties.text = item.GetItemBasePropertiesString ();
 				choiceHUDWithOneBtn.gameObject.SetActive (true);
-
-			}
-
+				break;
+			case ItemType.Material:
+				itemProperties.text = item.GetItemBasePropertiesString ();
+				choiceHUDWithOneBtn.gameObject.SetActive (true);
+				break;
+			case ItemType.FuseStone:
+				itemProperties.text = item.GetItemBasePropertiesString ();
+				choiceHUDWithOneBtn.gameObject.SetActive (true);
+				break;
+			case ItemType.Task:
+				itemProperties.text = item.GetItemBasePropertiesString ();
+				break;
+			} 
 			itemDetailHUD.gameObject.SetActive (true);
 		}
+
+
 
 		/// <summary>
 		/// 初始化选择分解数量界面
@@ -266,7 +270,7 @@ namespace WordJourney
 
 			Button minusBtn = resolveCountContainer.Find("MinusButton").GetComponent<Button>();
 			Button plusBtn = resolveCountContainer.Find("PlusButton").GetComponent<Button>();
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
 			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
 
 
@@ -287,6 +291,8 @@ namespace WordJourney
 			resolveCountSlider.maxValue = maxValue;
 
 			resolveCountSlider.value = minValue;
+			resolveCount.text = "分解1个";
+
 
 		}
 
@@ -294,7 +300,7 @@ namespace WordJourney
 			
 			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
 
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
 
 			return (int)resolveCountSlider.value;
 		}
@@ -303,7 +309,8 @@ namespace WordJourney
 
 			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
 
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSliderContainer").GetComponentInChildren<Slider>();
+			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
+
 			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
 
 			resolveCountSlider.value = count;
@@ -351,11 +358,11 @@ namespace WordJourney
 					} else {
 						Image selectBorder = itemDisplayButtonTrans.Find ("SelectBorder").GetComponent<Image> ();
 						selectBorder.enabled = !selectBorder.enabled;
-						GetComponent<BagViewController> ().SelectItem (item);
-						SetUpItemDetailHUD (item);
 					}
-
 				}
+
+				GetComponent<BagViewController> ().OnSelectItemInBag (item);
+				SetUpItemDetailHUD (item);
 
 			});
 
@@ -403,14 +410,24 @@ namespace WordJourney
 		/// <summary>
 		/// 装备更换页面开始进行拖拽时，重置拖拽过程中cell重用计数
 		/// </summary>
-		public void ResetReuseCount(){
+		public void ResetDataOnBeginDrag(){
+			
 			reuseCount = 0;
+
+			// content的位置移动（cell重用数量 * （cell高度+cell间距））
+			// 为了方便这里计算，需要设定cell间距和scrollView顶部间距保持一致
+			float offset = reuseCount * (itemDetailModelHeight + paddingY);
+
+			UnityEngine.EventSystems.PointerEventData newData = specificTypeItemsScrollView.GetComponent<DragRecorder> ().GetPointerEventData (offset);
+
+			// 传入更新后的PointerEventData
+			if (newData != null) {
+				specificTypeItemsScrollView.GetComponent<ScrollRect> ().OnBeginDrag (newData);
+			}
+
 		}
 
-		/// <summary>
-		/// 拖拽过程中根据cell重用计数更改PointerEventData
-		/// </summary>
-		public void UpdatePointerEventData(){
+		public void ResetDataOnDrag(){
 
 			// content的位置移动（cell重用数量 * （cell高度+cell间距））
 			// 为了方便这里计算，需要设定cell间距和scrollView顶部间距保持一致
@@ -515,11 +532,14 @@ namespace WordJourney
 		}
 
 		public void OnItemButtonOfSpecificItemPlaneClick(Item item){
-
 			SetUpItemDetailHUD (item);
-
 		}
 
+
+		public void OnResolveCountSliderDrag(){
+			int resolveCount = GetResolveCountBySlider ();
+			UpdateResolveCountHUD (resolveCount);
+		}
 	
 
 		public void OnEquipButtonOfDetailHUDClick(){
@@ -533,29 +553,33 @@ namespace WordJourney
 		}
 
 
-		public void OnResolveButtonOfDetailHUDClick(){
+		public void ResetBagView<T>(List<T> currentSelectedTypeItemsInBag)
+			where T:Item
+		{
 
-//			OnQuitResolveCountHUD ();
-//
-//			OnQuitItemDetailHUD ();
-//
-//			SetUpPlayerStatusPlane ();
-//
-//			SetUpEquipedItemPlane ();
-//
-//			SetUpAllItemsPlane ();
+			QuitResolveCountHUD ();
+
+			QuitItemDetailHUD ();
+
+			SetUpPlayerStatusPlane ();
+
+			SetUpEquipedEquipmentsPlane ();
+
+			SetUpItemsDiaplayPlane<T> (currentSelectedTypeItemsInBag);
 
 		}
 
-		public void OnQuitResolveCountHUD(){
+		public void QuitResolveCountHUD(){
 
 			resolveCountHUD.gameObject.SetActive (false);
+
+
 
 		}
 					
 
 		// 关闭物品详细说明HUD
-		public void OnQuitItemDetailHUD(){
+		public void QuitItemDetailHUD(){
 			
 			itemDetailHUD.gameObject.SetActive (false);
 

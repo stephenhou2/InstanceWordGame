@@ -29,6 +29,7 @@ namespace WordJourney
 
 			this.itemType = ItemType.FuseStone;
 			this.itemName = fuseStoneName;
+			this.itemNameInEnglish = spell;
 			this.spriteName = "sword";
 			this.itemId = -1000;
 			this.successGain = spell.Length * 3;

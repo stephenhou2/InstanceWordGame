@@ -143,14 +143,14 @@ namespace WordJourney
 		/// 分解材料
 		/// </summary>
 		/// <returns>分解后获得的字母碎片</returns>
-		public List<char> ResolveMaterial(Material material,int resolveCount){
+		public List<char> GetCharactersFromItem(Item item,int resolveCount){
 
 			//分解后得到的字母碎片
 			List<char> charactersReturn = new List<char> ();
 
 			int charactersReturnCount = 1;
 
-			char[] charArray = material.itemNameInEnglish.ToCharArray ();
+			char[] charArray = item.itemNameInEnglish.ToCharArray ();
 
 			List<char> charList = new List<char> ();
 
@@ -172,10 +172,18 @@ namespace WordJourney
 				}
 			}
 
-			material.itemCount -= resolveCount;
+			item.itemCount -= resolveCount;
 
-			if (material.itemCount <= 0) {
-				allMaterialsInBag.Remove (material);
+			if (item.itemCount <= 0) {
+				switch (item.itemType) {
+				case ItemType.Material:
+					allMaterialsInBag.Remove (item as Material);
+					break;
+				case ItemType.FuseStone:
+					allFuseStonesInBag.Remove (item as FuseStone);
+					break;
+				}
+
 			}
 
 			return charactersReturn;
