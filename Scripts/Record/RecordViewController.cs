@@ -93,30 +93,26 @@ namespace WordJourney
 		/// </summary>
 		public void QuitRecordPlane(){
 
-			recordView.OnQuitRecordPlane (DestroyInstances);
+			recordView.OnQuitRecordPlane ();
 
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+			});
 
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			}
+			TransformManager.DestroyTransfromWithName ("PoolContainerOfRecordCanvas", TransformRoot.PoolContainer);
+
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "LearnInfo" });
 
 		}
 
 		/// <summary>
 		/// 清理内存
 		/// </summary>
-		private void DestroyInstances(){
+		public void DestroyInstances(){
 
 			learnInfo = null;
 
-			TransformManager.DestroyTransform (gameObject.transform);
-			TransformManager.DestroyTransfromWithName ("WordItem", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("WordItemPool", TransformRoot.PoolContainer);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.recordCanvasBundleName, "RecordCanvas","PoolContainerOfRecordCanvas","ModelContainerOfRecordCanvas");
 
 		}
 

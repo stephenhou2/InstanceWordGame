@@ -12,7 +12,7 @@ namespace WordJourney
 	public class SpellView: MonoBehaviour {
 
 		public Transform spellViewContainer;
-		public GameObject spellPlane;
+		public Transform spellPlane;
 
 		public Text spellRequestText;
 
@@ -52,22 +52,6 @@ namespace WordJourney
 		public Text materialValence;
 
 
-
-		public Transform fixedItemDetailHUD;
-
-		public Transform fixedItemDetailContainer;
-
-
-		public Text fixedItemName;
-		public Text fixedItemType;
-		public Text fixedItemDamagePercentage;
-		public Text fixedItemProperties;
-		public Image fixedItemIcon;
-
-		private InstancePool fixGainTextPool;
-
-		public GameObject fixGainTextModel;
-
 	//	public void SetUpSpellView(){
 	//
 	//	}
@@ -84,19 +68,22 @@ namespace WordJourney
 			case SpellPurpose.CreateMaterial:
 				onceButton.gameObject.SetActive (true);
 				multiTimesButton.gameObject.SetActive (true);
+				confirmButton.gameObject.SetActive (false);
 				break;
 			case SpellPurpose.CreateFuseStone:
+				onceButton.gameObject.SetActive (false);
+				multiTimesButton.gameObject.SetActive (false);
 				confirmButton.GetComponentInChildren<Text> ().text = "生成";
 				confirmButton.gameObject.SetActive (true);
 				break;
 			case SpellPurpose.Fix:
+				onceButton.gameObject.SetActive (false);
+				multiTimesButton.gameObject.SetActive (false);
 				confirmButton.GetComponentInChildren<Text> ().text = "修复";
 				confirmButton.gameObject.SetActive (true);
 				break; 
 			}
-
-
-
+				
 			GetComponent<Canvas>().enabled = true;
 
 		}
@@ -236,62 +223,62 @@ namespace WordJourney
 
 		}
 
-		public void SetUpFixedItemDetailHUD(Equipment equipment){
+//		public void SetUpFixedItemDetailHUD(Equipment equipment){
+//
+//			fixedItemName.text = equipment.itemName;
+//			fixedItemType.text = equipment.GetItemTypeString ();
+//			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
+//			fixedItemDamagePercentage.text = string.Format ("损坏度:{0}%", (int)(equipment.damagePercentage * 100));
+//
+//
+//			fixedItemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate (Sprite obj) {
+//				return obj.name == equipment.spriteName;
+//			});
+//
+//			if (fixedItemIcon.sprite != null) {
+//				fixedItemIcon.enabled = true;
+//			}
+//
+//			fixGainTextPool = InstancePool.GetOrCreateInstancePool ("FixGainTextPool");
+//
+//			fixedItemDetailHUD.gameObject.SetActive (true);
+//
+//		}
 
-			fixedItemName.text = equipment.itemName;
-			fixedItemType.text = equipment.GetItemTypeString ();
-			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
-			fixedItemDamagePercentage.text = string.Format ("损坏度:{0}%", (int)(equipment.damagePercentage * 100));
-
-
-			fixedItemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate (Sprite obj) {
-				return obj.name == equipment.spriteName;
-			});
-
-			if (fixedItemIcon.sprite != null) {
-				fixedItemIcon.enabled = true;
-			}
-
-			fixGainTextPool = InstancePool.GetOrCreateInstancePool ("FixGainTextPool");
-
-			fixedItemDetailHUD.gameObject.SetActive (true);
-
-		}
-
-		public void UpdateFixedItemDetailHUD(Equipment equipment){
-
-			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
-
-			Text strengthenGainText = fixGainTextPool.GetInstance<Text> (fixGainTextModel, fixedItemDetailContainer);
-
-			strengthenGainText.transform.localPosition = Vector3.zero;
-
-			strengthenGainText.gameObject.SetActive(true);
-
-			strengthenGainText.transform.DOLocalMoveY (200f, 0.5f).OnComplete (() => {
-
-				strengthenGainText.gameObject.SetActive(false);
-
-				strengthenGainText.text = string.Empty;
-
-				fixGainTextPool.AddInstanceToPool(strengthenGainText.gameObject);
-
-			});
-				
-		}
-
-		public void QuitFixedItemDetailHUD(){
-
-			fixedItemName.text = string.Empty;
-			fixedItemType.text = string.Empty;
-			fixedItemProperties.text = string.Empty;
-
-			fixedItemIcon.sprite = null;
-			fixedItemIcon.enabled = false;
-
-			fixedItemDetailHUD.gameObject.SetActive (false);
-
-		}
+//		public void UpdateFixedItemDetailHUD(Equipment equipment){
+//
+//			fixedItemProperties.text = equipment.GetItemBasePropertiesString ();
+//
+//			Text strengthenGainText = fixGainTextPool.GetInstance<Text> (fixGainTextModel, fixedItemDetailContainer);
+//
+//			strengthenGainText.transform.localPosition = Vector3.zero;
+//
+//			strengthenGainText.gameObject.SetActive(true);
+//
+//			strengthenGainText.transform.DOLocalMoveY (200f, 0.5f).OnComplete (() => {
+//
+//				strengthenGainText.gameObject.SetActive(false);
+//
+//				strengthenGainText.text = string.Empty;
+//
+//				fixGainTextPool.AddInstanceToPool(strengthenGainText.gameObject);
+//
+//			});
+//				
+//		}
+//
+//		public void QuitFixedItemDetailHUD(){
+//
+//			fixedItemName.text = string.Empty;
+//			fixedItemType.text = string.Empty;
+//			fixedItemProperties.text = string.Empty;
+//
+//			fixedItemIcon.sprite = null;
+//			fixedItemIcon.enabled = false;
+//
+//			fixedItemDetailHUD.gameObject.SetActive (false);
+//
+//		}
 
 		public void QuitSpellCountHUD(){
 
@@ -314,8 +301,11 @@ namespace WordJourney
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
-			spellPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-	//			Destroy (GameObject.Find ("SpellCanvas"));
+			Vector3 originalPosition = spellPlane.localPosition;
+
+			spellPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+				gameObject.SetActive(false);
+				spellPlane.localPosition = originalPosition;
 			});
 		}
 

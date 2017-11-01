@@ -7,7 +7,7 @@ namespace WordJourney
 {
 	public class MaterialDisplayView : MonoBehaviour {
 
-
+		public Transform materialsScrollView;// 材料展示scrollView;
 		public Transform materialsContainer;//材料展示模型容器
 		private Transform materialBtnModel;//材料展示模型
 
@@ -23,10 +23,22 @@ namespace WordJourney
 			this.materialSprites = GameManager.Instance.dataCenter.allMaterialSprites;
 
 			// 创建材料展示模型缓存池
-			materialBtnPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
 
-			// 获取材料展示模型
-			materialBtnModel = TransformManager.FindTransform ("MaterialBtnModel");
+			Transform poolContainerOfMaterialDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfMaterialDisplayCanvas");
+			Transform modelContainerOfMaterialDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfMaterialDisplayCanvas");
+
+
+			if (poolContainerOfMaterialDisplayCanvas.childCount == 0) {
+				// 创建材料展示模型缓存池
+				materialBtnPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
+				materialBtnPool.transform.SetParent (poolContainerOfMaterialDisplayCanvas);
+			}
+
+			if (modelContainerOfMaterialDisplayCanvas.childCount == 0) {
+				// 获取材料展示模型
+				materialBtnModel = TransformManager.FindTransform ("MaterialBtnModel");
+				materialBtnModel.transform.SetParent (modelContainerOfMaterialDisplayCanvas);
+			}
 
 		}
 
@@ -40,6 +52,9 @@ namespace WordJourney
 			// 将容器中的所有材料模型放入缓存池
 			materialBtnPool.AddChildInstancesToPool (materialsContainer);
 
+			materialsScrollView.GetComponent<ScrollRect> ().velocity = Vector2.zero;
+
+			materialsContainer.localPosition = Vector3.zero;
 
 			// 更新图鉴界面
 			for (int i = 0; i < materialsOfTargetType.Count; i++) {
@@ -72,21 +87,17 @@ namespace WordJourney
 
 				materialBtn.GetComponent<Button> ().onClick.AddListener (delegate {
 
-					ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader();
+					GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.spellCanvasBundleName,"SpellCanvas",()=>{
 
-					ResourceManager.Instance.LoadAssetsWithBundlePath(spellCanvasLoader, "spell/canvas",()=>{
+						TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(m);
 
-						SpellViewController spellViewController = TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>();
-
-						spellViewController.SetUpSpellViewForCreateMaterial(m);
-
-					},true);
-
-
+					});
 				});
 
 			}
 		}
+
+
 
 	}
 }

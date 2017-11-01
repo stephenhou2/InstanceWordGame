@@ -49,9 +49,7 @@ namespace WordJourney
 
 		public void SetUpBagView(){
 
-			bagView.SetUpBagView ();
-
-			GetComponent<Canvas>().enabled = true; 
+			bagView.SetUpBagView (currentSelectItem);
 
 		}
 			
@@ -101,7 +99,7 @@ namespace WordJourney
 				break;
 			}
 
-			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelcetType);
+			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelcetType,currentSelectItem);
 
 		}
 
@@ -119,14 +117,7 @@ namespace WordJourney
 				allItemsOfCurrentSelcetType.Add (itemsInBag [i]);
 			}
 		}
-
-		public void OnItemButtonOfSpecificItemPlaneClick(int index){
-
-			Item item = allItemsOfCurrentSelcetType [index];
-
-			bagView.OnItemButtonOfSpecificItemPlaneClick (item);
-
-		}
+			
 
 		public void OnSelectItemInBag(Item item){
 
@@ -210,20 +201,27 @@ namespace WordJourney
 
 			List<char> charactersReturn = Player.mainPlayer.GetCharactersFromItem (item, resolveCount);
 
-			// 返回的有字母，相应处理
+			List<Item> resolveGainCharacterFragments = new List<Item> ();
+
+			// 返回的有字母，生成字母碎片表
 			if (charactersReturn.Count > 0) {
 
 				foreach (char c in charactersReturn) {
-					Debug.Log (c.ToString ());
+					resolveGainCharacterFragments.Add (new CharacterFragment (c));
 				}
 
 			}
+
+			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
+
+			currentSelectItem = null;
+
 			switch(item.itemType){
 			case ItemType.Material:
-				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag);
+				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag,currentSelectItem);
 				break;
 			case ItemType.FuseStone:
-				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag);
+				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
 				break;
 			}
 
@@ -234,6 +232,14 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="item">Item.</param>
 		private void ResolveAndGetMaterials(Item item){
+
+			List<Item> returnedMaterials = (item as Equipment).ResolveEquipment ();
+
+			bagView.SetUpResolveGainHUD (returnedMaterials);
+
+			currentSelectItem = null;
+
+			bagView.ResetBagView<Equipment> (Player.mainPlayer.allEquipmentsInBag,currentSelectItem);
 
 		}
 
@@ -264,31 +270,27 @@ namespace WordJourney
 			Equipment equipment = currentSelectItem as Equipment;
 
 			Word word = Word.RandomWord();
-
-			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (word.spell);
-
-			if (unsufficientCharacters.Count > 0) {
-
-				foreach (char c in unsufficientCharacters) {
-					Debug.Log (string.Format ("字母{0}数量不足", c.ToString ()));
-				}
-				return;
-
-			} 
 				
-			// 玩家的字母碎片数量足够，进入修复界面
-			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+			Transform spellCanvas = TransformManager.FindTransform ("SpellCanvas");
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader,CommonData.spellCanvasBundleName, () => {
+			if (spellCanvas != null) {
 
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForFix(equipment,word);
+				spellCanvas.GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
 
-				OnQuitItemDetailHUD ();
+				return;
+			} else {// 如果当前没有拼写界面的缓存，则从本地加载拼写界面
+				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			});
+				ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
+
+					TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
+
+				});
+			}
 
 		}
-			
+
+
 
 		public void OnQuitResolveCountHUD(){
 
@@ -320,35 +322,28 @@ namespace WordJourney
 
 				GameObject exploreCanvas = GameObject.Find (CommonData.instanceContainerName + "/ExploreCanvas");
 
-				if (exploreCanvas != null) {
+				if (exploreCanvas == null) {
 
-					GetComponent<Canvas>().enabled = false;
+						GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.homeCanvasBundleName,"HomeCanvas",()=>{
 
-				} else {
+						GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-					GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+						GameManager.Instance.dataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
 
-					if (homeCanvas != null) {
-						homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-					}
-
-					DestroyInstances(); 
+						TransformManager.DestroyTransfromWithName ("PoolContainerOfBagCanvas", TransformRoot.PoolContainer);
+					});
 				}
 			});
 
 		}
 
-		// 退出背包界面时清理内存
-		private void DestroyInstances(){
 
-			TransformManager.DestroyTransform (gameObject.transform);
-			TransformManager.DestroyTransfromWithName ("ItemDetailModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("ItemDetailsPool", TransformRoot.PoolContainer);
-		
-			Resources.UnloadUnusedAssets ();
 
-			System.GC.Collect ();
-		
+		// 完全清理背包界面内存
+		public void DestroyInstances(){
+
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", "PoolContainerOfBagCanvas", "ModelContainerOfBagCanvas");
+
 		}
 	}
 }

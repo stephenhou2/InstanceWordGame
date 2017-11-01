@@ -39,7 +39,7 @@ namespace WordJourney
 //		private Sprite typeBtnSelectedSprite;
 
 		// 单词cell模型
-		public GameObject wordItemModel;
+		private Transform wordItemModel;
 
 		// 复用缓存池
 		private InstancePool wordItemPool;
@@ -47,7 +47,22 @@ namespace WordJourney
 
 		public void SetUpRecordView(){
 
-			wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
+			Transform poolContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfRecordCanvas");
+			Transform modelContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfRecordCanvas");
+
+			if (poolContainerOfRecordCanvas.childCount == 0) {
+				// 创建缓存池
+				wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
+				wordItemPool.transform.SetParent (poolContainerOfRecordCanvas);
+			}
+
+			if (modelContainerOfRecordCanvas.childCount == 0) {
+				// 获得单词展示模型
+				wordItemModel = TransformManager.FindTransform ("WordItemModel");
+				wordItemModel.SetParent (modelContainerOfRecordCanvas);
+			}
+
+
 
 		}
 
@@ -121,7 +136,7 @@ namespace WordJourney
 
 				Word w = learnInfo.learnedWords [i];
 
-				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordsRecordPlane);
+				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordsRecordPlane);
 
 				Text word = wordItem.Find ("Word").GetComponent<Text>();
 
@@ -159,7 +174,7 @@ namespace WordJourney
 
 				Word w = learnInfo.unlearnedWords [i];
 
-				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel, wordItemsContainer);
+				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordItemsContainer);
 
 				Text word = wordItem.Find ("Word").gameObject.GetComponent<Text>();
 
@@ -204,7 +219,7 @@ namespace WordJourney
 		/// 退出整个单词记录几面
 		/// </summary>
 		/// <param name="cb">Cb.</param>
-		public void OnQuitRecordPlane(CallBack cb){
+		public void OnQuitRecordPlane(){
 
 			wordItemModel = null;
 
@@ -212,9 +227,15 @@ namespace WordJourney
 
 			recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
+			Vector3 originalPosition = recordPlane.localPosition;
+
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-				recordPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
-				cb();
+
+			recordPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
+
+				gameObject.SetActive(false);
+
+				recordPlane.localPosition = originalPosition;
 			});
 
 

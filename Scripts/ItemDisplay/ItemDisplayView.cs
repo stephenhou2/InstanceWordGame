@@ -24,11 +24,11 @@ namespace WordJourney
 		private InstancePool materialPool;//材料图鉴模型缓存池
 		private Transform materialModel;//材料图鉴模型
 
-		public Transform ItemDisplayViewContainer;
+		public Transform itemDisplayViewContainer;
 
 		public Transform[] charactersOwnedPlane;
 
-		public Transform ItemDisplayPlane;
+		public Transform itemDisplayPlane;
 
 		public Transform allItemsPlane;
 
@@ -46,16 +46,32 @@ namespace WordJourney
 			this.itemSprites = GameManager.Instance.dataCenter.allItemSprites;
 			this.materialSprites = GameManager.Instance.dataCenter.allMaterialSprites;
 
-			// 创建缓存池
-			itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
-			itemDetailTypeBtnPool = InstancePool.GetOrCreateInstancePool ("ItemDetailTypeBtnPool");
-			materialPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
+			Transform poolContainerOfItemDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfItemDisplayCanvas");
+			Transform modelContainerOfItemDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfItemDisplayCanvas");
 
-			// 获得模型
-			itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModel");
-			itemDetailTypeBtnModel = TransformManager.FindTransform ("ItemDetailTypeBtnModel");
-			materialModel = TransformManager.FindTransform ("MaterialModel");
+			if (poolContainerOfItemDisplayCanvas.childCount == 0) {
 
+				// 创建缓存池
+				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
+				itemDetailTypeBtnPool = InstancePool.GetOrCreateInstancePool ("ItemDetailTypeBtnPool");
+				materialPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
+
+				itemDetailsPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+				itemDetailTypeBtnPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+				materialPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+			}
+
+			if (modelContainerOfItemDisplayCanvas.childCount == 0) {
+
+				// 获得模型
+				itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModelInItemDisplayCanvas");
+				itemDetailTypeBtnModel = TransformManager.FindTransform ("ItemDetailTypeBtnModel");
+				materialModel = TransformManager.FindTransform ("MaterialModel");
+
+				itemDetailsModel.SetParent (modelContainerOfItemDisplayCanvas);
+				itemDetailTypeBtnModel.SetParent (modelContainerOfItemDisplayCanvas);
+				materialModel.SetParent (modelContainerOfItemDisplayCanvas);
+			}
 		}
 
 		public void SetUpDetailTypeButtons(string[] detailTypes){
@@ -306,18 +322,22 @@ namespace WordJourney
 
 		}
 
-		public void QuitItemDisplayView(CallBack cb){
+		public void QuitItemDisplayView(){
 
 			this.itemSprites = null;
 			this.materialSprites = null;
 
-			ItemDisplayViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+			itemDisplayViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
-			ItemDisplayPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-				
-				cb();
+			Vector3 originalPosition = itemDisplayPlane.localPosition;
+
+			itemDisplayPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+
+				gameObject.SetActive(false);
+
+				itemDisplayPlane.localPosition = originalPosition;
 
 			});
 

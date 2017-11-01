@@ -1,44 +1,54 @@
 ManifestFileVersion: 0
-CRC: 2918747748
+CRC: 442344697
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: skills/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_1:
       Name: bag/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_2:
       Name: spell/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_3:
       Name: home/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_4:
       Name: setting/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_5:
       Name: record/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_6:
       Name: explore/scene
       Dependencies:
         Dependency_0: explore/mapicons
+        Dependency_1: ui/icons
     Info_7:
       Name: item/icons
       Dependencies: {}
     Info_8:
       Name: material/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_9:
       Name: material/icons
       Dependencies: {}
     Info_10:
       Name: item/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_11:
       Name: produce/canvas
-      Dependencies: {}
+      Dependencies:
+        Dependency_0: ui/icons
     Info_12:
       Name: audio/explore
       Dependencies: {}
@@ -56,4 +66,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_17:
       Name: main/static
+      Dependencies: {}
+    Info_18:
+      Name: ui/icons
       Dependencies: {}

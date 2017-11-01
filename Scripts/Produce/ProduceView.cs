@@ -34,20 +34,29 @@ namespace WordJourney
 
 
 
-		void Awake(){
-
-			fuseStonesPool = InstancePool.GetOrCreateInstancePool ("FuseStonesPool");
-			fuseStoneModel = TransformManager.FindTransform ("FuseStoneModel");
-
-		}
-
-
 		/// <summary>
 		/// 初始化制造界面
 		/// </summary>
 		/// <param name="itemModel">Item model.</param>
 		/// <param name="materialsForProduce">Materials for produce.</param>
 		public void SetUpProduceView(ItemModel itemModel,List<Material> materialsForProduce,int totalValence,int totalUnstableness){
+
+			Transform poolContainerOfProduceCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolCotainerOfProduceCanvas");
+			Transform modelContainerOfProduceCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfProduceCanvas");
+
+			if (poolContainerOfProduceCanvas.childCount == 0) {
+				// 创建缓存池
+				fuseStonesPool = InstancePool.GetOrCreateInstancePool ("FuseStonesPool");
+				fuseStonesPool.transform.SetParent (poolContainerOfProduceCanvas);
+			}
+
+
+			if (modelContainerOfProduceCanvas.childCount == 0) {
+				// 获得融合石模型
+				fuseStoneModel = TransformManager.FindTransform ("FuseStoneModel");
+				fuseStoneModel.SetParent (modelContainerOfProduceCanvas);
+			}
+
 
 			itemNameInProduceView.text = itemModel.itemName;
 
@@ -325,11 +334,6 @@ namespace WordJourney
 
 		}
 
-//		public void QuitProduceView(CallBack cb){
-//
-//
-//
-//		}
 
 	}
 }

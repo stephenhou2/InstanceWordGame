@@ -13,7 +13,8 @@ namespace WordJourney{
 		Task,
 		FuseStone,
 		Material,
-		Map
+		Map,
+		CharacterFragment
 	}
 
 	[System.Serializable]

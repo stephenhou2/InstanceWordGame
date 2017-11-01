@@ -80,9 +80,19 @@ namespace WordJourney
 		// 加载Manifest
 		private void LoadDependencyAssets(string bundleName)
 		{
-			string manifestPath = string.Format ("{0}/{1}", Application.streamingAssetsPath, "StreamingAssets");
 
-			var bundle = AssetBundle.LoadFromFile(manifestPath);
+			AssetBundle bundle = null;
+
+			if (!cacheDic.ContainsKey ("ManifestBundle")) {
+
+				string manifestPath = string.Format ("{0}/{1}", Application.streamingAssetsPath, "StreamingAssets");
+
+				bundle = AssetBundle.LoadFromFile (manifestPath);
+
+				cacheDic.Add ("ManifestBundle", bundle);
+			} else {
+				bundle = cacheDic ["ManifestBundle"];
+			}
 
 			AssetBundleManifest manifest = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
 
@@ -92,14 +102,10 @@ namespace WordJourney
 				string dependency = dependencies [i];
 				if (!ResourceManager.Instance.cacheDic.ContainsKey (dependency)) {
 					ResourceLoader dependencyLoader = ResourceLoader.CreateNewResourceLoader ();
-					dependencyLoader.LoadAssetsWithBundleName (dependency, null, true, null);
+					LoadAssetsWithBundlePath (dependencyLoader, dependency, null, true, null);
 				}
 			}
 
-			// 压缩包释放掉
-			bundle.Unload(false);
-
-			bundle = null;
 		}
 
 	}

@@ -91,32 +91,24 @@ namespace WordJourney
 
 		}
 
+		public void OnQuitMaterialDisplayView(){
 
-		private void backup(){
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+			});
 
-//			if (material == null) {
-//				ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("spell/canvas", () => {
-//					spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-//					spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(null);
-//				});
-//				return;
-//			}
-//
-//
-//			List<char> unsufficientCharacters = Player.mainPlayer.CheckUnsufficientCharacters (material.spell);
-//
-//			if (unsufficientCharacters.Count > 0) {
-//				foreach (char c in unsufficientCharacters) {
-//					Debug.Log (string.Format ("字母{0}数量不足", c.ToString ()));
-//				}
-//				return;
-//			}
-//
-//			// 如果玩家字母碎片足够，则进入拼写界面
-//			ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("spell/canvas", () => {
-//				spellCanvas = GameObject.Find(CommonData.instanceContainerName + "/SpellCanvas");
-//				spellCanvas.GetComponent<SpellViewController>().SetUpSpellViewForCreate(material);
-//			});
+			gameObject.SetActive(false);
+
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+
+			TransformManager.DestroyTransfromWithName ("PoolContainerOfMaterialDisplayCanvas", TransformRoot.PoolContainer);
+
+		}
+
+		public void DestroyInstances(){
+
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", "PoolContainerOfMaterialDisplayCanvas", "ModelContainerOfMaterialDisplayCanvas");
+
 		}
 
 	}

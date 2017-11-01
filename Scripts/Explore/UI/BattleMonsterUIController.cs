@@ -16,10 +16,6 @@ namespace WordJourney
 
 		public Transform monsterStatusPlane;
 
-		protected override void Awake ()
-		{
-			base.Awake ();
-		}
 			
 
 

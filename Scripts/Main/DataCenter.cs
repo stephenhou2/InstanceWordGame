@@ -133,7 +133,7 @@ namespace WordJourney
 			get{
 				if(mAllSkills.Count == 0){
 
-					Transform allSkillsContainer = TransformManager.FindOrCreateTransform ("InstanceContainer/AllSkills");
+					Transform allSkillsContainer = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/AllSkills");
 
 					ResourceLoader skillsLoader = ResourceLoader.CreateNewResourceLoader ();
 

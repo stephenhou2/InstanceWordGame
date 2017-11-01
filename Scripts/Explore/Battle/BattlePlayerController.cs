@@ -51,6 +51,27 @@ namespace WordJourney
 
 		public Trap trapTriggered;
 
+		public void ClearReference(){
+
+
+			enterNpc = null;
+			enterItem = null;
+			enterMonster = null;
+
+			attackTriggerCallBacks.Clear ();
+			beAttackedTriggerCallBacks.Clear ();
+
+			trapTriggered = null;
+			bmCtr = null;
+
+			playerLoseCallBack = null;
+
+			bpUICtr = null;
+
+
+
+		}
+
 
 		protected override void Awake(){
 
@@ -572,24 +593,24 @@ namespace WordJourney
 
 		}
 
-		public void OnPlayerClickBag(){
-
-			Transform bagCanvas = TransformManager.FindTransform (CommonData.instanceContainerName + "/BagCanvas");
-
-			if (bagCanvas != null) {
-				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-				return;
-			}
-
-			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
-
-				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
-
-			});
-
-		}
+//		public void OnPlayerClickBag(){
+//
+//			Transform bagCanvas = TransformManager.FindTransform (CommonData.instanceContainerName + "/BagCanvas");
+//
+//			if (bagCanvas != null) {
+//				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
+//				return;
+//			}
+//
+//			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+//
+//			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
+//
+//				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
+//
+//			});
+//
+//		}
 
 
 	}

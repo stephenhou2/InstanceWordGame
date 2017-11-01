@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 11252000
+CRC: 120484991
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7248f7102f12242e774a09e0a8359312
+    Hash: 0874bf95b3e6b1a7b9bfb1b1c904f43f
   TypeTreeHash:
     serializedVersion: 2
     Hash: 646ca98687a34df9be6292146ba58c05
@@ -47,4 +47,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Home/HomeCanvas.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

@@ -18,18 +18,18 @@ namespace WordJourney
 
 
 
-		//*****初始信息********//
+		//*****人物基础信息********//
+		public int originalAttack;
+		public int originalAttackSpeed;
+		public int originalArmor;
+		public int originalManaResist;
+		public int originalDodge;
+		public int originalCrit;
 		public int originalMaxHealth;
 		public int originalMaxMana;
 		public int originalHealth;
 		public int originalMana;
-		public int originalAttack;
-		public int originalAttackSpeed;
-		public int originalCrit;
-		public int originalDodge;
-		public int originalArmor;
-		public int originalManaResist;
-		//*****初始信息********//
+		//*****人物基础信息*******//
 
 
 

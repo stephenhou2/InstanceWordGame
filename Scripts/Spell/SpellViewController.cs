@@ -7,7 +7,15 @@ using System.Text;
 
 namespace WordJourney
 {
+
+	public enum SpellPurpose{
+		CreateMaterial,
+		CreateFuseStone,
+		Fix,
+	}
+
 	public class SpellViewController : MonoBehaviour {
+
 
 		public SpellView spellView;
 
@@ -43,18 +51,16 @@ namespace WordJourney
 			get{
 				int myMaxCreateCount = int.MaxValue;
 
-				for(int i = 0;i<charactersEntered.Length;i++){
+				for(int i = 0;i<charactersEnteredArray.Length;i++){
 
-					char character = charactersEntered [i];
+					int characterNeed = charactersEnteredArray [i];
 
-					int characterIndex = (int)character - CommonData.aInASCII;
-
-					int characterCount = Player.mainPlayer.charactersCount [characterIndex];
-
-					if (characterCount < myMaxCreateCount) {
-						myMaxCreateCount = characterCount;
+					if (characterNeed > 0) {
+						int maxCreateCount = Player.mainPlayer.charactersCount [i] / characterNeed;
+						if (maxCreateCount < myMaxCreateCount) {
+							myMaxCreateCount = maxCreateCount;
+						}
 					}
-
 				}
 
 				return myMaxCreateCount;
@@ -304,7 +310,7 @@ namespace WordJourney
 				if (Player.mainPlayer.charactersCount [i] < numNeed) {
 
 					string unsufficientCharacter = ((char)(i + CommonData.aInASCII)).ToString ();
-					unsufficientCharactesStr.AppendFormat ("字母碎片{0}缺少{1}个、",unsufficientCharacter,numNeed - Player.mainPlayer.charactersCount[i] * count);
+					unsufficientCharactesStr.AppendFormat ("字母碎片{0}缺少{1}个、",unsufficientCharacter,numNeed - Player.mainPlayer.charactersCount[i]);
 
 					sufficient = false;
 
@@ -395,26 +401,16 @@ namespace WordJourney
 			equipmentToFix.FixEquipment();
 
 			// 更新玩家字母碎片数量
-			UpdateOwnedCharacters ();
+//			UpdateOwnedCharacters ();
 
-			// 更新UI
-//			spellView.UpdateFixedItemDetailHUD (equipmentToFix);
+			// 退出拼写界面
+			QuitSpellPlane();
 
-			spellView.SetUpFixedItemDetailHUD (equipmentToFix);
+			// 清除输入信息
+			ClearSpellInfos ();
 
 		}
-
-		/// <summary>
-		/// 玩家点击强化按钮的响应方法
-		/// </summary>
-//		public void ConfirmFixItem(){
-//
-//			// 检查字母碎片是否足够1次强化
-//			if (CheckCharactersSufficient (1)) {
-//
-//
-//			}
-//		}
+	
 
 		/// <summary>
 		/// 清除本次制造信息
@@ -462,11 +458,7 @@ namespace WordJourney
 			spellView.UpdateCreateCountHUD (createCount,spellPurpose);
 
 		}
-
-
-		private bool CheckSpellCorrect(){
-			return charactersEntered.ToString () == spell;
-		}
+			
 
 		public void OnConfirmButtonClick(){
 
@@ -476,8 +468,6 @@ namespace WordJourney
 				if (fuseStone != null) {
 					
 					Player.mainPlayer.allFuseStonesInBag.Add (fuseStone);
-
-
 				
 					// 更新剩余字母碎片
 					UpdateOwnedCharacters ();
@@ -493,8 +483,10 @@ namespace WordJourney
 				}
 				break;
 			case SpellPurpose.Fix:
-				if (CheckSpellCorrect ()) {
+				if (charactersEntered.ToString () == spell) {
 					FixItem ();
+				} else {
+					Debug.Log ("Wrong word");
 				}
 				break;
 
@@ -529,16 +521,7 @@ namespace WordJourney
 
 			spellView.OnQuitCreateDetailHUD ();
 		}
-
-
-		/// <summary>
-		/// 退出强化物品描述界面
-		/// </summary>
-		public void QuitFixItemDetailHUD(){
-			ClearSpellInfos ();
-			spellView.QuitFixedItemDetailHUD();
-			QuitSpellPlane ();
-		}
+			
 
 		/// <summary>
 		/// Quits the spell plane.
@@ -547,51 +530,45 @@ namespace WordJourney
 			
 			spellView.OnQuitSpellPlane ();
 
-
-			if (spell == null) {
-
-				// 如果从制造接口的任意制造接口进入
-//				GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
-//				produceCanvas.GetComponent<ItemDisplayViewController> ().QuitItemDisplayView ();
-
-				GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-				DestroyInstances ();
-
-			} else {
-				switch (spellPurpose) {
-				case SpellPurpose.CreateMaterial:
-					GameObject produceCanvas = GameObject.Find (CommonData.instanceContainerName + "/ProduceCanvas");
-					if (produceCanvas != null) {
-						produceCanvas.GetComponent<Canvas> ().enabled = true;
-					}
-					break;
-				case SpellPurpose.Fix:
-					GameObject bagCanvas = GameObject.Find (CommonData.instanceContainerName + "/BagCanvas");
-					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-					break;
-				default:
-					break;
-				}
-
-				DestroyInstances ();
+			switch (spellPurpose) {
+			case SpellPurpose.CreateMaterial:
+				if (spell == null) {
+					// 如果从制造接口的任意制造接口进入
+					GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+						TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+					});
+					GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+				} 
+//				else {
+//					Transform materialDisplayCanvas = TransformManager.FindTransform ("MaterialDisplayCanvas");
+//					if (materialDisplayCanvas != null) {
+//						materialDisplayCanvas.GetComponent<Canvas> ().enabled = true;
+//					}
+//				}
+				break;
+			case SpellPurpose.CreateFuseStone:
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+					TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+				});
+				break;
+			case SpellPurpose.Fix:
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+					TransformManager.FindTransform ("BagCanvas").GetComponent<BagView> ().UpdateItemDetailHUDAfterFix (equipmentToFix);
+				});
+				break;
 			}
 
+			ClearSpellInfos ();
 
 		}
+			
 
 		/// <summary>
 		/// 退出拼写界面时清除内存
 		/// </summary>
-		private void DestroyInstances(){
-			
-			TransformManager.DestroyTransform (gameObject.transform);
-//			TransformManager.DestroyTransfromWithName ("FixGainTextModel", TransformRoot.InstanceContainer);
-//			TransformManager.DestroyTransfromWithName ("FixGainTextPool", TransformRoot.PoolContainer);
+		public void DestroyInstances(){
 
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", null, null);
 
 		}
 

@@ -86,6 +86,24 @@ namespace WordJourney
 		}
 
 
+
+		public void PlayerLevelUp(){
+
+			agentLevel++;
+
+			originalAttack += 1;
+			originalAttackSpeed += 1;
+			originalArmor += 1;
+			originalManaResist += 1;
+			originalDodge += 1;
+			originalCrit += 1;
+			originalMaxHealth += 10;
+			originalMaxMana += 5;
+
+			ResetBattleAgentProperties (true);
+
+		}
+
 		public void UpdateValidActionType(){
 
 			// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用

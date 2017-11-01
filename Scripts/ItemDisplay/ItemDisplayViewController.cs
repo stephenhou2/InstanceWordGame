@@ -178,16 +178,15 @@ namespace WordJourney
 
 			}
 
-			ResourceLoader produceCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (produceCanvasLoader, "produce/canvas", () => {
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.produceCanvasBundleName, "ProduceCanvas", () => {
 
 				TransformManager.FindTransform("ProduceCanvas").GetComponent<ProduceViewController>().SetUpProduceView(itemModel);
 
 				GetComponent<Canvas>().enabled = false;
 
-			}, true);
+				gameObject.SetActive(false);
 
+			});
 
 		}
 
@@ -203,66 +202,24 @@ namespace WordJourney
 
 		public void QuitItemDisplayView(){
 
-			itemDisplayView.QuitItemDisplayView (DestroyInstances);
+			itemDisplayView.QuitItemDisplayView ();
 
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+			});
 
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			}
+			TransformManager.DestroyTransfromWithName ("PoolContainerOfItemDisplayCanvas",TransformRoot.PoolContainer);
 
-
-		}
-
-
-		private void DestroyInstances(){
-
-			TransformManager.DestroyTransfromWithName ("ItemDetailsPool",TransformRoot.PoolContainer);
-			TransformManager.DestroyTransfromWithName ("ItemDetailsModel", TransformRoot.InstanceContainer);
-
-			TransformManager.DestroyTransform (gameObject.transform);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});
 
 		}
 
 
-//		private void LoadAllItems(){
-//
-//	//		Item[] allItems = DataHandler.LoadDataToModelWithPath<Item> (CommonData.persistDataPath, CommonData.itemsDataFileName);
-//
-//			List<Item> allItems = GameManager.Instance.allItems;
-//
-//
-//			for (int i = 0; i < allItems.Count; i++) {
-//
-//				Item item = allItems [i];
-//
-//				switch (item.itemType) {
-//
-//				case ItemType.Weapon:
-//					allWeapons.Add (item);
-//					break;
-//				case ItemType.armor:
-//					allarmors.Add (item);
-//					break;
-//				case ItemType.Shoes:
-//					allShoes.Add (item);
-//					break;
-//				case ItemType.Consumables:
-//					allConsumables.Add (item);
-//					break;
-//				case ItemType.Task:
-//					allTaskItems.Add (item);
-//					break;
-//				default:
-//					break;
-//				}
-//
-//			}
-//		}
-//
+		public void DestroyInstances(){
+
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", "PoolContainerOfItemDisplayCanvas", "ModelContainerOfItemDisplayCanvas");
+
+		}
+
 	}
 }

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4114406780
+CRC: 3898350912
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 55bd927e55ae7120873a83dcac384b0f
+    Hash: 4fed3611f360937177f527521d7a31e3
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1283b6d56c1eec40340a9f77ab40f343
+    Hash: 41b465ea0fe00652ff76ab92feb62566
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -21,8 +21,6 @@ ClassTypes:
   Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-- Class: 114
-  Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
@@ -53,5 +51,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Spell/SpellCanvas.prefab
-- Assets/Prefabs/Spell/CreatedItemDetailModel.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

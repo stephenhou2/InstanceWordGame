@@ -55,6 +55,8 @@ namespace WordJourney{
 				break;
 			}
 
+			GetComponent<Canvas> ().enabled = true;
+
 		}
 
 		public void UpdatePronounceControl(bool enable){
@@ -82,14 +84,17 @@ namespace WordJourney{
 			return index;
 		}
 
-		public void QuitSettingView(CallBack cb){
+		public void QuitSettingView(){
 
 			settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
+			Vector3 originalPosition = settingPlane.localPosition;
+
 			settingPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
-				cb();
+				gameObject.SetActive(false);
+				settingPlane.localPosition = originalPosition;
 			});
 		}
 

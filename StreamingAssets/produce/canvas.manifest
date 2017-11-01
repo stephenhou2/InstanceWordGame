@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1993794466
+CRC: 2432046896
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2e58abc8376c26acf91d0fb021395ef9
+    Hash: 041ed39977e7f2b13189d0b76948d501
   TypeTreeHash:
     serializedVersion: 2
     Hash: 457a230455ec9ea8000d65fac0905289
@@ -56,4 +56,5 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/Produce/ProduceCanvas.prefab
 - Assets/Prefabs/Produce/FuseStoneModel.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

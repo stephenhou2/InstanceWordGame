@@ -38,7 +38,7 @@ namespace WordJourney{
 		public static string DailyEnglishTable = "Daily";
 
 		public static string instanceContainerName = "InstanceContainer";
-		public static string poolContainerName = "PoolContainer";
+		public static string poolContainerName = "PoolsContainer";
 
 
 //		public static string gameSettingsBundleName = "gameSettings";
@@ -49,13 +49,14 @@ namespace WordJourney{
 		public static string mainStaticBundleName = "main/static";
 		public static string homeCanvasBundleName = "home/canvas";
 		public static string recordCanvasBundleName = "record/canvas";
-		public static string materialDiaplayCanvasBundleName = "material/canvas";
+		public static string materialDisplayCanvasBundleName = "material/canvas";
 		public static string itemDisplayCanvasBundleName = "item/canvas";
 		public static string skillCanvasBundleName = "skills/canvas";
 		public static string bagCanvasBundleName = "bag/canvas";
 		public static string settingCanvasBundleName = "setting/canvas";
 		public static string spellCanvasBundleName = "spell/canvas";
 		public static string exploreSceneBundleName = "explore/scene";
+		public static string produceCanvasBundleName = "produce/canvas";
 
 
 		public static string allMaterialSpritesBundleName = "material/icons";
@@ -76,11 +77,7 @@ namespace WordJourney{
 
 	}
 
-	public enum SpellPurpose{
-		CreateMaterial,
-		CreateFuseStone,
-		Fix,
-	}
+
 
 
 	public enum TransformRoot{

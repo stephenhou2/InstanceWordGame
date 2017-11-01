@@ -42,62 +42,16 @@ namespace WordJourney
 
 		public DataCenter dataCenter;
 
+		public UIManager UIManager;
 
 		public int unlockedMaxChapterIndex = 0;
-
-
-
-
-//
-//		private List<MapNPC> mAllMapNpcs = new List<MapNPC> ();
-//		public List<MapNPC> allMapNpcs{
-//			get{
-//				if (mAllMapNpcs.Count == 0) {
-//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("mapnpcs", () => {
-//
-//						foreach (GameObject mapNpc in ResourceLoader.CreateNewResourceLoader().gos) {
-//							mAllMapNpcs.Add (mapNpc.GetComponent<MapNPC>());
-//						}
-//
-//					}, true);
-//				}
-//				return mAllMapNpcs;
-//			}
-//		}
-
-//		private List<Monster> mAllMonsters = new List<Monster> ();
-//		public List<Monster> allMonsters{
-//			get{
-//				if (mAllMonsters.Count == 0) {
-//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("monsters", () => {
-//						for(int i = 0;i<ResourceLoader.CreateNewResourceLoader().gos.Count;i++){
-//						mAllMonsters.Add(ResourceLoader.CreateNewResourceLoader().gos[i].GetComponent<Monster>());
-//						}
-//					},true);
-//				}
-//				return mAllMonsters;
-//			}
-//		}
-
-//		private List<NPC> mAllNPCs = new List<NPC> ();
-//		public List<NPC> allNPCs{
-//			get{
-//				if (mAllNPCs.Count == 0) {
-//					ResourceLoader.CreateNewResourceLoader().LoadAssetWithBundlePath ("npcs", () => {
-//						for(int i = 0;i<ResourceLoader.CreateNewResourceLoader().gos.Count;i++){
-//							mAllNPCs.Add(ResourceLoader.CreateNewResourceLoader().gos[i].GetComponent<NPC>());
-//						}
-//					},true);
-//				}
-//				return mAllNPCs;
-//			}
-//		}
-
 
 
 		void Awake(){
 
 			dataCenter = new DataCenter ();
+
+			UIManager = new UIManager ();
 
 			#warning 加载本地游戏数据,后面需要写一下
 			dataCenter.gameSettings = DataHandler.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFilePath);

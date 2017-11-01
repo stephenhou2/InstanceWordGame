@@ -21,7 +21,7 @@ namespace WordJourney
 		public Text dodgeText;
 
 		//战斗中文本模型
-		public GameObject tintTextModel;
+		private Transform tintTextModel;
 
 		// 文本缓存池
 		private InstancePool tintTextPool;
@@ -38,9 +38,16 @@ namespace WordJourney
 
 
 
-		protected virtual void Awake(){
+		protected void Start(){
+
+			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
 			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
+			tintTextModel = TransformManager.FindTransform ("TintTextModel");
+
+			tintTextPool.transform.SetParent (poolContainerOfExploreScene);
+			tintTextModel.SetParent (modelContainerOfExploreScene);
 
 		}
 
@@ -74,7 +81,7 @@ namespace WordJourney
 		public void PlayHurtTextAnim(string hurtStr, Vector3 agentPos, Towards towards, TintTextType tintTextType){
 
 			// 从缓存池获取文本模型
-			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
+			Text hurtText = tintTextPool.GetInstance<Text> (tintTextModel.gameObject, tintTextContainer);
 
 		
 			Vector3 originHurtPos = Vector3.zero;
@@ -154,7 +161,7 @@ namespace WordJourney
 
 			Vector3 pos = ToPointInCanvas(agentPos) + new Vector3(50f,100f,0);
 
-			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
+			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel.gameObject, tintTextContainer);
 
 			gainText.transform.localPosition = pos;
 
@@ -178,7 +185,7 @@ namespace WordJourney
 		/// <param name="originPos">Origin position.</param>
 		private void PlayTintTextAnim(string tintStr, Vector3 originPos){
 			
-			Text tintText = tintTextPool.GetInstance<Text> (tintTextModel, tintTextContainer);
+			Text tintText = tintTextPool.GetInstance<Text> (tintTextModel.gameObject, tintTextContainer);
 
 			tintText.transform.localPosition = originPos;
 

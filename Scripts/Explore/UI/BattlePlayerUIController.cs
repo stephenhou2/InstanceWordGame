@@ -49,23 +49,23 @@ namespace WordJourney
 		private CallBack<int> skillSelectCallBack;
 
 
-		protected override void Awake(){
 
-			player = Player.mainPlayer;
-
-			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
-
-			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
-
-			base.Awake ();
-
-		}
 
 
 		public void SetUpExplorePlayerView(Player player,CallBack<int> skillSelectCallBack){
 
 			this.player = player;
 			this.skillSelectCallBack = skillSelectCallBack;
+
+			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
+
+
+			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
+			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
+
+			skillButtonPool.transform.SetParent (poolContainerOfExploreScene);
+			skillButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
 			UpdateItemButtons ();
@@ -208,11 +208,11 @@ namespace WordJourney
 		private void SetUpItemButton(Item item,Button itemButton){
 
 			if (item == null) {
-				itemButton.GetComponent<Image> ().color = new Color (100, 100, 100, 255);
+//				itemButton.GetComponent<Image> ().color = new Color (100, 100, 100, 255);
 				itemButton.interactable = false;
 				itemButton.GetComponentInChildren<Text> ().text = "0";
 			} else {
-				itemButton.GetComponent<Image> ().color = Color.white;
+//				itemButton.GetComponent<Image> ().color = Color.white;
 				itemButton.interactable = true;
 				itemButton.GetComponentInChildren<Text> ().text = item.itemCount.ToString ();
 			}
@@ -223,9 +223,11 @@ namespace WordJourney
 
 		public void OnBagButtonClick(){
 
-			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
-
-			bpCtr.OnPlayerClickBag ();
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
+				bagCanvas.GetComponent<Canvas>().enabled =true;
+				bagCanvas.gameObject.SetActive(true);
+			}, false);
 
 		}
 

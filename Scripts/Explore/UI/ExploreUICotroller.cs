@@ -47,20 +47,41 @@ namespace WordJourney
 		private List<Item> itemsToPickUp = new List<Item>();
 
 
-			
-		public void InitializePoolsAndModels(){
+		public void SetUpExploreCanvas(){
 
-			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
-
-			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
-
-			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
-
-			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
-
+			Initialize ();
 
 		}
 
+			
+		private void Initialize(){
+
+			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
+
+			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
+			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
+
+			choiceButtonPool.transform.SetParent (poolContainerOfExploreScene);
+			rewardButtonPool.transform.SetParent (poolContainerOfExploreScene);
+
+			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
+			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
+
+			choiceButtonModel.SetParent (modelContainerOfExploreScene);
+			rewardButtonModel.SetParent (modelContainerOfExploreScene);
+
+			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
+
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+
+					Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
+					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
+					bagCanvas.GetComponent<Canvas>().enabled = false;
+				}, true);
+			}
+
+		}
 
 
 		public void ShowFightPlane(){
@@ -273,46 +294,29 @@ namespace WordJourney
 
 		public void QuitExplore(){
 
-			DestroyInstances ();
-
-			DestroyInstancePools ();
-
 			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().OnQuitExplore();
+
+			TransformManager.DestroyTransform(transform);
+
+			DestroyInstances ();
 
 			Resources.UnloadUnusedAssets ();
 
 			System.GC.Collect ();
 
-			ResourceLoader homeCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (homeCanvasLoader, CommonData.homeCanvasBundleName, () => {
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-				TransformManager.DestroyTransform(transform);
+			});
 
-			},true);
 		}
 
 
 		private void DestroyInstances(){
-
-			Destroy (this.gameObject);
-			TransformManager.DestroyTransfromWithName ("TintTextModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("SkillButtonModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("RewardButtonModel", TransformRoot.InstanceContainer);
-			TransformManager.DestroyTransfromWithName ("ChoiceButtonModel", TransformRoot.InstanceContainer);
-
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", "PoolContainerOfExploreScene", "ModelContainerOfExploreScene");
 		}
 
-		private void DestroyInstancePools(){
-
-			Destroy (TransformManager.FindTransform ("ChoiceButtonPool").gameObject);
-			Destroy (TransformManager.FindTransform ("RewardButtonPool").gameObject);
-			Destroy (TransformManager.FindTransform ("SkillButtonPool").gameObject);
-			Destroy (TransformManager.FindTransform ("TintTextPool").gameObject);
-
-		}
 
 	}
 }

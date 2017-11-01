@@ -17,6 +17,30 @@ namespace WordJourney
 
 		}
 
+//		private void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb){
+//			
+//			Transform canvas = TransformManager.FindTransform (canvasName);
+//
+//			if (canvas != null) {
+//
+//				cb ();
+//
+//				homeView.OnQuitHomeView();
+//
+//				return;
+//			}
+//
+//			ResourceLoader loader = ResourceLoader.CreateNewResourceLoader ();
+//
+//			ResourceManager.Instance.LoadAssetsWithBundlePath (loader, bundleName, () => {
+//
+//				cb();
+//
+//				homeView.OnQuitHomeView();
+//			});
+//
+//		}
+
 		public void OnExploreButtonClick(){
 			
 			homeView.ShowMaskImage ();
@@ -33,13 +57,15 @@ namespace WordJourney
 
 			int currentExploreLevel = GameManager.Instance.unlockedMaxChapterIndex;
 
-			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
+//			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
 
-			ResourceManager.Instance.LoadAssetsWithBundlePath (exploreSceneLoader, CommonData.exploreSceneBundleName, () => {
+			QuitHomeView();
+
+			GameManager.Instance.UIManager.UnloadAllCanvasInSceneExcept(new string[]{"BagCanvas"});
+
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", () => {
 
 				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
-
-				QuitHomeView();
 
 			},true);
 
@@ -47,132 +73,78 @@ namespace WordJourney
 
 		public void OnRecordButtonClick(){
 
-			ResourceLoader recordCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (recordCanvasLoader, CommonData.recordCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.recordCanvasBundleName, "RecordCanvas", () => {
 				TransformManager.FindTransform("RecordCanvas").GetComponent<RecordViewController> ().SetUpRecordView();
-
 				homeView.OnQuitHomeView();
 			});
-
-
 		}
 
 		public void OnThinkingButtonClick(){
 
-			ResourceLoader materialDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (materialDisplayCanvasLoader,CommonData.materialDiaplayCanvasBundleName, () => {
-				
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", () => {
 				TransformManager.FindTransform("MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
-			
 				homeView.OnQuitHomeView();
 			});
-
 		}
 
 		public void OnProduceButtonClick(){
 
-			ResourceLoader itemDisplayCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (itemDisplayCanvasLoader, CommonData.itemDisplayCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", () => {
 				TransformManager.FindTransform("ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
-
 				homeView.OnQuitHomeView();
 			});
-
 		}
 
 
 		public void OnSkillButtonClick(){
 
-			ResourceLoader skillCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (skillCanvasLoader, CommonData.skillCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.skillCanvasBundleName, "SkillsCanvas", () => {
 				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
-
 				homeView.OnQuitHomeView();
 			});
-
 		}
 
 		public void OnBagButtonClick(){
 
-			Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
-
-			if (bagCanvas != null) {
-				
-				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-
-				homeView.OnQuitHomeView();
-			}
-
-			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, CommonData.bagCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
-
 				homeView.OnQuitHomeView();
-
 			});
 		}
 
 		public void OnSettingButtonClick(){
 
-			ResourceLoader settingCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (settingCanvasLoader, CommonData.settingCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
 				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController> ().SetUpSettingView ();
-
 				homeView.OnQuitHomeView();
 			});
 		}
 
 		public void OnMaterialProduceButtonClick(){
 
-			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(null);
-
 				homeView.OnQuitHomeView();
-
 			});
 		}
 
 		public void OnFuseStoneButtonClick(){
 
-			ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-
-			ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
-
 				homeView.OnQuitHomeView();
-
 			});
 		}
 
 
 		private void QuitHomeView(){
-			homeView.OnQuitHomeView (DestroyInstances);
+			homeView.OnQuitHomeView ();
+			DestroyInstances ();
 		}
 
-		private void DestroyInstances(){
+		public void DestroyInstances(){
 
-			ResourceManager.Instance.UnloadCaches (CommonData.homeCanvasBundleName, true);
-
-			Destroy (this.gameObject);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", null, null);
 
 		}
 

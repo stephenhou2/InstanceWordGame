@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 585507153
+CRC: 2665813262
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9e9d2defcd642602041bfc568c042d04
+    Hash: 6919796a27717377c4ed15f9321026bd
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 7fbd12b5ee09694dcc5a758ba9719cb2
+    Hash: e0105abeb0f930b1b9483c0f19df9a56
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -58,6 +58,9 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/ItemsDisplay/ItemDisplayCanvas.prefab
-- Assets/Prefabs/ItemsDisplay/Models.prefab
-Dependencies: []
+- Assets/Prefabs/ItemDisplay/MaterialModel.prefab
+- Assets/Prefabs/ItemDisplay/ItemDetailTypeBtnModel.prefab
+- Assets/Prefabs/ItemDisplay/ItemDetailsModelInItemDisplayCanvas.prefab
+- Assets/Prefabs/ItemDisplay/ItemDisplayCanvas.prefab
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

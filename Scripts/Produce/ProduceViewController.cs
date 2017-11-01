@@ -192,21 +192,19 @@ namespace WordJourney
 
 		public void QuitProduceView(){
 			
-//			produceView.QuitProduceView (DestroyInstances);
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", () => {
+				TransformManager.FindTransform ("ItemDisplayCanvas").GetComponent<Canvas> ().enabled = true;
+			});
 
-			DestroyInstances ();
+			gameObject.SetActive(false);
 
-			TransformManager.FindTransform ("ItemDisplayCanvas").GetComponent<Canvas> ().enabled = true;
+			TransformManager.DestroyTransfromWithName ("PoolContainerOfProduceCanvas", TransformRoot.PoolContainer);
 
 		}
 
-		private void DestroyInstances(){
+		public void DestroyInstances(){
 
-			TransformManager.DestroyTransform (this.transform);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.produceCanvasBundleName, "ProduceCanvas", "PoolContainerOfProduceCanvas", "ModelContainerOfProduceCanvas");
 
 		}
 

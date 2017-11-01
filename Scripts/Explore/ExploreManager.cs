@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace WordJourney
 {
 	
-	using UnityEngine.SceneManagement;
+//	using UnityEngine.SceneManagement;
 
 	public class ExploreManager : MonoBehaviour
 	{
@@ -64,16 +64,18 @@ namespace WordJourney
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
-			TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ().InitializePoolsAndModels ();
-
 			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex-1];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);
 
+			ExploreUICotroller expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ();
+
+			expUICtr.SetUpExploreCanvas ();
+
+			expUICtr.GetComponent<Canvas> ().enabled = true;
+
 		}
-
-
 
 		 
 
@@ -357,7 +359,7 @@ namespace WordJourney
 		
 			mapGenerator.DestroyInstancePools ();
 
-			ReleaseReference ();
+			battlePlayerCtr.ClearReference ();
 
 			Destroy(this.gameObject);
 
@@ -366,20 +368,8 @@ namespace WordJourney
 				"AllSkills", "AllSkillSprites", "AllMonsters","AllExploreAudioClips"
 			});
 
-			ResourceManager.Instance.UnloadCaches (CommonData.exploreSceneBundleName,true);
-
-
-//			SceneManager.LoadScene ("GameScene",LoadSceneMode.Single);
-
 		}
 
-		private void ReleaseReference(){
-
-			battlePlayerCtr.enterNpc = null;
-			battlePlayerCtr.enterItem = null;
-			battlePlayerCtr.enterMonster = null;
-
-		}
 
 	}
 }

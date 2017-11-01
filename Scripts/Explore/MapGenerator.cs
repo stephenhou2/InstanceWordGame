@@ -59,12 +59,22 @@ namespace WordJourney
 		public void SetUpMap (ChapterDetailInfo chapterDetail)
 		{
 
+			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
+
 			outerWallPool = InstancePool.GetOrCreateInstancePool ("OuterWallPool");
 			floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool");
 			npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool");
 			itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool");
 			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool");
 			skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool");
+
+			outerWallPool.transform.SetParent (poolContainerOfExploreScene);
+			floorPool.transform.SetParent (poolContainerOfExploreScene);
+			npcPool.transform.SetParent (poolContainerOfExploreScene);
+			itemPool.transform.SetParent (poolContainerOfExploreScene);
+			monsterPool.transform.SetParent (poolContainerOfExploreScene);
+			skillEffectPool.transform.SetParent (poolContainerOfExploreScene);
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
 

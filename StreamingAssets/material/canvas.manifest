@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1560905860
+CRC: 1500175833
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 994253910217d9ccd53e49e5a743a0b6
+    Hash: 5e356c24b46320a6b90ae61484d50b6c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fea6d01c64f458a407db94a52f376122
+    Hash: 4cd472d202da02bdf1816b63d3e3ac78
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -54,4 +54,5 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/MaterialDisplay/MaterialDisplayCanvas.prefab
 - Assets/Prefabs/MaterialDisplay/MaterialBtnModel.prefab
-Dependencies: []
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

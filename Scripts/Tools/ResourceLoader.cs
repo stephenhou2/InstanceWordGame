@@ -225,6 +225,7 @@ namespace WordJourney
 				if (obj.GetType () == typeof(Sprite)) {
 					sprites.Add (obj as Sprite);
 				} else if(obj.GetType() == typeof(Texture2D)){
+					obj = null;
 					continue;
 				}else if(obj.GetType() == typeof(AudioClip)){
 					audioClips.Add (obj as AudioClip);
@@ -252,7 +253,6 @@ namespace WordJourney
 
 			assetsLoaded = null;
 
-
 			// 执行资源加载完成后回调，取得资源必须在回调中完成，之后资源会从内存中删除
 			if (callBack != null) {
 				callBack ();
@@ -265,6 +265,10 @@ namespace WordJourney
 			audioClips.Clear();
 
 			Destroy (this.gameObject);
+
+			Resources.UnloadUnusedAssets ();
+
+			System.GC.Collect ();
 
 		}
 

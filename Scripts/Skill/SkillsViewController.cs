@@ -84,40 +84,24 @@ namespace WordJourney
 			
 			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive (false);
 
-			skillsView.OnQuitSkillsPlane (DestroyInstances);
+			skillsView.QuitSkillsPlane ();
 
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			} 
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+			});
+
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllSkills", "AllSkillSprites" });
+				
 		}
 
-		private void DestroyInstances(){
+		public void DestroyInstances(){
 
 			mSkills = null;
 
 			mSkillSprites = null;
 
-			GameManager.Instance.dataCenter.allSkills.Clear ();
-
-			GameManager.Instance.dataCenter.allSkillSprites.Clear ();
-
-			TransformManager.DestroyTransform (gameObject.transform);
-
-			TransformManager.DestroyTransfromWithName ("AllSkills", TransformRoot.InstanceContainer);
-
-			TransformManager.DestroyTransfromWithName ("ResourceLoader", TransformRoot.Plain);
-
-			Destroy (this.gameObject);
-
-			ResourceManager.Instance.UnloadCaches (CommonData.skillCanvasBundleName,true);
-			ResourceManager.Instance.UnloadCaches (CommonData.allSkillsBundleName,true);
-			ResourceManager.Instance.UnloadCaches (CommonData.allSkillSpritesBundleName,true);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.skillCanvasBundleName, "SkillsCanvas", null, null);
 
 		}
 	}

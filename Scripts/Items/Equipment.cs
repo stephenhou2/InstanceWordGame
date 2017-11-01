@@ -59,8 +59,8 @@ namespace WordJourney
 
 
 
-		public double damagePercentage;//装备损坏程度
-		private double fixPercentage = 0.05d;//每次修复百分比
+		public int damagePercentage;//装备损坏程度
+		private int fixPercentage = 5;//每次修复百分比
 
 		//装备是否已佩戴
 		public bool equiped;
@@ -95,12 +95,44 @@ namespace WordJourney
 			healthGain = itemModel.healthGain;
 			manaGain = itemModel.manaGain;
 
-			damagePercentage = 0d;
+			damagePercentage = 0;
 			equipmentType = itemModel.equipmentType;
+
+			materials = itemModel.materials;
+			failMaterials = itemModel.failMaterials;
 
 			if (fuseStone != null) {
 				itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
 			}
+
+		}
+
+
+
+		public List<Item> ResolveEquipment(){
+
+			List<Material> returnedMaterials = new List<Material> ();
+
+			for (int i = 0; i < materials.Count; i++) {
+
+				Material m = materials [i];
+
+				if (m.materialType == MaterialType.Boss) {
+					continue;
+				}else{
+					returnedMaterials.Add (m);
+				}
+			}
+
+			int materialIndex = Random.Range (0, returnedMaterials.Count - 1);
+
+			Player.mainPlayer.allEquipmentsInBag.Remove (this);
+
+			Material returnedMaterial = returnedMaterials [materialIndex];
+
+			Player.mainPlayer.AddMaterial (returnedMaterial);
+
+			return new List<Item>{ returnedMaterial };
 
 		}
 

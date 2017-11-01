@@ -171,14 +171,18 @@ namespace WordJourney
 
 
 		// 退出按钮点击响应
-		public void OnQuitSkillsPlane(CallBack cb){
+		public void QuitSkillsPlane(){
 
 			skillsViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
+			Vector3 originalPosition = skillPlane.localPosition;
+
 			skillPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-				cb();
+				GetComponent<Canvas>().enabled =  false;
+				gameObject.SetActive(false);
+				skillPlane.localPosition = originalPosition;
 			});
 
 		}

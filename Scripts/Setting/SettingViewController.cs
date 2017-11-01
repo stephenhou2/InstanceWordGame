@@ -77,13 +77,13 @@ namespace WordJourney
 
 			GameManager.Instance.OnSettingsChanged ();
 
-			settingView.QuitSettingView (DestroyInstances);
+			settingView.QuitSettingView ();
 
-			GameObject homeCanvas = GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas");
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
+			});
 
-			if (homeCanvas != null) {
-				homeCanvas.GetComponent<HomeViewController> ().SetUpHomeView ();
-			}
+			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "GameSettings" });
 
 		}
 
@@ -100,13 +100,9 @@ namespace WordJourney
 
 		}
 
-		private void DestroyInstances(){
+		public void DestroyInstances(){
 
-			TransformManager.DestroyTransform (gameObject.transform);
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", null, null);
 
 		}
 
