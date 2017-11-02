@@ -21,7 +21,7 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpRecordView(){
 
-			learnInfo = GameManager.Instance.dataCenter.learnInfo;
+			learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
 
 			recordView.SetUpRecordView ();
 
@@ -101,7 +101,7 @@ namespace WordJourney
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfRecordCanvas", TransformRoot.PoolContainer);
 
-			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "LearnInfo" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "LearnInfo" });
 
 		}
 

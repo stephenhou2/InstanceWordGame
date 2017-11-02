@@ -30,6 +30,10 @@ namespace WordJourney
 
 			T instance = default (T);
 
+			if (jsonStr == string.Empty) {
+				return instance;
+			}
+
 			//模型转换
 			try{
 				instance = JsonUtility.FromJson<T> (jsonStr);
@@ -66,13 +70,17 @@ namespace WordJourney
 		}
 			
 
-		public static void WriteModelDataToFile<T>(T model,string filePath){
+		public static void SaveInstanceDataToFile<T>(T instance,string filePath){
 			
 			try{
 
-				string stringData = JsonUtility.ToJson(model);
+				string stringData = JsonUtility.ToJson(instance);
 
-				File.WriteAllText (filePath, stringData);
+				StreamWriter sw = new StreamWriter(filePath,false);
+
+				sw.Write(stringData);
+
+				sw.Dispose();
 
 			}catch(System.Exception e){
 				

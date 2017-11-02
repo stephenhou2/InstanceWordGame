@@ -19,8 +19,6 @@ namespace WordJourney
 
 		public string skillDescription;
 
-//		public BaseSkillEffect[] skillEffects;// 技能效果数组
-
 		public int manaConsume;//技能的魔法消耗
 
 		public float coolenInterval;// 技能的冷却时间
@@ -30,8 +28,6 @@ namespace WordJourney
 		public bool isAvalible = true;
 
 		public int unlockAgentLevel;
-
-//		public bool unlocked;
 
 		public float dodgeSeed = 0.01f; //计算闪避时的种子数
 
@@ -90,6 +86,34 @@ namespace WordJourney
 		{
 	//		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume + "\n[ActionConsume]:" + actionConsume + "\n[effect1]:" + skillEffects[0].effectName + "\n[effect2]:" + skillEffects[1].effectName);
 			return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume);
+		}
+
+		public static Skill LoadSkillFromWithSkillInfo(SkillInfo skillInfo){
+
+			List<Skill> allSkills = GameManager.Instance.gameDataCenter.allSkills;
+
+			Skill skill = allSkills.Find (delegate(Skill obj) {
+				return obj.skillId == skillInfo.skillId;
+			});
+
+			skill.skillLevel = skillInfo.skillLevel;
+
+			return skill;
+
+		}
+
+	}
+
+	[System.Serializable]
+	public class SkillInfo{
+
+		public int skillId;
+
+		public int skillLevel;
+
+		public SkillInfo(Skill skill){
+			this.skillId = skill.skillId;
+			this.skillLevel = skill.skillLevel;
 		}
 
 	}

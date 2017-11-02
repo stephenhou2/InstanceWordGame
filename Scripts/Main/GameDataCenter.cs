@@ -5,7 +5,7 @@ using UnityEngine;
 namespace WordJourney
 {
 
-	public class DataCenter {
+	public class GameDataCenter {
 
 		private GameSettings mGameSettings;
 		public GameSettings gameSettings{
@@ -13,28 +13,34 @@ namespace WordJourney
 			get{
 
 				if (mGameSettings == null) {
-					mGameSettings = new GameSettings ();
+					mGameSettings = DataHandler.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFilePath);
+					if (mGameSettings == null) {
+						mGameSettings = new GameSettings ();
+					}
 				}
 				return mGameSettings;
 
 			}
-			set{
-				mGameSettings = value;
-			}
+//			set{
+//				mGameSettings = value;
+//			}
 		}
 
 		private LearningInfo mLearnInfo;
 		public LearningInfo learnInfo{
 			get{
 				if (mLearnInfo == null) {
-					mLearnInfo = new LearningInfo ();
+					mLearnInfo = DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (CommonData.learningInfoFilePath);
+					if (mLearnInfo == null) {
+						mLearnInfo = new LearningInfo ();
+					}
 				}
 				mLearnInfo.SetUpWords ();
 				return mLearnInfo;
 			}
-			set{
-				mLearnInfo = value;
-			}
+//			set{
+//				mLearnInfo = value;
+//			}
 		}
 
 		private List<Material> mAllMaterials = new List<Material> ();

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace WordJourney{
-	
+
+
 	public delegate void CallBack ();
 	public delegate void CallBack<T>(T[] parameters);
 
@@ -26,8 +27,8 @@ namespace WordJourney{
 		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";
 //		public static string mapTilesDataFilePath = persistDataPath + "/NewTileJson.json";
 
-		public static string settingsFilePath = persistDataPath + "/Settings.txt";
-		public static string learningInfoFilePath = persistDataPath + "/LearningInfo.txt";
+		public static string settingsFilePath = persistDataPath + "/Settings.json";
+		public static string learningInfoFilePath = persistDataPath + "/LearningInfo.json";
 
 		public static string dataBaseName = "MyGameDB.db";
 
@@ -247,6 +248,71 @@ namespace WordJourney{
 //	{
 //		
 //		public int[] walkableInfoArray;
+//
+//	}
+
+
+
+//	[System.Serializable]
+//	public struct GameArchive{
+//		
+//		public Player player;
+//		public LearningInfo learnInfo;
+//		public GameSettings gameSettings;
+//		public int unlockedMaxChapterIndex;
+//
+//		public void SaveGameArchive(){
+//
+//			this.player = Player.mainPlayer;
+//			this.learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
+//			this.gameSettings = GameManager.Instance.gameDataCenter.gameSettings;
+//			this.unlockedMaxChapterIndex = GameManager.Instance.unlockedMaxChapterIndex;
+//
+//
+//			string gameArchiveString = JsonUtility.ToJson (this);
+//
+//			string gameArchivePath = Path.Combine (CommonData.persistDataPath, "GameArchive.json");
+//
+//
+//			StreamWriter sw = new StreamWriter (gameArchivePath, false);
+//
+//			sw.Write (gameArchiveString);
+//
+//			sw.Dispose ();
+//
+//		}
+//
+//		public static GameArchive LoadGameArchive(){
+//
+//			GameArchive ga;
+//
+//			string gameArchivePath = Path.Combine (CommonData.persistDataPath, "GameArchive.json");
+//
+//			if (!File.Exists (gameArchivePath)) {
+//
+//				ga = new GameArchive ();
+//
+//				ga.player = Player.mainPlayer;
+//
+//				ga.gameSettings = new GameSettings ();
+//
+//				ga.learnInfo = new LearningInfo ();
+//
+//				ga.unlockedMaxChapterIndex = 0;
+//
+//			} else {
+//
+//				StreamReader sr = new StreamReader (gameArchivePath);
+//
+//				string gameArchiveString = sr.ReadToEnd ();
+//
+//				ga = JsonUtility.FromJson<GameArchive> (gameArchiveString);
+//
+//			}
+//
+//			return ga;
+//
+//		}
 //
 //	}
 		

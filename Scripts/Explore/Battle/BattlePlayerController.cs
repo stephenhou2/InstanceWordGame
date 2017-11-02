@@ -383,7 +383,7 @@ namespace WordJourney
 			if (!ArriveEndPoint ()) {
 
 				GameManager.Instance.soundManager.PlayClips (
-					GameManager.Instance.dataCenter.allExploreAudioClips,
+					GameManager.Instance.gameDataCenter.allExploreAudioClips,
 					SoundDetailTypeName.Steps, 
 					null);
 
@@ -495,7 +495,7 @@ namespace WordJourney
 		{
 
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips, 
+				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 				SoundDetailTypeName.Skill, 
 				skill.sfxName);
 			// 技能对应的角色动画，动画结束后执行技能效果并更新角色状态栏

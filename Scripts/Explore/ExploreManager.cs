@@ -215,7 +215,7 @@ namespace WordJourney
 			Obstacle obstacle = mapItem as Obstacle;
 
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips, 
+				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 				SoundDetailTypeName.Map, 
 				mapItem.mapItemName);
 
@@ -245,7 +245,7 @@ namespace WordJourney
 			}
 
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips,
+				GameManager.Instance.gameDataCenter.allExploreAudioClips,
 				SoundDetailTypeName.Map, 
 				mapItem.mapItemName);
 
@@ -281,7 +281,7 @@ namespace WordJourney
 					unlockItem.itemCount--;
 
 					GameManager.Instance.soundManager.PlayClips (
-						GameManager.Instance.dataCenter.allExploreAudioClips, 
+						GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 						SoundDetailTypeName.Map, 
 						mapItem.mapItemName);
 
@@ -300,7 +300,7 @@ namespace WordJourney
 			}
 
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips,
+				GameManager.Instance.gameDataCenter.allExploreAudioClips,
 				SoundDetailTypeName.Map, 
 				mapItem.mapItemName);
 
@@ -363,7 +363,7 @@ namespace WordJourney
 
 			Destroy(this.gameObject);
 
-			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[] {
+			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[] {
 				"AllMaterials", "AllMaterialSprites", "AllMapSprites", 
 				"AllSkills", "AllSkillSprites", "AllMonsters","AllExploreAudioClips"
 			});

@@ -14,7 +14,7 @@ namespace WordJourney{
 			}
 			set{
 				mNpc = value;
-				GetComponent<SpriteRenderer> ().sprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
+				GetComponent<SpriteRenderer> ().sprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 					return s.name == mNpc.spriteName;
 				});
 

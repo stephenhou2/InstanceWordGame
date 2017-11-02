@@ -115,7 +115,7 @@ namespace WordJourney
 				materialProperty.text = material.itemDescription;
 				materialCount.text = material.itemCount.ToString ();
 
-				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
 					return obj.name == material.spriteName;
 				});
 
@@ -167,7 +167,7 @@ namespace WordJourney
 				itemName.text = item.itemName;
 				itemBaseProperties.text = item.GetItemBasePropertiesString ();
 
-				Sprite s = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 
@@ -194,7 +194,7 @@ namespace WordJourney
 				materialValence.text = failMaterial.valence.ToString ();
 				materialCount.text = string.Format ("数量：{0}", failMaterial.itemCount);
 
-				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
 					return obj.name == failMaterial.spriteName;
 				});
 

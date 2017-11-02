@@ -50,13 +50,13 @@ namespace WordJourney
 		#warning for test use
 		private void TestMaterials(){
 
-			Material wood = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
+			Material wood = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
 				return obj.itemName == "木";
 			});
-			Material iron = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
+			Material iron = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
 				return obj.itemName == "铁锭";
 			});
-			Material bandage = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
+			Material bandage = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
 				return obj.itemName == "绷带";
 			});
 
@@ -70,7 +70,7 @@ namespace WordJourney
 		/// </summary:
 		public void SetUpItemDisplayView(){
 
-			allItemModels = GameManager.Instance.dataCenter.allItemModels;
+			allItemModels = GameManager.Instance.gameDataCenter.allItemModels;
 
 //			for (int i = 0; i < allItemModels.Count; i++) {
 //
@@ -210,7 +210,7 @@ namespace WordJourney
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfItemDisplayCanvas",TransformRoot.PoolContainer);
 
-			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});
+			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});
 
 		}
 

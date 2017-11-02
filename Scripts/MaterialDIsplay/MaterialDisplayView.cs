@@ -20,7 +20,7 @@ namespace WordJourney
 		public void Initialize(){
 			
 			// 获取所有材料图片
-			this.materialSprites = GameManager.Instance.dataCenter.allMaterialSprites;
+			this.materialSprites = GameManager.Instance.gameDataCenter.allMaterialSprites;
 
 			// 创建材料展示模型缓存池
 

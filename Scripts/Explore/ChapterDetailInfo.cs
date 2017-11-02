@@ -38,7 +38,7 @@ namespace WordJourney
 
 			foreach (int itemId in itemIds) {
 
-				ItemModel itemModel = GameManager.Instance.dataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
 					return obj.itemId == itemId;
 				});
 
@@ -78,7 +78,7 @@ namespace WordJourney
 //					
 //			}
 
-			monsters = GameManager.Instance.dataCenter.allMonsters;
+			monsters = GameManager.Instance.gameDataCenter.allMonsters;
 
 		}
 

@@ -38,7 +38,7 @@ namespace WordJourney
 		public WordType wordType{
 
 			get{
-				return GameManager.Instance.dataCenter.gameSettings.wordType;
+				return GameManager.Instance.gameDataCenter.gameSettings.wordType;
 			}
 
 		}
@@ -50,10 +50,10 @@ namespace WordJourney
 			Unlearned
 		}
 
-		// 空构造函数
-		public LearningInfo(){
-
-		}
+//		// 空构造函数
+//		public LearningInfo(){
+//
+//		}
 
 		/// <summary>
 		/// 从数据库中读取对应类型的单词
@@ -96,6 +96,10 @@ namespace WordJourney
 
 			// 从表中读取数据
 			while (reader.Read ()) {
+
+				if (reader == null) {
+					return;
+				}
 
 				int wordId = reader.GetInt32 (0);
 				string spell = reader.GetString (1);

@@ -16,9 +16,9 @@ namespace WordJourney
 
 		public void SetUpSkillsView(){
 
-			mSkills = GameManager.Instance.dataCenter.allSkills;
+			mSkills = GameManager.Instance.gameDataCenter.allSkills;
 
-			mSkillSprites = GameManager.Instance.dataCenter.allSkillSprites;
+			mSkillSprites = GameManager.Instance.gameDataCenter.allSkillSprites;
 
 			skillsView.SetUpSkillsView (mSkills,mSkillSprites);
 
@@ -91,7 +91,7 @@ namespace WordJourney
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 			});
 
-			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllSkills", "AllSkillSprites" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllSkills", "AllSkillSprites" });
 				
 		}
 

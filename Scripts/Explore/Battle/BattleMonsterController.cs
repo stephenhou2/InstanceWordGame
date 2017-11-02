@@ -56,7 +56,7 @@ namespace WordJourney
 		{
 			
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips,
+				GameManager.Instance.gameDataCenter.allExploreAudioClips,
 				SoundDetailTypeName.Skill, 
 				skill.sfxName);
 

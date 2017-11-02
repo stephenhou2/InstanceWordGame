@@ -24,7 +24,7 @@ namespace WordJourney
 			GetComponent<BoxCollider2D> ().enabled = false;
 
 			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.dataCenter.allExploreAudioClips, 
+				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 				SoundDetailTypeName.Map, 
 				mapItemName);
 

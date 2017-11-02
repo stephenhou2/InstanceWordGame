@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
 namespace WordJourney{
+
+	using System.IO;
+
 	[System.Serializable]
 	public class GameSettings {
 
@@ -14,6 +16,7 @@ namespace WordJourney{
 		public int systemVolume = 50;
 
 		public WordType wordType = WordType.CET4;
+
 
 		public override string ToString ()
 		{

@@ -284,7 +284,7 @@ namespace WordJourney
 
 		}
 
-//		public void CopyAgentStatus(BattleAgentModel ba){
+//		public void CopyAgentStatus(PlayerData ba){
 //
 //			this.agentIconName = ba.agentIconName;
 //
@@ -494,45 +494,5 @@ namespace WordJourney
 
 
 
-	[System.Serializable]
-	public class BattleAgentModel{
 
-		public string agentName;
-
-		public string agentIconName;
-
-		public bool isActive = true;
-
-		public int agentLevel;
-
-		//*****初始信息********//
-		public int originalMaxHealth;
-		public int originalMaxStrength;
-		public int originalHealth;
-		public int originalStrength;
-		public int originalAttack;
-		public int originalPower;
-		public int originalMana;
-		public int originalCrit;
-		public int originaldodge;
-		public int originalarmor;
-		public int originalManaResist;
-		//*****初始信息********//
-
-		public int maxHealth;//最大血量
-		public int maxStrength;//最大气力值
-
-		public int health;
-		public int strength;
-
-		public int attack;//攻击力
-		public int power;//力量
-		public int mana;//魔法
-		public int dodge;//敏捷
-		public int armor;//护甲
-		public int manaResist;//魔抗
-		public int crit;//暴击
-
-
-	}
 }

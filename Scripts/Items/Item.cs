@@ -61,7 +61,7 @@ namespace WordJourney{
 		/// <param name="itemNameInEnglish">Item name in english.</param>
 		public static Item NewItemWithName(string itemNameInEnglish){
 
-			ItemModel itemModel = GameManager.Instance.dataCenter.allItemModels.Find(delegate (ItemModel item){
+			ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate (ItemModel item){
 				return item.itemNameInEnglish == itemNameInEnglish;
 			});
 
@@ -110,7 +110,7 @@ namespace WordJourney{
 		/// </summary>
 		public static List<Equipment> GetAllEquipments(){
 
-			List<ItemModel> allItemModels = GameManager.Instance.dataCenter.allItemModels;
+			List<ItemModel> allItemModels = GameManager.Instance.gameDataCenter.allItemModels;
 
 			List<Equipment> allEquipment = new List<Equipment> ();
 

@@ -29,7 +29,7 @@ namespace WordJourney
 //				
 //				itemName.text = consumables.itemName;
 //
-//				itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+//				itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 //					return obj.name == consumables.spriteName;
 //				});
 //
@@ -47,7 +47,7 @@ namespace WordJourney
 
 			itemName.text = equipmentInBag.itemName;
 
-			itemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+			itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 				return obj.name == equipmentInBag.spriteName;
 			});
 			if (itemIcon.sprite != null) {

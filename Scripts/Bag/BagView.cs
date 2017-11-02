@@ -76,7 +76,7 @@ namespace WordJourney
 			this.GetComponent<Canvas> ().enabled = true;
 
 			//获取所有item的图片
-			this.sprites = GameManager.Instance.dataCenter.allItemSprites;
+			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
 			this.player = Player.mainPlayer;
 
 			Transform poolContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfBagCanvas");
@@ -189,7 +189,7 @@ namespace WordJourney
 
 				Image itemIcon = equipedEquipmentButton.transform.Find ("ItemIcon").GetComponent<Image> ();
 
-				Sprite s = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == equipment.spriteName;
 				});
 
@@ -388,7 +388,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.dataCenter.allUISprites.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 
@@ -491,7 +491,7 @@ namespace WordJourney
 
 				Text resolveGainName = resolveGain.Find ("ResolveGainName").GetComponent<Text> ();
 
-				Sprite s = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == resolveGainItem.spriteName;
 				});
 

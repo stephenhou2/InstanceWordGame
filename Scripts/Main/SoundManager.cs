@@ -45,7 +45,7 @@ namespace WordJourney
 
 			AudioClip clip = null;
 
-			List<AudioClip> detailClips = GameManager.Instance.dataCenter.allExploreAudioClips.FindAll (delegate(AudioClip obj) {
+			List<AudioClip> detailClips = GameManager.Instance.gameDataCenter.allExploreAudioClips.FindAll (delegate(AudioClip obj) {
 				return obj.name.Contains (detailType);
 			});
 

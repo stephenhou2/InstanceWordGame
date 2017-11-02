@@ -66,7 +66,7 @@ namespace WordJourney
 
 		public static Word RandomWord(){
 
-			LearningInfo learnInfo = GameManager.Instance.dataCenter.learnInfo;
+			LearningInfo learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
 
 			int wordId = 0;
 
@@ -81,7 +81,7 @@ namespace WordJourney
 
 			string tableName = string.Empty;
 
-			WordType wt = GameManager.Instance.dataCenter.learnInfo.wordType;
+			WordType wt = GameManager.Instance.gameDataCenter.learnInfo.wordType;
 
 			switch (wt) {
 			case WordType.CET4:

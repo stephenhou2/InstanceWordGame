@@ -150,7 +150,7 @@ namespace WordJourney
 			if (minusBtn.GetComponent<Image> ().sprite == null 
 				|| plusBtn.GetComponent<Image>().sprite == null) 
 			{
-				Sprite arrowSprite = GameManager.Instance.dataCenter.allUISprites.Find (delegate(Sprite obj) {
+				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
 					return obj.name == "arrowIcon";
 				});
 
@@ -192,7 +192,7 @@ namespace WordJourney
 
 				materialValence.text = (item as Material).valence.ToString ();
 
-				Sprite s = GameManager.Instance.dataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 
@@ -204,7 +204,7 @@ namespace WordJourney
 				materialCount.text = string.Empty;
 				materialValence.text = string.Empty;
 
-				s = GameManager.Instance.dataCenter.allItemSprites.Find(delegate(Sprite obj){
+				s = GameManager.Instance.gameDataCenter.allItemSprites.Find(delegate(Sprite obj){
 					return obj.name == item.spriteName;
 				});
 
@@ -231,7 +231,7 @@ namespace WordJourney
 //			fixedItemDamagePercentage.text = string.Format ("损坏度:{0}%", (int)(equipment.damagePercentage * 100));
 //
 //
-//			fixedItemIcon.sprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate (Sprite obj) {
+//			fixedItemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate (Sprite obj) {
 //				return obj.name == equipment.spriteName;
 //			});
 //

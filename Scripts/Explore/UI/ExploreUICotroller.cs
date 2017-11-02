@@ -121,7 +121,7 @@ namespace WordJourney
 
 			Dialog dialog = npc.dialogGroups [dialogGroupIndex].dialogs [0];
 
-			Sprite npcSprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
+			Sprite npcSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 				return s.name == npc.spriteName;
 			});
 
@@ -219,7 +219,7 @@ namespace WordJourney
 				
 				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
 
-				Sprite rewardSprite = GameManager.Instance.dataCenter.allItemSprites.Find (delegate(Sprite s) {
+				Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite s) {
 					return s.name == rewardItem.spriteName;
 				});
 					

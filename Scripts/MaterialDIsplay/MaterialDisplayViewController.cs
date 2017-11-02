@@ -21,7 +21,7 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpMaterialView(){
 			
-			List<Material> materials = GameManager.Instance.dataCenter.allMaterials;
+			List<Material> materials = GameManager.Instance.gameDataCenter.allMaterials;
 
 			for (int i = 0; i < materials.Count; i++) {
 				Material m = materials [i];
@@ -99,7 +99,7 @@ namespace WordJourney
 
 			gameObject.SetActive(false);
 
-			GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfMaterialDisplayCanvas", TransformRoot.PoolContainer);
 

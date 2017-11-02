@@ -43,8 +43,8 @@ namespace WordJourney
 
 		public void Initialize(){
 			
-			this.itemSprites = GameManager.Instance.dataCenter.allItemSprites;
-			this.materialSprites = GameManager.Instance.dataCenter.allMaterialSprites;
+			this.itemSprites = GameManager.Instance.gameDataCenter.allItemSprites;
+			this.materialSprites = GameManager.Instance.gameDataCenter.allMaterialSprites;
 
 			Transform poolContainerOfItemDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfItemDisplayCanvas");
 			Transform modelContainerOfItemDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfItemDisplayCanvas");

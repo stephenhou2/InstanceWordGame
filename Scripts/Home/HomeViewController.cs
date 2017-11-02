@@ -17,6 +17,14 @@ namespace WordJourney
 
 		}
 
+
+		public void OnSaveButtonClick(){
+
+			GameManager.Instance.persistDataManager.SavePersistDatas ();
+
+
+		}
+
 //		private void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb){
 //			
 //			Transform canvas = TransformManager.FindTransform (canvasName);
@@ -51,11 +59,13 @@ namespace WordJourney
 
 		}
 
+
+
 		private IEnumerator LoadExploreData(){
 
 			yield return null;
 
-			int currentExploreLevel = GameManager.Instance.unlockedMaxChapterIndex;
+			int currentExploreLevel = GameManager.Instance.maxUnlockChapterIndex;
 
 //			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
 

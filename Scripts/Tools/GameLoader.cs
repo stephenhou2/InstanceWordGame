@@ -12,17 +12,14 @@ namespace WordJourney
 
 		void Awake(){
 
-			StartCoroutine ("PersistDataAlways");
+//			StartCoroutine ("PersistDataAlways");
+			StartCoroutine ("PersistDataIfFirstLoad");
 
 		}
 
 		private void InitGame(){
 
 			SetUpSystemSettings ();
-
-			DontDestroyOnLoad (Player.mainPlayer.gameObject);
-
-			DontDestroyOnLoad (GameManager.Instance.gameObject);
 
 			SetUpHomeView ();
 

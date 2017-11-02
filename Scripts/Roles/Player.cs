@@ -32,6 +32,8 @@ namespace WordJourney
 							mPlayerSingleton.transform.SetParent (null);
 							mPlayerSingleton.ResetBattleAgentProperties (true);
 						},true,"Player");
+
+						DontDestroyOnLoad (mPlayerSingleton);
 					}
 				} 
 				return mPlayerSingleton;
@@ -47,11 +49,16 @@ namespace WordJourney
 			get{
 				if (mCharactersCount == null || mCharactersCount.Length == 0) {
 					mCharactersCount = new int[26];
+					#warning 这里测试用，暂时初始化每个字母初始有10个，后面去掉
 					for(int i = 0;i<mCharactersCount.Length;i++){
 						mCharactersCount[i] = 10;
 					}
 				}
 				return mCharactersCount;
+			}
+
+			set{
+				mCharactersCount = value;
 			}
 
 		}
@@ -74,8 +81,7 @@ namespace WordJourney
 
 			base.Awake ();
 
-			#warning 这里用来玩家信息初始化
-
+			InitPlayerFromLocalData ();
 		}
 
 
@@ -83,9 +89,70 @@ namespace WordJourney
 
 		private void InitPlayerFromLocalData(){
 
+			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
+
+			PlayerData playerData = DataHandler.LoadDataToSingleModelWithPath<PlayerData> (playerDataPath);
+
+			if (playerData != null) {
+				LoadDataFromModel (playerData);
+			}
+
 		}
 
+		private void LoadDataFromModel(PlayerData playerData){
 
+			this.agentName = playerData.agentName;
+			this.agentIconName = playerData.agentIconName;
+			this.agentLevel = playerData.agentLevel;
+			this.isActive = playerData.isActive;
+
+			this.originalMaxHealth = playerData.originalMaxHealth;
+			this.originalMaxMana = playerData.originalMaxMana;
+			this.originalAttack = playerData.originalAttack;
+			this.originalAttackSpeed = playerData.originalAttackSpeed;
+			this.originalArmor = playerData.originalArmor;
+			this.originalManaResist = playerData.originalManaResist;
+			this.originalCrit = playerData.originalCrit;
+			this.originalDodge = playerData.originalDodge;
+			this.originalHealth = playerData.originalHealth;
+			this.originalMana = playerData.originalMana;
+
+
+			this.attack = playerData.attack;//攻击力
+			this.attackSpeed = playerData.attackSpeed;//攻速
+			this.armor = playerData.armor;//护甲
+			this.manaResist = playerData.manaResist;//魔抗
+			this.dodge = playerData.dodge;//闪避
+			this.crit = playerData.crit;//暴击
+			this.maxHealth = playerData.maxHealth;//最大生命值
+			this.maxMana = playerData.maxMana;//最大魔法值
+			this.health = playerData.health;//生命
+			this.mana = playerData.mana;//魔法
+
+			this.charactersCount = playerData.charactersCount;
+
+			this.allMaterialsInBag = playerData.allMaterialsInBag;
+			this.allEquipmentsInBag = playerData.allEquipmentsInBag;
+			this.allConsumablesInBag = playerData.allConsumablesInBag;
+			this.allFuseStonesInBag = playerData.allFuseStonesInBag;
+			this.allTaskItemsInBag = playerData.allTaskItemsInBag;
+
+			GameManager.Instance.maxUnlockChapterIndex = playerData.maxUnlockChapterIndex;
+
+
+			for (int i = 0; i < playerData.allLearnedSkillInfo.Count; i++) {
+
+				SkillInfo skillInfo = playerData.allLearnedSkillInfo [i];
+
+				Skill skill = Skill.LoadSkillFromWithSkillInfo (skillInfo);
+
+				allLearnedSkills.Add (skill);
+
+			}
+
+			this.skillPointsLeft = playerData.skillPointsLeft;
+
+		}
 
 		public void PlayerLevelUp(){
 
@@ -338,4 +405,114 @@ namespace WordJourney
 
 
 	}
+
+
+
+	[System.Serializable]
+	public class PlayerData{
+
+		public string agentName;
+
+		public string agentIconName;
+
+		public bool isActive = true;
+
+		public int agentLevel;
+
+		//*****初始信息********//
+		public int originalMaxHealth;
+		public int originalMaxMana;
+		public int originalHealth;
+		public int originalMana;
+		public int originalAttack;
+		public int originalAttackSpeed;
+		public int originalArmor;
+		public int originalManaResist;
+		public int originalDodge;
+		public int originalCrit;
+		//*****初始信息********//
+
+
+
+		public int attack;//攻击力
+		public int attackSpeed;//攻速
+		public int armor;//护甲
+		public int manaResist;//魔抗
+		public int dodge;//敏捷
+		public int crit;//暴击
+		public int maxHealth;//最大生命值
+		public int maxMana;//最大魔法值
+		public int health;//生命
+		public int mana;//魔法
+
+		public int[] charactersCount;//剩余的字母碎片信息
+
+		public List<Material> allMaterialsInBag;//背包中所有材料信息
+		public List<Equipment> allEquipmentsInBag;//背包中所有装备信息
+		public List<Consumables> allConsumablesInBag;//背包中所有消耗品信息
+		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
+		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
+
+		public int maxUnlockChapterIndex;//最大解锁关卡序号
+
+		public List<SkillInfo> allLearnedSkillInfo = new List<SkillInfo>();//所有已学习的技能信息
+
+		public int skillPointsLeft;//剩余可用技能点
+
+		public PlayerData(Player player){
+
+			this.agentName = player.agentName;
+			this.agentIconName = player.agentIconName;
+			this.agentLevel = player.agentLevel;
+			this.isActive = player.isActive;
+
+			this.originalMaxHealth = player.originalMaxHealth;
+			this.originalMaxMana = player.originalMaxMana;
+			this.originalAttack = player.originalAttack;
+			this.originalAttackSpeed = player.originalAttackSpeed;
+			this.originalArmor = player.originalArmor;
+			this.originalManaResist = player.originalManaResist;
+			this.originalCrit = player.originalCrit;
+			this.originalDodge = player.originalDodge;
+			this.originalHealth = player.originalHealth;
+			this.originalMana = player.originalMana;
+
+
+			this.attack = player.attack;//攻击力
+			this.attackSpeed = player.attackSpeed;//攻速
+			this.armor = player.armor;//护甲
+			this.manaResist = player.manaResist;//魔抗
+			this.dodge = player.dodge;//闪避
+			this.crit = player.crit;//暴击
+			this.maxHealth = player.maxHealth;//最大生命值
+			this.maxMana = player.maxMana;//最大魔法值
+			this.health = player.health;//生命
+			this.mana = player.mana;//魔法
+
+			this.charactersCount = player.charactersCount;
+
+			this.allMaterialsInBag = player.allMaterialsInBag;
+			this.allEquipmentsInBag = player.allEquipmentsInBag;
+			this.allConsumablesInBag = player.allConsumablesInBag;
+			this.allFuseStonesInBag = player.allFuseStonesInBag;
+			this.allTaskItemsInBag = player.allTaskItemsInBag;
+
+			this.maxUnlockChapterIndex = GameManager.Instance.maxUnlockChapterIndex;
+
+
+			for (int i = 0; i < player.allLearnedSkills.Count; i++) {
+
+				SkillInfo skillInfo = new SkillInfo (player.allLearnedSkills [i]);
+
+				allLearnedSkillInfo.Add (skillInfo);
+
+			}
+
+			this.skillPointsLeft = player.skillPointsLeft;
+
+		}
+
+	}
+
+
 }

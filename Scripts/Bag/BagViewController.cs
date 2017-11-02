@@ -32,7 +32,7 @@ namespace WordJourney
 			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 				for (int i = 0; i < 128; i++) {
 
-					ItemModel im = GameManager.Instance.dataCenter.allItemModels.Find (delegate (ItemModel obj) {
+					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
 						return obj.itemId == i;
 					});
 
@@ -328,7 +328,7 @@ namespace WordJourney
 
 						GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-						GameManager.Instance.dataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
+						GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
 
 						TransformManager.DestroyTransfromWithName ("PoolContainerOfBagCanvas", TransformRoot.PoolContainer);
 					});

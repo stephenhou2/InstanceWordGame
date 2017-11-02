@@ -202,7 +202,7 @@ namespace WordJourney
 
 //				SpriteRenderer sr = mapNpc.GetComponent<SpriteRenderer> ();
 //
-//				sr.sprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite obj) {
+//				sr.sprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
 //					return obj.name == mapNpc.npc.
 //				});
 
@@ -279,7 +279,7 @@ namespace WordJourney
 
 						string tileName = string.Format ("{0}_{1}", mapImageName,tileIndex);
 
-						Sprite tileSprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
+						Sprite tileSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 							return s.name == tileName;
 						});
 

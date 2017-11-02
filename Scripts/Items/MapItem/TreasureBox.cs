@@ -42,9 +42,9 @@ namespace WordJourney
 //			string spriteName = string.Empty;
 //
 //			do {
-//				int index = Random.Range (0, GameManager.Instance.dataCenter.allMapSprites.Count);
+//				int index = Random.Range (0, GameManager.Instance.gameDataCenter.allMapSprites.Count);
 //
-//				Sprite s = GameManager.Instance.dataCenter.allMapSprites [index];
+//				Sprite s = GameManager.Instance.gameDataCenter.allMapSprites [index];
 //
 //				spriteName = s.name;
 //
@@ -54,13 +54,13 @@ namespace WordJourney
 //
 //			string originSpriteName = "item_" + itemName + "_origin";
 //
-//			originSprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
+//			originSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 //				return s.name == originSpriteName;
 //			});
 //
 //			string destroyedSpriteName = "item_" + itemName + "_unlocked";
 //
-//			unlockedSprite = GameManager.Instance.dataCenter.allMapSprites.Find (delegate(Sprite s) {
+//			unlockedSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 //				return s.name == destroyedSpriteName;
 //			});
 //

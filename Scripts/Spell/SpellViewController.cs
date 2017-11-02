@@ -279,7 +279,7 @@ namespace WordJourney
 
 			}
 
-			Material material = GameManager.Instance.dataCenter.allMaterials.Find (delegate(Material obj) {
+			Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
 				
 				return obj.itemNameInEnglish == charactersEntered.ToString ();
 
@@ -537,7 +537,7 @@ namespace WordJourney
 					GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 						TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 					});
-					GameManager.Instance.dataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+					GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
 				} 
 //				else {
 //					Transform materialDisplayCanvas = TransformManager.FindTransform ("MaterialDisplayCanvas");
