@@ -12,6 +12,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = false;
+			skillType = SkillType.Physical;
 			baseNum = 0.04f;
 			hurtScaler = 2;
 			absorbBase = 10;

@@ -13,6 +13,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = true;
+			skillType = SkillType.Passive;
 			baseNum = 0.01f;
 			skillName = "重击";
 			skillDescription = string.Format ("<color=orange>{0}*技能等级</color>%的概率将对方击晕，持续<color=orange>{1}s</color>",(int)(baseNum * 100),duration);

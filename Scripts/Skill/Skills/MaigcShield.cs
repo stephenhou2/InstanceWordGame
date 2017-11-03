@@ -14,6 +14,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = true;
+			skillType = SkillType.Passive;
 			duration = 2;
 			decreaseHurtScaler = 0.5f;
 			baseNum = 0.5f;

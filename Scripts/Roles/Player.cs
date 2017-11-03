@@ -43,7 +43,6 @@ namespace WordJourney
 			
 
 		[SerializeField]private int[] mCharactersCount;
-
 		public int[] charactersCount{
 
 			get{
@@ -74,32 +73,19 @@ namespace WordJourney
 		public List<Consumables> allConsumablesInBag = new List<Consumables> ();
 		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
 		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
+//		public List<CharacterFragment> allCharacterFragmentsInBag = new List<CharacterFragment> ();
 
 
+		public int maxUnlockChapterIndex;
 
-		public override void Awake(){
-
-			base.Awake ();
-
-			InitPlayerFromLocalData ();
-		}
+		public int currentChapterIndex;
 
 
+		public void SetUpPlayerWithPlayerData(PlayerData playerData){
 
-
-		private void InitPlayerFromLocalData(){
-
-			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
-
-			PlayerData playerData = DataHandler.LoadDataToSingleModelWithPath<PlayerData> (playerDataPath);
-
-			if (playerData != null) {
-				LoadDataFromModel (playerData);
+			if (playerData == null) {
+				return;
 			}
-
-		}
-
-		private void LoadDataFromModel(PlayerData playerData){
 
 			this.agentName = playerData.agentName;
 			this.agentIconName = playerData.agentIconName;
@@ -136,8 +122,10 @@ namespace WordJourney
 			this.allConsumablesInBag = playerData.allConsumablesInBag;
 			this.allFuseStonesInBag = playerData.allFuseStonesInBag;
 			this.allTaskItemsInBag = playerData.allTaskItemsInBag;
+//			this.allCharacterFragmentsInBag = playerData.allCharacterFragmentsInBag;
 
-			GameManager.Instance.maxUnlockChapterIndex = playerData.maxUnlockChapterIndex;
+			this.maxUnlockChapterIndex = playerData.maxUnlockChapterIndex;
+			this.currentChapterIndex = playerData.currentChapterIndex;
 
 
 			for (int i = 0; i < playerData.allLearnedSkillInfo.Count; i++) {
@@ -230,33 +218,51 @@ namespace WordJourney
 		/// <returns>分解后获得的字母碎片</returns>
 		public List<char> GetCharactersFromItem(Item item,int resolveCount){
 
-			//分解后得到的字母碎片
+			// 分解后得到的字母碎片
 			List<char> charactersReturn = new List<char> ();
 
+			// 每分解一个物品可以获得的字母碎片数量
 			int charactersReturnCount = 1;
 
+			// 物品英文名称转换为char数组
 			char[] charArray = item.itemNameInEnglish.ToCharArray ();
 
+			// char数组转换为可以进行增减操作的list
 			List<char> charList = new List<char> ();
 
 			for (int i = 0; i < charArray.Length; i++) {
 				charList.Add (charArray [i]);
 			}
 
+			// 分解物品，背包中的字母碎片数量增加
 			for (int j = 0; j < resolveCount; j++) {
 
 				for (int i = 0; i < charactersReturnCount; i++) {
 
 					char character = ReturnRandomCharacters (ref charList);
 
-					int charIndex = (int)character - CommonData.aInASCII;
+					int characterIndex = (int)character - CommonData.aInASCII;
 
-					charactersCount [charIndex]++;
+					charactersCount [i]++;
+
+//					CharacterFragment cf = allCharacterFragmentsInBag.Find (delegate(CharacterFragment obj) {
+//						return obj.itemName == character.ToString ();
+//					});
+//
+//					if (cf == null) {
+//						
+//						cf = new CharacterFragment (character, 0);
+//
+//						allCharacterFragmentsInBag.Add (cf);
+//					}
+//
+//					cf.itemCount++;
 
 					charactersReturn.Add (character);
 				}
 			}
 
+			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
 			item.itemCount -= resolveCount;
 
 			if (item.itemCount <= 0) {
@@ -404,6 +410,171 @@ namespace WordJourney
 		}
 
 
+		/// <summary>
+		/// 玩家死亡时随机丢失一种 装备／消耗品／材料
+		/// </summary>
+		/// <returns>The item when die.</returns>
+		public Item LostItemWhenDie(){
+
+			// 判断玩家背包中是否有字母碎片
+			bool noCharacterFragmentInBag = true;
+
+			for (int i = 0; i < charactersCount.Length; i++) {
+				if (charactersCount [i] != 0) {
+					noCharacterFragmentInBag = false;
+				}
+			}
+
+			// 如果玩家背包中没有可丢失的物品，返回null
+			if (allEquipmentsInBag.Count == 0 && allConsumablesInBag.Count == 0 && allMaterialsInBag.Count == 0 && noCharacterFragmentInBag) {
+				return null;
+			}
+
+			// 随机一种丢失物品类型（0:装备，1:消耗品，2:材料，3:字母碎片）
+			ItemType lostItemType = (ItemType)Random.Range (0, 3);
+
+			Item lostItem = null;
+
+			int lostCount = 0;
+
+			switch (lostItemType) {
+			case ItemType.Equipment:
+				
+				if (allEquipmentsInBag.Count == 0) {
+					return LostItemWhenDie ();
+				}
+
+				int lostEquipmentIndex = Random.Range (0, allEquipmentsInBag.Count - 1);
+
+				lostItem = allEquipmentsInBag [lostEquipmentIndex];
+
+				allEquipmentsInBag.Remove (lostItem as Equipment);
+
+				if ((lostItem as Equipment).equiped) {
+					allEquipedEquipments.Remove (lostItem as Equipment);
+				}
+
+				return lostItem;
+
+			case ItemType.Consumables:
+				
+				if (allConsumablesInBag.Count == 0) {
+					return LostItemWhenDie ();
+				}
+
+				int lostConsumbablesIndex = Random.Range (0, allConsumablesInBag.Count - 1);
+
+				// 获得背包中丢失的物品
+				Consumables lostConsumables = allConsumablesInBag [lostConsumbablesIndex];
+
+				// 获得丢失数量（20%概率返回最大值*0.2，70%概率返回最大值* 0.5，10%概率返回最大值；最小返回1，最大返回5）
+				lostCount = MyRandom (lostConsumables.itemCount);
+
+				// 获取物品实际数量
+				lostConsumables.itemCount -= lostCount;
+
+				// 如果物品数量==0，从背包中移除
+				if (lostConsumables.itemCount == 0) {
+					allConsumablesInBag.Remove (lostConsumables);
+				}
+
+				lostItem = new Consumables (lostConsumables, lostCount);
+
+				return lostItem;
+
+			case ItemType.Material:
+				
+				if (allMaterialsInBag.Count == 0) {
+					return LostItemWhenDie ();
+				}
+
+				int lostMaterialIndex = Random.Range (0, allMaterialsInBag.Count - 1);
+
+				Material lostMaterial = allMaterialsInBag [lostMaterialIndex];
+
+				lostCount = MyRandom (lostMaterial.itemCount);
+
+				lostMaterial.itemCount -= lostCount;
+
+				if (lostMaterial.itemCount == 0) {
+					allMaterialsInBag.Remove (lostMaterial);
+				}
+
+				lostItem = new Material (lostMaterial, lostCount);
+
+				return lostItem;
+
+			case ItemType.CharacterFragment:
+				
+				if (noCharacterFragmentInBag) {
+					return LostItemWhenDie ();
+				}
+
+				List<int> notEmptyCharacterIndexs = new List<int> ();
+
+				// 将背包中字母碎片数量不为0的字母单独拉出来一个表
+				for (int i = 0; i < charactersCount.Length; i++) {
+					if (charactersCount [i] > 0) {
+						notEmptyCharacterIndexs.Add (i);
+					}
+				}
+				// 随机获取一个数量不为0的字母碎片序号（在新拉出来的表中）
+				int randomIndex = Random.Range (0, notEmptyCharacterIndexs.Count - 1);
+
+				// 获取对应的真实字母
+				char character = (char)(notEmptyCharacterIndexs [randomIndex] + CommonData.aInASCII);
+
+				// 获取对应的字母碎片数量
+				int characterCount = charactersCount [notEmptyCharacterIndexs [randomIndex]];
+
+				lostCount = MyRandom (characterCount);
+
+				charactersCount [notEmptyCharacterIndexs [randomIndex]] -= lostCount;
+
+				lostItem = new CharacterFragment (character, characterCount) as Item;
+
+				// 返回字母碎片
+				return lostItem;
+			}
+
+			return null;
+		}
+
+
+		/// <summary>
+		/// 随机返回数量，20%概率返回最大值*0.2，70%概率返回最大值* 0.5，10%概率返回最大值
+		/// 最小返回1，最大返回5
+		/// </summary>
+		/// <returns>The random.</returns>
+		/// <param name="max">Max.</param>
+		private int MyRandom(int max){
+
+			int seed = 0;
+
+			int returnNum = 0;
+
+			seed = Random.Range (1, 10);
+
+			if (seed <= 2) {
+				returnNum = (int)(max * 0.2f);
+			} else if (seed <= 9) {
+				returnNum = (int)(max * 0.5f);
+			}else{
+				returnNum = max;
+			}
+
+			if (returnNum < 1) {
+				returnNum = 1;
+			}
+
+			if (returnNum > 5) {
+				returnNum = 5;
+			}
+
+			return returnNum;
+
+		}
+
 	}
 
 
@@ -452,8 +623,10 @@ namespace WordJourney
 		public List<Consumables> allConsumablesInBag;//背包中所有消耗品信息
 		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
 		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
+//		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片
 
 		public int maxUnlockChapterIndex;//最大解锁关卡序号
+		public int currentChapterIndex;//当前所在关卡序号
 
 		public List<SkillInfo> allLearnedSkillInfo = new List<SkillInfo>();//所有已学习的技能信息
 
@@ -489,6 +662,8 @@ namespace WordJourney
 			this.health = player.health;//生命
 			this.mana = player.mana;//魔法
 
+
+
 			this.charactersCount = player.charactersCount;
 
 			this.allMaterialsInBag = player.allMaterialsInBag;
@@ -496,9 +671,10 @@ namespace WordJourney
 			this.allConsumablesInBag = player.allConsumablesInBag;
 			this.allFuseStonesInBag = player.allFuseStonesInBag;
 			this.allTaskItemsInBag = player.allTaskItemsInBag;
+//			this.allCharacterFragmentsInBag = player.allCharacterFragmentsInBag;
 
-			this.maxUnlockChapterIndex = GameManager.Instance.maxUnlockChapterIndex;
-
+			this.maxUnlockChapterIndex = player.maxUnlockChapterIndex;
+			this.currentChapterIndex = player.currentChapterIndex;
 
 			for (int i = 0; i < player.allLearnedSkills.Count; i++) {
 

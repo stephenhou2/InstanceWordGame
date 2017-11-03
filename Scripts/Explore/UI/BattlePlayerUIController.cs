@@ -57,14 +57,14 @@ namespace WordJourney
 			this.player = player;
 			this.skillSelectCallBack = skillSelectCallBack;
 
-			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
 
-			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool");
+			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
 			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 
-			skillButtonPool.transform.SetParent (poolContainerOfExploreScene);
+//			skillButtonPool.transform.SetParent (poolContainerOfExploreCanvas);
 			skillButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();

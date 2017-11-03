@@ -12,14 +12,14 @@ namespace WordJourney
 
 		void Awake(){
 
-//			StartCoroutine ("PersistDataAlways");
-			StartCoroutine ("PersistDataIfFirstLoad");
+			StartCoroutine ("PersistDataAlways");
+//			StartCoroutine ("PersistDataIfFirstLoad");
 
 		}
 
 		private void InitGame(){
 
-			SetUpSystemSettings ();
+			LoadDatas ();
 
 			SetUpHomeView ();
 
@@ -41,9 +41,13 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化系统设置
 		/// </summary>
-		private void SetUpSystemSettings(){
+		private void LoadDatas(){
 			
 			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
+
+			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
+
+			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
 		}
 

@@ -40,13 +40,13 @@ namespace WordJourney
 
 		protected void Start(){
 
-			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
-			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool");
+			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool",poolContainerOfExploreCanvas.name);
 			tintTextModel = TransformManager.FindTransform ("TintTextModel");
 
-			tintTextPool.transform.SetParent (poolContainerOfExploreScene);
+//			tintTextPool.transform.SetParent (poolContainerOfExploreCanvas);
 			tintTextModel.SetParent (modelContainerOfExploreScene);
 
 		}

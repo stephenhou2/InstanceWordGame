@@ -56,14 +56,11 @@ namespace WordJourney
 			
 		private void Initialize(){
 
-			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
+			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
-			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool");
-			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool");
-
-			choiceButtonPool.transform.SetParent (poolContainerOfExploreScene);
-			rewardButtonPool.transform.SetParent (poolContainerOfExploreScene);
+			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool",poolContainerOfExploreCanvas.name);
+			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool",poolContainerOfExploreCanvas.name);
 
 			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
 			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
@@ -74,7 +71,6 @@ namespace WordJourney
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
 
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
-
 					Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
 					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
 					bagCanvas.GetComponent<Canvas>().enabled = false;
@@ -91,12 +87,12 @@ namespace WordJourney
 		}
 
 
-		public void SetUpTintHUD(string unlockItemName){
+		public void SetUpTintHUD(string tint){
 			HideMask ();
 			tintHUD.gameObject.SetActive (true);
 			Text tintText = tintHUD.GetComponentInChildren<Text> ();
 			tintText.color = Color.black;
-			tintText.text = string.Format ("缺少 <color=blue>{0}x1</color>", unlockItemName);
+			tintText.text = tint;
 
 			StartCoroutine ("PlayTintTextAnim", tintText);
 
@@ -292,9 +288,12 @@ namespace WordJourney
 			battlePlane.gameObject.SetActive (false);
 		}
 
-		public void QuitExplore(){
 
-			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().OnQuitExplore();
+		public void EnterNextLevel(){
+			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().EnterNextLevel ();
+		}
+
+		public void QuitExplore(){
 
 			TransformManager.DestroyTransform(transform);
 
@@ -312,6 +311,11 @@ namespace WordJourney
 
 		}
 
+
+		#warning 测试用，退出按钮直接退出探索界面
+		public void QuitExploreWithTP(){
+			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().QuitExploreScene ();
+		}
 
 		private void DestroyInstances(){
 			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", "PoolContainerOfExploreScene", "ModelContainerOfExploreScene");

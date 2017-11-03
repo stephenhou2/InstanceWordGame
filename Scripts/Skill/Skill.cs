@@ -5,6 +5,14 @@ using UnityEngine;
 
 namespace WordJourney
 {
+
+	public enum SkillType{
+		Physical,
+		Magic,
+		Passive
+	}
+
+
 	public abstract class Skill:MonoBehaviour {
 
 		public string skillName;// 技能名称
@@ -14,6 +22,8 @@ namespace WordJourney
 		public string sfxName;//音效名称
 
 		public int skillId;
+
+		public SkillType skillType;
 
 		public string skillIconName;
 

@@ -60,21 +60,25 @@ namespace WordJourney
 		{
 
 			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
-			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
+//			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
-			outerWallPool = InstancePool.GetOrCreateInstancePool ("OuterWallPool");
-			floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool");
-			npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool");
-			itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool");
-			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool");
-			skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool");
+			if (poolContainerOfExploreScene.childCount == 0) {
+				outerWallPool = InstancePool.GetOrCreateInstancePool ("OuterWallPool",poolContainerOfExploreScene.name);
+				floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool",poolContainerOfExploreScene.name);
+				npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool",poolContainerOfExploreScene.name);
+				itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool",poolContainerOfExploreScene.name);
+				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
+				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
 
-			outerWallPool.transform.SetParent (poolContainerOfExploreScene);
-			floorPool.transform.SetParent (poolContainerOfExploreScene);
-			npcPool.transform.SetParent (poolContainerOfExploreScene);
-			itemPool.transform.SetParent (poolContainerOfExploreScene);
-			monsterPool.transform.SetParent (poolContainerOfExploreScene);
-			skillEffectPool.transform.SetParent (poolContainerOfExploreScene);
+//				outerWallPool.transform.SetParent (poolContainerOfExploreScene);
+//				floorPool.transform.SetParent (poolContainerOfExploreScene);
+//				npcPool.transform.SetParent (poolContainerOfExploreScene);
+//				itemPool.transform.SetParent (poolContainerOfExploreScene);
+//				monsterPool.transform.SetParent (poolContainerOfExploreScene);
+//				skillEffectPool.transform.SetParent (poolContainerOfExploreScene);
+
+			}
+			MapInstancesToPool ();
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
 
@@ -108,6 +112,8 @@ namespace WordJourney
 
 			// 初始化地图怪物
 			SetUpMonsters ();
+
+			ClearPools ();
 
 		}
 			
@@ -479,7 +485,7 @@ namespace WordJourney
 		/// <summary>
 		/// 将场景中的墙体，地板，npc，地图物品，怪物加入缓存池中
 		/// </summary>
-		public void ResetAllGosAndPushToPool(){
+		private void MapInstancesToPool(){
 
 			outerWallPool.AddChildInstancesToPool (outerWallsContainer);
 			floorPool.AddChildInstancesToPool (floorsContainer);
@@ -487,54 +493,20 @@ namespace WordJourney
 			itemPool.AddChildInstancesToPool (itemsContainer);
 			monsterPool.AddChildInstancesToPool (monstersContainer);
 
-//			ResetGosAndPushToPool (outerWallsContainer, outerWallPool);
-//			ResetGosAndPushToPool (floorsContainer, floorPool);
-//			ResetGosAndPushToPool (npcsContainer, npcPool);
-//			ResetMapItemsAndPushToPool (itemsContainer, itemPool);
+		}
 
+		/// <summary>
+		/// 每关初始化完毕后清除缓存池中没有复用到的游戏体
+		/// </summary>
+		private void ClearPools(){
+			outerWallPool.ClearInstancePool ();
+			floorPool.ClearInstancePool ();
+			npcPool.ClearInstancePool ();
+			itemPool.ClearInstancePool ();
+			monsterPool.ClearInstancePool ();
 
 		}
 
-//		private void ResetGosAndPushToPool(Transform container,InstancePool pool){
-//			
-//			while(container.childCount > 0){
-//				
-//				Transform trans = container.GetChild(0);
-//
-//				SpriteRenderer sr = trans.GetComponent<SpriteRenderer> ();
-//				if (sr != null) {
-//					sr.sprite = null;
-//				}
-//
-//				BoxCollider2D bc2d = trans.GetComponent<BoxCollider2D> ();
-//				if(bc2d != null){
-//					bc2d.enabled = false;
-//				}
-//
-//				trans.position = Vector3.zero;
-//				pool.AddInstanceToPool (trans.gameObject);
-//			}
-//				
-//		}
-
-//		private void ResetMapItemsAndPushToPool(Transform container,InstancePool pool){
-//
-//			while(container.childCount > 0){
-//
-//				Transform mapItem = container.GetChild (0);
-//
-//				mapItem.GetComponent<BoxCollider2D> ().enabled = false;
-//
-//				SpriteRenderer sr = mapItem.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
-//
-//				sr.sprite = null;
-//				sr.enabled = false;
-//
-//				pool.AddInstanceToPool (mapItem.gameObject);
-//
-//			}
-//
-//		}
 
 	}
 		

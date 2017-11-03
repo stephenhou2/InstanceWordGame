@@ -38,6 +38,27 @@ namespace WordJourney
 
 		}
 
+		public Consumables (Consumables cons,int count){
+			
+			this.itemType = ItemType.Consumables;
+
+			// 初始化物品基础属性
+			this.itemId = cons.itemId;
+			this.itemName = cons.itemName;
+			this.itemDescription = cons.itemDescription;
+			this.spriteName = cons.spriteName;
+			this.itemType = cons.itemType;
+			this.itemNameInEnglish = cons.itemNameInEnglish;
+
+			// 初始化消耗品属性
+			this.healthGain = cons.healthGain;
+			this.manaGain = cons.manaGain;
+
+			this.itemCount = count;
+
+
+		}
+
 		/// <summary>
 		/// 获取物品属性字符串
 		/// </summary>

@@ -46,7 +46,8 @@ namespace WordJourney
 
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
-					item = new Equipment (itemModel);
+					#warning 这里装备的耐久度都设为50
+					item = new Equipment (itemModel,5);
 					break;
 				case ItemType.Consumables:
 					item = new Consumables (itemModel);

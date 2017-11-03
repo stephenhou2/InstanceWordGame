@@ -13,7 +13,7 @@ namespace WordJourney
 			get{
 
 				if (mGameSettings == null) {
-					mGameSettings = DataHandler.LoadDataToSingleModelWithPath<GameSettings> (CommonData.settingsFilePath);
+					mGameSettings = GameManager.Instance.persistDataManager.LoadGameSettings ();
 					if (mGameSettings == null) {
 						mGameSettings = new GameSettings ();
 					}
@@ -21,16 +21,16 @@ namespace WordJourney
 				return mGameSettings;
 
 			}
-//			set{
-//				mGameSettings = value;
-//			}
+			set{
+				mGameSettings = value;
+			}
 		}
 
 		private LearningInfo mLearnInfo;
 		public LearningInfo learnInfo{
 			get{
 				if (mLearnInfo == null) {
-					mLearnInfo = DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (CommonData.learningInfoFilePath);
+					mLearnInfo = GameManager.Instance.persistDataManager.LoadLearnInfo ();
 					if (mLearnInfo == null) {
 						mLearnInfo = new LearningInfo ();
 					}
@@ -42,6 +42,24 @@ namespace WordJourney
 //				mLearnInfo = value;
 //			}
 		}
+
+		private List<ChapterDetailInfo> mChapterDetails = new List<ChapterDetailInfo>();
+		public List<ChapterDetailInfo> chapterDetails{
+			get{
+				if (mChapterDetails.Count == 0) {
+
+					ChapterDetailInfo[] chapterDetailArray = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath);
+
+					for (int i = 0; i < chapterDetailArray.Length; i++) {
+						mChapterDetails.Add(chapterDetailArray[i]);
+					}
+				}
+
+				return mChapterDetails;
+			}
+
+		}
+
 
 		private List<Material> mAllMaterials = new List<Material> ();
 		public List<Material> allMaterials{

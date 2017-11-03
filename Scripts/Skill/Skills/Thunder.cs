@@ -18,6 +18,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = false;
+			skillType = SkillType.Magic;
 			skillName = "天雷";
 			skillDescription = string.Format ("对敌方造成<color=orange>{0}*技能等级</color>点魔法伤害", mMagicBase);
 			enemyEffectName = "Thunder";

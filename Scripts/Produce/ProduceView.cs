@@ -46,8 +46,8 @@ namespace WordJourney
 
 			if (poolContainerOfProduceCanvas.childCount == 0) {
 				// 创建缓存池
-				fuseStonesPool = InstancePool.GetOrCreateInstancePool ("FuseStonesPool");
-				fuseStonesPool.transform.SetParent (poolContainerOfProduceCanvas);
+				fuseStonesPool = InstancePool.GetOrCreateInstancePool ("FuseStonesPool",poolContainerOfProduceCanvas.name);
+//				fuseStonesPool.transform.SetParent (poolContainerOfProduceCanvas);
 			}
 
 

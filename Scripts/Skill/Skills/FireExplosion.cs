@@ -18,6 +18,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = false;
+			skillType = SkillType.Magic;
 			baseNum = 0.05f;
 			skillName = "炎爆";
 			skillDescription = string.Format ("对敌方造成<color=orange>{0}*技能等级</color>点魔法伤害,并较少对方<color=orange>{1}*技能等级%的攻速直至战斗结束(可叠加)", magicBase, baseNum);

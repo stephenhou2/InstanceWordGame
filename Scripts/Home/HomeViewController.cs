@@ -50,24 +50,28 @@ namespace WordJourney
 //		}
 
 		public void OnExploreButtonClick(){
+
+			homeView.SetUpChapterSelectPlane ();
+
+		}
+
+		public void SelectChapter(int chapterIndex){
 			
+			Player.mainPlayer.currentChapterIndex = chapterIndex;
+
 			homeView.ShowMaskImage ();
 
 			StartCoroutine ("LoadExploreData");
 
-//			SceneManager.LoadSceneAsync ("ExploreScene", LoadSceneMode.Single);
-
 		}
-
-
 
 		private IEnumerator LoadExploreData(){
 
 			yield return null;
 
-			int currentExploreLevel = GameManager.Instance.maxUnlockChapterIndex;
+			Debug.Log (Player.mainPlayer.currentChapterIndex);
 
-//			ResourceLoader exploreSceneLoader = ResourceLoader.CreateNewResourceLoader ();
+			ChapterDetailInfo chapterDetail = GameManager.Instance.gameDataCenter.chapterDetails [Player.mainPlayer.currentChapterIndex];
 
 			QuitHomeView();
 
@@ -75,7 +79,7 @@ namespace WordJourney
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", () => {
 
-				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(currentExploreLevel);
+				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(chapterDetail);
 
 			},true);
 
@@ -154,7 +158,7 @@ namespace WordJourney
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", null, null);
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", "PoolContainerOfHomeCanvas","ModelContainerOfHomeCanvas");
 
 		}
 

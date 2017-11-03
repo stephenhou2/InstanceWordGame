@@ -84,13 +84,13 @@ namespace WordJourney
 
 			if (poolContainerOfBagCanvas.childCount == 0) {
 				//创建缓存池
-				itemDisplayButtonsPool = InstancePool.GetOrCreateInstancePool ("ItemDisplayButtonsPool");
-				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
-				resolveGainsPool = InstancePool.GetOrCreateInstancePool ("ResolveGainsPool");
+				itemDisplayButtonsPool = InstancePool.GetOrCreateInstancePool ("ItemDisplayButtonsPool",poolContainerOfBagCanvas.name);
+				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfBagCanvas.name);
+				resolveGainsPool = InstancePool.GetOrCreateInstancePool ("ResolveGainsPool",poolContainerOfBagCanvas.name);
 
-				itemDisplayButtonsPool.transform.SetParent (poolContainerOfBagCanvas);
-				itemDetailsPool.transform.SetParent (poolContainerOfBagCanvas);
-				resolveGainsPool.transform.SetParent (poolContainerOfBagCanvas);
+//				itemDisplayButtonsPool.transform.SetParent (poolContainerOfBagCanvas);
+//				itemDetailsPool.transform.SetParent (poolContainerOfBagCanvas);
+//				resolveGainsPool.transform.SetParent (poolContainerOfBagCanvas);
 			}
 
 			if (modelContainerOfBagCanvas.childCount == 0) {
@@ -128,8 +128,6 @@ namespace WordJourney
 			SetUpEquipedEquipmentsPlane ();
 
 			SetUpItemsDiaplayPlane (player.allEquipmentsInBag,currentSelectItem);
-
-
 
 		}
 
@@ -308,15 +306,17 @@ namespace WordJourney
 
 				string colorText = string.Empty;
 
-				if (equipment.damagePercentage <= 15) {
-					colorText = "green";
-				} else if (equipment.damagePercentage <= 50) {
+				float damagePercentage = (float)equipment.durability / equipment.maxDurability;
+
+				if (damagePercentage <= 0.5f) {
+					colorText = "red";
+				} else if (damagePercentage <= 0.8f) {
 					colorText = "orange";
 				} else {
-					colorText = "red";
+					colorText = "green";
 				}
 
-				itemDamagePercentage.text = string.Format("损坏率：<color={0}>{1}%</color>",colorText, equipment.damagePercentage);
+				itemDamagePercentage.text = string.Format("耐久度：<color={0}>{1}/{2}</color>",colorText, equipment.durability,equipment.maxDurability);
 
 				choiceHUDWithTwoBtns.gameObject.SetActive (true);
 
@@ -356,15 +356,17 @@ namespace WordJourney
 
 			string colorText = string.Empty;
 
-			if (equipment.damagePercentage <= 15) {
-				colorText = "green";
-			} else if (equipment.damagePercentage <= 50) {
+			float damagePercentage = (float)equipment.durability / equipment.maxDurability;
+
+			if (damagePercentage <= 0.5f) {
+				colorText = "red";
+			} else if (damagePercentage <= 0.8f) {
 				colorText = "orange";
 			} else {
-				colorText = "red";
+				colorText = "green";
 			}
 
-			itemDamagePercentage.text = string.Format("损坏率：<color={0}>{1}%</color>",colorText, equipment.damagePercentage);
+			itemDamagePercentage.text = string.Format("损坏率：<color={0}>{1}/{2}</color>",colorText, equipment.durability,equipment.maxDurability);
 
 			GetComponent<Canvas> ().enabled = true;
 
@@ -689,13 +691,15 @@ namespace WordJourney
 		}
 	
 
-		public void OnEquipButtonOfDetailHUDClick(){
+		public void OnEquipButtonOfDetailHUDClick(List<Item> itemsOfCurrentSelectType,Item currentSelectItem){
 
 			OnQuitSpecificTypePlane ();
 
 			SetUpPlayerStatusPlane ();
 
 			SetUpEquipedEquipmentsPlane ();
+
+			SetUpItemsDiaplayPlane (itemsOfCurrentSelectType, currentSelectItem);
 
 		}
 
@@ -719,8 +723,6 @@ namespace WordJourney
 		public void QuitResolveCountHUD(){
 
 			resolveCountHUD.gameObject.SetActive (false);
-
-
 
 		}
 					

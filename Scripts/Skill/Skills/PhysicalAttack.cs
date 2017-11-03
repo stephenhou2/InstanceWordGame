@@ -9,6 +9,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = false;
+			skillType = SkillType.Physical;
 		}
 
 		public override void AffectAgents(BattleAgentController self, BattleAgentController enemy){

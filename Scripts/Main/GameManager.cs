@@ -47,7 +47,7 @@ namespace WordJourney
 
 		public PersistDataManager persistDataManager;
 
-		public int maxUnlockChapterIndex;
+
 
 
 		void Awake(){
@@ -59,11 +59,7 @@ namespace WordJourney
 			persistDataManager = new PersistDataManager ();
 
 		}
-
-
-
-
-
+			
 		#warning 如果决定使用scene来进行场景转换打开下面的代码
 //		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 //		static public void CallbackInitialization()
@@ -93,10 +89,6 @@ namespace WordJourney
 //			}
 //
 //		}
-
-
-
-
 
 
 	}

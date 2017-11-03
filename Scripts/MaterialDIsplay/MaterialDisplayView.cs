@@ -30,8 +30,8 @@ namespace WordJourney
 
 			if (poolContainerOfMaterialDisplayCanvas.childCount == 0) {
 				// 创建材料展示模型缓存池
-				materialBtnPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
-				materialBtnPool.transform.SetParent (poolContainerOfMaterialDisplayCanvas);
+				materialBtnPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool",poolContainerOfMaterialDisplayCanvas.name);
+//				materialBtnPool.transform.SetParent (poolContainerOfMaterialDisplayCanvas);
 			}
 
 			if (modelContainerOfMaterialDisplayCanvas.childCount == 0) {

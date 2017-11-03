@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 151903685
+CRC: 3146752485
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e5295f442d7bce267f18d49128705962
+    Hash: d8c2e3151e251360f80fad3e3e6bad22
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -14,16 +14,129 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Sprites/ItemIcon/leather.jpg
-- Assets/Resources/Sprites/ItemIcon/good1.png
-- Assets/Resources/Sprites/ItemIcon/staff.jpg
-- Assets/Resources/Sprites/ItemIcon/cloak.jpg
-- Assets/Resources/Sprites/ItemIcon/knife.jpg
-- Assets/Resources/Sprites/ItemIcon/sword.jpg
-- Assets/Resources/Sprites/ItemIcon/sandal.jpg
-- Assets/Resources/Sprites/ItemIcon/huili.jpg
-- Assets/Resources/Sprites/ItemIcon/axe.jpg
-- Assets/Resources/Sprites/ItemIcon/shield.jpeg
-- Assets/Resources/Sprites/ItemIcon/good2.png
-- Assets/Resources/Sprites/ItemIcon/cloth.jpg
+- Assets/Textures/ItemIcon/187.png
+- Assets/Textures/ItemIcon/55 (4).png
+- Assets/Textures/ItemIcon/71 (3).png
+- Assets/Textures/ItemIcon/24 (6).png
+- Assets/Textures/ItemIcon/57 (4).png
+- Assets/Textures/ItemIcon/22.png
+- Assets/Textures/ItemIcon/11 (8).png
+- Assets/Textures/ItemIcon/100.png
+- Assets/Textures/ItemIcon/79 (3).png
+- Assets/Textures/ItemIcon/1 (16).png
+- Assets/Textures/ItemIcon/13 (6).png
+- Assets/Textures/ItemIcon/82 (3).png
+- Assets/Textures/ItemIcon/106 (2).png
+- Assets/Textures/ItemIcon/152 (2).png
+- Assets/Textures/ItemIcon/128.png
+- Assets/Textures/ItemIcon/23 (7).png
+- Assets/Textures/ItemIcon/45 (6).png
+- Assets/Textures/ItemIcon/53 (5).png
+- Assets/Textures/ItemIcon/108.png
+- Assets/Textures/ItemIcon/leather.jpg
+- Assets/Textures/ItemIcon/14 (7).png
+- Assets/Textures/ItemIcon/46 (6).png
+- Assets/Textures/ItemIcon/164.png
+- Assets/Textures/ItemIcon/78 (2).png
+- Assets/Textures/ItemIcon/184.png
+- Assets/Textures/ItemIcon/26.png
+- Assets/Textures/ItemIcon/48 (7).png
+- Assets/Textures/ItemIcon/good1.png
+- Assets/Textures/ItemIcon/73 (5).png
+- Assets/Textures/ItemIcon/0000000.png
+- Assets/Textures/ItemIcon/21 (9).png
+- Assets/Textures/ItemIcon/113..png
+- Assets/Textures/ItemIcon/24.png
+- Assets/Textures/ItemIcon/49 (5).png
+- Assets/Textures/ItemIcon/0 (18).png
+- Assets/Textures/ItemIcon/10 (8).png
+- Assets/Textures/ItemIcon/staff.jpg
+- Assets/Textures/ItemIcon/193.png
+- Assets/Textures/ItemIcon/106 (3).png
+- Assets/Textures/ItemIcon/114.png
+- Assets/Textures/ItemIcon/25.png
+- Assets/Textures/ItemIcon/182.png
+- Assets/Textures/ItemIcon/0 (3).png
+- Assets/Textures/ItemIcon/74 (7).png
+- Assets/Textures/ItemIcon/161.png
+- Assets/Textures/ItemIcon/175 (2).png
+- Assets/Textures/ItemIcon/51 (5).png
+- Assets/Textures/ItemIcon/0 (2).png
+- Assets/Textures/ItemIcon/-2 (2).png
+- Assets/Textures/ItemIcon/25 (6).png
+- Assets/Textures/ItemIcon/172 (2).png
+- Assets/Textures/ItemIcon/cloak.jpg
+- Assets/Textures/ItemIcon/47 (5).png
+- Assets/Textures/ItemIcon/27.png
+- Assets/Textures/ItemIcon/67 (4).png
+- Assets/Textures/ItemIcon/knife.jpg
+- Assets/Textures/ItemIcon/131.png
+- Assets/Textures/ItemIcon/98 (2).png
+- Assets/Textures/ItemIcon/-1 (4).png
+- Assets/Textures/ItemIcon/sword.jpg
+- Assets/Textures/ItemIcon/26 (6).png
+- Assets/Textures/ItemIcon/70 (4).png
+- Assets/Textures/ItemIcon/1 (39).png
+- Assets/Textures/ItemIcon/67 (2).png
+- Assets/Textures/ItemIcon/141 (2).png
+- Assets/Textures/ItemIcon/10.png
+- Assets/Textures/ItemIcon/49 (6).png
+- Assets/Textures/ItemIcon/77 (4).png
+- Assets/Textures/ItemIcon/sandal.jpg
+- Assets/Textures/ItemIcon/huili.jpg
+- Assets/Textures/ItemIcon/72 (5).png
+- Assets/Textures/ItemIcon/102.png
+- Assets/Textures/ItemIcon/15 (6).png
+- Assets/Textures/ItemIcon/56 (4).png
+- Assets/Textures/ItemIcon/axe.jpg
+- Assets/Textures/ItemIcon/-1 (3).png
+- Assets/Textures/ItemIcon/1 (18).png
+- Assets/Textures/ItemIcon/110.png
+- Assets/Textures/ItemIcon/58 (4).png
+- Assets/Textures/ItemIcon/69 (3).png
+- Assets/Textures/ItemIcon/23.png
+- Assets/Textures/ItemIcon/76 (3).png
+- Assets/Textures/ItemIcon/20 (8).png
+- Assets/Textures/ItemIcon/50.png
+- Assets/Textures/ItemIcon/127 (2).png
+- Assets/Textures/ItemIcon/54 (5).png
+- Assets/Textures/ItemIcon/46 (7).png
+- Assets/Textures/ItemIcon/0 (8).png
+- Assets/Textures/ItemIcon/113 (3).png
+- Assets/Textures/ItemIcon/18 (5).png
+- Assets/Textures/ItemIcon/0 (9).png
+- Assets/Textures/ItemIcon/33.png
+- Assets/Textures/ItemIcon/1 (20).png
+- Assets/Textures/ItemIcon/101 (2).png
+- Assets/Textures/ItemIcon/125.png
+- Assets/Textures/ItemIcon/80 (2).png
+- Assets/Textures/ItemIcon/112 (2).png
+- Assets/Textures/ItemIcon/1 (7).png
+- Assets/Textures/ItemIcon/1 (36).png
+- Assets/Textures/ItemIcon/64 (5).png
+- Assets/Textures/ItemIcon/-2 (3).png
+- Assets/Textures/ItemIcon/17 (5).png
+- Assets/Textures/ItemIcon/shield.jpeg
+- Assets/Textures/ItemIcon/1 (13).png
+- Assets/Textures/ItemIcon/71 (4).png
+- Assets/Textures/ItemIcon/68 (4).png
+- Assets/Textures/ItemIcon/116.png
+- Assets/Textures/ItemIcon/81 (3).png
+- Assets/Textures/ItemIcon/0 (7).png
+- Assets/Textures/ItemIcon/3 (15).png
+- Assets/Textures/ItemIcon/9 (7).png
+- Assets/Textures/ItemIcon/good2.png
+- Assets/Textures/ItemIcon/179.png
+- Assets/Textures/ItemIcon/1 (26).png
+- Assets/Textures/ItemIcon/19 (7).png
+- Assets/Textures/ItemIcon/74 (5).png
+- Assets/Textures/ItemIcon/73 (8).png
+- Assets/Textures/ItemIcon/59 (5).png
+- Assets/Textures/ItemIcon/cloth.jpg
+- Assets/Textures/ItemIcon/113 (4).png
+- Assets/Textures/ItemIcon/146.png
+- Assets/Textures/ItemIcon/75 (5).png
+- Assets/Textures/ItemIcon/104 (2).png
+- Assets/Textures/ItemIcon/52 (4).png
+- Assets/Textures/ItemIcon/21.png
 Dependencies: []

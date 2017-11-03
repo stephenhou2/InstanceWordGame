@@ -20,9 +20,26 @@ namespace WordJourney
 
 		public Image maskImage;
 
+		public Transform chapterSelectPlane;
+		public Transform chaptersContainer;
 
+		private Transform chapterButtonModel;
+		private InstancePool chapterButtonPool;
 
 		public void SetUpHomeView(){
+
+			Transform poolContainerOfHomeCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfHomeCanvas");
+			Transform modelContainerOfHomeCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfHomeCanvas");
+
+
+			if (poolContainerOfHomeCanvas.childCount == 0) {
+				chapterButtonPool = InstancePool.GetOrCreateInstancePool ("ChapterButtonPool", poolContainerOfHomeCanvas.name);
+			}
+
+			if (modelContainerOfHomeCanvas.childCount == 0) {
+				chapterButtonModel = TransformManager.FindTransform ("ChapterButtonModel");
+				chapterButtonModel.SetParent (modelContainerOfHomeCanvas);
+			}
 
 			GetComponent<Canvas> ().enabled = true;
 
@@ -59,7 +76,35 @@ namespace WordJourney
 
 		}
 
+		public void SetUpChapterSelectPlane(){
+
+			int maxUnlockLocationIndex = Player.mainPlayer.maxUnlockChapterIndex / 5;
+
+			for (int i = 0; i < maxUnlockLocationIndex + 1; i++) {
+
+				int chapterLocationIndex = i;
+
+				Button chapterButton = chapterButtonPool.GetInstance<Button> (chapterButtonModel.gameObject, chaptersContainer);
+
+				chapterButton.GetComponentInChildren<Text> ().text = GameManager.Instance.gameDataCenter.chapterDetails [5 * i].chapterLocation;
+
+				chapterButton.onClick.RemoveAllListeners ();
+
+				chapterButton.onClick.AddListener (delegate {
+					GetComponent<HomeViewController>().SelectChapter(5 * chapterLocationIndex);
+				});
+
+			}
+
+			chapterSelectPlane.gameObject.SetActive (true);
+
+		}
+
 		public void OnQuitHomeView(){
+
+			chapterButtonPool.AddChildInstancesToPool (chaptersContainer);
+
+			chapterSelectPlane.gameObject.SetActive (false);
 
 			gameObject.SetActive(false);
 

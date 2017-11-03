@@ -72,6 +72,56 @@ namespace WordJourney
 			if (skill.enemyAnimName != string.Empty) {
 				bpCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
 			}
+			Player player = Player.mainPlayer;
+			switch (skill.skillType) {
+			case SkillType.Physical:
+				for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
+					
+					Equipment equipment = player.allEquipedEquipments [i];
+
+					// 受到物理攻击时，已装备的护具中随机一个护具的耐久度降低
+					EquipmentType damagedEquipmentType = (EquipmentType)Random.Range (1, 5);
+
+					if (equipment.equipmentType == damagedEquipmentType) {
+						
+						equipment.durability -= CommonData.durabilityDecreaseWhenBeAttacked;
+
+						if (equipment.durability <= 0) {
+							string tint = string.Format("{0}完全损坏",equipment.itemName);
+							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
+							player.allEquipmentsInBag.Remove (equipment);
+							player.allEquipedEquipments.Remove (equipment);
+							equipment = null;
+						}
+					}
+
+				}
+				break;
+			case SkillType.Magic:
+				for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
+
+					Equipment equipment = player.allEquipedEquipments [i];
+
+					// 受到物理攻击时，已装备的饰品中随机一个的耐久度降低
+					EquipmentType damagedEquipmentType = (EquipmentType)Random.Range (5,7);
+
+					if (equipment.equipmentType == damagedEquipmentType) {
+
+						equipment.durability -= CommonData.durabilityDecreaseWhenBeMagicAttacked;
+
+						if (equipment.durability <= 0) {
+							string tint = string.Format("{0}完全损坏",equipment.itemName);
+							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
+							player.allEquipmentsInBag.Remove (equipment);
+							player.allEquipedEquipments.Remove (equipment);
+							equipment = null;
+						}
+					}
+				}
+				break;
+			case SkillType.Passive:
+				break;
+			}
 		}
 
 

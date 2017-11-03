@@ -523,6 +523,28 @@ namespace WordJourney
 			if (skill.enemyEffectName != string.Empty) {
 				bmCtr.SetEffectAnim (skill.enemyEffectName);
 			}
+
+			switch (skill.skillType) {
+			case SkillType.Physical:
+				for (int i = 0; i < agent.allEquipedEquipments.Count; i++) {
+					Equipment equipment = agent.allEquipedEquipments [i];
+					if (equipment.equipmentType == EquipmentType.Weapon) {
+						equipment.durability -= CommonData.durabilityDecreaseWhenAttack;
+						if (equipment.durability <= 0) {
+							string tint = string.Format("{0}完全损坏",equipment.itemName);
+							bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
+							agent.allEquipedEquipments.Remove (equipment);
+							(agent as Player).allEquipmentsInBag.Remove (equipment);
+							equipment = null;
+						}
+					}
+				}
+				break;
+			case SkillType.Magic:
+				break;
+			case SkillType.Passive:
+				break;
+			}
 		}
 
 		/// <summary>

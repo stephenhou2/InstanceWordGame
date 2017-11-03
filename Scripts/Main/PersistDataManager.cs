@@ -6,36 +6,70 @@ namespace WordJourney
 {
 	public class PersistDataManager{
 
+		/// <summary>
+		/// 保存游戏设置，学习信息，玩家游戏数据到本地
+		/// </summary>
 		public void SavePersistDatas(){
+			SaveGameSettings ();
+			SaveLearnInfo ();
+			SavePlayerData ();
+		}
 
+		/// <summary>
+		/// Saves the game settings.
+		/// </summary>
+		public void SaveGameSettings(){
+			
 			string gameSettingsPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "GameSettings.json");
-			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearnInfo.json");
-			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
-
 
 			DataHandler.SaveInstanceDataToFile<GameSettings> (GameManager.Instance.gameDataCenter.gameSettings, gameSettingsPath);
+		}
+
+		/// <summary>
+		/// Saves the learn info.
+		/// </summary>
+		public void SaveLearnInfo(){
+			
+			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearnInfo.json");
+
 			DataHandler.SaveInstanceDataToFile<LearningInfo> (GameManager.Instance.gameDataCenter.learnInfo, learnInfoPath);
+		}
+
+		/// <summary>
+		/// Saves the player data.
+		/// </summary>
+		public void SavePlayerData(){
+			
+			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
 
 			PlayerData playerData = new PlayerData (Player.mainPlayer);
+
 			DataHandler.SaveInstanceDataToFile<PlayerData> (playerData, playerDataPath);
+		}
 
+		/// <summary>
+		/// 从本地加载玩家游戏数据
+		/// </summary>
+		public PlayerData LoadPlayerData(){
+			
+			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
+
+			return DataHandler.LoadDataToSingleModelWithPath<PlayerData> (playerDataPath);
 
 		}
 
-		// 系统设置更改后更新相关设置
-		public void OnSettingsChanged(){
 
-			GameManager.Instance.soundManager.effectAS.volume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
-			GameManager.Instance.soundManager.bgmAS.volume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
-
-			GameManager.Instance.soundManager.pronunciationAS.enabled = GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
-
-
-			#warning 离线下载和更改词库的代码后续补充
-			// 保存游戏设置到本地文件
-			DataHandler.SaveInstanceDataToFile <GameSettings>(GameManager.Instance.gameDataCenter.gameSettings, CommonData.settingsFilePath);
-
+		public GameSettings LoadGameSettings(){
+			string settingsPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "Settings.json");
+			return DataHandler.LoadDataToSingleModelWithPath<GameSettings> (settingsPath);
 		}
+
+		public LearningInfo LoadLearnInfo(){
+			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
+			return DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (learnInfoPath);
+		}
+
+
 
 
 	}

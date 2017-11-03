@@ -36,7 +36,7 @@ namespace WordJourney
 						return obj.itemId == i;
 					});
 
-					Equipment e = new Equipment (im);
+					Equipment e = new Equipment (im,5);
 
 					Player.mainPlayer.allEquipmentsInBag.Add (e);
 
@@ -50,6 +50,8 @@ namespace WordJourney
 		public void SetUpBagView(){
 
 			bagView.SetUpBagView (currentSelectItem);
+
+			InitItemsOfCurrentSelectType<Equipment> (Player.mainPlayer.allEquipmentsInBag);
 
 		}
 			
@@ -129,7 +131,12 @@ namespace WordJourney
 
 		}
 
-		public void EquipEquipment(Equipment equipment){
+		public void OnEquipButtonClick(Equipment equipment){
+
+			if (equipment.equiped) {
+				bagView.OnQuitSpecificTypePlane ();
+				return;
+			}
 
 			List<Equipment> allEquipedEquipments = Player.mainPlayer.allEquipedEquipments;
 
@@ -140,6 +147,7 @@ namespace WordJourney
 			if (equipedEquipmentOfSelectType != null) {
 				
 				equipedEquipmentOfSelectType.equiped = false;
+				allEquipedEquipments.Remove (equipedEquipmentOfSelectType);
 
 			}
 
@@ -149,7 +157,7 @@ namespace WordJourney
 
 			Player.mainPlayer.ResetBattleAgentProperties (false);
 
-			bagView.OnEquipButtonOfDetailHUDClick ();
+			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelcetType, currentSelectItem);
 
 		}
 

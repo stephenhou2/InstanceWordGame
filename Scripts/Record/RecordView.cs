@@ -52,8 +52,8 @@ namespace WordJourney
 
 			if (poolContainerOfRecordCanvas.childCount == 0) {
 				// 创建缓存池
-				wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool");
-				wordItemPool.transform.SetParent (poolContainerOfRecordCanvas);
+				wordItemPool = InstancePool.GetOrCreateInstancePool ("WordItemPool",poolContainerOfRecordCanvas.name);
+//				wordItemPool.transform.SetParent (poolContainerOfRecordCanvas);
 			}
 
 			if (modelContainerOfRecordCanvas.childCount == 0) {

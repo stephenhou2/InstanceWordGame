@@ -84,9 +84,7 @@ namespace WordJourney
 		public void QuitSettingPlane(){
 
 			if (settingChanged) {
-
-				GameManager.Instance.persistDataManager.OnSettingsChanged ();
-
+				ChangeSettingsAndSave ();
 			}
 
 			settingChanged = false;
@@ -98,6 +96,20 @@ namespace WordJourney
 			});
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "GameSettings" });
+
+		}
+
+		/// <summary>
+		/// Changes the settings and save.
+		/// </summary>
+		private void ChangeSettingsAndSave(){
+
+			GameManager.Instance.soundManager.effectAS.volume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
+			GameManager.Instance.soundManager.bgmAS.volume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
+
+			GameManager.Instance.soundManager.pronunciationAS.enabled = GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
+
+			GameManager.Instance.persistDataManager.SaveGameSettings ();
 
 		}
 

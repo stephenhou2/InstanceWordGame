@@ -60,11 +60,9 @@ namespace WordJourney
 		}
 			
 		//Initializes the game for each level.
-		public void SetupExploreView(int chapterIndex)
+		public void SetupExploreView(ChapterDetailInfo chapterDetail)
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
-
-			ChapterDetailInfo chapterDetail = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath)[chapterIndex-1];
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(chapterDetail);
@@ -226,6 +224,28 @@ namespace WordJourney
 					mapGenerator.mapWalkableInfoArray [(int)obstacle.transform.position.x, (int)obstacle.transform.position.y] = 1;
 
 					expUICtr.HideMask();
+
+					Player player = Player.mainPlayer;
+
+					for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
+
+						Equipment equipment = player.allEquipedEquipments [i];
+
+						// 使用武器破坏障碍物时，武器的耐久度降低
+						if (equipment.equipmentType == EquipmentType.Weapon) {
+
+							equipment.durability -= CommonData.durabilityDecreaseWhenAttackObstacle;
+
+							if (equipment.durability <= 0) {
+								string tint = string.Format("{0}完全损坏",equipment.itemName);
+								expUICtr.SetUpTintHUD (tint);
+								player.allEquipmentsInBag.Remove (equipment);
+								player.allEquipedEquipments.Remove (equipment);
+								equipment = null;
+							}
+						}
+					}
+
 				});
 
 			});
@@ -273,8 +293,8 @@ namespace WordJourney
 				});
 
 				if (unlockItem == null) {
-
-					expUICtr.SetUpTintHUD (tb.unlockItemName);
+					string tint = string.Format ("缺少 <color=blue>{0}x1</color>", tb.unlockItemName);
+					expUICtr.SetUpTintHUD (tint);
 
 				} else {
 
@@ -349,9 +369,36 @@ namespace WordJourney
 
 			Debug.Log ("dead");
 
+			Player player = Player.mainPlayer;
+
+			player.ResetBattleAgentProperties (true);
+
+			#warning 玩家死亡后掉落的物品是否需要展示出来
+			Item lostItem = player.LostItemWhenDie ();
+
+			QuitExploreScene ();
 		}
 
-		public void OnQuitExplore(){
+
+		public void EnterNextLevel(){
+
+			Player player = Player.mainPlayer;
+
+			#warning 关卡数据只做了一关，暂时使用第一关的数据，后面数据做好后打开下面注释的代码
+//			player.currentChapterIndex++;
+
+			if (player.currentChapterIndex > player.maxUnlockChapterIndex) {
+				player.maxUnlockChapterIndex = player.currentChapterIndex;
+			}
+
+			ChapterDetailInfo chapterDetail = GameManager.Instance.gameDataCenter.chapterDetails [player.currentChapterIndex];
+
+			SetupExploreView (chapterDetail);
+
+		}
+
+
+		public void QuitExploreScene(){
 
 			Camera.main.transform.SetParent (null);
 
@@ -367,6 +414,8 @@ namespace WordJourney
 				"AllMaterials", "AllMaterialSprites", "AllMapSprites", 
 				"AllSkills", "AllSkillSprites", "AllMonsters","AllExploreAudioClips"
 			});
+
+			TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ().QuitExplore ();
 
 		}
 

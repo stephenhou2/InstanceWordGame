@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3338324378
+CRC: 3803404067
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a32ef03569c8dae4dc64095a31506e25
+    Hash: a1035e79fd68d751536da94eda75edf3
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 646ca98687a34df9be6292146ba58c05
+    Hash: ecec70b95fb156b02c3e9f2bda6a494c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -22,13 +22,21 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: cc9d9df33910b48a192c4aed7aa7e30f, type: 3}
 - Class: 114
@@ -47,5 +55,6 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Home/HomeCanvas.prefab
+- Assets/Prefabs/Home/ChapterButtonModel.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

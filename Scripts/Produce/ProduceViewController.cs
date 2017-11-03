@@ -132,7 +132,13 @@ namespace WordJourney
 			switch (itemModel.itemType) {
 			case ItemType.Equipment:
 				if (ProduceSuccess(totalUnstableness)) {
-					item = new Equipment (itemModel,fuseStoneSelected);
+					
+					int materialCount = 0;
+
+					for (int i = 0; i < materialsForProduce.Count; i++) {
+						materialCount += materialsForProduce [i].itemCount;
+					}
+					item = new Equipment (itemModel, materialCount, fuseStoneSelected);
 				} else {
 					Material failMaterial = RandomFailMaterial (itemModel.failMaterials);
 					item = new Material (failMaterial, 1);

@@ -10,7 +10,6 @@ namespace WordJourney
 {
 	public class ItemDisplayView : MonoBehaviour {
 
-
 		private InstancePool itemDetailsPool;//物品明细模型缓存池
 		private Transform itemDetailsModel;//物品明细模型
 		public Transform allItemsContainer;//物品明细模型容器（父级transform）
@@ -52,13 +51,13 @@ namespace WordJourney
 			if (poolContainerOfItemDisplayCanvas.childCount == 0) {
 
 				// 创建缓存池
-				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool");
-				itemDetailTypeBtnPool = InstancePool.GetOrCreateInstancePool ("ItemDetailTypeBtnPool");
-				materialPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool");
+				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfItemDisplayCanvas.name);
+				itemDetailTypeBtnPool = InstancePool.GetOrCreateInstancePool ("ItemDetailTypeBtnPool",poolContainerOfItemDisplayCanvas.name);
+				materialPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool",poolContainerOfItemDisplayCanvas.name);
 
-				itemDetailsPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
-				itemDetailTypeBtnPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
-				materialPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+//				itemDetailsPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+//				itemDetailTypeBtnPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
+//				materialPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
 			}
 
 			if (modelContainerOfItemDisplayCanvas.childCount == 0) {
@@ -232,6 +231,18 @@ namespace WordJourney
 				Text characterCount = charactersOwnedPlane [i].Find("Count").GetComponent<Text>();
 
 				characterCount.text = player.charactersCount [i].ToString ();
+
+//				char character = (char)(i + CommonData.aInASCII);
+//
+//				CharacterFragment cf = player.allCharacterFragmentsInBag.Find (delegate(CharacterFragment obj) {
+//					return obj.itemName == character.ToString();
+//				});
+//
+//				if (cf == null) {
+//					characterCount.text = "0";
+//				} else {
+//					characterCount.text = cf.itemCount.ToString ();
+//				}
 
 			}
 

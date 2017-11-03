@@ -10,11 +10,11 @@ namespace WordJourney{
 	public enum ItemType{
 		Equipment,
 		Consumables,
+		Material,
+		CharacterFragment,
 		Task,
 		FuseStone,
-		Material,
-		Map,
-		CharacterFragment
+		Map
 	}
 
 	[System.Serializable]
@@ -59,33 +59,33 @@ namespace WordJourney{
 		/// </summary>
 		/// <returns>The item with name.</returns>
 		/// <param name="itemNameInEnglish">Item name in english.</param>
-		public static Item NewItemWithName(string itemNameInEnglish){
-
-			ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate (ItemModel item){
-				return item.itemNameInEnglish == itemNameInEnglish;
-			});
-
-			Item newItem = null;
-
-			switch (itemModel.itemType) {
-			case ItemType.Equipment:
-				newItem = new Equipment (itemModel);
-				break;
-			case ItemType.Consumables:
-				newItem = new Consumables (itemModel);
-				break;
-			case ItemType.FuseStone:
-				newItem = FuseStone.CreateFuseStoneIfExist(itemNameInEnglish);
-				break;
-			case ItemType.Task:
-				newItem = new TaskItem(itemModel);
-				break;
-			default:
-				break;
-			}
-
-			return newItem;
-		}
+//		public static Item NewItemWithName(string itemNameInEnglish){
+//
+//			ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate (ItemModel item){
+//				return item.itemNameInEnglish == itemNameInEnglish;
+//			});
+//
+//			Item newItem = null;
+//
+//			switch (itemModel.itemType) {
+//			case ItemType.Equipment:
+//				newItem = new Equipment (itemModel,10);
+//				break;
+//			case ItemType.Consumables:
+//				newItem = new Consumables (itemModel);
+//				break;
+//			case ItemType.FuseStone:
+//				newItem = FuseStone.CreateFuseStoneIfExist(itemNameInEnglish);
+//				break;
+//			case ItemType.Task:
+//				newItem = new TaskItem(itemModel);
+//				break;
+//			default:
+//				break;
+//			}
+//
+//			return newItem;
+//		}
 
 
 
@@ -119,7 +119,8 @@ namespace WordJourney{
 				ItemModel itemModel = allItemModels [i];
 
 				if (itemModel.itemType == ItemType.Equipment) {
-					Equipment equipment = new Equipment (itemModel);
+					#warning 这里耐久度都设为0
+					Equipment equipment = new Equipment (itemModel,0);
 					allEquipment.Add (equipment);
 				}
 					

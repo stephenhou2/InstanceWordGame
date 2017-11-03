@@ -122,9 +122,8 @@ namespace WordJourney
 			equipButton.onClick.RemoveAllListeners ();
 
 
-
 			equipButton.onClick.AddListener (delegate() {
-				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().EquipEquipment (equipmentInBag);	
+				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().OnEquipButtonClick (equipmentInBag);	
 			});
 
 			propertiesPlane.gameObject.SetActive (true);

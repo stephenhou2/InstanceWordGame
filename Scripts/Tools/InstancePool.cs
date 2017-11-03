@@ -9,9 +9,9 @@ namespace WordJourney
 
 		private List<GameObject> mInstancePool = new List<GameObject>();
 
-		public static InstancePool GetOrCreateInstancePool(string poolName){
+		public static InstancePool GetOrCreateInstancePool(string poolName,string parentName){
 
-			Transform trans = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/" + poolName);
+			Transform trans = TransformManager.FindOrCreateTransform (parentName + "/" + poolName);
 
 			InstancePool instancePool = trans.GetComponent<InstancePool> ();
 
@@ -83,6 +83,13 @@ namespace WordJourney
 				mInstancePool.Add (instance);
 			}
 
+		}
+
+		public void ClearInstancePool(){
+			for(int i = 0;i<transform.childCount;i++){
+				GameObject instance = transform.GetChild (i).gameObject;
+				Destroy (instance);
+			}
 		}
 
 		public void AddInstanceToPool(GameObject instance){

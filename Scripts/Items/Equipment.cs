@@ -59,8 +59,9 @@ namespace WordJourney
 
 
 
-		public int damagePercentage;//装备损坏程度
-		private int fixPercentage = 5;//每次修复百分比
+		public int maxDurability;//装备最大耐久度
+		public int durability;//装备实际耐久度
+
 
 		//装备是否已佩戴
 		public bool equiped;
@@ -78,7 +79,7 @@ namespace WordJourney
 		/// <summary>
 		/// 构造函数
 		/// </summary>
-		public Equipment(ItemModel itemModel,FuseStone fuseStone = null){
+		public Equipment(ItemModel itemModel, int materialCount, FuseStone fuseStone = null){
 
 			this.itemType = ItemType.Equipment;
 
@@ -95,7 +96,9 @@ namespace WordJourney
 			healthGain = itemModel.healthGain;
 			manaGain = itemModel.manaGain;
 
-			damagePercentage = 0;
+			maxDurability = 10 * materialCount;
+			durability = maxDurability;
+
 			equipmentType = itemModel.equipmentType;
 
 			materials = itemModel.materials;
@@ -349,11 +352,24 @@ namespace WordJourney
 		/// Fixs the equipment.
 		/// </summary>
 		public void FixEquipment(){
-			damagePercentage -= fixPercentage;
-			if (damagePercentage < 0) {
-				damagePercentage = 0;
+			durability += CommonData.fixDurability;
+			if (durability > maxDurability) {
+				durability = maxDurability;
 			}
 		}
 
+
+
+		public void EquipmentDamaged(EquipmentDamageSource source){
+
+		}
+
+	}
+
+	public enum EquipmentDamageSource{
+		PhysicalAttack,
+		BePhysicalAttacked,
+		BeMagicAttacked,
+		DestroyObstacle
 	}
 }

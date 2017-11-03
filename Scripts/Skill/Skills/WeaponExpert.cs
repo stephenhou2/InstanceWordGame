@@ -9,6 +9,7 @@ namespace WordJourney
 
 		void Awake(){
 			isPassive = true;
+			skillType = SkillType.Passive;
 			baseNum = 0.05f;
 			skillName = "武器精通";
 			skillDescription = string.Format ("提升<color=orange>{0}*技能等级%</color>暴击", (int)(baseNum * 100));
