@@ -50,7 +50,7 @@ namespace WordJourney
 					item = new Equipment (itemModel,5);
 					break;
 				case ItemType.Consumables:
-					item = new Consumables (itemModel);
+					item = new Consumables (itemModel,1);
 					break;
 				default:
 					break;

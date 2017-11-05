@@ -57,6 +57,7 @@ namespace WordJourney
 		public string selfEffectName;
 		public string enemyEffectName;
 
+		public bool unlocked;
 
 		/// <summary>
 		/// 技能作用效果

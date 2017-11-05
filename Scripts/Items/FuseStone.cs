@@ -7,6 +7,8 @@ using System.Text;
 
 namespace WordJourney
 {
+
+	// 融合石的id=3101
 	[System.Serializable]
 	public class FuseStone : Item {
 
@@ -31,7 +33,7 @@ namespace WordJourney
 			this.itemName = fuseStoneName;
 			this.itemNameInEnglish = spell;
 			this.spriteName = "sword";
-			this.itemId = -1000;
+			this.itemId = 3101;
 			this.successGain = spell.Length * 3;
 			this.itemDescription = string.Format("提升{0}%物品制造成功率",spell.Length * 3);
 			this.itemCount = 1;

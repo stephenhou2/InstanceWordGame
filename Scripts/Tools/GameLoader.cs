@@ -49,6 +49,8 @@ namespace WordJourney
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
+			GameManager.Instance.gameDataCenter.InitItemsAndSkillDataByFormula ();
+
 		}
 
 		#warning 测试时每次都将文件本地化，打包时使用下面的方法，保证只有首次进入游戏会进行文件本地化

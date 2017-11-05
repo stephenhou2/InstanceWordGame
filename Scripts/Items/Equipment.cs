@@ -66,6 +66,7 @@ namespace WordJourney
 		//装备是否已佩戴
 		public bool equiped;
 
+		public bool unlocked;
 
 		/// <summary>
 		/// 空构造函数，初始化一个0属性的装备
@@ -73,8 +74,7 @@ namespace WordJourney
 		public Equipment(){
 			
 		}
-
-
+			
 
 		/// <summary>
 		/// 构造函数
@@ -82,31 +82,39 @@ namespace WordJourney
 		public Equipment(ItemModel itemModel, int materialCount, FuseStone fuseStone = null){
 
 			this.itemType = ItemType.Equipment;
+			this.itemCount = 1;
 
 			// 初始化物品基本属性
 			InitBaseProperties (itemModel);
 
 			// 初始化装备属性
-			attackGain = itemModel.attackGain;
-			attackSpeedGain = itemModel.attackSpeedGain;
-			critGain = itemModel.critGain;
-			armorGain = itemModel.armorGain;
-			manaResistGain = itemModel.manaResistGain;
-			dodgeGain = itemModel.dodgeGain;
-			healthGain = itemModel.healthGain;
-			manaGain = itemModel.manaGain;
+			this.attackGain = itemModel.attackGain;
+			this.attackSpeedGain = itemModel.attackSpeedGain;
+			this.critGain = itemModel.critGain;
+			this.armorGain = itemModel.armorGain;
+			this.manaResistGain = itemModel.manaResistGain;
+			this.dodgeGain = itemModel.dodgeGain;
+			this.healthGain = itemModel.healthGain;
+			this.manaGain = itemModel.manaGain;
 
-			maxDurability = 10 * materialCount;
-			durability = maxDurability;
+			if (materialCount != 0) {
+				this.maxDurability = 10 * materialCount;
+				this.durability = this.maxDurability;
+			} else {
+				this.maxDurability = Random.Range (itemModel.materials.Count, 2 * itemModel.materials.Count);
+				this.durability = this.maxDurability;
+			}
 
-			equipmentType = itemModel.equipmentType;
+			this.equipmentType = itemModel.equipmentType;
 
-			materials = itemModel.materials;
-			failMaterials = itemModel.failMaterials;
+			this.materials = itemModel.materials;
+			this.failMaterials = itemModel.failMaterials;
 
 			if (fuseStone != null) {
-				itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
+				this.itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
 			}
+
+			this.unlocked = itemModel.unlocked;
 
 		}
 

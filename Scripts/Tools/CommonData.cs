@@ -180,11 +180,7 @@ namespace WordJourney{
 		Next
 	}
 
-	public enum ChoiceTriggerType{
-		Plot,
-		Fight,
-		Magic
-	}
+
 
 
 	public enum WordType{

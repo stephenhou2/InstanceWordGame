@@ -529,160 +529,24 @@ namespace WordJourney
 
 			this.allEquipmentsOfCurrentSelectTypeInBag = allEquipmentsOfCurrentSelectTypeInBag;
 
-			itemDetailsPool.AddChildInstancesToPool (specificTypeItemDetailsContainer);
+			MyVerticalScrollView scrollView = specificTypeItemsScrollView.GetComponent<MyVerticalScrollView> ();
+	
+			List<object> dataList = new List<object> ();
 
-			specificTypeItemDetailsContainer.localPosition = new Vector3 (specificTypeItemDetailsContainer.localPosition.x, 0, 0);
+			for (int i = 0; i < allEquipmentsOfCurrentSelectTypeInBag.Count; i++) {
 
-			//如果当前选中类的所有装备数量小于预加载数量，则只加载实际装备数量的cell
-			int maxCount = maxPreloadCountOfItemDetails < allEquipmentsOfCurrentSelectTypeInBag.Count ? maxPreloadCountOfItemDetails : allEquipmentsOfCurrentSelectTypeInBag.Count;
-
-			for(int i =0;i<maxCount;i++){
-				
-				Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag[i];
-
-				Transform itemDetail = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject,specificTypeItemDetailsContainer);
-
-				itemDetail.GetComponent<ItemDetailView>().SetUpItemDetailView(equipedEquipment,equipmentInBag);
+				dataList.Add(new EquipmentAndCompareEquipment(allEquipmentsOfCurrentSelectTypeInBag[i],compareEquipment));
 
 			}
 
-			//初始化当前顶部和底部的equipment序号
-			currentMinEquipmentIndex = 0;
-			currentMaxEquipmentIndex = maxCount < 1 ? 0 : maxCount - 1;
+			scrollView.InitVerticalScrollViewData (dataList, itemDetailsPool, itemDetailsModel);
+
+			scrollView.SetUpScrollView ();
 
 			specificTypeItemHUD.gameObject.SetActive (true);
 
 		}
-
-
-
-		/// <summary>
-		/// 装备更换页面开始进行拖拽时，重置拖拽过程中cell重用计数
-		/// </summary>
-		public void ResetScrollViewOnBeginDrag(){
 			
-			reuseCount = 0;
-
-
-			if (currentMinEquipmentIndex == 0 || currentMaxEquipmentIndex == allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
-				specificTypeItemsScrollView.GetComponent<ScrollRect> ().movementType = ScrollRect.MovementType.Clamped;
-			} else {
-				specificTypeItemsScrollView.GetComponent<ScrollRect> ().movementType = ScrollRect.MovementType.Elastic;
-			}
-
-		}
-
-
-		public void ResetDataOnDrag(){
-
-			if (currentMinEquipmentIndex == 0 || currentMaxEquipmentIndex == allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
-				specificTypeItemsScrollView.GetComponent<ScrollRect> ().movementType = ScrollRect.MovementType.Clamped;
-			} else {
-				specificTypeItemsScrollView.GetComponent<ScrollRect> ().movementType = ScrollRect.MovementType.Elastic;
-			}
-
-
-			// content的位置移动（cell重用数量 * （cell高度+cell间距））
-			// 为了方便这里计算，需要设定cell间距和scrollView顶部间距保持一致
-			float offset = reuseCount * (itemDetailModelHeight + paddingY);
-
-			UnityEngine.EventSystems.PointerEventData newData = specificTypeItemsScrollView.GetComponent<DragRecorder> ().GetPointerEventData (offset);
-
-			// 传入更新后的PointerEventData
-			if (newData != null) {
-				specificTypeItemsScrollView.GetComponent<ScrollRect> ().OnDrag (newData);
-			}
-
-		}
-
-
-
-		/// <summary>
-		/// scrollView滑动过程中根据位置回收重用cell
-		/// </summary>
-		public void ReuseCellAndUpdateContentPosition(){
-
-			// 获得content的localPosition
-			float scrollRectPosY = specificTypeItemDetailsContainer.localPosition.y;
-			// 获得content的滚动速度
-			float velocityY = specificTypeItemsScrollView.GetComponent<ScrollRect> ().velocity.y;
-
-			// 向下滚动
-			if (velocityY > 0) {
-
-				// 如果最底部equipment是当前选中类型equipments中的最后一个
-				if (currentMaxEquipmentIndex >= allEquipmentsOfCurrentSelectTypeInBag.Count - 1) {
-					Debug.Log ("所有物品加载完毕");
-					return;
-				}
-
-				// 判断最顶部cell是否已经不可见
-				bool firstCellInvisible = (int)(scrollRectPosY / (itemDetailModelHeight + paddingY))  >= 1;
-
-				// 顶部cell移至底部并更新显示数据
-				if (firstCellInvisible) {
-
-					// 获得顶部cell
-					Transform itemDetail = specificTypeItemDetailsContainer.GetChild (0);
-
-					// 移至底部
-					itemDetail.SetAsLastSibling ();
-
-					// 获得将显示的euipment数据
-					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMaxEquipmentIndex + 1];
-
-					// 更新该cell的显示数据
-					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag);
-
-					// 计算content新的位置信息
-					float newPosY = specificTypeItemDetailsContainer.localPosition.y - itemDetailModelHeight - paddingY;
-
-					// 移动content，确保屏幕显示和cell重用前一致
-					//（cell重用时由于autoLayout，cell位置会产生变化，整体移动content的位置确保每个cell回到重用前的位置）
-					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
-
-					// 最顶部和最底部equipment的序号++
-					currentMaxEquipmentIndex++;
-					currentMinEquipmentIndex++;
-
-					// 重用数量++
-					reuseCount++;
-
-				} 
-
-			} else if (velocityY < 0) {//向下滚动
-
-				// 如果最顶部equipment是当前选中类型equipments中的第一个
-				if (currentMinEquipmentIndex <= 0) {
-					Debug.Log ("所有物品加载完毕");
-					return;
-				}
-
-				// 判断最底部cell是否可见
-				bool lastCellInvisble = maxCellsVisible * (itemDetailModelHeight + paddingY) - scrollRectPosY >= itemDetailViewPortHeight;
-
-				if (lastCellInvisble) {
-
-					Transform itemDetail = specificTypeItemDetailsContainer.GetChild (specificTypeItemDetailsContainer.childCount - 1);
-
-					itemDetail.SetAsFirstSibling ();
-
-					Equipment equipmentInBag = allEquipmentsOfCurrentSelectTypeInBag [currentMinEquipmentIndex - 1];
-
-					itemDetail.GetComponent<ItemDetailView> ().SetUpItemDetailView (compareEquipment, equipmentInBag);
-
-					float newPosY = specificTypeItemDetailsContainer.localPosition.y + itemDetailModelHeight + paddingY;
-
-					specificTypeItemDetailsContainer.localPosition = new Vector3 (0, newPosY, 0);
-
-					currentMaxEquipmentIndex--;
-					currentMinEquipmentIndex--;
-
-					reuseCount--;
-
-				}
-			}
-		}
 
 
 		public void OnResolveCountSliderDrag(){

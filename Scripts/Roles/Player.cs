@@ -74,6 +74,7 @@ namespace WordJourney
 		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
 		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
 //		public List<CharacterFragment> allCharacterFragmentsInBag = new List<CharacterFragment> ();
+		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
 
 		public int maxUnlockChapterIndex;
@@ -123,6 +124,7 @@ namespace WordJourney
 			this.allFuseStonesInBag = playerData.allFuseStonesInBag;
 			this.allTaskItemsInBag = playerData.allTaskItemsInBag;
 //			this.allCharacterFragmentsInBag = playerData.allCharacterFragmentsInBag;
+			this.allFormulasInBag = playerData.allFormulasInBag;
 
 			this.maxUnlockChapterIndex = playerData.maxUnlockChapterIndex;
 			this.currentChapterIndex = playerData.currentChapterIndex;
@@ -408,6 +410,7 @@ namespace WordJourney
 			return character;
 
 		}
+			
 
 
 		/// <summary>
@@ -624,6 +627,7 @@ namespace WordJourney
 		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
 		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
 //		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片
+		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
 		public int maxUnlockChapterIndex;//最大解锁关卡序号
 		public int currentChapterIndex;//当前所在关卡序号
@@ -672,6 +676,7 @@ namespace WordJourney
 			this.allFuseStonesInBag = player.allFuseStonesInBag;
 			this.allTaskItemsInBag = player.allTaskItemsInBag;
 //			this.allCharacterFragmentsInBag = player.allCharacterFragmentsInBag;
+			this.allFormulasInBag = player.allFormulasInBag;
 
 			this.maxUnlockChapterIndex = player.maxUnlockChapterIndex;
 			this.currentChapterIndex = player.currentChapterIndex;

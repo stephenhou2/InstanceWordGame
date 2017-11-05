@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace WordJourney
 {
+	// 字母碎片的id=3102
 	public class CharacterFragment : Item {
 
 		public CharacterFragment(char character,int count = 1){
-
+			this.itemId = 3102;
 			itemName = string.Format ("字母碎片-{0}", character.ToString());
 			itemNameInEnglish = character.ToString();
 			spriteName = "character_fragment";

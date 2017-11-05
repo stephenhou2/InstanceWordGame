@@ -11,10 +11,10 @@ namespace WordJourney{
 		Equipment,
 		Consumables,
 		Material,
-		CharacterFragment,
-		Task,
+		Formula,
 		FuseStone,
-		Map
+		CharacterFragment,
+		Task
 	}
 
 	[System.Serializable]
@@ -55,37 +55,38 @@ namespace WordJourney{
 
 
 		/// <summary>
-		/// 通过物品英文名称初始化物品
+		/// 通过物品id和数量初始化物品
 		/// </summary>
-		/// <returns>The item with name.</returns>
-		/// <param name="itemNameInEnglish">Item name in english.</param>
-//		public static Item NewItemWithName(string itemNameInEnglish){
-//
-//			ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate (ItemModel item){
-//				return item.itemNameInEnglish == itemNameInEnglish;
-//			});
-//
-//			Item newItem = null;
-//
-//			switch (itemModel.itemType) {
-//			case ItemType.Equipment:
-//				newItem = new Equipment (itemModel,10);
-//				break;
-//			case ItemType.Consumables:
-//				newItem = new Consumables (itemModel);
-//				break;
-//			case ItemType.FuseStone:
-//				newItem = FuseStone.CreateFuseStoneIfExist(itemNameInEnglish);
-//				break;
-//			case ItemType.Task:
-//				newItem = new TaskItem(itemModel);
-//				break;
-//			default:
-//				break;
-//			}
-//
-//			return newItem;
-//		}
+		public static Item NewItemWith(int itemId,int itemCount){
+			
+			ItemModel itemModel = null;
+			Item newItem = null;
+
+			if (itemId <= 2000) {
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
+					return item.itemId == itemId;
+				});
+				switch (itemModel.itemType) {
+				case ItemType.Equipment:
+					newItem = new Equipment (itemModel, 0);
+					break;
+				case ItemType.Consumables:
+					newItem = new Consumables (itemModel, 1);
+					break;
+				}
+			} else if (itemId <= 3000) {
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
+					return item.itemId == itemId - 3000;
+				});
+				newItem = new Formula (FormulaType.Equipment, itemId - 3000);
+			} else if (itemId <= 3100) {
+				newItem = new Formula (FormulaType.Skill, itemId - 3100);
+			}
+
+			return newItem;
+
+	
+		}
 
 
 
@@ -191,7 +192,7 @@ namespace WordJourney{
 		public List<Material> materials = new List<Material> ();
 		public List<Material> failMaterials = new List<Material>();
 
-
+		public bool unlocked;
 	}
 
 

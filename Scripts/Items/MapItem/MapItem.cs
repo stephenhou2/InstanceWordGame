@@ -15,7 +15,6 @@ namespace WordJourney
 
 	public class MapItem : MonoBehaviour {
 
-
 		public string mapItemName;
 
 		public Sprite originSprite;

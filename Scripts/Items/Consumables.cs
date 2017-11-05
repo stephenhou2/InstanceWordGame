@@ -25,9 +25,10 @@ namespace WordJourney
 		/// 构造函数
 		/// </summary>
 		/// <param name="itemModel">Item model.</param>
-		public Consumables(ItemModel itemModel){
+		public Consumables(ItemModel itemModel,int itemCount){
 
 			this.itemType = ItemType.Consumables;
+			this.itemCount = itemCount;
 
 			// 初始化物品基础属性
 			InitBaseProperties (itemModel);
