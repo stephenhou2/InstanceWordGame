@@ -153,7 +153,9 @@ namespace WordJourney
 
 			Player.mainPlayer.AddItem (item);
 
-			Player.mainPlayer.RemoveMaterials (materialsForProduce);
+			for (int i = 0; i < materialsForProduce.Count; i++) {
+				Player.mainPlayer.RemoveItem (materialsForProduce [i]);
+			}
 
 			UseFuseStone ();
 

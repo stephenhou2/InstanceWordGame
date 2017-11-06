@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Text;
+
 
 namespace WordJourney
 {
+
+	using System.Text;
+
 	/// <summary>
 	/// 装备类型枚举
 	/// </summary>
@@ -50,14 +53,14 @@ namespace WordJourney
 		public float manaGain;//魔法增益
 
 		public int maxAttachedProperties;//附加属性最大数量
-		public int attachedPropertyId;//附加属性id
+		public int attachedPropertyId;//一定有的附加属性id
 		public EquipmentType equipmentType;//装备类型
-//		public int levelRequired;//装备等级要求
+		public int levelRequired;//装备等级要求
 
 		public List<Material> materials = new List<Material> ();//合成材料需求
 		public List<Material> failMaterials = new List<Material>();//合成失败时可能掉落的特殊材料
 
-
+		public List<EquipmentAttachedProperty> attachedProperties = new List<EquipmentAttachedProperty> ();
 
 		public int maxDurability;//装备最大耐久度
 		public int durability;//装备实际耐久度
@@ -116,9 +119,40 @@ namespace WordJourney
 
 			this.unlocked = itemModel.unlocked;
 
+			InitAttachedProperties (itemModel.attachedPropertyId, itemModel.maxAttachedPropertyCount);
+
 		}
 
+		private void InitAttachedProperties(int predeterminedPropertyId,int maxAttachedPropertyCount){
 
+			List<int> attachedPropertiesIdList = new List<int> ();
+			for (int i = 0; i < GameManager.Instance.gameDataCenter.allEquipmentAttachedProperties.Count; i++) {
+				attachedPropertiesIdList.Add (i);
+			}
+
+			EquipmentAttachedProperty predeterminedProperty = null;
+
+			if (predeterminedPropertyId >= 0) {
+				predeterminedProperty = GameManager.Instance.gameDataCenter.allEquipmentAttachedProperties.Find (delegate(EquipmentAttachedProperty obj) {
+					return obj.attachedPropertyId == predeterminedPropertyId;
+				});
+			}
+
+			if (predeterminedProperty != null) {
+				attachedProperties.Add (predeterminedProperty);
+			}
+
+			for (int i = attachedProperties.Count; i < maxAttachedPropertyCount; i++) {
+
+				int randomId = Random.Range (0, attachedPropertiesIdList.Count - 1);
+
+				EquipmentAttachedProperty attachedProperty = new EquipmentAttachedProperty (randomId, true);
+
+				attachedProperties.Add (attachedProperty);
+
+			}
+
+		}
 
 		public List<Item> ResolveEquipment(){
 
@@ -137,11 +171,13 @@ namespace WordJourney
 
 			int materialIndex = Random.Range (0, returnedMaterials.Count - 1);
 
-			Player.mainPlayer.allEquipmentsInBag.Remove (this);
+			Player.mainPlayer.RemoveItem (this);
 
 			Material returnedMaterial = returnedMaterials [materialIndex];
 
-			Player.mainPlayer.AddMaterial (returnedMaterial);
+			returnedMaterial.itemCount = 1;
+
+			Player.mainPlayer.AddItem (returnedMaterial);
 
 			return new List<Item>{ returnedMaterial };
 
@@ -380,4 +416,6 @@ namespace WordJourney
 		BeMagicAttacked,
 		DestroyObstacle
 	}
+
+
 }

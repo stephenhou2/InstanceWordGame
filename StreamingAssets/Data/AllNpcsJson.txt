@@ -1,9 +1,8 @@
-﻿{
+{
   "Items": [
     {
       "npcId": 0,
       "npcName": "老头",
-      "npcDescription": "一个衣衫褴褛的老头眼中透着精光",
       "spriteName": "npc_older",
       "dialogGroups": [
         {
@@ -49,7 +48,6 @@
     {
       "npcId": 1,
       "npcName": "兽人",
-      "npcDescription": "一个兽人",
       "spriteName": "npc_monster",
       "dialogGroups": [
         {

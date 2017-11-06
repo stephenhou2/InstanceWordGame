@@ -22,14 +22,16 @@ namespace WordJourney
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
 			baCtr = enemy;
-			self.attackTriggerCallBacks.Add (HardBeatEnemy);
+			self.attackTriggerCallBacks.Add (delegate{
+				HardBeatEnemy(self.agent);
+			});
+			self.agent.hardBeatChance = baseNum * skillLevel;
+			self.agent.ResetBattleAgentProperties (false);
 		}
 
-		private void HardBeatEnemy(){
+		private void HardBeatEnemy(Agent agent){
 
-			float hardBeatChance = baseNum * skillLevel;
-
-			if (isEffective (hardBeatChance)) {
+			if (isEffective (agent.hardBeatChance)) {
 				
 				CancelInvoke ("EndHardBeat");
 

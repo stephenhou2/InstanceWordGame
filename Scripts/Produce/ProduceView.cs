@@ -175,7 +175,7 @@ namespace WordJourney
 					itemIcon.sprite = s;
 				}
 				
-				levelRequired.text = string.Format ("等级要求:{0}", item.levelRequired);
+				levelRequired.text = string.Format ("等级要求:{0}", (item as Equipment).levelRequired);
 
 				itemDetailsPlane.gameObject.SetActive (true);
 

@@ -43,19 +43,19 @@ namespace WordJourney
 //			}
 		}
 
-		private List<ChapterDetailInfo> mChapterDetails = new List<ChapterDetailInfo>();
-		public List<ChapterDetailInfo> chapterDetails{
+		private List<GameLevelData> mGameLevelDatas = new List<GameLevelData>();
+		public List<GameLevelData> gameLevelDatas{
 			get{
-				if (mChapterDetails.Count == 0) {
+				if (mGameLevelDatas.Count == 0) {
 
-					ChapterDetailInfo[] chapterDetailArray = DataHandler.LoadDataToModelWithPath<ChapterDetailInfo> (CommonData.chapterDataFilePath);
+					GameLevelData[] gameLevelDatasArray = DataHandler.LoadDataToModelWithPath<GameLevelData> (CommonData.gameLevelDataFilePath);
 
-					for (int i = 0; i < chapterDetailArray.Length; i++) {
-						mChapterDetails.Add(chapterDetailArray[i]);
+					for (int i = 0; i < gameLevelDatasArray.Length; i++) {
+						mGameLevelDatas.Add(gameLevelDatasArray[i]);
 					}
 				}
 
-				return mChapterDetails;
+				return mGameLevelDatas;
 			}
 
 		}
@@ -90,6 +90,21 @@ namespace WordJourney
 
 				}
 				return mAllMaterialSprites;
+			}
+		}
+
+		private List<EquipmentAttachedProperty> mAllEquipmentAttachedProperties = new List<EquipmentAttachedProperty> ();
+		public List<EquipmentAttachedProperty> allEquipmentAttachedProperties{
+			get{
+				if (mAllEquipmentAttachedProperties.Count == 0) {
+
+					EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
+
+					for (int i = 0; i < attachedPropertiesArray.Length; i++) {
+						mAllEquipmentAttachedProperties.Add (attachedPropertiesArray [i]);
+					}
+				}
+				return mAllEquipmentAttachedProperties;
 			}
 		}
 
@@ -251,6 +266,22 @@ namespace WordJourney
 			}
 		}
 			
+		private List<NPC> mAllNpcs = new List<NPC>();
+		public List<NPC> allNpcs{
+			get{
+				if (mAllNpcs.Count == 0) {
+					
+					NPC[] npcsArray = DataHandler.LoadDataToModelWithPath<NPC> (CommonData.npcsDataFilePath);
+
+					for (int i = 0; i < npcsArray.Length; i++) {
+						mAllNpcs.Add (npcsArray [i]);
+					}
+
+				}
+				return mAllNpcs;
+			}
+
+		}
 
 		private List<AudioClip> mAllExploreAudioClips = new List<AudioClip>();
 		public List<AudioClip> allExploreAudioClips{
@@ -325,6 +356,9 @@ namespace WordJourney
 				mAllItemSprites.Clear ();
 				ResourceManager.Instance.UnloadCaches (CommonData.allItemSpritesBundleName, true);
 				break;
+			case "AllAttachedProperties":
+				mAllEquipmentAttachedProperties.Clear ();
+				break;
 			case "AllMapSprites":
 				mAllMapSprites.Clear ();
 				ResourceManager.Instance.UnloadCaches (CommonData.allMapSpritesBundleName, true);
@@ -341,6 +375,9 @@ namespace WordJourney
 			case "AllMonsters":
 				mAllMonsters.Clear ();
 				ResourceManager.Instance.UnloadCaches (CommonData.allMonstersBundleName, false);
+				break;
+			case "AllNpcs":
+				mAllNpcs.Clear ();
 				break;
 			case "AllExploreAudioClips":
 				mAllExploreAudioClips.Clear ();

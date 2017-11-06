@@ -13,14 +13,21 @@ namespace WordJourney
 
 		public List<MyMaterial> allMaterials = new List<MyMaterial>();
 
-		public void CheckValence(){
+		public List<MyAttachedProperty> allAttachedProperties = new List<MyAttachedProperty>();
+
+		public void LoadAllData(){
 
 			LoadAllMaterial ();
 			LoadAllItem ();
+			LoadAllAttachedProperties ();
 
 			List<int> valences = new List<int> ();
 
 			for (int i = 0; i < allItems.Count; i++) {
+
+				if (allItems [i].itemType == ItemType.Consumables) {
+					continue;
+				}
 
 				valences.Clear ();
 
@@ -53,12 +60,17 @@ namespace WordJourney
 			materials.Items = allMaterials;
 			string materialsJson = JsonUtility.ToJson (materials);
 
+			AllAttachedProperty attachedProperties = new AllAttachedProperty ();
+			attachedProperties.Items = allAttachedProperties;
+			string attachedPropertiesJson = JsonUtility.ToJson (attachedProperties);
+
 			Debug.Log (itemsJson);
 			Debug.Log (materialsJson);
+			Debug.Log (attachedPropertiesJson);
 
 			File.WriteAllText ("/Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/Data/Items.json", itemsJson);
 			File.WriteAllText ("/Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/Data/Materials.json", materialsJson);
-
+			File.WriteAllText ("/Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/Data/AttachedProperties.json", attachedPropertiesJson);
 
 
 		}
@@ -91,31 +103,34 @@ namespace WordJourney
 
 				MyItem item = new MyItem (itemStrings[i]);
 
-				string[] materialStrings = item.materialString.Split (new char[]{ '+' });
+				if (item.itemType == ItemType.Equipment) {
 
-				for (int j = 0; j < materialStrings.Length; j++) {
+					string[] materialStrings = item.materialString.Split (new char[]{ '+' });
 
-					MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-						return obj.itemName == materialStrings [j];
-					});
+					for (int j = 0; j < materialStrings.Length; j++) {
 
-					if (m == null) {
-						Debug.Log(string.Format("null:{0}-{1}",item.itemName,materialStrings [j]));
+						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
+							return obj.itemName == materialStrings [j];
+						});
+
+						if (m == null) {
+							Debug.Log (string.Format ("null:{0}-{1}", item.itemName, materialStrings [j]));
+						}
+
+						item.materials.Add (m);
 					}
 
-					item.materials.Add (m);
-				}
+					string[] failMaterialStrings = item.failMaterialString.Split (new char[]{ '+' });
 
-				string[] failMaterialStrings = item.failMaterialString.Split(new char[]{ '+' });
-
-				for (int k = 0; k < failMaterialStrings.Length; k++) {
-					MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-						return obj.itemName == failMaterialStrings [k];
-					});
-					if (m == null) {
-						Debug.Log(string.Format("fail-null:{0}-{1}",item.itemName,failMaterialStrings [k]));
-							}
-					item.failMaterials.Add (m);
+					for (int k = 0; k < failMaterialStrings.Length; k++) {
+						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
+							return obj.itemName == failMaterialStrings [k];
+						});
+						if (m == null) {
+							Debug.Log (string.Format ("fail-null:{0}-{1}", item.itemName, failMaterialStrings [k]));
+						}
+						item.failMaterials.Add (m);
+					}
 				}
 
 				allItems.Add (item);
@@ -126,12 +141,28 @@ namespace WordJourney
 
 		}
 
+		private void LoadAllAttachedProperties(){
+
+			string attachedPropertiesSource = File.ReadAllText ("/Users/houlianghong/Desktop/物品系统/附加属性-表格 1.csv");
+
+			string[] attachedPropertyStrings = attachedPropertiesSource.Split (new string[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+			for (int i = 1; i < attachedPropertyStrings.Length; i++) {
+
+				MyAttachedProperty ap = new MyAttachedProperty (attachedPropertyStrings[i]);
+
+				allAttachedProperties.Add (ap);
+
+			}
+
+		}
+
 	}
 
 	[System.Serializable]
 	public class MyItem{
 
-		//名称	属性加成	合成材料	攻击	攻速	护甲	抗性	闪避	暴击	生命	魔法	附加属性数量上限	附加属性名称	必出附加属性id	必出附加属性加成	装备等级需求
+		//名称 物品描述 合成材料 攻击	攻速	护甲	抗性	闪避	暴击	生命	魔法 物理伤害加成 魔法伤害加成 效果持续时间 附加属性数量上限	附加属性名称	必出附加属性id	必出附加属性加成	装备等级需求
 		public string itemName;
 		public string itemDescription;
 		public string materialString;
@@ -144,10 +175,14 @@ namespace WordJourney
 		public float critGain;
 		public float healthGain;
 		public float manaGain;
-		public int maxAttachedProperties;
+		public float physicalHurtScaler;
+		public float magicHurtScaler;
+		public int effectDuration;
+		public int maxAttachedPropertyCount;
 		public string attachedPropertyString;
 		public int attachedPropertyId;
 		public EquipmentType equipmentType;
+		public ConsumablesType consumablesType;
 		public string detailType;
 		public int levelRequired;
 		public string spriteName;
@@ -180,14 +215,18 @@ namespace WordJourney
 			critGain = Convert.ToSingle(itemStrings[10]);
 			healthGain = Convert.ToSingle(itemStrings[11]);
 			manaGain = Convert.ToSingle(itemStrings[12]);
-			maxAttachedProperties = Convert.ToInt16(itemStrings[13]);
-			attachedPropertyString = itemStrings[14];
-			attachedPropertyId = Convert.ToInt16(itemStrings[15]);
-			itemType = (ItemType)(Convert.ToInt16(itemStrings[16]));
-			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[17]));
-			detailType = itemStrings [18];
-			levelRequired = Convert.ToInt16 (itemStrings [19]);
-			spriteName = itemStrings [20];
+			physicalHurtScaler = Convert.ToSingle (itemStrings [13]);
+			magicHurtScaler = Convert.ToSingle (itemStrings [14]);
+			effectDuration = Convert.ToInt16 (itemStrings [15]);
+			maxAttachedPropertyCount = Convert.ToInt16(itemStrings[16]);
+			attachedPropertyString = itemStrings[17];
+			attachedPropertyId = Convert.ToInt16(itemStrings[18]);
+			itemType = (ItemType)(Convert.ToInt16(itemStrings[19]));
+			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[20]));
+			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [21]));
+			detailType = itemStrings [22];
+			levelRequired = Convert.ToInt16 (itemStrings [23]);
+			spriteName = itemStrings [24];
 
 			itemDescription = itemDescription.Replace ("_", "\n"); 
 
@@ -200,6 +239,9 @@ namespace WordJourney
 			AdjustData (critGain,out critGain);
 			AdjustData (healthGain,out healthGain);
 			AdjustData (manaGain,out manaGain);
+			AdjustData (physicalHurtScaler, out physicalHurtScaler);
+			AdjustData (magicHurtScaler, out magicHurtScaler);
+			AdjustData (effectDuration, out effectDuration);
 
 
 
@@ -209,11 +251,15 @@ namespace WordJourney
 			value = v < 0 ? 0 : v;
 		}
 
+		private void AdjustData(int v,out int value){
+			value = v < 0 ? 0 : v;
+		}
+
 
 		public override string ToString ()
 		{
 			return string.Format ("[Item]\nname:{0},itemDescription:{1},materialString:{2},failMaterialString:{3}maxAttachedProperties:{4},attachedPropertyString:{5},attachedPropertyId:{6}",
-				itemName,itemDescription,materialString,failMaterialString,maxAttachedProperties,attachedPropertyString,attachedPropertyId);
+				itemName,itemDescription,materialString,failMaterialString,maxAttachedPropertyCount,attachedPropertyString,attachedPropertyId);
 		}
 
 	}
@@ -284,6 +330,52 @@ namespace WordJourney
 	}
 
 	[System.Serializable]
+	public class MyAttachedProperty{
+
+		public int attachedPropertyId;
+		public int attackGain;
+		public int attackSpeedGain;
+		public int armorGain;
+		public int manaResistGain;
+		public int dodgeGain;
+		public int critGain;
+		public int healthGain;
+		public int manaGain;
+		public int physicalHurtGain;
+		public int magicHurtGain;
+		public int healthAbsorbGain;
+		public int hardBeatGain;
+		public int brambleShiledGain;
+		public int magicShieldGain;
+		public int allPropertiesGain;
+
+		public MyAttachedProperty(string attachedPropertyString){
+
+			string[] attachedPropertyStrings = attachedPropertyString.Split (new char[]{ ',' });
+
+			attachedPropertyId = Convert.ToInt16 (attachedPropertyStrings [0]);
+			attackGain = Convert.ToInt16 (attachedPropertyStrings [2]);
+			attackSpeedGain = Convert.ToInt16 (attachedPropertyStrings [3]);
+			armorGain = Convert.ToInt16 (attachedPropertyStrings [4]);
+			manaResistGain = Convert.ToInt16 (attachedPropertyStrings [5]);
+			dodgeGain = Convert.ToInt16 (attachedPropertyStrings [6]);
+			critGain = Convert.ToInt16 (attachedPropertyStrings [7]);
+			healthGain = Convert.ToInt16 (attachedPropertyStrings [8]);
+			manaGain = Convert.ToInt16 (attachedPropertyStrings [9]);
+			physicalHurtGain = Convert.ToInt16 (attachedPropertyStrings [10]);
+			magicHurtGain = Convert.ToInt16 (attachedPropertyStrings [11]);
+			healthAbsorbGain = Convert.ToInt16 (attachedPropertyStrings [12]);
+			hardBeatGain = Convert.ToInt16 (attachedPropertyStrings [13]);
+			brambleShiledGain = Convert.ToInt16 (attachedPropertyStrings [14]);
+			magicShieldGain = Convert.ToInt16 (attachedPropertyStrings [15]);
+			allPropertiesGain = Convert.ToInt16 (attachedPropertyStrings [16]);
+
+
+		}
+
+	}
+
+	[System.Serializable]
 	public class AllItems{
 		public List<MyItem> Items;
 	}
@@ -293,4 +385,8 @@ namespace WordJourney
 		public List<MyMaterial> Items;
 	}
 
+	[System.Serializable]
+	public class AllAttachedProperty{
+		public List<MyAttachedProperty> Items;
+	}
 }

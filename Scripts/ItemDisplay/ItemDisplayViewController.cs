@@ -60,9 +60,13 @@ namespace WordJourney
 				return obj.itemName == "绷带";
 			});
 
-			Player.mainPlayer.AddMaterial (wood, 5);
-			Player.mainPlayer.AddMaterial (iron, 5);
-			Player.mainPlayer.AddMaterial (bandage, 5);
+			wood.itemCount = 5;
+			iron.itemCount = 5;
+			bandage.itemCount = 5;
+
+			Player.mainPlayer.AddItem (wood);
+			Player.mainPlayer.AddItem (iron);
+			Player.mainPlayer.AddItem (bandage);
 		}
 
 		/// <summary>

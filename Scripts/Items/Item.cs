@@ -27,7 +27,7 @@ namespace WordJourney{
 		public int itemId;
 		public ItemType itemType;
 
-		public int levelRequired;
+//		public int levelRequired;
 
 		public int itemCount;
 
@@ -182,10 +182,14 @@ namespace WordJourney{
 		public float dodgeGain;//闪避增益
 		public float healthGain;//血量增益
 		public float manaGain;//魔法增益
+		public float physicalHurtScaler;//物理攻击增益
+		public float magicHurtScaler;//魔法攻击增益
+		public int effectDuration;//效果持续时间
 
-		public int maxAttachedProperties;//附加属性最大数量
-		public int attachedPropertyId;//附加属性id
+		public int maxAttachedPropertyCount;//附加属性最大数量
+		public int attachedPropertyId;//一定有的附加属性id
 		public EquipmentType equipmentType;//装备类型
+		public ConsumablesType consumbalesType;//消耗品类型
 		public string detailType;//详细装备类型
 		public int levelRequired;//装备等级要求
 

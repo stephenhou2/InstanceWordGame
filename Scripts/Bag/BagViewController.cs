@@ -138,24 +138,7 @@ namespace WordJourney
 				return;
 			}
 
-			List<Equipment> allEquipedEquipments = Player.mainPlayer.allEquipedEquipments;
-
-			Equipment equipedEquipmentOfSelectType = allEquipedEquipments.Find (delegate(Equipment obj) {
-				return obj.equipmentType == equipment.equipmentType;
-			});
-
-			if (equipedEquipmentOfSelectType != null) {
-				
-				equipedEquipmentOfSelectType.equiped = false;
-				allEquipedEquipments.Remove (equipedEquipmentOfSelectType);
-
-			}
-
-			equipment.equiped = true;
-
-			allEquipedEquipments.Add(equipment);
-
-			Player.mainPlayer.ResetBattleAgentProperties (false);
+			Player.mainPlayer.EquipEquipment (equipment);
 
 			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelcetType, currentSelectItem);
 

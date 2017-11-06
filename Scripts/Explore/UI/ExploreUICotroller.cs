@@ -38,8 +38,11 @@ namespace WordJourney
 		private Transform rewardButtonModel;
 		/**********  RewardPlane UI *************/
 
+
+
 		private InstancePool choiceButtonPool;
 		private InstancePool rewardButtonPool;
+
 
 		private Dialog[] dialogs;
 		private Choice[] choices;
@@ -62,11 +65,14 @@ namespace WordJourney
 			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool",poolContainerOfExploreCanvas.name);
 			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool",poolContainerOfExploreCanvas.name);
 
+
 			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
 			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
 
+
 			choiceButtonModel.SetParent (modelContainerOfExploreScene);
 			rewardButtonModel.SetParent (modelContainerOfExploreScene);
+
 
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
 
@@ -155,8 +161,6 @@ namespace WordJourney
 
 
 			}
-
-
 
 		}
 

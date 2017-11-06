@@ -78,20 +78,20 @@ namespace WordJourney
 
 		public void SetUpChapterSelectPlane(){
 
-			int maxUnlockLevelIndex = Player.mainPlayer.maxUnlockChapterIndex / 5;
+			int maxUnlockChapterIndex = Player.mainPlayer.maxUnlockLevelIndex / 5;
 
-			for (int i = 0; i < maxUnlockLevelIndex + 1; i++) {
+			for (int i = 0; i < maxUnlockChapterIndex + 1; i++) {
 
 				int chapterLevelIndex = i;
 
 				Button chapterButton = chapterButtonPool.GetInstance<Button> (chapterButtonModel.gameObject, chaptersContainer);
 
-				chapterButton.GetComponentInChildren<Text> ().text = GameManager.Instance.gameDataCenter.chapterDetails [5 * i].chapterLocation;
+				chapterButton.GetComponentInChildren<Text> ().text = GameManager.Instance.gameDataCenter.gameLevelDatas [5 * i].chapterName;
 
 				chapterButton.onClick.RemoveAllListeners ();
 
 				chapterButton.onClick.AddListener (delegate {
-					GetComponent<HomeViewController>().SelectChapter(5 * chapterLevelIndex);
+					GetComponent<HomeViewController>().SelectChapter(chapterLevelIndex);
 				});
 
 			}

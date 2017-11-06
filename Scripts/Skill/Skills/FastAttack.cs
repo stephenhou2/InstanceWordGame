@@ -20,17 +20,10 @@ namespace WordJourney
 
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
-//			baCtr = self;
-//			originAttackSpeed = self.agent.attackSpeed;
 			self.agent.attackSpeed = (int)(self.agent.attackSpeed * (1 + baseNum * skillLevel));
-//			self.PlaySkillEffect (skillName);
-//			Invoke ("EndFastAttack", duration);
+			self.agent.ResetBattleAgentProperties (false);
 		}
-	
-//		private void EndFastAttack(){
-//			baCtr.agent.attackSpeed = originAttackSpeed;
-//			baCtr.EndSkillEffect (skillName);
-//		}
+
 
 	}
 }

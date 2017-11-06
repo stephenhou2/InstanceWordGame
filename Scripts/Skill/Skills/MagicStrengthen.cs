@@ -18,6 +18,7 @@ namespace WordJourney
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
 			self.agent.magicalHurtScaler = baseNum * skillLevel;
+			self.agent.ResetBattleAgentProperties (false);
 		}
 
 

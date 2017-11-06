@@ -70,93 +70,27 @@ namespace WordJourney
 		public int crit;//暴击
 
 
-		public float reflectScaler;
-		public float decreaseHurtScaler;
-
-		public int magicBase;
-
 
 		//*****基础属性加成比例，只由技能影响*******//
-		private double baseMaxHealthGainScaler;
-		private double baseMaxManaGainScaler;
-		private double baseAttackGainScaler;
-		private double baseAttackSpeedGainScaler;
-		private double baseArmorGainScaler;
-		private double baseManaResistGainScaler;
-		private double baseDodgeGainScaler;
-		private double baseCritGainScaler; 
+		private float baseMaxHealthGainScaler;
+		private float baseMaxManaGainScaler;
+		private float baseAttackGainScaler;
+		private float baseAttackSpeedGainScaler;
+		private float baseArmorGainScaler;
+		private float baseManaResistGainScaler;
+		private float baseDodgeGainScaler;
+		private float baseCritGainScaler; 
 		//*****基础属性加成比例，只由技能影响*******//
 
 
-		private double maxHealthGainScaler;
-		private double maxManaGainScaler;
-		private double attackGainScaler;
-		private double attackSpeedGainScaler;
-		private double armorGainScaler;
-		private double manaResistGainScaler;
-		private double dodgeGainScaler;
-		private double critGainScaler;
-
-
-
-//		private float mAttackGainScaler;
-//		public float attackGainScaler{
-//			get{ return mAttackGainScaler; }
-//			set{ 
-//				mAttackGainScaler = value;
-//				ResetBattleAgentProperties ();
-//			}
-//			
-//		}
-//
-//		private float mAttackSpeedGainScaler;
-//		public float attackSpeedGainScaler{
-//			get{ return mAttackSpeedGainScaler; }
-//			set{
-//				mAttackSpeedGainScaler = value;
-//				ResetBattleAgentProperties ();
-//			}
-//		}
-//
-//		private float mArmorGainScaler;
-//		public float armorGainScaler{
-//			get{ return mArmorGainScaler; }
-//			set{
-//				mArmorGainScaler = value; 
-//				ResetBattleAgentProperties ();
-//			}
-//				
-//		}
-//
-//		private float mManaResistGainScaler;
-//		public float manaResistGainScaler{
-//			get{ return mManaResistGainScaler; }
-//			set{
-//				mManaResistGainScaler = value;
-//				ResetBattleAgentProperties ();
-//			}
-//		}
-//
-//		private float mDodgeGainScaler;
-//		public float dodgeGainScaler{
-//			get{ return mDodgeGainScaler; }
-//			set{
-//				mDodgeGainScaler = value;
-//				ResetBattleAgentProperties ();
-//			}
-//		}
-//
-//		private float mCritGainScalser;
-//		public float critGainScaler{
-//			get{ return mCritGainScalser; }
-//			set{
-//				mCritGainScalser = value;
-//				ResetBattleAgentProperties ();
-//			}
-//		}
-
-
-
+		private float maxHealthGainScaler;
+		private float maxManaGainScaler;
+		private float attackGainScaler;
+		private float attackSpeedGainScaler;
+		private float armorGainScaler;
+		private float manaResistGainScaler;
+		private float dodgeGainScaler;
+		private float critGainScaler;
 
 
 		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
@@ -168,6 +102,14 @@ namespace WordJourney
 		public float critHurtScaler;//暴击伤害系数
 
 		public float healthAbsorbScalser;//回血比例
+
+		public float hardBeatChance;//打出重击的基础概率
+
+		public float reflectScaler;//荆棘护甲反弹伤害比例
+
+		public float decreaseHurtScaler;//魔法盾减伤比例
+
+
 
 		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
@@ -381,6 +323,10 @@ namespace WordJourney
 				maxManaGainScaler += equipment.manaGain;
 			}
 
+			for (int i = 0; i < equipment.attachedProperties.Count; i++) {
+				equipment.attachedProperties [i].RebuildPropertiesOf (this);
+			}
+
 		}
 
 		// 仅根据物品重新计人物的属性，其余属性重置为初始状态
@@ -423,6 +369,9 @@ namespace WordJourney
 			maxHealth = (int)(maxHealth * (1 + maxHealthGainScaler));
 			maxMana = (int)(maxMana * (1 + maxManaGainScaler));
 
+
+		
+
 			critHurtScaler = 1.0f;//暴击伤害系数
 			healthAbsorbScalser = 0f;//吸血比例
 			attackTime = 1;
@@ -447,9 +396,9 @@ namespace WordJourney
 		/// <param name="baseCritGainScaler">基础暴击加成比例.</param>
 		/// <param name="baseMaxHealthGainScaler">基础最大血量加成比例.</param>
 		/// <param name="baseMaxManaGainScaler">基础最大魔法加成比例.</param>
-		public void SetBasePropertyGainScalers(double baseAttackGainScaler,double baseAttackSpeedGainScaler,
-			double baseArmorGainScaler,double baseManaResistGainScaler,double baseDodgeGainScaler,
-			double baseCritGainScaler,double baseMaxHealthGainScaler,double baseMaxManaGainScaler){
+		public void SetBasePropertyGainScalers(float baseAttackGainScaler,float baseAttackSpeedGainScaler,
+			float baseArmorGainScaler,float baseManaResistGainScaler,float baseDodgeGainScaler,
+			float baseCritGainScaler,float baseMaxHealthGainScaler,float baseMaxManaGainScaler){
 
 			if (baseAttackGainScaler > 0) {
 				this.baseAttackGainScaler = baseAttackGainScaler;
@@ -465,6 +414,9 @@ namespace WordJourney
 			}
 			if (baseDodgeGainScaler > 0) {
 				this.baseDodgeGainScaler = baseDodgeGainScaler;
+			}
+			if (baseCritGainScaler > 0) {
+				this.baseCritGainScaler = baseCritGainScaler;
 			}
 			if (baseMaxHealthGainScaler > 0) {
 				this.baseMaxHealthGainScaler = baseMaxHealthGainScaler;

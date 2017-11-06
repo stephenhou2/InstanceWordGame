@@ -15,10 +15,8 @@ namespace WordJourney
 	[System.Serializable]
 	public class Material:Item {
 		
-//		public int id;//材料id
-//		public string materialName;//材料名称
+
 		public MaterialType materialType;//材料类型
-//		public string propertyString;//材料属性描述
 
 		public int attackGain;//攻击增益
 		public int attackSpeedGain;//攻速增益
@@ -41,6 +39,7 @@ namespace WordJourney
 		public Material(Material materialModel,int count){
 			this.itemId = materialModel.itemId;
 			this.itemName = materialModel.itemName;
+			this.itemType = ItemType.Material;
 			this.materialType = materialModel.materialType;
 			this.valence = materialModel.valence;
 			this.itemDescription = materialModel.itemDescription;

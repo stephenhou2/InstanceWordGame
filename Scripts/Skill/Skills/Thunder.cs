@@ -31,7 +31,7 @@ namespace WordJourney
 			self.agent.mana -= this.manaConsume;
 
 			//原始魔法伤害值
-			int originalDamage = (int)(self.agent.magicBase * skillLevel * (1 + enemy.agent.magicalHurtScaler));
+			int originalDamage = (int)(self.agent.mana * skillLevel * (1 + enemy.agent.magicalHurtScaler));
 
 			//抵消魔抗作用后的实际伤害值
 			int actualDamage = (int)(originalDamage / (1 + magicResistSeed * enemy.agent.manaResist) + 0.5f);

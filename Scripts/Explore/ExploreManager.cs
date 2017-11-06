@@ -60,12 +60,12 @@ namespace WordJourney
 		}
 			
 		//Initializes the game for each level.
-		public void SetupExploreView(ChapterDetailInfo chapterDetail)
+		public void SetupExploreView(GameLevelData levelData)
 		{
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
-			mapGenerator.SetUpMap(chapterDetail);
+			mapGenerator.SetUpMap(levelData);
 
 			ExploreUICotroller expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ();
 
@@ -239,8 +239,7 @@ namespace WordJourney
 							if (equipment.durability <= 0) {
 								string tint = string.Format("{0}完全损坏",equipment.itemName);
 								expUICtr.SetUpTintHUD (tint);
-								player.allEquipmentsInBag.Remove (equipment);
-								player.allEquipedEquipments.Remove (equipment);
+								player.RemoveItem(equipment);
 								equipment = null;
 							}
 						}
@@ -387,13 +386,13 @@ namespace WordJourney
 			#warning 关卡数据只做了一关，暂时使用第一关的数据，后面数据做好后打开下面注释的代码
 //			player.currentChapterIndex++;
 
-			if (player.currentChapterIndex > player.maxUnlockChapterIndex) {
-				player.maxUnlockChapterIndex = player.currentChapterIndex;
+			if (player.currentLevelIndex > player.maxUnlockLevelIndex) {
+				player.maxUnlockLevelIndex = player.currentLevelIndex;
 			}
 
-			ChapterDetailInfo chapterDetail = GameManager.Instance.gameDataCenter.chapterDetails [player.currentChapterIndex];
+			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
 
-			SetupExploreView (chapterDetail);
+			SetupExploreView (levelData);
 
 		}
 
@@ -412,7 +411,7 @@ namespace WordJourney
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[] {
 				"AllMaterials", "AllMaterialSprites", "AllMapSprites", 
-				"AllSkills", "AllSkillSprites", "AllMonsters","AllExploreAudioClips"
+				"AllSkills", "AllSkillSprites", "AllMonsters","AllNpcs","AllExploreAudioClips"
 			});
 
 			TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ().QuitExplore ();

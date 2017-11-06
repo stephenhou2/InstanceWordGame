@@ -57,7 +57,7 @@ namespace WordJourney
 
 		public void SelectChapter(int chapterIndex){
 			
-			Player.mainPlayer.currentChapterIndex = chapterIndex;
+			Player.mainPlayer.currentLevelIndex = 5 * chapterIndex;
 
 			homeView.ShowMaskImage ();
 
@@ -69,9 +69,9 @@ namespace WordJourney
 
 			yield return null;
 
-			Debug.Log (Player.mainPlayer.currentChapterIndex);
+			Debug.Log (Player.mainPlayer.currentLevelIndex);
 
-			ChapterDetailInfo chapterDetail = GameManager.Instance.gameDataCenter.chapterDetails [Player.mainPlayer.currentChapterIndex];
+			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 
 			QuitHomeView();
 
@@ -79,7 +79,7 @@ namespace WordJourney
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", () => {
 
-				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(chapterDetail);
+				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(levelData);
 
 			},true);
 

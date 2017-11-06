@@ -18,6 +18,7 @@ namespace WordJourney
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
 		{
 			self.agent.SetBasePropertyGainScalers (0, 0, baseNum * skillLevel, 0, 0, 0, 0, 0);
+			self.agent.ResetBattleAgentProperties (false);
 		}
 
 	}

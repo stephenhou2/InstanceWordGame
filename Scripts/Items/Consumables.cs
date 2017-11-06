@@ -10,16 +10,40 @@ namespace WordJourney
 	/// 消耗品类型
 	/// </summary>
 	public enum ConsumablesType{
-		Medicine,
-		Tool
+		MedicineAndScroll,
+		Pickaxe,
+		Key,
+		TP
+	}
+
+	public class ConsumablesEffectState{
+
+		public Consumables consumables;
+		public int effectTime;
+
+		public ConsumablesEffectState(Consumables consumables){
+			this.consumables = consumables;
+			this.effectTime = 0;
+		}
+
 	}
 
 	[System.Serializable]
 	public class Consumables : Item {
 
-		public double healthGain;//血量增益
-		public double manaGain;//魔法增益
+		public float attackGain;//攻击力增益
+		public float attackSpeedGain;//攻速增益
+		public float critGain;//暴击增益
+		public float armorGain;//护甲增益
+		public float manaResistGain;//魔抗增益
+		public float dodgeGain;//闪避增益
+		public float healthGain;//生命增益
+		public float manaGain;//魔法增益
+		public float physicalHurtScaler;
+		public float magicHurtScaler;
+		public int effectDuration;
 
+		public ConsumablesType consumablesType;
 
 		/// <summary>
 		/// 构造函数
@@ -28,7 +52,12 @@ namespace WordJourney
 		public Consumables(ItemModel itemModel,int itemCount){
 
 			this.itemType = ItemType.Consumables;
+			this.consumablesType = itemModel.consumbalesType;
 			this.itemCount = itemCount;
+
+			this.physicalHurtScaler = itemModel.physicalHurtScaler;
+			this.magicHurtScaler = itemModel.magicHurtScaler;
+			this.effectDuration = itemModel.effectDuration;
 
 			// 初始化物品基础属性
 			InitBaseProperties (itemModel);
@@ -49,7 +78,6 @@ namespace WordJourney
 			this.itemDescription = cons.itemDescription;
 			this.spriteName = cons.spriteName;
 			this.itemType = cons.itemType;
-			this.itemNameInEnglish = cons.itemNameInEnglish;
 
 			// 初始化消耗品属性
 			this.healthGain = cons.healthGain;

@@ -46,7 +46,7 @@ namespace WordJourney
 
 		public Animator destinationAnimator;
 
-		private ChapterDetailInfo chapterDetail;
+		private GameLevelData levelData;
 
 		public UnityEngine.Material spriteMaterial; 
 
@@ -56,7 +56,7 @@ namespace WordJourney
 
 
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
-		public void SetUpMap (ChapterDetailInfo chapterDetail)
+		public void SetUpMap (GameLevelData levelData)
 		{
 
 			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
@@ -82,7 +82,7 @@ namespace WordJourney
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
 
-			this.chapterDetail = chapterDetail;
+			this.levelData = levelData;
 
 			mapInfo = DataHandler.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFilePath);
 
@@ -155,7 +155,7 @@ namespace WordJourney
 
 		private void SetUpItems(){
 			
-			List<Item> currentChapterItems = chapterDetail.GetCurrentChapterItems ();
+			List<Item> currentChapterItems = levelData.GetCurrentChapterItems ();
 
 //			int mapItemCount = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
 
@@ -188,7 +188,7 @@ namespace WordJourney
 
 		private void SetUpNPCs(){
 			
-			List<NPC> currentChapterNpcs = chapterDetail.GetCurrentChapterNpcs ();
+			List<NPC> currentChapterNpcs = levelData.GetCurrentChapterNpcs ();
 
 			for (int i = 0; i < currentChapterNpcs.Count; i++) {
 
@@ -221,7 +221,7 @@ namespace WordJourney
 
 		private void SetUpMonsters(){
 			
-			monsters = chapterDetail.GetCurrentChapterMonsters ();
+			monsters = levelData.GetCurrentChapterMonsters ();
 
 			for(int i = 0;i<monsters.Count;i++){
 				Transform monster = monsters [i].transform;

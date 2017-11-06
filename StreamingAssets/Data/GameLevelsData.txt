@@ -1,8 +1,8 @@
-﻿{
+{
 	"Items": [
 		{
-			"chapterIndex":0,
-			"chapterLocation": "黑暗之森",
+			"gameLevelIndex":0,
+			"chapterName": "黑暗之森",
 			"itemIds": [0,5],
 			"npcIds": [0,1],
 			"monsterIds": [0],

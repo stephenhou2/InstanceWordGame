@@ -341,7 +341,7 @@ namespace WordJourney
 			materialCreated = new Material (material, createCount);
 
 			// 更新玩家材料数据
-			Player.mainPlayer.AddMaterial (materialCreated);
+			Player.mainPlayer.AddItem (materialCreated);
 
 			// 更新剩余字母碎片
 			UpdateOwnedCharacters ();

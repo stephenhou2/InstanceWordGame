@@ -77,9 +77,11 @@ namespace WordJourney
 		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
 
-		public int maxUnlockChapterIndex;
+		public int maxUnlockLevelIndex;
 
-		public int currentChapterIndex;
+		public int currentLevelIndex;
+
+		public List<ConsumablesEffectState> allConsumablesEffectStates = new List<ConsumablesEffectState> ();
 
 
 		public void SetUpPlayerWithPlayerData(PlayerData playerData){
@@ -126,8 +128,8 @@ namespace WordJourney
 //			this.allCharacterFragmentsInBag = playerData.allCharacterFragmentsInBag;
 			this.allFormulasInBag = playerData.allFormulasInBag;
 
-			this.maxUnlockChapterIndex = playerData.maxUnlockChapterIndex;
-			this.currentChapterIndex = playerData.currentChapterIndex;
+			this.maxUnlockLevelIndex = playerData.maxUnlockLevelIndex;
+			this.currentLevelIndex = playerData.currentLevelIndex;
 
 
 			for (int i = 0; i < playerData.allLearnedSkillInfo.Count; i++) {
@@ -144,6 +146,57 @@ namespace WordJourney
 
 		}
 
+
+		public void EquipEquipment(Equipment equipment){
+
+			Equipment equipedEquipmentOfSelectType = allEquipedEquipments.Find (delegate(Equipment obj) {
+				return obj.equipmentType == equipment.equipmentType;
+			});
+
+			if (equipedEquipmentOfSelectType != null) {
+
+				equipedEquipmentOfSelectType.equiped = false;
+				allEquipedEquipments.Remove (equipedEquipmentOfSelectType);
+
+			}
+
+			equipment.equiped = true;
+
+			allEquipedEquipments.Add(equipment);
+
+			ResetBattleAgentProperties (false);
+
+			ResetPropertiesByConsumablesEffectState ();
+
+		}
+
+		/// <summary>
+		/// 根据玩家身上有的消耗品对应的状态重置玩家属性(仅在玩家更换装备后使用该方法）
+		/// </summary>
+		private void ResetPropertiesByConsumablesEffectState(){
+
+			for (int i = 0; i < allConsumablesEffectStates.Count; i++) {
+
+				Consumables consumables = allConsumablesEffectStates [i].consumables;
+
+				attack = (int)(attack * (1 + consumables.attackGain));
+				attackSpeed = (int)(attackSpeed * (1 + consumables.attackSpeedGain));
+				armor = (int)(armor * (1 + consumables.armorGain));
+				manaResist = (int)(manaResist * (1 + consumables.manaResistGain));
+				dodge = (int)(dodge * (1 + consumables.dodgeGain));
+				crit = (int)(crit * (1 + consumables.critGain));
+
+				physicalHurtScaler = 1 + consumables.physicalHurtScaler;
+				magicalHurtScaler = 1 + consumables.magicHurtScaler;
+
+			}
+
+		}
+			
+
+		/// <summary>
+		/// 玩家升级,全属性+1
+		/// </summary>
 		public void PlayerLevelUp(){
 
 			agentLevel++;
@@ -185,6 +238,10 @@ namespace WordJourney
 			return s;
 		}
 
+		/// <summary>
+		/// 添加物品到背包中
+		/// </summary>
+		/// <param name="item">Item.</param>
 		public void AddItem(Item item){
 
 			switch(item.itemType){
@@ -213,6 +270,77 @@ namespace WordJourney
 			}
 				
 		}
+
+		public void RemoveItem(Item item){
+			switch(item.itemType){
+			case ItemType.Equipment:
+				Equipment equipment = item as Equipment;
+				allEquipmentsInBag.Remove (equipment);
+				if (equipment.equiped) {
+					allEquipedEquipments.Remove (equipment);
+				}
+				break;
+				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
+			case ItemType.Consumables:
+				Consumables consumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
+					return obj.itemId == item.itemId;	
+				});
+				consumablesInBag.itemCount -= item.itemCount;
+				if (consumablesInBag.itemCount <= 0) {
+					allConsumablesInBag.Remove (consumablesInBag);
+				}
+				break;
+			case ItemType.FuseStone:
+				allFuseStonesInBag.Remove (item as FuseStone);
+				break;
+			case ItemType.Task:
+				allTaskItemsInBag.Remove (item as TaskItem);
+				break;
+			case ItemType.Material:
+				RemoveMaterial (item as Material);
+				break;
+			}
+		}
+
+		/// <summary>
+		/// Adds the material.
+		/// </summary>
+		/// <param name="material">Material.</param>
+		private void AddMaterial(Material material){
+
+			Material materialInBag = allMaterialsInBag.Find(delegate(Material obj){
+				return obj.itemId == material.itemId;
+			});
+
+			if (materialInBag != null) {
+				// 如果玩家背包中存在对应材料 ＋＝ 材料数量
+				materialInBag.itemCount += material.itemCount;		
+			}else{
+				// 如果玩家背包中不存在对应材料，则背包中添加该材料
+				Player.mainPlayer.allMaterialsInBag.Add(material);
+			} 
+		}
+
+		public Material GetMaterialInBagWithId(int materialId){
+			return allMaterialsInBag.Find(delegate(Material obj) {
+				return obj.itemId == materialId;
+			});
+		}
+
+		private void RemoveMaterial(Material material){
+
+			Material materialInBag = allMaterialsInBag.Find (delegate(Material obj) {
+				return obj.itemId == material.itemId;
+			});
+
+			materialInBag.itemCount -= material.itemCount;
+
+			if (materialInBag.itemCount <= 0) {
+				allMaterialsInBag.Remove (materialInBag);
+			}
+				
+		}
+
 
 		/// <summary>
 		/// 分解材料
@@ -265,100 +393,15 @@ namespace WordJourney
 			}
 
 			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
-			item.itemCount -= resolveCount;
-
-			if (item.itemCount <= 0) {
-				switch (item.itemType) {
-				case ItemType.Material:
-					allMaterialsInBag.Remove (item as Material);
-					break;
-				case ItemType.FuseStone:
-					allFuseStonesInBag.Remove (item as FuseStone);
-					break;
-				}
-
-			}
+			RemoveItem(item);
+		
 
 			return charactersReturn;
 
 		}
 
-//		public void ArrangeItems(List<Item> items){
-//
-//			for (int i = 0; i < items.Count; i++) {
-//
-//				Item item = allItems [i];
-//
-//				if (item.itemType == ItemType.Consumables) {
-//
-//					for (int j = i + 1; j < allItems.Count; j++) {
-//
-//						Item itemBackwards = allItems [j];
-//
-//						if (item.itemId == itemBackwards.itemId) {
-//
-//							item.itemCount += itemBackwards.itemCount;
-//
-//							allItems.Remove (itemBackwards);
-//
-//							j--;
-//
-//						}
-//					}
-//				}
-//			}
-//		}
 
 
-		public void AddMaterial(Material material,int materialCount){
-			material.itemCount = materialCount;
-			AddMaterial (material);
-		}
-
-		public void RemoveMaterials(List<Material> materials){
-			
-			for(int i = 0;i<materials.Count;i++){
-
-				Material material = materials [i];
-
-				Material materialInBag = allMaterialsInBag.Find (delegate(Material obj) {
-					return obj.itemId == material.itemId;
-				});
-
-				materialInBag.itemCount -= material.itemCount;
-
-				if (materialInBag.itemCount <= 0) {
-					allMaterialsInBag.Remove (materialInBag);
-				}
-
-			}
-
-		}
-
-		/// <summary>
-		/// Adds the material.
-		/// </summary>
-		/// <param name="material">Material.</param>
-		public void AddMaterial(Material material){
-
-			Material materialInBag = allMaterialsInBag.Find(delegate(Material obj){
-				return obj.itemId == material.itemId;
-			});
-
-			if (materialInBag != null) {
-				// 如果玩家背包中存在对应材料 ＋＝ 材料数量
-				materialInBag.itemCount += material.itemCount;		
-			}else{
-				// 如果玩家背包中不存在对应材料，则背包中添加该材料
-				Player.mainPlayer.allMaterialsInBag.Add(material);
-			} 
-		}
-
-		public Material GetMaterialInBagWithId(int materialId){
-			return allMaterialsInBag.Find(delegate(Material obj) {
-				return obj.itemId == materialId;
-			});
-		}
 
 		/// <summary>
 		/// Checks the unsufficient characters.
@@ -451,11 +494,7 @@ namespace WordJourney
 
 				lostItem = allEquipmentsInBag [lostEquipmentIndex];
 
-				allEquipmentsInBag.Remove (lostItem as Equipment);
-
-				if ((lostItem as Equipment).equiped) {
-					allEquipedEquipments.Remove (lostItem as Equipment);
-				}
+				RemoveItem (lostItem);
 
 				return lostItem;
 
@@ -629,8 +668,8 @@ namespace WordJourney
 //		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片
 		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
-		public int maxUnlockChapterIndex;//最大解锁关卡序号
-		public int currentChapterIndex;//当前所在关卡序号
+		public int maxUnlockLevelIndex;//最大解锁关卡序号
+		public int currentLevelIndex;//当前所在关卡序号
 
 		public List<SkillInfo> allLearnedSkillInfo = new List<SkillInfo>();//所有已学习的技能信息
 
@@ -678,8 +717,8 @@ namespace WordJourney
 //			this.allCharacterFragmentsInBag = player.allCharacterFragmentsInBag;
 			this.allFormulasInBag = player.allFormulasInBag;
 
-			this.maxUnlockChapterIndex = player.maxUnlockChapterIndex;
-			this.currentChapterIndex = player.currentChapterIndex;
+			this.maxUnlockLevelIndex = player.maxUnlockLevelIndex;
+			this.currentLevelIndex = player.currentLevelIndex;
 
 			for (int i = 0; i < player.allLearnedSkills.Count; i++) {
 

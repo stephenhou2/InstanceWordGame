@@ -10,5 +10,7 @@ namespace WordJourney
 
 		public int[] rewardCounts;
 
+
+
 	}
 }

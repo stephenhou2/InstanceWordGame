@@ -19,7 +19,14 @@ namespace WordJourney
 		public Transform skillsContainer;
 		private Transform skillButtonModel;
 	
+		/**********  ConsumablesPlane UI *************/
+		public Transform allConsumablesPlane;
+		public Transform allConsumablesContainer;
+		private Transform consumablesButtonModel;
+		private InstancePool consumablesButtonPool;
+		/**********  ConsumablesPlane UI *************/
 
+		public Button allConsumablesButton;
 		public Button healthBottleButton;
 		public Button manaBottleButton;
 		public Button antiDebuffButton;
@@ -64,7 +71,10 @@ namespace WordJourney
 			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
 			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 
-//			skillButtonPool.transform.SetParent (poolContainerOfExploreCanvas);
+			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
+			consumablesButtonModel = TransformManager.FindTransform ("ConsumablesButtonModel");
+
+			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
 			skillButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
@@ -234,36 +244,88 @@ namespace WordJourney
 
 		public void OnItemButtonClick(int buttonIndex){
 
-			Consumables consumable = null;
+			Consumables consumables = null;
 
 			switch (buttonIndex) {
-			case 0:
-				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemNameInEnglish == "health";
+			case 0://生命药剂
+				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
+					return obj.itemId == 501;
 				});
 				break;
-			case 1:
-				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemNameInEnglish == "mana";
+			case 1://魔法药剂
+				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
+					return obj.itemId == 502;
 				});
 				break;
-			case 2:
-				consumable = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemNameInEnglish == "antiDebuff";
+			case 2://回程卷轴
+				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
+					return obj.itemId == 515;
 				});
 				break;
-			default:
-				break;
-
 			}
 				
-			if (consumable == null) {
+			if (consumables == null) {
 				return;
 			}
 
 			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 
-			bpCtr.OnPlayerUseItem (consumable);
+			bpCtr.UseItem (consumables);
+
+		}
+
+		public void OnAllConsumablesButtonClick(){
+
+			if (allConsumablesButton.transform.localRotation != Quaternion.identity) {
+
+				allConsumablesButton.transform.localRotation = Quaternion.identity;
+
+				QuitAllConsumablesPlane ();
+
+				return;
+
+			}
+
+			allConsumablesButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
+
+			for (int i = 0; i < Player.mainPlayer.allConsumablesInBag.Count; i++) {
+
+				Consumables consumables = Player.mainPlayer.allConsumablesInBag [i];
+
+				Button consumablesButton = consumablesButtonPool.GetInstance<Button> (consumablesButtonModel.gameObject, allConsumablesContainer);
+
+				Image consumablesIcon = consumablesButton.GetComponent<Image> ();
+				Text consumablesCount = consumablesButton.GetComponentInChildren<Text> ();
+
+				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == consumables.spriteName;
+				});
+
+				if (s != null) {
+					consumablesIcon.sprite = s;
+				}
+
+				consumablesCount.text = consumables.itemCount.ToString ();
+
+				consumablesButton.onClick.RemoveAllListeners ();
+
+				consumablesButton.onClick.AddListener (delegate {
+
+					BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
+
+					bpCtr.UseItem (consumables);
+
+				});
+
+			}
+
+			allConsumablesPlane.gameObject.SetActive (true);
+
+		}
+
+		public void QuitAllConsumablesPlane(){
+
+			allConsumablesPlane.gameObject.SetActive (false);
 
 		}
 

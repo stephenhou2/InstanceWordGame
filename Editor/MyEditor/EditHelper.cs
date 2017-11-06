@@ -52,7 +52,7 @@ namespace WordJourney{
 		public static void TransferItemAndMaterialData(){
 
 			ItemHandler ih = new ItemHandler ();
-			ih.CheckValence ();
+			ih.LoadAllData ();
 			ih.SaveData ();
 		}
 

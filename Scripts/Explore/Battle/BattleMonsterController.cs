@@ -89,8 +89,7 @@ namespace WordJourney
 						if (equipment.durability <= 0) {
 							string tint = string.Format("{0}完全损坏",equipment.itemName);
 							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-							player.allEquipmentsInBag.Remove (equipment);
-							player.allEquipedEquipments.Remove (equipment);
+							player.RemoveItem (equipment);
 							equipment = null;
 						}
 					}
@@ -112,8 +111,7 @@ namespace WordJourney
 						if (equipment.durability <= 0) {
 							string tint = string.Format("{0}完全损坏",equipment.itemName);
 							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-							player.allEquipmentsInBag.Remove (equipment);
-							player.allEquipedEquipments.Remove (equipment);
+							player.RemoveItem (equipment);
 							equipment = null;
 						}
 					}

@@ -533,7 +533,6 @@ namespace WordJourney
 						if (equipment.durability <= 0) {
 							string tint = string.Format("{0}完全损坏",equipment.itemName);
 							bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
-							agent.allEquipedEquipments.Remove (equipment);
 							(agent as Player).allEquipmentsInBag.Remove (equipment);
 							equipment = null;
 						}
@@ -599,40 +598,79 @@ namespace WordJourney
 		}
 
 
-		public void OnPlayerUseItem(Consumables consumable){
+		public void UseItem(Consumables consumables){
 
-			agent.health += (int)(consumable.healthGain * agent.maxHealth);
-			agent.mana += (int)(consumable.manaGain * agent.maxMana);
+			Player player = agent as Player;
 
+			switch (consumables.consumablesType) {
+			case ConsumablesType.MedicineAndScroll:
+				if (consumables.effectDuration == 0) {
+					player.health += (int)(consumables.healthGain * agent.maxHealth);
+					player.mana += (int)(consumables.manaGain * agent.maxMana);
+				} else {
+					ConsumablesEffectState consumablesEffectState = player.allConsumablesEffectStates.Find (delegate(ConsumablesEffectState obj) {
+						return obj.consumables.itemId == consumables.itemId;
+					});
+					if (consumablesEffectState == null) {
+						consumablesEffectState = new ConsumablesEffectState (consumables);
+						player.allConsumablesEffectStates.Add (consumablesEffectState);
+						StartCoroutine ("ConsumablesEffectOn", consumablesEffectState);
+					}
+				}
+				break;
+			}
 
-			consumable.itemCount--;
+			consumables.itemCount--;
 
-			if (consumable.itemCount <= 0) {
-				(agent as Player).allConsumablesInBag.Remove (consumable);
+			if (consumables.itemCount <= 0) {
+				player.allConsumablesInBag.Remove (consumables);
 			}
 
 			bpUICtr.UpdateItemButtonsAndStatusPlane ();
 
 		}
 
-//		public void OnPlayerClickBag(){
-//
-//			Transform bagCanvas = TransformManager.FindTransform (CommonData.instanceContainerName + "/BagCanvas");
-//
-//			if (bagCanvas != null) {
-//				bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-//				return;
-//			}
-//
-//			ResourceLoader bagCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
-//
-//			ResourceManager.Instance.LoadAssetsWithBundlePath (bagCanvasLoader, "bag/canvas", () => {
-//
-//				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
-//
-//			});
-//
-//		}
+		private IEnumerator ConsumablesEffectOn(ConsumablesEffectState consumablesEffectState){
+
+			Player player = agent as Player;
+
+			Consumables consumables = consumablesEffectState.consumables;
+
+			int healthGain = (int)(consumables.healthGain * player.maxHealth / consumables.effectDuration);
+			int manaGain = (int)(consumables.manaGain * player.maxMana / consumables.effectDuration);
+
+			player.attack = (int)(player.attack * (1 + consumables.attackGain));
+			player.attackSpeed = (int)(player.attackSpeed * (1 + consumables.attackSpeedGain));
+			player.armor = (int)(player.armor * (1 + consumables.armorGain));
+			player.manaResist = (int)(player.manaResist * (1 + consumables.manaResistGain));
+			player.dodge = (int)(player.dodge * (1 + consumables.dodgeGain));
+			player.crit = (int)(player.crit * (1 + consumables.critGain));
+
+			player.physicalHurtScaler = 1 + consumables.physicalHurtScaler;
+			player.magicalHurtScaler = 1 + consumables.magicHurtScaler;
+
+			bpUICtr.UpdatePlayerStatusPlane ();
+
+			while (consumablesEffectState.effectTime < consumables.effectDuration) {
+				yield return new WaitForSeconds (1.0f);
+				consumablesEffectState.effectTime++;
+				player.health += healthGain;
+				player.mana += manaGain;
+				if (player.health >= player.maxHealth) {
+					player.health = player.maxHealth;
+				}
+				if (player.mana >= player.maxMana) {
+					player.mana = player.maxMana;
+				}
+
+				bpUICtr.UpdatePlayerStatusPlane ();
+			}
+
+			player.ResetBattleAgentProperties (false);
+			player.physicalHurtScaler -= consumables.physicalHurtScaler;
+			player.magicalHurtScaler -= consumables.magicHurtScaler;
+
+		}
 
 
 	}
