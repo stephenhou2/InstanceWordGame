@@ -69,8 +69,6 @@ namespace WordJourney
 
 			yield return null;
 
-			Debug.Log (Player.mainPlayer.currentLevelIndex);
-
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 
 			QuitHomeView();

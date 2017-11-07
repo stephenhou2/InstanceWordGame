@@ -13,5 +13,10 @@ namespace WordJourney
 			this.mapItemType = MapItemType.Obstacle;
 		}
 
+		public override void InitMapItem ()
+		{
+			bc2d.enabled = true;
+			mapItemAnimator.ResetTrigger ("Play");
+		}
 	}
 }

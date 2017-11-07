@@ -17,7 +17,7 @@ namespace WordJourney{
 		public static string persistDataPath = Application.persistentDataPath + "/Data";
 
 		public static string effectsDataFilePath = persistDataPath + "/TestEffectString.txt";
-		public static string gameLevelDataFilePath = persistDataPath + "/GameLevelsData.txt";
+		public static string gameLevelDataFilePath = persistDataPath + "/GameLevelDatas.json";
 		public static string itemsDataFilePath = persistDataPath + "/Items.json";
 		public static string materialsDataFilePath = persistDataPath + "/Materials.json";
 		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";

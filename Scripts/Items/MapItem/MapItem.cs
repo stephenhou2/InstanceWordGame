@@ -13,28 +13,31 @@ namespace WordJourney
 		TrapSwitch
 	}
 
-	public class MapItem : MonoBehaviour {
+	public abstract class MapItem : MonoBehaviour {
 
 		public string mapItemName;
 
-		public Sprite originSprite;
-		public Sprite unlockedOrDestroyedSprite;
+		public bool walkableAfterUnlockOrDestroy;
 
 		protected Animator mapItemAnimator;
-
-		public bool walkableAfterUnlockOrDestroy;
 
 		protected CallBack animEndCallBack;
 
 		public MapItemType mapItemType;
 
+		protected BoxCollider2D bc2d;
+
 		protected virtual void Awake(){
 
 			mapItemAnimator = GetComponent<Animator> ();
 
+			bc2d = GetComponent<BoxCollider2D> ();
+
 //			SetUpItemIcon ();
 
 		}
+
+		public abstract void InitMapItem ();
 
 //		private void SetUpItemIcon(){
 //			

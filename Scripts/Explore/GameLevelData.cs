@@ -23,8 +23,11 @@ namespace WordJourney
 		// 关卡中出现的所有可以开出的物品id
 		public int[] itemIds;
 
+		// 关卡中所有可能出现的装备配方id
+		public int[] formulaIds;
+
 		// 每个itemId对应的物品是否只能由宝箱开出来
-		public bool[] isItemLocked;
+		public bool[] itemLockInfoArray;
 
 		// 关卡中所有npc的id
 		public int[] npcIds;
@@ -38,44 +41,80 @@ namespace WordJourney
 		// 关卡中一共出现的怪物数量范围
 		public Count monsterCount;
 
-		// 关卡中出现的所有可以开出的物品id对应的物品
-		private List<Item> items = new List<Item>();
+		// 关卡中出现的所有可以直接开出的物品id对应的物品
+		public List<Item> normalItems = new List<Item>();
+
+		// 关卡中出现的所有宝箱开出的物品id对应的物品
+		public List<Item> lockedItems = new List<Item> ();
 
 		// 关卡中所有npc的id对应的npc
-		private List<NPC> npcs = new List<NPC>();
+		public List<NPC> npcs = new List<NPC>();
 
 		// 关卡中的所有怪物id对应的怪物
-		private List<Transform> monsters = new List<Transform>();
+		public List<Transform> monsters = new List<Transform>();
 
+
+		public void LoadAllData(){
+			LoadAllItemsData ();
+			LoadNPCsData ();
+			LoadMonsters ();
+		}
 
 		/// <summary>
 		/// 加载所有本关卡物品数据
 		/// </summary>
-		private void LoadItemsData(){
+		private void LoadAllItemsData(){
 
-			foreach (int itemId in itemIds) {
+			for(int i = 0;i<itemIds.Length;i++) {
 
-				ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-					return obj.itemId == itemId;
-				});
+				int itemId = itemIds [i];
+				bool locked = itemLockInfoArray [i];
 
 				Item item = null;
 
-				switch (itemModel.itemType) {
-				case ItemType.Equipment:
-					item = new Equipment (itemModel,0);
-					break;
-				case ItemType.Consumables:
-					item = new Consumables (itemModel,1);
-					break;
-				default:
-					break;
+				//如果是材料（1000<=材料id<2000)
+				if (itemId >= 1000 && itemId < 2000) {
+
+					Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+						return obj.itemId == itemId;
+					});
+
+					item = new Material (material, 1);
+
+				} else {
+
+					ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+						return obj.itemId == itemId;
+					});
+
+					switch (itemModel.itemType) {
+					case ItemType.Equipment:
+						item = new Equipment (itemModel, 0);
+						break;
+					case ItemType.Consumables:
+						item = new Consumables (itemModel, 1);
+						break;
+					}
+						
 				}
 
-				if (item != null) {
-					items.Add (item);
+				if (item != null && !locked) {
+					normalItems.Add (item);
+				} else if (item != null && locked) {
+					lockedItems.Add (item);
 				} else {
 					Debug.LogError ("item null when load level info");
+				}
+			}
+
+			for (int i = 0; i < formulaIds.Length; i++) {
+
+				Formula formula = new Formula (FormulaType.Equipment, formulaIds [i]);
+
+				if (formula != null) {
+					lockedItems.Add (formula);
+				} else {
+					Debug.LogError ("formula null when load level info");
 				}
 			}
 		
@@ -118,36 +157,7 @@ namespace WordJourney
 				}
 			}
 		}
-
-		public List<Item> GetCurrentChapterItems(){
-
-			if (items.Count == 0) {
-				LoadItemsData ();
-			}
-
-			return items;
-
-		}
-
-		public List<NPC> GetCurrentChapterNpcs(){
-
-			if (npcs.Count == 0) {
-				LoadNPCsData ();
-			}
-
-			return npcs;
-
-		}
-
-		public List<Transform> GetCurrentChapterMonsters(){
-
-			if (monsters.Count == 0) {
-				LoadMonsters ();
-			}
-
-			return monsters;
-
-		}
+			
 
 
 		public override string ToString ()

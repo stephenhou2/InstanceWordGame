@@ -65,48 +65,56 @@ namespace WordJourney
 		public void RebuildPropertiesOf(Agent agent){
 
 			if (attackGain > 0) {
-				agent.attack = (int)(agent.attack * (1 + attackGain / 100f));
+//				agent.attack = (int)(agent.attack * (1 + attackGain / 100f));
+				agent.attackGainScaler += attackGain / 100f;
 			}
 			if (attackSpeedGain > 0) {
-				agent.attackSpeed = (int)(agent.attackSpeed * (1 + attackSpeedGain / 100f));
+//				agent.attackSpeed = (int)(agent.attackSpeed * (1 + attackSpeedGain / 100f));
+				agent.attackSpeedGainScaler += attackSpeedGain / 100f;
 			}
 			if (armorGain > 0) {
-				agent.armor = (int)(agent.armor * (1 + armorGain / 100f));
+//				agent.armor = (int)(agent.armor * (1 + armorGain / 100f));
+				agent.armorGainScaler += armorGain / 100f;
 			}
 			if (manaResistGain > 0) {
-				agent.manaResist = (int)(agent.manaResist * (1 + manaResistGain / 100f));
+//				agent.manaResist = (int)(agent.manaResist * (1 + manaResistGain / 100f));
+				agent.manaResistGainScaler += manaResistGain / 100f;
 			}
 			if (dodgeGain > 0) {
-				agent.dodge = (int)(agent.dodge * (1 + dodgeGain / 100f));
+//				agent.dodge = (int)(agent.dodge * (1 + dodgeGain / 100f));
+				agent.dodgeGainScaler += dodgeGain / 100f;
 			}
 			if (critGain > 0) {
-				agent.crit = (int)(agent.crit * (1 + critGain / 100f));
+//				agent.crit = (int)(agent.crit * (1 + critGain / 100f));
+				agent.critGainScaler += critGain / 100f;
 			}
 			if (healthGain > 0) {
-				agent.maxHealth = (int)(agent.maxHealth * (1 + healthGain / 100f));
-				agent.health = (int)(agent.health * (1 + healthGain / 100f));
+//				agent.maxHealth = (int)(agent.maxHealth * (1 + healthGain / 100f));
+//				agent.health = (int)(agent.health * (1 + healthGain / 100f));
+				agent.maxHealthGainScaler += healthGain / 100f;
 			}
 			if (manaGain > 0) {
-				agent.maxMana = (int)(agent.maxMana * (1 + manaGain / 100f));
-				agent.mana = (int)(agent.mana * (1 + manaGain / 100f));
+//				agent.maxMana = (int)(agent.maxMana * (1 + manaGain / 100f));
+//				agent.mana = (int)(agent.mana * (1 + manaGain / 100f));
+				agent.maxManaGainScaler += manaGain / 100f;
 			}
 			if (physicalHurtGain > 0) {
-				agent.physicalHurtScaler *= 1 + physicalHurtGain / 100f;
+				agent.physicalHurtScaler += physicalHurtGain / 100f;
 			}
 			if (magicHurtGain > 0) {
-				agent.magicalHurtScaler *= 1 + magicHurtGain / 100f;
+				agent.magicalHurtScaler += magicHurtGain / 100f;
 			}
 			if (healthAbsorbGain > 0) {
-				agent.healthAbsorbScalser *= 1 + healthAbsorbGain / 100f;
+				agent.healthAbsorbScalser += healthAbsorbGain / 100f;
 			}
 			if (hardBeatGain > 0) {
-				agent.hardBeatChance *= 1 + hardBeatGain / 100f;
+				agent.hardBeatChance += hardBeatGain / 100f;
 			}
 			if (brambleShiledGain > 0) {
-				agent.reflectScaler *= 1 + brambleShiledGain / 100f;
+				agent.reflectScaler += brambleShiledGain / 100f;
 			}
 			if (magicShieldGain > 0) {
-				agent.decreaseHurtScaler *= 1 + magicShieldGain / 100f;
+				agent.decreaseHurtScaler += magicShieldGain / 100f;
 			}
 			if (allPropertiesGain > 0) {
 				agent.originalAttack += allPropertiesGain;

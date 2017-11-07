@@ -270,6 +270,10 @@ namespace WordJourney
 
 			trapSwitch.SwitchOffTrap ();
 
+			Transform trapTrans = trapSwitch.trap.transform;
+
+			mapGenerator.mapWalkableInfoArray[(int)trapTrans.position.x,(int)trapTrans.position.y] = 1;
+
 			expUICtr.HideMask ();
 
 		}
@@ -357,6 +361,11 @@ namespace WordJourney
 
 			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
 
+			Player player = battlePlayerCtr.agent as Player;
+
+			player.experience += trans.GetComponent<Monster> ().rewardExperience;//更新玩家经验值
+
+			player.LevelUpIfExperienceEnough ();//判断是否升级
 
 			#warning 消灭怪物后需要走到怪物原位置的话开启下面这段代卖
 //			battlePlayerCtr.ContinueMove ();
@@ -383,12 +392,18 @@ namespace WordJourney
 
 			Player player = Player.mainPlayer;
 
-			#warning 关卡数据只做了一关，暂时使用第一关的数据，后面数据做好后打开下面注释的代码
-//			player.currentChapterIndex++;
+			player.currentLevelIndex++;
+
+			if (player.currentLevelIndex >= 5) {
+				Debug.Log ("通关");
+				return;
+			}
 
 			if (player.currentLevelIndex > player.maxUnlockLevelIndex) {
 				player.maxUnlockLevelIndex = player.currentLevelIndex;
 			}
+
+
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
 

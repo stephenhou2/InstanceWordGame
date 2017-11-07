@@ -144,7 +144,7 @@ namespace WordJourney
 
 			for (int i = attachedProperties.Count; i < maxAttachedPropertyCount; i++) {
 
-				int randomId = Random.Range (0, attachedPropertiesIdList.Count - 1);
+				int randomId = Random.Range (0, attachedPropertiesIdList.Count);
 
 				EquipmentAttachedProperty attachedProperty = new EquipmentAttachedProperty (randomId, true);
 
@@ -169,7 +169,7 @@ namespace WordJourney
 				}
 			}
 
-			int materialIndex = Random.Range (0, returnedMaterials.Count - 1);
+			int materialIndex = Random.Range (0, returnedMaterials.Count);
 
 			Player.mainPlayer.RemoveItem (this);
 

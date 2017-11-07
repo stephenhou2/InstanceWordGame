@@ -62,6 +62,14 @@ namespace WordJourney
 
 		}
 			
+		public int experience;//玩家经验值
+
+		// 每次升级所需要的经验值
+		public int upgradeExprience{
+			get{
+				return 50 * agentLevel * (agentLevel + 1);
+			}
+		}
 
 		public List<Skill> allLearnedSkills = new List<Skill>();
 
@@ -193,24 +201,26 @@ namespace WordJourney
 
 		}
 			
+		public void LevelUpIfExperienceEnough(){
 
-		/// <summary>
-		/// 玩家升级,全属性+1
-		/// </summary>
-		public void PlayerLevelUp(){
+			if (experience >= upgradeExprience) {
+		
+				agentLevel++;
 
-			agentLevel++;
+				// 全属性+1，血量+10，魔法+5
+				originalAttack += 1;
+				originalAttackSpeed += 1;
+				originalArmor += 1;
+				originalManaResist += 1;
+				originalDodge += 1;
+				originalCrit += 1;
+				originalMaxHealth += 10;
+				originalMaxMana += 5;
 
-			originalAttack += 1;
-			originalAttackSpeed += 1;
-			originalArmor += 1;
-			originalManaResist += 1;
-			originalDodge += 1;
-			originalCrit += 1;
-			originalMaxHealth += 10;
-			originalMaxMana += 5;
+				skillPointsLeft++;
 
-			ResetBattleAgentProperties (true);
+				ResetBattleAgentProperties (true);//升级后更新玩家状态，玩家血量和魔法值回满
+			}
 
 		}
 
@@ -490,7 +500,7 @@ namespace WordJourney
 					return LostItemWhenDie ();
 				}
 
-				int lostEquipmentIndex = Random.Range (0, allEquipmentsInBag.Count - 1);
+				int lostEquipmentIndex = Random.Range (0, allEquipmentsInBag.Count);
 
 				lostItem = allEquipmentsInBag [lostEquipmentIndex];
 
@@ -504,7 +514,7 @@ namespace WordJourney
 					return LostItemWhenDie ();
 				}
 
-				int lostConsumbablesIndex = Random.Range (0, allConsumablesInBag.Count - 1);
+				int lostConsumbablesIndex = Random.Range (0, allConsumablesInBag.Count);
 
 				// 获得背包中丢失的物品
 				Consumables lostConsumables = allConsumablesInBag [lostConsumbablesIndex];
@@ -530,7 +540,7 @@ namespace WordJourney
 					return LostItemWhenDie ();
 				}
 
-				int lostMaterialIndex = Random.Range (0, allMaterialsInBag.Count - 1);
+				int lostMaterialIndex = Random.Range (0, allMaterialsInBag.Count);
 
 				Material lostMaterial = allMaterialsInBag [lostMaterialIndex];
 
@@ -561,7 +571,7 @@ namespace WordJourney
 					}
 				}
 				// 随机获取一个数量不为0的字母碎片序号（在新拉出来的表中）
-				int randomIndex = Random.Range (0, notEmptyCharacterIndexs.Count - 1);
+				int randomIndex = Random.Range (0, notEmptyCharacterIndexs.Count);
 
 				// 获取对应的真实字母
 				char character = (char)(notEmptyCharacterIndexs [randomIndex] + CommonData.aInASCII);

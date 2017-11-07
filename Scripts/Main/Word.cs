@@ -72,7 +72,7 @@ namespace WordJourney
 
 			if (learnInfo.learnedWords.Count != 0) {
 
-				wordId = Random.Range (0, learnInfo.learnedWords.Count - 1);
+				wordId = Random.Range (0, learnInfo.learnedWords.Count);
 
 				return learnInfo.learnedWords [wordId];
 
@@ -105,7 +105,7 @@ namespace WordJourney
 
 			int wordsCount = sql.GetItemCountOfTable (tableName);
 
-			wordId = Random.Range (0, wordsCount - 1);
+			wordId = Random.Range (0, wordsCount);
 
 			string[] conditions = new string[]{string.Format ("wordId={0}", wordId)};
 

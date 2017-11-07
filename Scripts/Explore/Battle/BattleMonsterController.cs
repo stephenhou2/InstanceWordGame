@@ -20,10 +20,6 @@ namespace WordJourney
 		protected override void Awake(){
 
 			agent = GetComponent<Monster> ();
-			
-			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
-
-			bmUICtr = canvas.GetComponent<BattleMonsterUIController> ();
 
 			physicalAttack.selfAnimName = "fight";
 
@@ -38,6 +34,10 @@ namespace WordJourney
 		/// 初始化碰到的怪物
 		/// </summary>
 		public void InitMonster(Transform monsterTrans){
+
+			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
+
+			bmUICtr = canvas.GetComponent<BattleMonsterUIController> ();
 
 			Monster monster = agent as Monster;
 

@@ -52,17 +52,12 @@ namespace WordJourney
 
 		public void SaveData(){
 
-			AllItems items = new AllItems ();
-			items.Items = allItems;
-			string itemsJson = JsonUtility.ToJson (items);
 
-			AllMaterials materials = new AllMaterials ();
-			materials.Items = allMaterials;
-			string materialsJson = JsonUtility.ToJson (materials);
+			string itemsJson = JsonHelper.ToJson<MyItem>(allItems.ToArray());
 
-			AllAttachedProperty attachedProperties = new AllAttachedProperty ();
-			attachedProperties.Items = allAttachedProperties;
-			string attachedPropertiesJson = JsonUtility.ToJson (attachedProperties);
+			string materialsJson = JsonHelper.ToJson<MyMaterial> (allMaterials.ToArray ());
+
+			string attachedPropertiesJson = JsonHelper.ToJson<MyAttachedProperty>(allAttachedProperties.ToArray());
 
 			Debug.Log (itemsJson);
 			Debug.Log (materialsJson);
@@ -77,7 +72,7 @@ namespace WordJourney
 
 		private void LoadAllMaterial(){
 
-			string materialSource = File.ReadAllText ("/Users/houlianghong/Desktop/物品系统/材料和属性-表格 1.csv");
+			string materialSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/材料和属性-表格 1.csv");
 
 			string[] materialStrings = materialSource.Split (new string[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -95,7 +90,7 @@ namespace WordJourney
 
 		private void LoadAllItem(){
 
-			string itemSource = File.ReadAllText ("/Users/houlianghong/Desktop/物品系统/物品和属性-表格 1.csv");
+			string itemSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/物品和属性-表格 1.csv");
 
 			string[] itemStrings = itemSource.Split (new String[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -143,7 +138,7 @@ namespace WordJourney
 
 		private void LoadAllAttachedProperties(){
 
-			string attachedPropertiesSource = File.ReadAllText ("/Users/houlianghong/Desktop/物品系统/附加属性-表格 1.csv");
+			string attachedPropertiesSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/附加属性-表格 1.csv");
 
 			string[] attachedPropertyStrings = attachedPropertiesSource.Split (new string[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -374,19 +369,5 @@ namespace WordJourney
 		}
 
 	}
-
-	[System.Serializable]
-	public class AllItems{
-		public List<MyItem> Items;
-	}
-
-	[System.Serializable]
-	public class AllMaterials{
-		public List<MyMaterial> Items;
-	}
-
-	[System.Serializable]
-	public class AllAttachedProperty{
-		public List<MyAttachedProperty> Items;
-	}
+		
 }

@@ -11,8 +11,8 @@ namespace WordJourney{
 		Equipment,
 		Consumables,
 		Material,
-		Formula,
 		FuseStone,
+		Formula,
 		CharacterFragment,
 		Task
 	}

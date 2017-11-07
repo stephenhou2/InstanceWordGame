@@ -12,25 +12,82 @@ namespace WordJourney
 
 		public TrapSwitch trapSwitchModel;
 
-		public TreasureBox[] treasureBoxModels;
+		public TreasureBox lockedTreasureBoxModel;
+		public TreasureBox normalTreasureBoxModel;
 
-		public Count rewardsCount;
+		private Count rewardsRange;
+		private Count lockedTreasureBoxRange;
+		private Count trapRange;
 
+		void Awake(){
+			rewardsRange = new Count (1, 3);
+			lockedTreasureBoxRange = new Count (0, 2);
+			trapRange = new Count (0, 2);
+		}
 
-
-		public List<MapItem> RandomMapItems(List<Item> currentChapterItems,InstancePool itemPool, Transform itemsContainer, int mapItemCount){
+		public List<MapItem> RandomMapItems(List<Item> normalItems, List<Item> lockedItems, InstancePool itemPool, Transform itemsContainer, int mapItemCount){
 
 			List<MapItem> mapItems = new List<MapItem> ();
 
-			for (int i = 0; i < mapItemCount; i++) {
+			int lockedTreasureBoxCount = Random.Range (lockedTreasureBoxRange.minimum, lockedTreasureBoxRange.maximum + 1);
 
-				int rewardItemCount = Random.Range (rewardsCount.minimum, rewardsCount.maximum);
+			for (int i = 0; i < lockedTreasureBoxCount; i++) {
+
+				int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
+
+				TreasureBox lockedTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (lockedTreasureBoxModel.name, lockedTreasureBoxModel.gameObject, itemsContainer);
+
+				lockedTreasureBox.mapItemName = lockedTreasureBoxModel.mapItemName;
+
+				Item[] rewardItems = new Item[rewardItemCount];
+
+				for (int j = 0; j < rewardItemCount; j++) {
+
+					Item item = RandomItem (lockedItems);
+
+					rewardItems [j] = item;
+				}
+					
+				lockedTreasureBox.InitMapItem ();
+
+				lockedTreasureBox.rewardItems = rewardItems;
+
+				mapItems.Add (lockedTreasureBox);
+
+
+			}
+
+			int trapCount = Random.Range (trapRange.minimum, trapRange.maximum + 1);
+
+			for (int i = 0; i < trapCount; i++) {
+
+				Trap trap = itemPool.GetInstanceWithName<Trap> (trapModel.name, trapModel.gameObject, itemsContainer);
+
+				TrapSwitch trapSwitch = itemPool.GetInstanceWithName<TrapSwitch> (trapSwitchModel.name, trapSwitchModel.gameObject, itemsContainer);
+
+				trapSwitch.trap = trap;
+
+				trap.mapItemName = trapModel.mapItemName;
+
+				trapSwitch.mapItemName = trapSwitchModel.mapItemName;
+
+				trapSwitch.InitMapItem ();
+
+				trap.InitMapItem ();
+
+				mapItems.Add (trap);
+
+				mapItems.Add (trapSwitch);
+
+			}
+
+			for (int i = lockedTreasureBoxCount + trapCount; i < mapItemCount; i++) {
+
+				int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
 
 				MapItemType type = RandomMapItemType ();
 
 				switch (type) {
-				case MapItemType.None:
-					break;
 				case MapItemType.Obstacle:
 
 					int modelIndex = Random.Range (0, obstacleModels.Length);
@@ -41,50 +98,32 @@ namespace WordJourney
 
 					obstacle.mapItemName = randomModel.mapItemName;
 
-					obstacle.GetComponent<BoxCollider2D> ().enabled = true;
+					obstacle.InitMapItem ();
 
 					mapItems.Add (obstacle);
 
 					break;
 
-				case MapItemType.Trap:
-
-					Trap trap = itemPool.GetInstanceWithName<Trap> (trapModel.name, trapModel.gameObject, itemsContainer);
-
-					TrapSwitch trapSwitch = itemPool.GetInstanceWithName<TrapSwitch> (trapSwitchModel.name, trapSwitchModel.gameObject, itemsContainer);
-
-					trapSwitch.trap = trap;
-
-					trap.GetComponent<BoxCollider2D> ().enabled = true;
-
-					trapSwitch.GetComponent<BoxCollider2D> ().enabled = true;
-
-					mapItems.Add (trap);
-
-					mapItems.Add (trapSwitch);
-
-					break;
-
 				case MapItemType.TreasureBox:
 
-					modelIndex = Random.Range (0, treasureBoxModels.Length);
+					TreasureBox normalTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (normalTreasureBoxModel.name, normalTreasureBoxModel.gameObject, itemsContainer);
 
-					TreasureBox randomTreasureBoxModel = treasureBoxModels [modelIndex];
+					normalTreasureBox.mapItemName = normalTreasureBoxModel.mapItemName;
 
-					TreasureBox tb = itemPool.GetInstanceWithName<TreasureBox> (randomTreasureBoxModel.name, randomTreasureBoxModel.gameObject, itemsContainer);
-
-					tb.GetComponent<BoxCollider2D> ().enabled = true;
-
-					tb.rewardItems = new Item[rewardItemCount];
+					Item[] rewardItems = new Item[rewardItemCount];
 
 					for (int j = 0; j < rewardItemCount; j++) {
 
-						Item item = RandomItem (currentChapterItems);
+						Item item = RandomItem (normalItems);
 
-						tb.rewardItems [j] = item;
+						rewardItems [j] = item;
 					}
-					
-					mapItems.Add (tb);
+
+					normalTreasureBox.InitMapItem ();
+
+					normalTreasureBox.rewardItems = rewardItems;
+
+					mapItems.Add (normalTreasureBox);
 
 					break;
 				}
@@ -96,7 +135,7 @@ namespace WordJourney
 
 		private MapItemType RandomMapItemType(){
 
-			int seed = Random.Range (0, 3);
+			int seed = Random.Range (0, 2);
 
 			MapItemType mip = MapItemType.None;
 
@@ -105,9 +144,6 @@ namespace WordJourney
 				mip = MapItemType.Obstacle;
 				break;
 			case 1:
-				mip = MapItemType.Trap;
-				break;
-			case 2:
 				mip = MapItemType.TreasureBox;
 				break;
 			}

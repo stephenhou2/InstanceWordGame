@@ -9,10 +9,20 @@ namespace WordJourney
 
 		public bool trapOff;
 
+		public Sprite originSprite;
+		public Sprite unlockedOrDestroyedSprite;
+
 		protected override void Awake ()
 		{
 			base.Awake ();
 			this.mapItemType = MapItemType.Trap;
+		}
+
+		public override void InitMapItem ()
+		{
+			bc2d.enabled = true;
+			GetComponent<SpriteRenderer> ().sprite = originSprite;
+			trapOff = false;
 		}
 
 		public void OnTriggerEnter2D(Collider2D col){

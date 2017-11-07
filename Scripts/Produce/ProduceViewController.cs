@@ -114,7 +114,7 @@ namespace WordJourney
 		}
 
 		private Material RandomFailMaterial(List<Material> materials){
-			int index = Random.Range (0, materials.Count - 1);
+			int index = Random.Range (0, materials.Count);
 			return materials [index];
 		}
 

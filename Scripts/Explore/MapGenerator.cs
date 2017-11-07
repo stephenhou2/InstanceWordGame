@@ -27,7 +27,7 @@ namespace WordJourney
 
 		private List<MapItem> mapItems = new List<MapItem> ();
 		private List<MapNPC> mapNpcs = new List<MapNPC>();
-		private List<Transform>monsters;
+		private List<Monster>monsters = new List<Monster>();
 
 		public Transform monsterModelsContainer;
 
@@ -70,14 +70,8 @@ namespace WordJourney
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
 				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
 
-//				outerWallPool.transform.SetParent (poolContainerOfExploreScene);
-//				floorPool.transform.SetParent (poolContainerOfExploreScene);
-//				npcPool.transform.SetParent (poolContainerOfExploreScene);
-//				itemPool.transform.SetParent (poolContainerOfExploreScene);
-//				monsterPool.transform.SetParent (poolContainerOfExploreScene);
-//				skillEffectPool.transform.SetParent (poolContainerOfExploreScene);
-
 			}
+
 			MapInstancesToPool ();
 
 			mapItemGenerator = GetComponent<MapItemGenerator> ();
@@ -154,14 +148,12 @@ namespace WordJourney
 		}
 
 		private void SetUpItems(){
-			
-			List<Item> currentChapterItems = levelData.GetCurrentChapterItems ();
 
-//			int mapItemCount = Random.Range (chapterDetail.itemCount.minimum, chapterDetail.itemCount.maximum + 1);
+			int mapItemCount = Random.Range (levelData.itemCount.minimum, levelData.itemCount.maximum + 1);
 
-			int mapItemCount = 50;
+//			int mapItemCount = 50;
 
-			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (currentChapterItems, itemPool, itemsContainer, mapItemCount);
+			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer, mapItemCount);
 
 			for (int i = 0; i < randomMapItems.Count; i++) {
 
@@ -172,7 +164,8 @@ namespace WordJourney
 				mapItem.transform.position = pos;
 
 				if (mapItem.mapItemType == MapItemType.Trap) {
-					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 1;
+					#warning 这里为了测试，先把陷阱做成和普通地板一样的消耗值
+					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 10;
 				} else {
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 				}
@@ -187,12 +180,10 @@ namespace WordJourney
 		}
 
 		private void SetUpNPCs(){
-			
-			List<NPC> currentChapterNpcs = levelData.GetCurrentChapterNpcs ();
 
-			for (int i = 0; i < currentChapterNpcs.Count; i++) {
+			for (int i = 0; i < levelData.npcs.Count; i++) {
 
-				NPC npc = currentChapterNpcs [i];
+				NPC npc = levelData.npcs [i];
 
 				Vector3 pos = RandomPosition ();
 
@@ -220,22 +211,32 @@ namespace WordJourney
 		}
 
 		private void SetUpMonsters(){
-			
-			monsters = levelData.GetCurrentChapterMonsters ();
 
-			for(int i = 0;i<monsters.Count;i++){
-				Transform monster = monsters [i].transform;
+			for(int i = 0;i<levelData.monsters.Count;i++){
+				Transform monster = levelData.monsters [i].transform;
 				monster.SetParent (monsterModelsContainer, false);
 			}
 
-			#warning for test
-			LayoutObjectAtRandom (monsters, new Count(30,40),monstersContainer);
+			int monsterCount = Random.Range (levelData.monsterCount.minimum, levelData.monsterCount.maximum + 1);
 
-			for (int i = 0; i < monstersContainer.transform.childCount; i++) {
-				Transform monsterTrans = monstersContainer.transform.GetChild (i);
-				monsterTrans.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0);
+			for (int i = 0; i < monsterCount; i++) {
+				
+				int randomMonsterId = Random.Range (0, levelData.monsters.Count);
+
+				Transform monster = monsterPool.GetInstance<Transform> (levelData.monsters [randomMonsterId].gameObject, monstersContainer);
+
+				Vector2 pos = RandomPosition ();
+
+				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
+
+				monster.position = pos;
+
+				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0);
+
+				monsters.Add (monster.GetComponent<Monster>());
+
+
 			}
-//			LayoutObjectAtRandom (monsters, chapterDetail.monsterCount,monstersContainer);
 		}
 
 

@@ -11,6 +11,17 @@ namespace WordJourney
 
 		public bool switchOff;
 
+		public Sprite originSprite;
+		public Sprite unlockedOrDestroyedSprite;
+
+		public override void InitMapItem ()
+		{
+			this.switchOff = false;
+
+			transform.GetComponent<SpriteRenderer> ().sprite = originSprite;
+
+		}
+
 		public void SwitchOffTrap(){
 
 			if (switchOff) {

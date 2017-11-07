@@ -17,35 +17,13 @@ using WordJourney;
 namespace WordJourney{
 	public class EditHelper {
 		
-		[MenuItem("EditHelper/Test")]
-		public static void Test(){
-
-			GameObject go = GameObject.Find ("MaterialsContainer");
-
-			for (int i = 0; i < go.transform.childCount; i++) {
-				
-				Transform trans = go.transform.GetChild (i);
-
-				Transform plus = trans.Find ("PlusButton");
-				Transform minus = trans.Find ("MinusButton");
-
-				if (plus != null) {
-					GameObject.DestroyImmediate (plus.gameObject);	
-				}
-
-				if (minus != null) {
-					GameObject.DestroyImmediate (minus.gameObject);
-				}
-			}
+		[MenuItem("EditHelper/GameLevelDatasHelper")]
+		public static void GameLevelDatasHelper(){
+			GameLevelDataHandler gldh = new GameLevelDataHandler ();
+			gldh.LoadGameDatas ();
+			gldh.SaveGameDatas ();
 		}
 
-
-		[MenuItem("EditHelper/Execute")]
-		public static void Execute(){
-
-
-
-		}
 
 
 		[MenuItem("EditHelper/ItemHelper")]
@@ -58,71 +36,6 @@ namespace WordJourney{
 
 
 
-		private static void ModifyCharacterButtons(){
-
-			GameObject charactersPlane = GameObject.Find ("CharactersPlane");
-
-			Button[] characterButtons = charactersPlane.GetComponentsInChildren<Button> ();
-
-			for (int i = 0; i < characterButtons.Length - 1; i++) {
-
-				Button btn = characterButtons [i];
-
-				Transform newTintHUD = btn.transform.Find ("TintHUD");
-
-				Text t = newTintHUD.GetComponentInChildren<Text> ();
-
-				char ch = (char)((int)('a') + i);
-
-				t.text = ch.ToString ().ToUpper ();
-
-				newTintHUD.gameObject.SetActive (false);
-
-//				EventTrigger et = btn.gameObject.GetComponent<EventTrigger> ();
-//
-//				EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry ();
-//
-//				pointerDownEntry.eventID = EventTriggerType.PointerDown;
-//
-//
-//				pointerDownEntry.callback.RemoveAllListeners ();
-//
-////				BaseEventData data = new BaseEventData (es);
-////				data.
-//
-//
-//				pointerDownEntry.callback.AddListener ((PointerEventData data) => {
-//					spellViewController.CharacterButtonDown (data);
-//				});
-
-
-//				pointerDownEntry.callback.AddListener(
-//
-//				EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry ();
-//
-//				pointerUpEntry.eventID = EventTriggerType.PointerUp;
-//
-//				pointerUpEntry.callback.AddListener ((data) => {
-//					OnPointerUpDelegate((PointerEventData)data);
-//					spellViewController.CharacterButtonUp ((int)i);
-//				});
-//
-//				et.triggers.Add (pointerDownEntry);
-//				et.triggers.Add (pointerUpEntry);
-
-			}
-
-		}
-			
-		public static void OnPointerDownDelegate(PointerEventData data)
-		{
-			Debug.Log ("pointerDown");
-
-		}
-		public static void OnPointerUpDelegate(PointerEventData data)
-		{
-			Debug.Log ("pointerup");
-		}
 
 		// 将物品csv数据转化为json文件并存储直接使用这个方法
 		private static void ConvertItemToJson(){

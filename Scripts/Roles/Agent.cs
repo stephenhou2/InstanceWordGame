@@ -83,14 +83,14 @@ namespace WordJourney
 		//*****基础属性加成比例，只由技能影响*******//
 
 
-		private float maxHealthGainScaler;
-		private float maxManaGainScaler;
-		private float attackGainScaler;
-		private float attackSpeedGainScaler;
-		private float armorGainScaler;
-		private float manaResistGainScaler;
-		private float dodgeGainScaler;
-		private float critGainScaler;
+		public float maxHealthGainScaler;
+		public float maxManaGainScaler;
+		public float attackGainScaler;
+		public float attackSpeedGainScaler;
+		public float armorGainScaler;
+		public float manaResistGainScaler;
+		public float dodgeGainScaler;
+		public float critGainScaler;
 
 
 		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
@@ -326,6 +326,7 @@ namespace WordJourney
 			for (int i = 0; i < equipment.attachedProperties.Count; i++) {
 				equipment.attachedProperties [i].RebuildPropertiesOf (this);
 			}
+
 
 		}
 

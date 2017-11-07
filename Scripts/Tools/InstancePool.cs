@@ -40,15 +40,16 @@ namespace WordJourney
 			return mInstance.GetComponent<T>();
 		}
 
-		public T GetInstanceWithName<T>(string instanceName, GameObject instanceModel,Transform instanceParent)
+		public T GetInstanceWithName<T>(string goName, GameObject instanceModel,Transform instanceParent)
 			where T:Component
 		{
 			GameObject mInstance = null;
 
+
 			if (mInstancePool.Count != 0) {
 
 				mInstance = mInstancePool.Find (delegate(GameObject obj) {
-					return obj.name == instanceName;
+					return obj.name == goName;
 				});
 
 				if (mInstance != null) {
@@ -88,6 +89,7 @@ namespace WordJourney
 		public void ClearInstancePool(){
 			for(int i = 0;i<transform.childCount;i++){
 				GameObject instance = transform.GetChild (i).gameObject;
+				mInstancePool.Remove (instance);
 				Destroy (instance);
 			}
 		}

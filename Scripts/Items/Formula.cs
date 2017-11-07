@@ -29,6 +29,9 @@ namespace WordJourney
 
 			this.itemOrSkillId = itemOrSkillId;
 
+			#warning 配方图片只有配方和卷轴两种，直接在构造函数里赋值
+			this.spriteName = "";
+
 			switch (formulaType) {
 			case FormulaType.Equipment:
 				

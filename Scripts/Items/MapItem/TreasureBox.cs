@@ -6,21 +6,8 @@ namespace WordJourney
 {
 	public class TreasureBox: MapItem {
 
-
 		public string unlockItemName;
 		public bool unlocked;
-
-
-//		private Item[] mRewardItems;
-//		public Item[] rewardItems{
-//
-//			get{
-//				return mRewardItems;
-//			}
-//			set{
-//				mRewardItems = value;
-//			}
-//		}
 
 		public Item[] rewardItems;
 
@@ -30,6 +17,12 @@ namespace WordJourney
 			this.mapItemType = MapItemType.TreasureBox;
 		}
 
+		public override void InitMapItem ()
+		{
+			unlocked = false;
+			bc2d.enabled = true;
+			mapItemAnimator.ResetTrigger ("Play");
+		}
 
 		protected override void AnimEnd ()
 		{

@@ -219,24 +219,23 @@ namespace WordJourney
 				
 				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
 
+				Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
+
 				Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite s) {
 					return s.name == rewardItem.spriteName;
 				});
 					
 
 				if (rewardSprite != null) {
-					Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
 					rewardItemIcon.sprite = rewardSprite;
-					rewardItemIcon.enabled = true;
-					rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
-					rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
-					itemsToPickUp.Add (rewardItem);
-					rewardButton.onClick.AddListener (delegate {
-						ChangeRewardSelection(rewardButton,rewardItem);
-					});
-				} else {
-					rewardButtonPool.AddInstanceToPool (rewardButton.gameObject);
-				}
+				} 
+
+				rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
+				rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
+				itemsToPickUp.Add (rewardItem);
+				rewardButton.onClick.AddListener (delegate {
+					ChangeRewardSelection(rewardButton,rewardItem);
+				});
 
 			}
 				
@@ -267,7 +266,9 @@ namespace WordJourney
 
 		public void PickUpSelected(){
 
-//			player.AddItems (itemsToPickUp);
+			for (int i = 0; i < itemsToPickUp.Count; i++) {
+				Player.mainPlayer.AddItem (itemsToPickUp[i]);
+			}
 
 			OnQuitRewardPlane ();
 
