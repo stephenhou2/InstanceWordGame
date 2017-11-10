@@ -18,7 +18,7 @@ namespace WordJourney
 			absorbBase = 10;
 			skillName = "背刺";
 			skillDescription = string.Format ("对敌方造成<color=orange>{0}*攻击力</color>点物理伤害,并将实际伤害的<color=orange>{1}%</color>转化为自身生命值",hurtScaler,absorbBase + (int)(baseNum * skillLevel));
-			selfAnimName = "stand";
+
 		}
 
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)

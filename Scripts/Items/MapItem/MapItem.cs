@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-
+	// 地图物品类型枚举
 	public enum MapItemType{
 		None,
 		Obstacle,
@@ -15,8 +15,10 @@ namespace WordJourney
 
 	public abstract class MapItem : MonoBehaviour {
 
+		// 地图物品名称
 		public string mapItemName;
 
+		// 地图物品开启或破坏之后是否可以行走
 		public bool walkableAfterUnlockOrDestroy;
 
 		protected Animator mapItemAnimator;
@@ -33,35 +35,29 @@ namespace WordJourney
 
 			bc2d = GetComponent<BoxCollider2D> ();
 
-//			SetUpItemIcon ();
-
 		}
 
 		public abstract void InitMapItem ();
 
-//		private void SetUpItemIcon(){
-//			
-//			if (originSprite != null) {
-//
-//				SpriteRenderer sr = transform.Find ("MapItemIcon").GetComponent<SpriteRenderer> ();
-//
-//				sr.sprite = originSprite;
-//
-//				sr.enabled = true;
-//
-//			}
-//
-//		}
 
+		/// <summary>
+		/// 地图物品被破坏或开启
+		/// </summary>
+		/// <param name="cb">Cb.</param>
 		public void UnlockOrDestroyMapItem(CallBack cb){
 
 			animEndCallBack = cb;
 
+			// 播放对应动画
 			mapItemAnimator.SetBool ("Play", true);
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}
 
+		/// <summary>
+		/// 动画结束后重置地图物品
+		/// </summary>
+		/// <returns>The map item on animation finished.</returns>
 		protected IEnumerator ResetMapItemOnAnimFinished(){
 
 			float animTime = mapItemAnimator.GetCurrentAnimatorStateInfo (0).normalizedTime;
@@ -74,13 +70,10 @@ namespace WordJourney
 
 			}
 
+			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
 			if (walkableAfterUnlockOrDestroy) {
 				GetComponent<BoxCollider2D> ().enabled = false;
 			}
-
-//			SpriteRenderer sr = transform.GetComponent<SpriteRenderer> ();
-//
-//			sr.sprite = unlockedOrDestroyedSprite;
 
 			AnimEnd ();
 

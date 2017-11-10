@@ -10,11 +10,12 @@ namespace WordJourney{
 	public enum ItemType{
 		Equipment,
 		Consumables,
-		Material,
+		Task,
 		FuseStone,
+		Material,
 		Formula,
-		CharacterFragment,
-		Task
+		CharacterFragment
+
 	}
 
 	[System.Serializable]

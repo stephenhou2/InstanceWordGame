@@ -51,27 +51,6 @@ namespace WordJourney
 
 		public Trap trapTriggered;
 
-		public void ClearReference(){
-
-
-			enterNpc = null;
-			enterItem = null;
-			enterMonster = null;
-
-			attackTriggerCallBacks.Clear ();
-			beAttackedTriggerCallBacks.Clear ();
-
-			trapTriggered = null;
-			bmCtr = null;
-
-			playerLoseCallBack = null;
-
-			bpUICtr = null;
-
-
-
-		}
-
 
 		protected override void Awake(){
 
@@ -79,7 +58,7 @@ namespace WordJourney
 
 			agent = GetComponentInParent<Player> ();
 
-			physicalAttack.selfAnimName = "fightWithAxe";
+			defaultSkill.selfAnimName = "fightWithAxe";
 
 			base.Awake ();
 
@@ -106,10 +85,10 @@ namespace WordJourney
 
 				moveTweener.OnComplete (() => {
 					inSingleMoving = false;
-
+					PlayRoleAnim ("stand", 0, null);
 				});
 
-				PlayRoleAnim ("stand", 0, null);
+
 
 				Debug.Log ("无有效路径");
 
@@ -237,13 +216,7 @@ namespace WordJourney
 			}
 		}
 
-		public override void PlayRoleAnim (string animName, int playTimes, CallBack cb)
-		{
-			armatureCom.animation.Play (animName,playTimes);
-			if (cb != null) {
-				StartCoroutine ("ExcuteCallBackAtEndOfAnim", cb);
-			}
-		}
+
 
 		/// <summary>
 		/// 移动到下一个节点
@@ -306,8 +279,6 @@ namespace WordJourney
 						}
 
 						r2d.transform.localScale = new Vector3 (-modelActive.transform.localScale.x, 1, 1);
-
-						TransformManager.FindTransform ("ExploreManager").GetComponent<MapGenerator> ().CreateSkillEffect (r2d.transform);
 
 						enterMonster (r2d.transform);
 
@@ -404,47 +375,7 @@ namespace WordJourney
 			}
 
 		}
-
-		/// <summary>
-		///  初始化探索界面中的玩家UI
-		/// </summary>
-		public void SetUpExplorePlayerUI(){
-
-			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
-
-			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
-
-			bpUICtr.SetUpExplorePlayerView (agent as Player, PlayerSelectSkill);
-
-		}
-
-		/// <summary>
-		/// Starts the fight.
-		/// </summary>
-		/// <param name="bmCtr">怪物控制器</param>
-		/// <param name="playerLoseCallBack"> 玩家战斗失败回调 </param>
-		public void StartFight(BattleMonsterController bmCtr,CallBack playerLoseCallBack){
-
-			this.bmCtr = bmCtr;
-
-			this.playerLoseCallBack = playerLoseCallBack;
-
-			// 初始化玩家战斗UI（技能界面）
-			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
-
-			// 开始战斗
-			Fight();
-
-		}
-
-		/// <summary>
-		/// 角色战斗逻辑
-		/// </summary>
-		public override void Fight(){
-			UseSkill(physicalAttack);
-		}
-
-
+			
 		/// <summary>
 		/// 伤害文本动画
 		/// </summary>
@@ -473,6 +404,47 @@ namespace WordJourney
 			
 
 		/// <summary>
+		///  初始化探索界面中的玩家UI
+		/// </summary>
+		public void SetUpExplorePlayerUI(){
+
+			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
+
+			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+
+			bpUICtr.SetUpExplorePlayerView (agent as Player, PlayerSelectSkill);
+
+		}
+
+
+		/// <summary>
+		/// Starts the fight.
+		/// </summary>
+		/// <param name="bmCtr">怪物控制器</param>
+		/// <param name="playerLoseCallBack"> 玩家战斗失败回调 </param>
+		public void StartFight(BattleMonsterController bmCtr,CallBack playerLoseCallBack){
+
+			this.bmCtr = bmCtr;
+
+			this.playerLoseCallBack = playerLoseCallBack;
+
+			// 初始化玩家战斗UI（技能界面）
+			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
+
+			// 默认玩家在战斗中将先出招，首次攻击不用等待
+			UseSkill(defaultSkill);
+
+		}
+
+		/// <summary>
+		/// 角色默认战斗逻辑
+		/// </summary>
+		public override void Fight(){
+			attackCoroutine = StartCoroutine ("InvokeAttack");
+		}
+			
+
+		/// <summary>
 		/// 玩家选择技能后的响应方法
 		/// </summary>
 		/// <param name="btnIndex">Button index.</param>
@@ -480,9 +452,13 @@ namespace WordJourney
 
 			int btnIndex = btnIndexArray [0];
 
+			// 获得选择的技能
 			Skill skill = agent.equipedSkills [btnIndex];
 
-			StopCoroutine ("InvokeAttack");
+			// 停止自动攻击的协程
+			if (attackCoroutine != null) {
+				StopCoroutine (attackCoroutine);
+			}
 
 			UseSkill (skill);
 		}
@@ -494,25 +470,39 @@ namespace WordJourney
 		protected override void UseSkill (Skill skill)
 		{
 
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-				SoundDetailTypeName.Skill, 
-				skill.sfxName);
-			// 技能对应的角色动画，动画结束后执行技能效果并更新角色状态栏
+			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-				skill.AffectAgents(this,bmCtr);
-				this.UpdatePlayerStatusPlane();
-				bmCtr.UpdateMonsterStatusPlane();
-				if(!FightEnd()){
-					StopCoroutine("InvokeAttack");
-					StartCoroutine("InvokeAttack",physicalAttack);
-				}
+				AttackerRoleAnimEnd(skill);
 			});
 				
 			// 播放技能对应的怪物动画
 			if (skill.enemyAnimName != string.Empty) {
 				bmCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
 			}
+
+
+		}
+
+		/// <summary>
+		/// 玩家角色动画（攻击动作）结束后的逻辑
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		private void AttackerRoleAnimEnd(Skill skill){
+
+			// 技能效果影响玩家和怪物
+			skill.AffectAgents(this,bmCtr);
+
+			// 更新玩家状态栏
+			this.UpdateStatusPlane();
+
+			// 更新怪物状态栏
+			bmCtr.UpdateStatusPlane();
+
+			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+			if(!FightEnd()){
+				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+			}
+
 
 			// 播放技能对应的玩家技能特效动画
 			if (skill.selfEffectName != string.Empty) {
@@ -524,6 +514,13 @@ namespace WordJourney
 				bmCtr.SetEffectAnim (skill.enemyEffectName);
 			}
 
+			// 播放技能对应的音效
+			GameManager.Instance.soundManager.PlayClips (
+				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+				SoundDetailTypeName.Skill, 
+				skill.sfxName);
+
+			// 如果该次攻击是物理攻击，对应减少当前武器的耐久度
 			switch (skill.skillType) {
 			case SkillType.Physical:
 				for (int i = 0; i < agent.allEquipedEquipments.Count; i++) {
@@ -544,6 +541,7 @@ namespace WordJourney
 			case SkillType.Passive:
 				break;
 			}
+
 		}
 
 		/// <summary>
@@ -564,36 +562,12 @@ namespace WordJourney
 
 		}
 			
-		/// <summary>
-		/// 玩家死亡
-		/// </summary>
-		public void PlayerDie(){
 
-			// 停止玩家和怪物的攻击
-			this.StopCoroutine ("InvokeAttack");
-			bmCtr.StopCoroutine ("InvokeAttack");
-
-//			playerLoseCallBack ();
-//			bpUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-//			gameObject.SetActive(false);
-
-			ExploreUICotroller expUICtr = bpUICtr.GetComponent<ExploreUICotroller> ();
-
-			expUICtr.HideFightPlane ();
-
-			PlayRoleAnim("die", 1, () => {
-				playerLoseCallBack ();
-				expUICtr.QuitFight ();
-				gameObject.SetActive(false);
-			});
-
-
-		}
 
 		/// <summary>
 		/// 更新玩家状态栏
 		/// </summary>
-		public void UpdatePlayerStatusPlane(){
+		public void UpdateStatusPlane(){
 			bpUICtr.UpdatePlayerStatusPlane ();
 		}
 
@@ -672,6 +646,87 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 清理引用
+		/// </summary>
+		public void ClearReference(){
+
+
+			enterNpc = null;
+			enterItem = null;
+			enterMonster = null;
+
+			attackTriggerCallBacks.Clear ();
+			beAttackedTriggerCallBacks.Clear ();
+
+			trapTriggered = null;
+			bmCtr = null;
+
+			playerLoseCallBack = null;
+
+			bpUICtr = null;
+
+
+
+		}
+
+		/// <summary>
+		/// 按照默认攻击方式自动攻击的协程
+		/// </summary>
+		/// <returns>The player attack.</returns>
+		/// <param name="skill">Skill.</param>
+		protected IEnumerator InvokePlayerAttack(Skill skill){
+
+			float timePassed = 0;
+
+			while (timePassed < agent.attackInterval) {
+
+				timePassed += Time.deltaTime;
+
+				yield return null;
+
+			}
+
+			UseSkill (skill);
+
+		}
+
+		public void QuitExplore(){
+
+			CollectSkillEffectsToPool ();
+
+			ClearReference ();
+
+			gameObject.SetActive (false);
+
+		}
+
+		/// <summary>
+		/// 玩家死亡
+		/// </summary>
+		public void PlayerDie(){
+
+			// 停止玩家和怪物的攻击
+			if (attackCoroutine != null) {
+				this.StopCoroutine (attackCoroutine);
+			}
+			if (bmCtr.attackCoroutine != null) {
+				bmCtr.StopCoroutine (bmCtr.attackCoroutine);
+			}
+
+			PlayRoleAnim("die", 1, () => {
+
+				playerLoseCallBack ();
+
+				CollectSkillEffectsToPool();
+
+				gameObject.SetActive(false);
+
+
+			});
+
+
+		}
 
 	}
 }

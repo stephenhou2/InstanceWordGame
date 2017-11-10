@@ -16,12 +16,11 @@ namespace WordJourney
 		private CallBack<Transform> playerWinCallBack;
 
 
-
 		protected override void Awake(){
 
 			agent = GetComponent<Monster> ();
 
-			physicalAttack.selfAnimName = "fight";
+			defaultSkill.selfAnimName = "fight";
 
 			modelActive = this.gameObject;
 
@@ -49,41 +48,70 @@ namespace WordJourney
 		}
 			
 		/// <summary>
-		/// Uses the skill.
+		/// 使用技能之后的逻辑
 		/// </summary>
 		/// <param name="skill">Skill.</param>
 		protected override void UseSkill (Skill skill)
 		{
-			
+
+			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
+			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
+				AttackerRoleAnimEnd(skill);
+			});
+
+			// 播放技能对应的怪物动画
+			if (skill.enemyAnimName != string.Empty) {
+				bpCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
+			}
+
+
+		}
+
+
+		/// <summary>
+		/// 怪物角色动画（攻击动作）结束后的逻辑
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		private void AttackerRoleAnimEnd(Skill skill){
+
+			skill.AffectAgents(this,bpCtr);
+
+			this.UpdateStatusPlane();
+
+			bpCtr.UpdateStatusPlane();
+
+			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+			if(!FightEnd()){
+				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+			}
+
+			// 播放技能对应的玩家技能特效动画
+			if (skill.selfEffectName != string.Empty) {
+				SetEffectAnim (skill.selfEffectName);
+			}
+
+			// 播放技能对应的怪物技能特效动画
+			if (skill.enemyEffectName != string.Empty) {
+				bpCtr.SetEffectAnim (skill.enemyEffectName);
+			}
+
 			GameManager.Instance.soundManager.PlayClips (
 				GameManager.Instance.gameDataCenter.allExploreAudioClips,
 				SoundDetailTypeName.Skill, 
 				skill.sfxName);
 
-			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-				skill.AffectAgents(this,bpCtr);
-				this.UpdateMonsterStatusPlane();
-				bpCtr.UpdatePlayerStatusPlane();
-				if(!FightEnd()){
-					StopCoroutine("InvokeAttack");
-					StartCoroutine("InvokeAttack",skill);
-				}
-			});
-			if (skill.enemyAnimName != string.Empty) {
-				bpCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
-			}
 			Player player = Player.mainPlayer;
 			switch (skill.skillType) {
 			case SkillType.Physical:
 				for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
-					
+
 					Equipment equipment = player.allEquipedEquipments [i];
 
 					// 受到物理攻击时，已装备的护具中随机一个护具的耐久度降低
 					EquipmentType damagedEquipmentType = (EquipmentType)Random.Range (1, 5);
 
 					if (equipment.equipmentType == damagedEquipmentType) {
-						
+
 						equipment.durability -= CommonData.durabilityDecreaseWhenBeAttacked;
 
 						if (equipment.durability <= 0) {
@@ -120,7 +148,10 @@ namespace WordJourney
 			case SkillType.Passive:
 				break;
 			}
+
 		}
+
+
 
 
 		/// <summary>
@@ -134,8 +165,8 @@ namespace WordJourney
 
 			this.playerWinCallBack = playerWinCallBack;
 
-			// 怪物比玩家延迟0.2s进入战斗状态
-			Invoke ("Fight", 0.2f);
+			// 怪物比玩家延迟0.5s进入战斗状态
+			Invoke ("Fight", 0.5f);
 
 		}
 
@@ -144,7 +175,7 @@ namespace WordJourney
 		/// 角色战斗逻辑
 		/// </summary>
 		public override void Fight(){
-			UseSkill(physicalAttack);
+			UseSkill(defaultSkill);
 		}
 
 		/// <summary>
@@ -187,7 +218,7 @@ namespace WordJourney
 
 		}
 
-		public void UpdateMonsterStatusPlane(){
+		public void UpdateStatusPlane(){
 			bmUICtr.UpdateMonsterStatusPlane ();
 		}
 
@@ -195,29 +226,33 @@ namespace WordJourney
 		/// 怪物死亡
 		/// </summary>
 		public void MonsterDie(){
-			
-			bpCtr.StopCoroutine ("InvokeAttack");
-			StopCoroutine ("InvokeAttack");
+
+			if (attackCoroutine != null) {
+				StopCoroutine (attackCoroutine);
+			}
+			if (waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (waitRoleAnimEndCoroutine);
+			}
+				
 
 			bpCtr.PlayRoleAnim ("stand", 0, null);
 
-//			playerWinCallBack (new Transform[]{ transform });
-//			bmUICtr.GetComponent<ExploreUICotroller> ().QuitFight ();
-//			gameObject.SetActive(false);
-
-			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
-
-			expUICtr.HideFightPlane ();
-
 			PlayRoleAnim ("death", 1, () => {
+				
 				playerWinCallBack (new Transform[]{ transform });
+
+				ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
+
 				expUICtr.QuitFight ();
-				Transform skillEffect = transform.Find("SkillEffect");
-				TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().AddSkillEffectToPool(skillEffect);
+
+				CollectSkillEffectsToPool();
+
 				gameObject.SetActive(false);
 			});
 
 		}
+
+
 
 	}
 }

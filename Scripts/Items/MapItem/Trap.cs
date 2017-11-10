@@ -7,9 +7,12 @@ namespace WordJourney
 {
 	public class Trap : MapItem {
 
+		// 陷阱已经关闭
 		public bool trapOff;
 
+		// 陷阱的原始图片
 		public Sprite originSprite;
+		// 陷阱关闭后的图片
 		public Sprite unlockedOrDestroyedSprite;
 
 		protected override void Awake ()
@@ -18,6 +21,9 @@ namespace WordJourney
 			this.mapItemType = MapItemType.Trap;
 		}
 
+		/// <summary>
+		/// 初始化陷阱
+		/// </summary>
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
@@ -25,6 +31,10 @@ namespace WordJourney
 			trapOff = false;
 		}
 
+		/// <summary>
+		/// 陷阱被触发的响应方法
+		/// </summary>
+		/// <param name="col">Col.</param>
 		public void OnTriggerEnter2D(Collider2D col){
 
 			if (trapOff) {
@@ -44,6 +54,9 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 关闭陷阱
+		/// </summary>
 		public void OnSwitchOff(){
 
 			this.trapOff = true;

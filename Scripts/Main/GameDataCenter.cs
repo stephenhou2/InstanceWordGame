@@ -253,11 +253,16 @@ namespace WordJourney
 			get{
 				if (mAllMonsters.Count == 0) {
 
+					Transform monsterModelsContainer = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/MonsterModelsContainer");
+
+					monsterModelsContainer.position = new Vector3 (0, 0, -10);
+
 					ResourceLoader monstersLoader = ResourceLoader.CreateNewResourceLoader ();
 
 					ResourceManager.Instance.LoadAssetsWithBundlePath (monstersLoader, CommonData.allMonstersBundleName, () => {
 						for(int i = 0;i<monstersLoader.gos.Count;i++){
 							Transform monster = monstersLoader.gos[i].transform;
+							monster.SetParent(monsterModelsContainer,false);
 							mAllMonsters.Add(monster);
 						};
 					}, true);
@@ -342,6 +347,9 @@ namespace WordJourney
 				break;
 			case "LearnInfo":
 				mLearnInfo = null;
+				break;
+			case "AllGameLevelDatas":
+				mGameLevelDatas.Clear ();
 				break;
 			case "AllMaterials":
 				mAllMaterials.Clear ();

@@ -79,7 +79,7 @@ namespace WordJourney
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 					Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
 					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-					bagCanvas.GetComponent<Canvas>().enabled = false;
+					bagCanvas.GetComponent<Canvas> ().enabled = false;
 				}, true);
 			}
 
@@ -282,14 +282,14 @@ namespace WordJourney
 
 		}
 
-
-		public void HideFightPlane(){
-			GetComponent<BattlePlayerUIController> ().QuitFight ();
-			GetComponent<BattleMonsterUIController>().QuitFight ();
-		}
+//		public void HideFightPlane(){
+//			GetComponent<BattlePlayerUIController> ().QuitFight ();
+//			GetComponent<BattleMonsterUIController>().QuitFight ();
+//		}
 
 		public void QuitFight(){
-	
+			GetComponent<BattlePlayerUIController> ().QuitFight ();
+			GetComponent<BattleMonsterUIController>().QuitFight ();
 			battlePlane.gameObject.SetActive (false);
 		}
 

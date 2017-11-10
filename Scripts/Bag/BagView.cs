@@ -48,26 +48,6 @@ namespace WordJourney
 		private Transform resolveGainModel;
 
 
-		private float itemDetailModelHeight;//单个cell的高度
-		private float itemDetailViewPortHeight;//scrollView的可视窗口高度
-		private float paddingY;//scrollView顶部间距&cell之间的间距（设定顶部间距和cell间距一致）
-		private int maxCellsVisible;//最多同时显示的cell数量
-		private int maxPreloadCountOfItemDetails;//预加载cell数量
-
-		private int currentMinEquipmentIndex;//当前最上部（包括不可见）equipment在背包中当前选中类型equipments的序号
-		private int currentMaxEquipmentIndex;//当前最底部（包括不可见）equipment在背包中当前选中类型equipments的序号
-
-		private List<Equipment> allEquipmentsOfCurrentSelectTypeInBag;//背包中当前选中类型的所有equipments
-		private Equipment compareEquipment;//用来比较的equipment
-
-		// 拖拽过程中的cell重用计数（底部cell移至顶部count++，顶部cell移至底部count--）
-		// scrollRect在拖拽过程中，content的localPosition由onDrag传入的PointerEventData计算而来，
-		// 无法直接更改localPosition（更改后也会被从PointerEventData计算的position替换掉），因此需要自己传入PointerEventData
-		// 记录拖拽过程的重用计数，获取原始PointerEventData后根据count更改其中的position后传入onDrag接口
-		// 只有拖拽过程中会有content的localposition无法更改的问题 自由滑动过程中没有这个问题
-		private int reuseCount;
-
-
 		/// <summary>
 		/// 初始化背包界面
 		/// </summary>
@@ -88,9 +68,6 @@ namespace WordJourney
 				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfBagCanvas.name);
 				resolveGainsPool = InstancePool.GetOrCreateInstancePool ("ResolveGainsPool",poolContainerOfBagCanvas.name);
 
-//				itemDisplayButtonsPool.transform.SetParent (poolContainerOfBagCanvas);
-//				itemDetailsPool.transform.SetParent (poolContainerOfBagCanvas);
-//				resolveGainsPool.transform.SetParent (poolContainerOfBagCanvas);
 			}
 
 			if (modelContainerOfBagCanvas.childCount == 0) {
@@ -104,24 +81,8 @@ namespace WordJourney
 				resolveGainModel.SetParent (modelContainerOfBagCanvas);
 			}
 
-
+			// 背包中单类物品最大预加载数量
 			maxPreloadCountOfItem = 30;
-
-			//获取装备更换页面cell的高度
-			itemDetailModelHeight = (itemDetailsModel as RectTransform).rect.height;
-
-			//获取装备更换页面可视区域高度
-			itemDetailViewPortHeight = (specificTypeItemsScrollView as RectTransform).rect.height;
-
-			//获取装备更换页面的顶部间距&cell间距
-			VerticalLayoutGroup vLayoutGroup = specificTypeItemDetailsContainer.GetComponent<VerticalLayoutGroup> ();
-			paddingY = vLayoutGroup.padding.top;
-
-			//计算装备更换页面cell最大显示数量
-			maxCellsVisible = (int)(itemDetailViewPortHeight / (itemDetailModelHeight + paddingY)) + 1;
-			//计算装备更换页面cell预加载数量
-			maxPreloadCountOfItemDetails = maxCellsVisible + 1;
-
 
 			SetUpPlayerStatusPlane ();
 
@@ -521,13 +482,10 @@ namespace WordJourney
 		/// <summary>
 		/// 更换装备／物品的方法
 		/// </summary>
-		/// <param name="type">Type.</param>
-		/// <param name="allItemsOfCurrentSelectType">All items of current select type.</param>
-		public void SetUpAllEquipmentsPlaneOfEquipmentType(Equipment equipedEquipment,List<Equipment> allEquipmentsOfCurrentSelectTypeInBag){
+		/// <param name="equipedEquipmentToCompare">Equiped equipment to compare.</param>
+		/// <param name="allEquipmentsOfCurrentSelectTypeInBag">All equipments of current select type in bag.</param>
+		public void SetUpAllEquipmentsPlaneOfEquipmentType(Equipment equipedEquipmentToCompare,List<Equipment> allEquipmentsOfCurrentSelectTypeInBag){
 
-			this.compareEquipment = equipedEquipment;
-
-			this.allEquipmentsOfCurrentSelectTypeInBag = allEquipmentsOfCurrentSelectTypeInBag;
 
 			MyVerticalScrollView scrollView = specificTypeItemsScrollView.GetComponent<MyVerticalScrollView> ();
 	
@@ -535,7 +493,7 @@ namespace WordJourney
 
 			for (int i = 0; i < allEquipmentsOfCurrentSelectTypeInBag.Count; i++) {
 
-				dataList.Add(new EquipmentAndCompareEquipment(allEquipmentsOfCurrentSelectTypeInBag[i],compareEquipment));
+				dataList.Add(new EquipmentAndCompareEquipment(allEquipmentsOfCurrentSelectTypeInBag[i],equipedEquipmentToCompare));
 
 			}
 
@@ -615,8 +573,6 @@ namespace WordJourney
 
 		// 关闭背包界面
 		public void OnQuitBagPlane(CallBack cb){
-
-			this.sprites = null;
 			
 			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 

@@ -10,33 +10,47 @@ namespace WordJourney
 {
 	public class MapGenerator:MonoBehaviour
 	{
-		[HideInInspector]public int columns; 										//Number of columns in our game board.
-		[HideInInspector]public int rows;											//Number of rows in our game board.
+		// 地图的行数和列数
+		[HideInInspector]public int columns; 										
+		[HideInInspector]public int rows;								
 
+		// 地图物品生成器
 		private MapItemGenerator mapItemGenerator;
 
+		// 地图信息（用于绘制地图）
 		private MapInfo mapInfo;
 //		private TileInfo tileInfo;
 
-		public Transform exit;	
-
+		// 外墙模型
 		public Transform wallModel;
+		// 地板模型
 		public Transform floorModel;
+		// 地图上npc模型
 		public Transform mapNpcModel;
+		// 玩家技能动画特效
+//		public Transform playerSkillEffect;
+		// 怪物技能动画特效
+//		public Transform monsterSkillEffect;
+
 		public Transform skillEffectModel;
 
+		// 地图上所有地图物品列表
 		private List<MapItem> mapItems = new List<MapItem> ();
+
+		// 地图上所有npc列表
 		private List<MapNPC> mapNpcs = new List<MapNPC>();
+
+		// 地图上所有怪物列表
 		private List<Monster>monsters = new List<Monster>();
 
-		public Transform monsterModelsContainer;
-
+		// 所有地图元素在场景中的父容器
 		public Transform outerWallsContainer;
 		public Transform floorsContainer;
 		public Transform itemsContainer;
 		public Transform npcsContainer;
 		public Transform monstersContainer;
 
+		// 所有的缓存池
 		private InstancePool outerWallPool;
 		private InstancePool floorPool;
 		private InstancePool npcPool;
@@ -46,6 +60,7 @@ namespace WordJourney
 
 		public Animator destinationAnimator;
 
+		// 关卡数据
 		private GameLevelData levelData;
 
 		public UnityEngine.Material spriteMaterial; 
@@ -110,11 +125,10 @@ namespace WordJourney
 			ClearPools ();
 
 		}
-			
-		public void CreateSkillEffect(Transform parentTrans){
 
-			skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, parentTrans);
 
+		public Transform GetSkillEffect(Transform parentTrans){
+			return skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, parentTrans);
 		}
 
 		public void AddSkillEffectToPool(Transform skillEffect){
@@ -127,8 +141,7 @@ namespace WordJourney
 
 			BattlePlayerController bpCtr = player.GetComponent<BattlePlayerController> ();
 
-//			CreateSkillEffect (bpCtr.transform);
-
+			// 随机玩家初始位置
 			Vector3 playerOriginPos = RandomPosition ();
 
 			player.position = playerOriginPos;
@@ -137,12 +150,14 @@ namespace WordJourney
 
 			player.rotation = Quaternion.identity;
 
+			// 视角聚焦到玩家身上
 			Camera.main.transform.SetParent (player, false);
 
 			Camera.main.transform.rotation = Quaternion.identity;
 
 			Camera.main.transform.localPosition = new Vector3 (0, 0, -10);
 
+			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("stand", 0, null);
 
 		}
@@ -153,7 +168,7 @@ namespace WordJourney
 
 //			int mapItemCount = 50;
 
-			List<MapItem> randomMapItems = mapItemGenerator.RandomMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer, mapItemCount);
+			List<MapItem> randomMapItems = mapItemGenerator.InitMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer, mapItemCount);
 
 			for (int i = 0; i < randomMapItems.Count; i++) {
 
@@ -165,7 +180,7 @@ namespace WordJourney
 
 				if (mapItem.mapItemType == MapItemType.Trap) {
 					#warning 这里为了测试，先把陷阱做成和普通地板一样的消耗值
-					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 10;
+					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 1;
 				} else {
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 				}
@@ -197,12 +212,6 @@ namespace WordJourney
 
 				mapNpc.name = npc.npcName;
 
-//				SpriteRenderer sr = mapNpc.GetComponent<SpriteRenderer> ();
-//
-//				sr.sprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
-//					return obj.name == mapNpc.npc.
-//				});
-
 				mapNpc.GetComponent<BoxCollider2D> ().enabled = true;
 
 				mapNpcs.Add (mapNpc);
@@ -212,18 +221,15 @@ namespace WordJourney
 
 		private void SetUpMonsters(){
 
-			for(int i = 0;i<levelData.monsters.Count;i++){
-				Transform monster = levelData.monsters [i].transform;
-				monster.SetParent (monsterModelsContainer, false);
-			}
-
 			int monsterCount = Random.Range (levelData.monsterCount.minimum, levelData.monsterCount.maximum + 1);
 
 			for (int i = 0; i < monsterCount; i++) {
 				
 				int randomMonsterId = Random.Range (0, levelData.monsters.Count);
 
-				Transform monster = monsterPool.GetInstance<Transform> (levelData.monsters [randomMonsterId].gameObject, monstersContainer);
+				Transform monsterModel = levelData.monsters [randomMonsterId];
+
+				Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
 				Vector2 pos = RandomPosition ();
 
@@ -231,7 +237,9 @@ namespace WordJourney
 
 				monster.position = pos;
 
-				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0);
+				monster.gameObject.SetActive (true);
+
+				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0,null);
 
 				monsters.Add (monster.GetComponent<Monster>());
 
@@ -248,7 +256,9 @@ namespace WordJourney
 
 		}
 
-		//Sets up the outer walls and floor (background) of the game board.
+		/// <summary>
+		/// Sets up the outer walls and floor (background) of the game board.
+		/// </summary>
 		private void SetUpWallAndFloor ()
 		{
 

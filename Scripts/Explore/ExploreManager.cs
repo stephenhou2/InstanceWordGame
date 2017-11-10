@@ -87,7 +87,7 @@ namespace WordJourney
 			if(Input.GetMouseButtonDown(0)){
 
 				if(EventSystem.current.IsPointerOverGameObject()){
-					Debug.Log("点击在UI上");
+//					Debug.Log("点击在UI上");
 					return;
 				}
 
@@ -416,11 +416,9 @@ namespace WordJourney
 
 			Camera.main.transform.SetParent (null);
 
-			battlePlayerCtr.gameObject.SetActive(false);
+			battlePlayerCtr.QuitExplore ();
 		
 			mapGenerator.DestroyInstancePools ();
-
-			battlePlayerCtr.ClearReference ();
 
 			Destroy(this.gameObject);
 

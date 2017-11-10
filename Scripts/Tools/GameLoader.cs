@@ -39,7 +39,7 @@ namespace WordJourney
 
 
 		/// <summary>
-		/// 初始化系统设置
+		/// 初始化游戏基础数据
 		/// </summary>
 		private void LoadDatas(){
 			

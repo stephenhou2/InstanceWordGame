@@ -260,13 +260,15 @@ namespace WordJourney
 				break;
 			// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
-				Consumables comsumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
+				Consumables consumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
 					return obj.itemId == item.itemId;	
 				});
-				if (comsumablesInBag != null) {
-					comsumablesInBag.itemCount += item.itemCount;
-				} 
-				allConsumablesInBag.Add (item as Consumables);
+				if (consumablesInBag != null) {
+					consumablesInBag.itemCount += item.itemCount;
+				} else {
+					consumablesInBag = new Consumables (item as Consumables, item.itemCount);
+					allConsumablesInBag.Add (item as Consumables);
+				}
 				break;
 			case ItemType.FuseStone:
 				allFuseStonesInBag.Add (item as FuseStone);

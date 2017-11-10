@@ -6,9 +6,13 @@ namespace WordJourney
 {
 	public class TreasureBox: MapItem {
 
+		// 开启所需物品的名称
 		public string unlockItemName;
+
+		// 是否已经打开
 		public bool unlocked;
 
+		// 奖励的物品数组
 		public Item[] rewardItems;
 
 		protected override void Awake ()
@@ -17,6 +21,9 @@ namespace WordJourney
 			this.mapItemType = MapItemType.TreasureBox;
 		}
 
+		/// <summary>
+		/// 初始化箱子类道具
+		/// </summary>
 		public override void InitMapItem ()
 		{
 			unlocked = false;
@@ -29,44 +36,6 @@ namespace WordJourney
 			unlocked = true;
 			base.AnimEnd ();
 		}
-
-//		private void InitialiseSprites(){
-//
-//			string spriteName = string.Empty;
-//
-//			do {
-//				int index = Random.Range (0, GameManager.Instance.gameDataCenter.allMapSprites.Count);
-//
-//				Sprite s = GameManager.Instance.gameDataCenter.allMapSprites [index];
-//
-//				spriteName = s.name;
-//
-//			} while(!spriteName.Contains ("item"));
-//
-//			string itemName = spriteName.Split ('_')[1];
-//
-//			string originSpriteName = "item_" + itemName + "_origin";
-//
-//			originSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
-//				return s.name == originSpriteName;
-//			});
-//
-//			string destroyedSpriteName = "item_" + itemName + "_unlocked";
-//
-//			unlockedSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
-//				return s.name == destroyedSpriteName;
-//			});
-//
-//
-//			if (originSprite != null) {
-//				SpriteRenderer sr = transform.Find("MapItemIcon").GetComponent<SpriteRenderer> ();
-//				sr.sprite = originSprite;
-//				sr.enabled = true;
-//			}
-//		}
-
-
-
 
 	}
 }

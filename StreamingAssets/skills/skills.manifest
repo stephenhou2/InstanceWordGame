@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3897449996
+CRC: 1238513901
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: babe8650c4ec5672adc67116284e621c
+    Hash: ef34d43f5965a7761e5e91c5afe254c6
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 67f8f31d0a8bde6cfbbff791333aea08
+    Hash: 41da44b56dbab6763698830f046c9213
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -50,7 +50,7 @@ Assets:
 - Assets/Prefabs/Skill/NewSkills/WeaponExpert.prefab
 - Assets/Prefabs/Skill/NewSkills/Thunder.prefab
 - Assets/Prefabs/Skill/NewSkills/PowerStrengthen.prefab
-- Assets/Prefabs/Skill/NewSkills/FireExplosion.prefab
+- Assets/Prefabs/Skill/NewSkills/IceExplosion.prefab
 - Assets/Prefabs/Skill/NewSkills/BrambleShield.prefab
 - Assets/Prefabs/Skill/NewSkills/HardBeat.prefab
 - Assets/Prefabs/Skill/NewSkills/MagicShield.prefab

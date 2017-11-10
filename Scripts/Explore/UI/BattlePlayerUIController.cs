@@ -30,7 +30,6 @@ namespace WordJourney
 		public Button healthBottleButton;
 		public Button manaBottleButton;
 		public Button antiDebuffButton;
-		public Button bagButton;
 
 //		private Transform mSkillAndItemDetailPlane;
 //		public Transform skillAndItemDetailPlane{
@@ -235,6 +234,7 @@ namespace WordJourney
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
+				bagCanvas.GetComponent<BagViewController>().SetUpBagView();
 				bagCanvas.GetComponent<Canvas>().enabled =true;
 				bagCanvas.gameObject.SetActive(true);
 			}, false);
@@ -278,13 +278,13 @@ namespace WordJourney
 
 			if (allConsumablesButton.transform.localRotation != Quaternion.identity) {
 
-				allConsumablesButton.transform.localRotation = Quaternion.identity;
-
 				QuitAllConsumablesPlane ();
 
 				return;
 
 			}
+
+			consumablesButtonPool.AddChildInstancesToPool (allConsumablesContainer);
 
 			allConsumablesButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
 
@@ -301,9 +301,7 @@ namespace WordJourney
 					return obj.name == consumables.spriteName;
 				});
 
-				if (s != null) {
-					consumablesIcon.sprite = s;
-				}
+				consumablesIcon.sprite = s;
 
 				consumablesCount.text = consumables.itemCount.ToString ();
 
@@ -324,6 +322,8 @@ namespace WordJourney
 		}
 
 		public void QuitAllConsumablesPlane(){
+
+			allConsumablesButton.transform.localRotation = Quaternion.identity;
 
 			allConsumablesPlane.gameObject.SetActive (false);
 
@@ -352,134 +352,6 @@ namespace WordJourney
 
 		}
 
-
-
-		public void QuitDetailPlane(){
-
-//			skillAndItemDetailPlane.gameObject.SetActive (false);
-
-		}
-
-
-//		public void ShowItemDetail(int index,Item item){
-//
-//			skillAndItemDetailPlane.SetParent (itemButtons [index].transform,false);
-//
-//			skillAndItemDetailPlane.FindChild ("Name").GetComponent<Text> ().text = item.itemName;
-//
-//			skillAndItemDetailPlane.FindChild ("Description").GetComponent<Text> ().text = item.itemDescription;
-//
-//			skillAndItemDetailPlane.FindChild ("Detail").GetComponent<Text> ().text = item.GetItemPropertiesString ();
-//
-//			skillAndItemDetailPlane.gameObject.SetActive (true);
-//		}
-
-
-//		public void SetUpBattleGainsHUD(List<Item> battleGains){
-//
-//			for (int i = 0; i < battleGains.Count; i++) {
-//
-//				Item item = battleGains [i];
-//
-//				Transform gainItem = battleGainsPool.GetInstance<Transform> (gainItemModel, battleGainsContainer);
-//
-//				Image itemIcon = gainItem.FindChild ("ItemIcon").GetComponent<Image> ();
-//
-//				Text itemCount = gainItem.FindChild ("ItemCount").GetComponent<Text> ();
-//
-//				itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-//					return obj.name == item.spriteName;
-//				});
-//
-//				if (itemIcon.sprite != null) {
-//					itemIcon.enabled = true;
-//				}
-//
-//				itemCount.text = item.itemCount.ToString ();
-//			}
-
-//		}
-
-//		public void QuitBattleGainsHUD (){
-//
-//			foreach (Transform trans in battleGainsContainer) {
-//
-//				Image itemIcon = trans.FindChild ("ItemIcon").GetComponent<Image> ();
-//
-//				Text itemCount = trans.FindChild ("ItemCount").GetComponent<Text> ();
-//
-//				itemIcon.sprite = null;
-//				itemIcon.enabled = false;
-//				itemCount.text = string.Empty;
-//
-//			}
-//
-//			battleGainsPool.AddChildInstancesToPool (battleGainsContainer);
-//
-//			battleGainsHUD.gameObject.SetActive (false);
-//
-//		}
-
-//		public void OnQuitBattle(){
-//
-//			foreach (Button btn in skillButtons) {
-//				btn.interactable = false;
-//				btn.GetComponent<Image> ().enabled = false;
-//				foreach (Text t in btn.GetComponentsInChildren<Text>()) {
-//					t.text = string.Empty;
-//				}
-//			}
-//
-//			foreach (Button btn in new Button[]{healthBottleButton,manaBottleButton,antiDebuffButton}) {
-//				btn.interactable = false;
-//				btn.GetComponent<Image> ().enabled = false;
-//				btn.GetComponentInChildren<Text> ().text = string.Empty;
-//			}
-//		}
-
-//		private BattlePlayerController mBaPlayerController;
-
-//		private List<Sprite> skillIcons = new List<Sprite>();
-
-		//	private List<Item> consumables = new List<Item> ();
-
-		// 角色UIView
-//		public BattlePlayerController baView{
-//
-//			get{
-//				if (mBaPlayerController == null) {
-//					mBaPlayerController = GetComponent<BattlePlayerController> ();
-//				}
-//				return mBaPlayerController;
-//			}
-//
-//		}
-
-
-
-
-//		public void OnSkillButtonUp(){
-//
-//			QuitDetailPlane ();
-//		}
-//
-//		public void OnItemButtonUp(){
-//
-//			QuitDetailPlane ();
-//		}
-
-
-//		public void PlayPlayerDieAnim(BattleAgentController baCtr,CallBack cb){
-//			
-//			baCtr.GetComponent<SpriteRenderer> ().DOFade (0, 0.5f).OnComplete(()=>{
-//				baCtr.gameObject.SetActive(false);
-//
-//				if(cb != null){
-//					cb();
-//				}
-//
-//			});
-//		}
 
 
 		public override void QuitFight(){

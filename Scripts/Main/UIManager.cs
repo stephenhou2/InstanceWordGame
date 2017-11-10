@@ -80,8 +80,7 @@ namespace WordJourney
 			IDictionaryEnumerator enumerator = UIDic.GetEnumerator ();
 			int i = 0;
 			while (enumerator.MoveNext ()) {
-				string key = enumerator.Key as string;
-				keys [i] = key;
+				keys [i] = enumerator.Key as string;
 				i++;
 			}
 			for(int j = 0;j<keys.Length;j++){
