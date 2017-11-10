@@ -15,6 +15,7 @@ namespace WordJourney
 	itemId：2000-3000代表物品配方，3000-3100代表技能卷轴
 
 	*************attention****************/
+	[System.Serializable]
 	public class Formula:Item {
 
 		public FormulaType formulaType;
@@ -45,7 +46,7 @@ namespace WordJourney
 
 				this.itemDescription = itemModel.itemDescription;
 
-				GetItemModelUnlock (itemModel);
+//				GetItemModelUnlock (itemModel);
 
 				break;
 			case FormulaType.Skill:
@@ -78,27 +79,12 @@ namespace WordJourney
 				return obj.itemId == itemOrSkillId;
 			});
 
-			GetItemModelUnlock (itemModel);
+			// 如果背包中没有这种配方，则解锁该配方，并把配方放进背包中
+			itemModel.formulaUnlocked = true;
 
 			return itemModel;
 		}
-
-		private void GetItemModelUnlock(ItemModel itemModel){
-
-			// 如果背包中已经有这种配方，则不添加到背包中
-			for (int i = 0; i < Player.mainPlayer.allFormulasInBag.Count; i++) {
-				Formula formulaInBag = Player.mainPlayer.allFormulasInBag [i];
-				if (formulaInBag.formulaType == FormulaType.Equipment && formulaInBag.itemOrSkillId == itemOrSkillId) {
-					return;
-				}
-			}
-
-			// 如果背包中没有这种配方，则解锁该配方，并把配方放进背包中
-			itemModel.unlocked = true;
-
-			Player.mainPlayer.allFormulasInBag.Add (this);
-
-		}
+			
 
 		/// <summary>
 		/// 解锁该技能卷轴对应的技能，并返回技能信息

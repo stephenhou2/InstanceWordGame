@@ -111,13 +111,15 @@ namespace WordJourney
 
 				ItemModel itemModel = itemModelsOfCurrentType [i];
 
+				if (!itemModel.formulaUnlocked) {
+					continue;
+				}
+
 				Transform itemDetails = itemDetailsPool.GetInstance<Transform> (itemDetailsModel.gameObject, allItemsContainer);
 
 				Image itemIcon = itemDetails.Find ("ItemIcon").GetComponent<Image>();
 
 				Text itemName = itemDetails.Find ("ItemName").GetComponent<Text> ();
-
-				Text levelRequired = itemDetails.Find ("LevelRequired").GetComponent<Text> ();
 
 				Text itemDescText = itemDetails.Find ("ItemDescription").GetComponent<Text> ();
 
@@ -137,9 +139,9 @@ namespace WordJourney
 
 				itemName.text = itemModel.itemName;
 
-				string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
-
-				levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
+//				string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
+//
+//				levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
 
 				itemDescText.text = itemModel.itemDescription;
 
@@ -263,8 +265,6 @@ namespace WordJourney
 
 			Text itemDescText = itemDetailsHUD.Find ("ItemDescription").GetComponent<Text> ();
 
-			Text levelRequired = itemDetailsHUD.Find ("LevelRequired").GetComponent<Text> ();
-
 			Text itemBaseProperties = itemDetailsHUD.Find ("ItemBaseProperties").GetComponent<Text> ();
 
 			Text itemAttachedProperties = itemDetailsHUD.Find ("ItemAttachedProperties").GetComponent<Text> ();
@@ -284,9 +284,9 @@ namespace WordJourney
 
 			itemName.text = itemModel.itemName;
 
-			string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
-
-			levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
+//			string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
+//
+//			levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
 
 			itemDescText.text = itemModel.itemDescription;
 

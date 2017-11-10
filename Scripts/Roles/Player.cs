@@ -279,6 +279,23 @@ namespace WordJourney
 			case ItemType.Material:
 				AddMaterial (item as Material);
 				break;
+			case ItemType.Formula:
+
+				Formula formula = item as Formula;
+
+				// 如果背包中已经有这种配方，则不添加到背包中
+				for (int i = 0; i < allFormulasInBag.Count; i++) {
+					Formula formulaInBag = allFormulasInBag [i];
+					if (formulaInBag.formulaType == FormulaType.Equipment && formulaInBag.itemOrSkillId == formula.itemOrSkillId) {
+						return;
+					}
+				}
+
+				formula.GetItemModelUnlock ();
+
+				allFormulasInBag.Add (formula);
+
+				break;
 			}
 				
 		}

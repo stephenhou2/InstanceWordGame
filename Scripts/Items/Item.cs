@@ -63,7 +63,7 @@ namespace WordJourney{
 			ItemModel itemModel = null;
 			Item newItem = null;
 
-			if (itemId <= 2000) {
+			if (itemId < 1000) {
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
 					return item.itemId == itemId;
 				});
@@ -75,13 +75,19 @@ namespace WordJourney{
 					newItem = new Consumables (itemModel, 1);
 					break;
 				}
-			} else if (itemId <= 3000) {
-				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
-					return item.itemId == itemId - 3000;
+			}else if (itemId < 2000) {
+				Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+					return obj.itemId == itemId;
 				});
-				newItem = new Formula (FormulaType.Equipment, itemId - 3000);
-			} else if (itemId <= 3100) {
-				newItem = new Formula (FormulaType.Skill, itemId - 3100);
+
+				newItem = new Material (material, itemCount);
+			} else if (itemId < 3000) {
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
+					return item.itemId == itemId - 2000;
+				});
+				newItem = new Formula (FormulaType.Equipment, itemId - 2000);
+			} else if (itemId < 3100) {
+				newItem = new Formula (FormulaType.Skill, itemId - 3000);
 			}
 
 			return newItem;
@@ -192,12 +198,11 @@ namespace WordJourney{
 		public EquipmentType equipmentType;//装备类型
 		public ConsumablesType consumbalesType;//消耗品类型
 		public string detailType;//详细装备类型
-		public int levelRequired;//装备等级要求
 
 		public List<Material> materials = new List<Material> ();
 		public List<Material> failMaterials = new List<Material>();
 
-		public bool unlocked;
+		public bool formulaUnlocked;
 	}
 
 

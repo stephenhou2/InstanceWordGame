@@ -179,7 +179,7 @@ namespace WordJourney
 		public EquipmentType equipmentType;
 		public ConsumablesType consumablesType;
 		public string detailType;
-		public int levelRequired;
+		public bool formulaUnlocked;
 		public string spriteName;
 		public int itemId;
 		public ItemType itemType;
@@ -220,7 +220,7 @@ namespace WordJourney
 			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[20]));
 			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [21]));
 			detailType = itemStrings [22];
-			levelRequired = Convert.ToInt16 (itemStrings [23]);
+			formulaUnlocked = Convert.ToInt16 (itemStrings [23]) == 1;
 			spriteName = itemStrings [24];
 
 			itemDescription = itemDescription.Replace ("_", "\n"); 

@@ -65,7 +65,7 @@ namespace WordJourney
 
 				for (int j = 0; j < rewardItemCount; j++) {
 
-					Item item = RandomItem (lockedItems);
+					Item item = RandomItem (lockedItems,rewardItems);
 
 					rewardItems [j] = item;
 				}
@@ -134,11 +134,12 @@ namespace WordJourney
 
 					normalTreasureBox.mapItemName = normalTreasureBoxModel.mapItemName;
 
+
 					Item[] rewardItems = new Item[rewardItemCount];
 
 					for (int j = 0; j < rewardItemCount; j++) {
 
-						Item item = RandomItem (normalItems);
+						Item item = RandomItem (normalItems,rewardItems);
 
 						rewardItems [j] = item;
 					}
@@ -185,11 +186,25 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>The item.</returns>
 		/// <param name="eventsList">Events list.</param>
-		private Item RandomItem(List<Item> eventsList){
+		private Item RandomItem(List<Item> itemList,Item[] rewardItems){
 
-			int index = Random.Range (0, eventsList.Count);
+			int index = Random.Range (0, itemList.Count);
 
-			return eventsList [index];
+			int itemCount = 1;
+
+			Item item = Item.NewItemWith(itemList[index].itemId,itemCount);
+
+			for (int i = 0; i < rewardItems.Length; i++) {
+
+				Item reward = rewardItems [i];
+
+				if (reward != null && reward.itemId == item.itemId) {
+					RandomItem (itemList, rewardItems);
+				}
+
+			}
+
+			return item;
 
 		}
 			

@@ -158,8 +158,8 @@ namespace WordJourney
 		public void SetUpItemDetailsPlane(Item item){
 
 			if (item.itemType == ItemType.Equipment) {
+
 				Text itemName = itemDetailsContainer.Find ("ItemName").GetComponent<Text> ();
-				Text levelRequired = itemDetailsContainer.Find ("LevelRequired").GetComponent<Text> ();
 				Text itemBaseProperties = itemDetailsContainer.Find ("ItemBaseProperties").GetComponent<Text> ();
 				Text itemAttachedProperties = itemDetailsContainer.Find ("ItemAttachedProperties").GetComponent<Text> ();
 				Image itemIcon = itemDetailsContainer.Find ("ItemIcon").GetComponent<Image> ();
@@ -175,7 +175,7 @@ namespace WordJourney
 					itemIcon.sprite = s;
 				}
 				
-				levelRequired.text = string.Format ("等级要求:{0}", (item as Equipment).levelRequired);
+//				levelRequired.text = string.Format ("等级要求:{0}", (item as Equipment).levelRequired);
 
 				itemDetailsPlane.gameObject.SetActive (true);
 

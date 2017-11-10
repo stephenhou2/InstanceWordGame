@@ -31,22 +31,12 @@ namespace WordJourney
 		public Button manaBottleButton;
 		public Button antiDebuffButton;
 
-//		private Transform mSkillAndItemDetailPlane;
-//		public Transform skillAndItemDetailPlane{
-//			get{
-//				if (mSkillAndItemDetailPlane == null) {
-//					mSkillAndItemDetailPlane = GameObject.Find (CommonData.instanceContainerName + "/SkillAndItemDetailPlane").transform;
-//				}
-//				return mSkillAndItemDetailPlane;
-//			}
-//
-//		}
+		public Transform toolChoicesPlane;
+		public Transform toolChoicesContaienr;
+		private InstancePool toolChoiceButtonPool;
+		private Transform toolChoiceButtonModel;
 			
 		private Sequence mSequence;
-
-//		private List<Sprite> skillSprites;
-//
-//		private List<Sprite> itemSprites;
 
 		private List<Button> skillButtons = new List<Button>();
 
@@ -68,13 +58,17 @@ namespace WordJourney
 
 
 			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
-			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
-
 			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
+			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
+
+
+			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 			consumablesButtonModel = TransformManager.FindTransform ("ConsumablesButtonModel");
+			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
 
 			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
 			skillButtonModel.SetParent (modelContainerOfExploreScene);
+			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
 			UpdateItemButtons ();
@@ -137,7 +131,7 @@ namespace WordJourney
 				skillButton.onClick.RemoveAllListeners ();
 				skillButton.onClick.AddListener (delegate() {
 					skillSelectCallBack(new int[]{index});
-					SkillButtonCoolen(skillButton,skill);
+					SkillButtonCoolen(skill);
 				});
 
 				skillButtons.Add (skillButton);
@@ -149,22 +143,27 @@ namespace WordJourney
 		}
 
 		/// <summary>
-		/// 技能按钮的冷却
+		/// 技能按钮的冷却(所有技能共同进入冷却)
 		/// </summary>
-		private void SkillButtonCoolen(Button skillButton,Skill skill){
-			
-			skillButton.interactable = false;
+		private void SkillButtonCoolen(Skill skill){
 
-			Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
+			for (int i = 0; i < skillButtons.Count; i++) {
+				
+				Button skillButton = skillButtons [i];
 
-			coolenMask.enabled = true;
+				skillButton.interactable = false;
 
-			coolenMask.fillAmount = 1;
+				Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
 
-			coolenMask.DOFillAmount (0, skill.coolenInterval).OnComplete(()=>{
-				coolenMask.enabled = false;
-				UpdateSkillButtonsStatus();
-			});
+				coolenMask.enabled = true;
+
+				coolenMask.fillAmount = 1;
+
+				coolenMask.DOFillAmount (0, skill.coolenInterval).OnComplete (() => {
+					coolenMask.enabled = false;
+					UpdateSkillButtonsStatus ();
+				});
+			}
 				
 		}
 
@@ -196,20 +195,20 @@ namespace WordJourney
 		public void UpdateItemButtons(){
 
 			Item healthBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemNameInEnglish == "health";
+				return obj.itemId == 500;
 			});
 
 			Item manaBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemNameInEnglish == "mana";
+				return obj.itemId == 501;
 			});
 
-			Item antiDebuffBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemNameInEnglish == "antiDebuff";
+			Item TP = player.allConsumablesInBag.Find (delegate(Consumables obj) {
+				return obj.itemId == 514;
 			});
 
 			SetUpItemButton (healthBottle, healthBottleButton);
 			SetUpItemButton (manaBottle, manaBottleButton);
-			SetUpItemButton (antiDebuffBottle, antiDebuffButton);
+			SetUpItemButton (TP, antiDebuffButton);
 
 
 		}
@@ -249,28 +248,27 @@ namespace WordJourney
 			switch (buttonIndex) {
 			case 0://生命药剂
 				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 501;
+					return obj.itemId == 500;
 				});
 				break;
 			case 1://魔法药剂
 				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 502;
+					return obj.itemId == 501;
 				});
 				break;
 			case 2://回程卷轴
 				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 515;
+					return obj.itemId == 514;
 				});
 				break;
 			}
-				
-			if (consumables == null) {
-				return;
-			}
+
 
 			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 
 			bpCtr.UseItem (consumables);
+
+			UpdateItemButtonsAndStatusPlane ();
 
 		}
 
@@ -283,6 +281,14 @@ namespace WordJourney
 				return;
 
 			}
+
+			SetUpAllConsumablesPlane ();
+
+			allConsumablesPlane.gameObject.SetActive (true);
+
+		}
+
+		private void SetUpAllConsumablesPlane(){
 
 			consumablesButtonPool.AddChildInstancesToPool (allConsumablesContainer);
 
@@ -313,11 +319,11 @@ namespace WordJourney
 
 					bpCtr.UseItem (consumables);
 
+					SetUpAllConsumablesPlane();
+
 				});
 
 			}
-
-			allConsumablesPlane.gameObject.SetActive (true);
 
 		}
 
@@ -352,6 +358,191 @@ namespace WordJourney
 
 		}
 
+		public void SetUpToolChoicePlane(MapItem mapItem){
+
+			Consumables consumablesAsTool = null;
+			Equipment equipedWeapon = null;
+
+			switch (mapItem.mapItemType) {
+			case MapItemType.Obstacle:
+
+				// 查找背包中的十字镐
+				consumablesAsTool = player.allConsumablesInBag.Find (delegate(Consumables obj) {
+					return obj.itemId == 512;	
+				});
+
+				break;
+			case MapItemType.TreasureBox:
+
+				// 查找背包中的钥匙
+				consumablesAsTool = player.allConsumablesInBag.Find (delegate(Consumables obj) {
+					return obj.itemId == 513;	
+				});
+				break;
+			}
+
+			equipedWeapon = player.allEquipedEquipments.Find (delegate(Equipment obj) {
+				return obj.equipmentType == EquipmentType.Weapon;
+			});
+
+			if (consumablesAsTool == null && equipedWeapon == null) {
+				string tint = "这里好像过不去";
+				GetComponent<ExploreUICotroller>().SetUpTintHUD (tint);
+				return;
+			}
+
+			if (consumablesAsTool != null) {
+
+				Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
+
+				Image toolIcon = toolChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
+
+				Text toolCount = toolChoiceButton.Find ("ToolCount").GetComponent<Text> ();
+
+				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == consumablesAsTool.spriteName;
+				});
+
+				if (s != null) {
+					toolIcon.sprite = s;
+				}
+
+				toolCount.text = consumablesAsTool.itemCount.ToString ();
+
+				toolChoiceButton.GetComponent<Button> ().onClick.RemoveAllListeners ();
+
+				toolChoiceButton.GetComponent<Button> ().onClick.AddListener (delegate() {
+					OnToolChoiceButtonClick(consumablesAsTool,mapItem);
+				});
+
+			}
+
+			if (equipedWeapon != null) {
+
+				Transform weaponChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
+				Image weaponIcon = weaponChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
+
+				Sprite weaponChoiceButtonSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == "";
+				});
+
+				weaponIcon.sprite = weaponChoiceButtonSprite;
+
+				weaponChoiceButton.GetComponent<Button> ().onClick.RemoveAllListeners ();
+
+				weaponChoiceButton.GetComponent<Button> ().onClick.AddListener (delegate() {
+					OnToolChoiceButtonClick (null, mapItem);
+				});
+			}
+
+			toolChoicesPlane.gameObject.SetActive (true);
+
+		}
+
+		public void QuitToolChoicePlane(){
+
+			GetComponent<ExploreUICotroller>().HideMask();
+
+			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
+
+			toolChoicesPlane.gameObject.SetActive (false);
+
+		}
+
+		private void OnToolChoiceButtonClick(Consumables tool,MapItem mapItem){
+
+			ExploreUICotroller expUICtr = GetComponent<ExploreUICotroller> ();
+			string tint = string.Empty;
+			Item[] rewards = null;
+
+			QuitToolChoicePlane ();
+
+			// 使用武器破坏
+			if (tool == null) {
+				
+				Equipment equipment = player.allEquipedEquipments.Find (delegate(Equipment obj) {
+					return obj.equipmentType == EquipmentType.Weapon;
+				});
+					
+				GameManager.Instance.soundManager.PlayClips (
+					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+					SoundDetailTypeName.Map, 
+					mapItem.mapItemName);
+
+				mapItem.UnlockOrDestroyMapItem(()=>{
+
+					if (mapItem.walkableAfterUnlockOrDestroy) {
+						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
+					}
+
+					GetComponent<ExploreUICotroller>().HideMask();
+
+					bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.DestroyObstacle);
+
+					if (completeDamaged) {
+						tint = string.Format ("{0}完全损坏", equipment.itemName);
+						expUICtr.SetUpTintHUD (tint);
+					}
+
+
+					switch (mapItem.mapItemType) {
+					case MapItemType.Obstacle:
+						break;
+					case MapItemType.TreasureBox:
+
+						bool unlockSuccess = false;
+
+						// 使用武器开箱子20%的几率可以成功，80%的概率拿不到东西
+						int seed = Random.Range (0, 10);
+
+						if (seed <= 1) {
+							unlockSuccess = true;
+						}
+
+						if (unlockSuccess) {
+							rewards = (mapItem as TreasureBox).rewardItems;
+							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+						}
+						break;
+					}
+						
+				});
+
+			} else {
+				// 背包中的工具数量-1
+				player.RemoveItem (new Consumables (tool, 1));
+
+				// 播放音效
+				GameManager.Instance.soundManager.PlayClips (
+					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+					SoundDetailTypeName.Map, 
+					mapItem.mapItemName);
+
+				mapItem.UnlockOrDestroyMapItem (()=>{
+					
+					if (mapItem.walkableAfterUnlockOrDestroy) {
+						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
+					}
+
+					switch (mapItem.mapItemType) {
+					// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
+					case MapItemType.Obstacle:
+						List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
+						int rareMaterialIndex = Random.Range (0, allMaterials.Count + 1);
+						Material rareMaterial = allMaterials [rareMaterialIndex];
+						rewards = new Item[]{new Material(rareMaterial,1)};
+						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+						break;
+						// 钥匙开宝箱一定成功
+					case MapItemType.TreasureBox:
+						rewards = (mapItem as TreasureBox).rewardItems;
+						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+						break;
+					}
+
+				});
+			}
+		}
 
 
 		public override void QuitFight(){

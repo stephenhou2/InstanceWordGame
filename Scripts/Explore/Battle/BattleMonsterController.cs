@@ -101,48 +101,53 @@ namespace WordJourney
 				skill.sfxName);
 
 			Player player = Player.mainPlayer;
+
 			switch (skill.skillType) {
 			case SkillType.Physical:
-				for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
 
-					Equipment equipment = player.allEquipedEquipments [i];
+				// 玩家受到物理攻击，已装备的护具中随机一个护具的耐久度降低
+				List<Equipment> allEquipedProtector = player.allEquipedEquipments.FindAll (delegate (Equipment obj) {
+					int equipmentTypeToInt = (int)obj.equipmentType;
+					return equipmentTypeToInt >= 1 && equipmentTypeToInt <= 5;
+				});
 
-					// 受到物理攻击时，已装备的护具中随机一个护具的耐久度降低
-					EquipmentType damagedEquipmentType = (EquipmentType)Random.Range (1, 5);
+				if (allEquipedProtector.Count == 0) {
+					break;
+				}
 
-					if (equipment.equipmentType == damagedEquipmentType) {
+				int randomIndex = Random.Range (0, allEquipedProtector.Count + 1);
 
-						equipment.durability -= CommonData.durabilityDecreaseWhenBeAttacked;
+				Equipment damagedEquipment = allEquipedProtector [randomIndex];
 
-						if (equipment.durability <= 0) {
-							string tint = string.Format("{0}完全损坏",equipment.itemName);
-							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-							player.RemoveItem (equipment);
-							equipment = null;
-						}
-					}
+				bool completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BePhysicalAttacked);
+
+				if (completeDamaged) {
+					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
+					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
 
 				}
+	
 				break;
 			case SkillType.Magic:
-				for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
 
-					Equipment equipment = player.allEquipedEquipments [i];
+				List<Equipment> allEquipedOrnaments = player.allEquipedEquipments.FindAll (delegate(Equipment obj) {
+					int equipmentTypeToInt = (int)obj.equipmentType;
+					return equipmentTypeToInt >= 5 && equipmentTypeToInt <= 6;
+				});
 
-					// 受到物理攻击时，已装备的饰品中随机一个的耐久度降低
-					EquipmentType damagedEquipmentType = (EquipmentType)Random.Range (5,7);
+				if (allEquipedOrnaments.Count == 0) {
+					break;
+				}
 
-					if (equipment.equipmentType == damagedEquipmentType) {
+				randomIndex = Random.Range (0, allEquipedOrnaments.Count + 1);
 
-						equipment.durability -= CommonData.durabilityDecreaseWhenBeMagicAttacked;
+				damagedEquipment = allEquipedOrnaments [randomIndex];
 
-						if (equipment.durability <= 0) {
-							string tint = string.Format("{0}完全损坏",equipment.itemName);
-							bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-							player.RemoveItem (equipment);
-							equipment = null;
-						}
-					}
+				completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BeMagicAttacked);
+
+				if (completeDamaged) {
+					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
+					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
 				}
 				break;
 			case SkillType.Passive:

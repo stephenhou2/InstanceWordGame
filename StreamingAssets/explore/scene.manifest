@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1993952000
+CRC: 3212482456
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1f60af8a65e68154ba126817c0c2f986
+    Hash: a20c8f17a879709032500ce6cea01ccc
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9dc7e59713698840c5c9ebe0a3fb8ee1
+    Hash: d64d878faeb2141061a8f935232e4e4f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -97,6 +97,7 @@ Assets:
 - Assets/Prefabs/Explore/ChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/SkillButtonModel.prefab
 - Assets/Prefabs/Explore/ExploreManager.prefab
+- Assets/Prefabs/Explore/ToolChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
 Dependencies:

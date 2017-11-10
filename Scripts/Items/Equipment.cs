@@ -55,7 +55,7 @@ namespace WordJourney
 		public int maxAttachedProperties;//附加属性最大数量
 		public int attachedPropertyId;//一定有的附加属性id
 		public EquipmentType equipmentType;//装备类型
-		public int levelRequired;//装备等级要求
+//		public bool formulaUnlocked;//装备配方是否已经解锁
 
 		public List<Material> materials = new List<Material> ();//合成材料需求
 		public List<Material> failMaterials = new List<Material>();//合成失败时可能掉落的特殊材料
@@ -68,8 +68,6 @@ namespace WordJourney
 
 		//装备是否已佩戴
 		public bool equiped;
-
-		public bool unlocked;
 
 		/// <summary>
 		/// 空构造函数，初始化一个0属性的装备
@@ -100,49 +98,72 @@ namespace WordJourney
 			this.healthGain = itemModel.healthGain;
 			this.manaGain = itemModel.manaGain;
 
+			// 如果是玩家自己合成的装备
 			if (materialCount != 0) {
+				// 耐久度=材料使用数量*10
 				this.maxDurability = 10 * materialCount;
 				this.durability = this.maxDurability;
-			} else {
-				this.maxDurability = Random.Range (itemModel.materials.Count, 2 * itemModel.materials.Count);
+			} else {// 如果是探索中掉落的装备
+				// 耐久度= 5*【材料种类，2倍材料种类】
+				this.maxDurability = 5 * Random.Range (itemModel.materials.Count, 2 * itemModel.materials.Count + 1);
 				this.durability = this.maxDurability;
 			}
 
 			this.equipmentType = itemModel.equipmentType;
 
 			this.materials = itemModel.materials;
+
 			this.failMaterials = itemModel.failMaterials;
 
 			if (fuseStone != null) {
 				this.itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
 			}
 
-			this.unlocked = itemModel.unlocked;
+//			this.formulaUnlocked = itemModel.formulaUnlocked;
 
 			InitAttachedProperties (itemModel.attachedPropertyId, itemModel.maxAttachedPropertyCount);
 
 		}
 
+
+		/// <summary>
+		/// 初始化装备的附加属性
+		/// </summary>
+		/// <param name="predeterminedPropertyId">一定有的附加属性id.</param>
+		/// <param name="maxAttachedPropertyCount">附加属性最大数量.</param>
 		private void InitAttachedProperties(int predeterminedPropertyId,int maxAttachedPropertyCount){
 
+			// 附加属性id列表
 			List<int> attachedPropertiesIdList = new List<int> ();
+
+			// 附加属性数量
+			int attachedPropertiesCount = 0;
+
+			// 初始化空的id表，用于从中抽取id后删除，保证每次拿到的附加属性id不同
 			for (int i = 0; i < GameManager.Instance.gameDataCenter.allEquipmentAttachedProperties.Count; i++) {
 				attachedPropertiesIdList.Add (i);
 			}
 
 			EquipmentAttachedProperty predeterminedProperty = null;
 
+			// 如果有必出的附加属性
 			if (predeterminedPropertyId >= 0) {
+				// 取得必出的附加属性
 				predeterminedProperty = GameManager.Instance.gameDataCenter.allEquipmentAttachedProperties.Find (delegate(EquipmentAttachedProperty obj) {
 					return obj.attachedPropertyId == predeterminedPropertyId;
 				});
-			}
-
-			if (predeterminedProperty != null) {
+				// 将必出的附加属性加入到附加属性列表中
 				attachedProperties.Add (predeterminedProperty);
+				// 获得附加属性实际数量
+				attachedPropertiesCount = Random.Range (1, maxAttachedPropertyCount + 1);
+			} else {// 如果没有必出的附加属性
+				// 获得附加属性实际数量
+				attachedPropertiesCount = Random.Range (0, maxAttachedPropertyCount + 1);
 			}
 
-			for (int i = attachedProperties.Count; i < maxAttachedPropertyCount; i++) {
+
+			// 随机附加属性
+			for (int i = attachedProperties.Count; i < attachedPropertiesCount; i++) {
 
 				int randomId = Random.Range (0, attachedPropertiesIdList.Count);
 
@@ -154,10 +175,16 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 分解装备，目前默认只从合成材料当中选择一种作为分解所得返还（但不包括boss材料）
+		/// </summary>
+		/// <returns>The equipment.</returns>
 		public List<Item> ResolveEquipment(){
 
+			// 返还的材料列表
 			List<Material> returnedMaterials = new List<Material> ();
 
+			// 去除制造材料中的boss材料（即boss材料在装备分解之后不会返还）
 			for (int i = 0; i < materials.Count; i++) {
 
 				Material m = materials [i];
@@ -168,7 +195,8 @@ namespace WordJourney
 					returnedMaterials.Add (m);
 				}
 			}
-
+				
+			// 返还的材料序号
 			int materialIndex = Random.Range (0, returnedMaterials.Count);
 
 			Player.mainPlayer.RemoveItem (this);
@@ -404,7 +432,43 @@ namespace WordJourney
 
 
 
-		public void EquipmentDamaged(EquipmentDamageSource source){
+		public bool EquipmentDamaged(EquipmentDamageSource source){
+
+			bool completeDamaged = false;
+
+			int equipmentTypeToInt = (int)this.equipmentType;
+
+			switch (source) {
+			case EquipmentDamageSource.PhysicalAttack:
+				if (equipmentTypeToInt == 0) {
+					this.durability -= CommonData.durabilityDecreaseWhenAttack;
+				}
+				break;
+			case EquipmentDamageSource.DestroyObstacle:
+				if (equipmentTypeToInt == 0) {
+					this.durability -= CommonData.durabilityDecreaseWhenAttackObstacle;
+				}
+				break;
+			case EquipmentDamageSource.BePhysicalAttacked:
+				if(equipmentTypeToInt >= 1 && equipmentTypeToInt <= 4){
+					this.durability -= CommonData.durabilityDecreaseWhenBeAttacked;
+				}
+				break;
+			case EquipmentDamageSource.BeMagicAttacked:
+				if (equipmentTypeToInt >= 5 && equipmentTypeToInt <= 6) {
+					this.durability -= CommonData.durabilityDecreaseWhenBeMagicAttacked;
+				}
+				break;
+			}
+
+
+			completeDamaged = this.durability <= 0;
+
+			if (completeDamaged) {
+				Player.mainPlayer.RemoveItem (this);
+			}
+
+			return completeDamaged;
 
 		}
 

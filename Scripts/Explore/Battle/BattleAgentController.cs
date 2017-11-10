@@ -55,8 +55,12 @@ namespace WordJourney
 			}
 		}
 
+		// 技能特效信息类
 		protected class SkillEffectInfo{
+
+			// 特效游戏体的transform
 			public Transform skillEffectTrans;
+			// 特效名称
 			public string triggerName;
 
 			public SkillEffectInfo(string triggerName,Transform skillEffectTrans){
@@ -65,6 +69,7 @@ namespace WordJourney
 			}
 		}
 
+		// 角色身上仍然在播放中的技能特效
 		protected Dictionary<string,SkillEffectInfo> skillEffectDic = new Dictionary<string,SkillEffectInfo> ();
 
 

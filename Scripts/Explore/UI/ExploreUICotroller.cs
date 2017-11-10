@@ -267,10 +267,11 @@ namespace WordJourney
 		public void PickUpSelected(){
 
 			for (int i = 0; i < itemsToPickUp.Count; i++) {
-				Player.mainPlayer.AddItem (itemsToPickUp[i]);
+				Player.mainPlayer.AddItem (itemsToPickUp [i]);
 			}
 
 			OnQuitRewardPlane ();
+			GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
 
 		}
 

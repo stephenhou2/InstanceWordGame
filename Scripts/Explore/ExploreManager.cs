@@ -212,43 +212,7 @@ namespace WordJourney
 
 			Obstacle obstacle = mapItem as Obstacle;
 
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-				SoundDetailTypeName.Map, 
-				mapItem.mapItemName);
-
-			battlePlayerCtr.PlayRoleAnim ("fightWithAxe", 1, () => {
-
-				obstacle.UnlockOrDestroyMapItem(()=>{
-
-					mapGenerator.mapWalkableInfoArray [(int)obstacle.transform.position.x, (int)obstacle.transform.position.y] = 1;
-
-					expUICtr.HideMask();
-
-					Player player = Player.mainPlayer;
-
-					for (int i = 0; i < player.allEquipedEquipments.Count; i++) {
-
-						Equipment equipment = player.allEquipedEquipments [i];
-
-						// 使用武器破坏障碍物时，武器的耐久度降低
-						if (equipment.equipmentType == EquipmentType.Weapon) {
-
-							equipment.durability -= CommonData.durabilityDecreaseWhenAttackObstacle;
-
-							if (equipment.durability <= 0) {
-								string tint = string.Format("{0}完全损坏",equipment.itemName);
-								expUICtr.SetUpTintHUD (tint);
-								player.RemoveItem(equipment);
-								equipment = null;
-							}
-						}
-					}
-
-				});
-
-			});
-
+			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle);
 
 		}
 
@@ -291,34 +255,11 @@ namespace WordJourney
 			// 如果该地图物品需要使用特殊物品开启
 			if (tb.unlockItemName != string.Empty) {
 
+				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (mapItem);
+
 				Consumables unlockItem = Player.mainPlayer.allConsumablesInBag.Find(delegate(Consumables item) {
 					return item.itemName == tb.unlockItemName;
 				});
-
-				if (unlockItem == null) {
-					string tint = string.Format ("缺少 <color=blue>{0}x1</color>", tb.unlockItemName);
-					expUICtr.SetUpTintHUD (tint);
-
-				} else {
-
-					unlockItem.itemCount--;
-
-					GameManager.Instance.soundManager.PlayClips (
-						GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-						SoundDetailTypeName.Map, 
-						mapItem.mapItemName);
-
-					tb.UnlockOrDestroyMapItem (()=>{
-
-						if (tb.walkableAfterUnlockOrDestroy) {
-							mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
-						}
-						expUICtr.SetUpRewardItemsPlane(tb.rewardItems);
-					});
-
-
-
-				}
 				return;
 			}
 

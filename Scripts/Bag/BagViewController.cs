@@ -49,6 +49,8 @@ namespace WordJourney
 
 		public void SetUpBagView(){
 
+			currentSelectItemType = ItemType.Equipment;
+
 			bagView.SetUpBagView (currentSelectItem);
 
 			InitItemsOfCurrentSelectType<Equipment> (Player.mainPlayer.allEquipmentsInBag);

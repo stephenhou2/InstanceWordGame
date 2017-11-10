@@ -67,6 +67,9 @@ namespace WordJourney
 			Player.mainPlayer.AddItem (wood);
 			Player.mainPlayer.AddItem (iron);
 			Player.mainPlayer.AddItem (bandage);
+
+			Formula f = new Formula (FormulaType.Equipment, 1);
+			Player.mainPlayer.AddItem (f);
 		}
 
 		/// <summary>
