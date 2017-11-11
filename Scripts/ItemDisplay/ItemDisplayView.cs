@@ -127,6 +127,8 @@ namespace WordJourney
 
 				Button produceButton = itemDetails.Find ("ProduceButton").GetComponent<Button> ();
 
+				Transform newFormulaTintIcon = itemDetails.Find ("NewFormulaTintIcon");
+
 				Transform materialsContainer = itemDetails.Find ("MaterialsContainer").transform;
 
 				itemIcon.sprite = itemSprites.Find (delegate(Sprite obj) {
@@ -139,9 +141,15 @@ namespace WordJourney
 
 				itemName.text = itemModel.itemName;
 
-//				string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
-//
-//				levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
+				Formula formula = Player.mainPlayer.allFormulasInBag.Find (delegate(Formula obj) {
+					return obj.itemOrSkillId == itemModel.itemId;
+				});
+
+				if (formula == null) {
+					newFormulaTintIcon.gameObject.SetActive(false);
+				} else {
+					newFormulaTintIcon.gameObject.SetActive(formula.isNewItem);
+				}
 
 				itemDescText.text = itemModel.itemDescription;
 
@@ -156,7 +164,7 @@ namespace WordJourney
 				produceButton.onClick.RemoveAllListeners ();
 
 				produceButton.onClick.AddListener (delegate() {
-					GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel);
+					GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel,newFormulaTintIcon,formula);
 				});
 
 
@@ -195,7 +203,6 @@ namespace WordJourney
 			Text materialUnstableness = materialPlane.Find ("MaterialUnstableness").GetComponent<Text> ();
 
 			Text materialPossessionCount = materialPlane.Find ("MaterialPossessionCount").GetComponent<Text> ();
-
 
 			materialName.text = material.itemName;
 
@@ -284,10 +291,6 @@ namespace WordJourney
 
 			itemName.text = itemModel.itemName;
 
-//			string colorText = Player.mainPlayer.agentLevel < itemModel.levelRequired ? "red" : "green";
-//
-//			levelRequired.text = string.Format ("等级要求:<color={0}>{1}级</color>", colorText, itemModel.levelRequired);
-
 			itemDescText.text = itemModel.itemDescription;
 
 			itemBaseProperties.text = itemModel.itemDescription;
@@ -295,7 +298,12 @@ namespace WordJourney
 			produceButton.onClick.RemoveAllListeners ();
 
 			produceButton.onClick.AddListener (delegate() {
-				GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel);
+
+				Formula formula = Player.mainPlayer.allFormulasInBag.Find (delegate(Formula obj) {
+					return obj.itemOrSkillId == itemModel.itemId;
+				});
+				
+				GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel,null,formula);
 			});
 
 			List<Material> materialsNeed = itemModel.materials;

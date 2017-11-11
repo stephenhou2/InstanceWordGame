@@ -32,8 +32,9 @@ namespace WordJourney{
 
 		public int itemCount;
 
-		// 物品属性数组
-//		protected double[] propertiesArray;
+		public bool isNewItem = true;
+
+
 
 
 //		public int attackGain;//攻击力增益

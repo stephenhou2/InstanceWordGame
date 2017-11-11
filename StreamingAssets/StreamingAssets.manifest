@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3763355591
+CRC: 3865825817
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -44,7 +44,8 @@ AssetBundleManifest:
     Info_10:
       Name: item/canvas
       Dependencies:
-        Dependency_0: ui/icons
+        Dependency_0: item/icons
+        Dependency_1: ui/icons
     Info_11:
       Name: produce/canvas
       Dependencies:

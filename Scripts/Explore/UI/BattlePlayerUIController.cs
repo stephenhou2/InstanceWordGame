@@ -47,7 +47,12 @@ namespace WordJourney
 
 
 
-
+		/// <summary>
+		/// 初始化探索界面中玩家UI
+		/// 包括：人物状态栏 底部物品栏 战斗中的技能栏 所有消耗品显示栏
+		/// </summary>
+		/// <param name="player">Player.</param>
+		/// <param name="skillSelectCallBack">Skill select call back.</param>
 		public void SetUpExplorePlayerView(Player player,CallBack<int> skillSelectCallBack){
 
 			this.player = player;
@@ -76,7 +81,9 @@ namespace WordJourney
 		}
 
 
-
+		/// <summary>
+		/// 初始化人物状态栏
+		/// </summary>
 		private void SetUpPlayerStatusPlane(){
 
 			healthBar.maxValue = player.maxHealth;
@@ -90,16 +97,21 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 更新人物状态栏
+		/// </summary>
 		public void UpdatePlayerStatusPlane(){
 			UpdateHealthBarAnim(player);
 			UpdateManaBarAnim (player);
 		}
 
+		/// <summary>
+		/// 初始化人物技能栏
+		/// </summary>
+		/// <param name="player">Player.</param>
 		public void SetUpPlayerSkillPlane(Player player){
 
 			skillButtons.Clear ();
-
-//			BattlePlayerController bpCtr = GameObject.Find (CommonData.instanceContainerName, "ExploreManager").GetComponent<BattlePlayerController> ();
 
 			for (int i = 0; i < player.equipedSkills.Count; i++) {
 
@@ -167,41 +179,44 @@ namespace WordJourney
 				
 		}
 
+		/// <summary>
+		/// 更新技能按钮是否可交互，根据玩家魔法值更新技能所需魔法的显示颜色
+		/// </summary>
 		private void UpdateSkillButtonsStatus(){
 			
 			for (int i = 0; i < skillButtons.Count; i++) {
 				
 				Button skillButton = skillButtons [i];
 				Skill skill = player.equipedSkills [i];
-
 				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
-//				Image coolenMask = skillButton.transform.FindChild ("CoolenMask").GetComponent<Image>();
 
 				skillButton.interactable = player.mana >= skill.manaConsume;
 
 				if (!skillButton.interactable) {
 					manaConsume.color = Color.red;
-//					coolenMask.fillAmount = 1;
-//					coolenMask.gameObject.SetActive (true);
 				} else {
 					manaConsume.color = Color.green;
-//					coolenMask.gameObject.SetActive (false);
 				}
 
 			}
 		}
 
-
+		/// <summary>
+		/// 更新底部物品栏状态
+		/// </summary>
 		public void UpdateItemButtons(){
 
+			// 背包中的血瓶
 			Item healthBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemId == 500;
 			});
 
+			// 背包中的蓝屏
 			Item manaBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemId == 501;
 			});
 
+			// 背包中的回程卷轴
 			Item TP = player.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemId == 514;
 			});
@@ -210,17 +225,19 @@ namespace WordJourney
 			SetUpItemButton (manaBottle, manaBottleButton);
 			SetUpItemButton (TP, antiDebuffButton);
 
-
 		}
 
+		/// <summary>
+		/// 更新底部物品栏上对应消耗品的按钮状态
+		/// </summary>
+		/// <param name="item">Item.</param>
+		/// <param name="itemButton">Item button.</param>
 		private void SetUpItemButton(Item item,Button itemButton){
 
 			if (item == null) {
-//				itemButton.GetComponent<Image> ().color = new Color (100, 100, 100, 255);
 				itemButton.interactable = false;
 				itemButton.GetComponentInChildren<Text> ().text = "0";
 			} else {
-//				itemButton.GetComponent<Image> ().color = Color.white;
 				itemButton.interactable = true;
 				itemButton.GetComponentInChildren<Text> ().text = item.itemCount.ToString ();
 			}
@@ -229,8 +246,12 @@ namespace WordJourney
 		}
 
 
+		/// <summary>
+		/// 背包按钮点击响应
+		/// </summary>
 		public void OnBagButtonClick(){
 
+			// 初始化背包界面并显示
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
 				bagCanvas.GetComponent<BagViewController>().SetUpBagView();
@@ -240,7 +261,10 @@ namespace WordJourney
 
 		}
 
-
+		/// <summary>
+		/// 底部物品栏上的消耗品按钮点击响应
+		/// </summary>
+		/// <param name="buttonIndex">Button index.</param>
 		public void OnItemButtonClick(int buttonIndex){
 
 			Consumables consumables = null;
@@ -268,12 +292,17 @@ namespace WordJourney
 
 			bpCtr.UseItem (consumables);
 
+			// 更新底部物品栏和人物状态栏
 			UpdateItemButtonsAndStatusPlane ();
 
 		}
 
+		/// <summary>
+		/// 打开所有消耗品界面的 箭头按钮 的点击响应
+		/// </summary>
 		public void OnAllConsumablesButtonClick(){
 
+			// 如果箭头朝下，则退出所有消耗品显示界面
 			if (allConsumablesButton.transform.localRotation != Quaternion.identity) {
 
 				QuitAllConsumablesPlane ();
@@ -282,12 +311,16 @@ namespace WordJourney
 
 			}
 
+			// 箭头朝上，初始化所有消耗品显示界面
 			SetUpAllConsumablesPlane ();
 
 			allConsumablesPlane.gameObject.SetActive (true);
 
 		}
 
+		/// <summary>
+		/// 初始化所有消耗品显示界面
+		/// </summary>
 		private void SetUpAllConsumablesPlane(){
 
 			consumablesButtonPool.AddChildInstancesToPool (allConsumablesContainer);
@@ -327,6 +360,9 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 退出所有消耗品显示栏
+		/// </summary>
 		public void QuitAllConsumablesPlane(){
 
 			allConsumablesButton.transform.localRotation = Quaternion.identity;
@@ -335,7 +371,9 @@ namespace WordJourney
 
 		}
 
-
+		/// <summary>
+		/// 更新底部物品栏和人物状态栏
+		/// </summary>
 		public void UpdateItemButtonsAndStatusPlane(){
 
 			UpdateItemButtons ();
@@ -343,7 +381,10 @@ namespace WordJourney
 
 		}
 
-
+		/// <summary>
+		/// 更新人物魔法槽
+		/// </summary>
+		/// <param name="ba">Ba.</param>
 		private void UpdateManaBarAnim(Agent ba){
 			
 			manaBar.maxValue = ba.maxMana;
@@ -358,6 +399,10 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 初始化工具选择栏
+		/// </summary>
+		/// <param name="mapItem">Map item.</param>
 		public void SetUpToolChoicePlane(MapItem mapItem){
 
 			Consumables consumablesAsTool = null;
@@ -381,16 +426,19 @@ namespace WordJourney
 				break;
 			}
 
+			// 获得玩家已装备的武器
 			equipedWeapon = player.allEquipedEquipments.Find (delegate(Equipment obj) {
 				return obj.equipmentType == EquipmentType.Weapon;
 			});
 
+			// 如果玩家既没有装备武器，背包中又没有对应的工具，则显示提示栏
 			if (consumablesAsTool == null && equipedWeapon == null) {
 				string tint = "这里好像过不去";
 				GetComponent<ExploreUICotroller>().SetUpTintHUD (tint);
 				return;
 			}
 
+			// 如果背包中又对应的工具，则将该工具的按钮加入到工具选择栏中
 			if (consumablesAsTool != null) {
 
 				Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
@@ -417,6 +465,7 @@ namespace WordJourney
 
 			}
 
+			// 如果玩家装备的又武器，则将武器按钮加入到工具选择栏中
 			if (equipedWeapon != null) {
 
 				Transform weaponChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
@@ -439,16 +488,11 @@ namespace WordJourney
 
 		}
 
-		public void QuitToolChoicePlane(){
-
-			GetComponent<ExploreUICotroller>().HideMask();
-
-			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
-
-			toolChoicesPlane.gameObject.SetActive (false);
-
-		}
-
+		/// <summary>
+		/// 选择了一种工具后的响应方法
+		/// </summary>
+		/// <param name="tool">Tool.</param>
+		/// <param name="mapItem">Map item.</param>
 		private void OnToolChoiceButtonClick(Consumables tool,MapItem mapItem){
 
 			ExploreUICotroller expUICtr = GetComponent<ExploreUICotroller> ();
@@ -459,16 +503,18 @@ namespace WordJourney
 
 			// 使用武器破坏
 			if (tool == null) {
-				
+
 				Equipment equipment = player.allEquipedEquipments.Find (delegate(Equipment obj) {
 					return obj.equipmentType == EquipmentType.Weapon;
 				});
-					
+
+				// 播放对应的音效
 				GameManager.Instance.soundManager.PlayClips (
 					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 					SoundDetailTypeName.Map, 
 					mapItem.mapItemName);
 
+				// 播放地图物品对应的动画
 				mapItem.UnlockOrDestroyMapItem(()=>{
 
 					if (mapItem.walkableAfterUnlockOrDestroy) {
@@ -477,6 +523,7 @@ namespace WordJourney
 
 					GetComponent<ExploreUICotroller>().HideMask();
 
+					// 判断武器是否被完全损坏
 					bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.DestroyObstacle);
 
 					if (completeDamaged) {
@@ -492,7 +539,7 @@ namespace WordJourney
 
 						bool unlockSuccess = false;
 
-						// 使用武器开箱子20%的几率可以成功，80%的概率拿不到东西
+						// 使用武器开箱子20%的几率可以拿到箱子里的东西，80%的概率拿不到东西
 						int seed = Random.Range (0, 10);
 
 						if (seed <= 1) {
@@ -505,21 +552,23 @@ namespace WordJourney
 						}
 						break;
 					}
-						
+
 				});
 
-			} else {
+			} else {//如果使用工具开箱子或清理障碍物
+				
 				// 背包中的工具数量-1
 				player.RemoveItem (new Consumables (tool, 1));
 
-				// 播放音效
+				// 播放对应的音效
 				GameManager.Instance.soundManager.PlayClips (
 					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 					SoundDetailTypeName.Map, 
 					mapItem.mapItemName);
 
+				// 播放地图物品对应的动画
 				mapItem.UnlockOrDestroyMapItem (()=>{
-					
+
 					if (mapItem.walkableAfterUnlockOrDestroy) {
 						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
 					}
@@ -527,16 +576,27 @@ namespace WordJourney
 					switch (mapItem.mapItemType) {
 					// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
 					case MapItemType.Obstacle:
+						
 						List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
+
 						int rareMaterialIndex = Random.Range (0, allMaterials.Count + 1);
+
 						Material rareMaterial = allMaterials [rareMaterialIndex];
+
+						// 奖励一种随机稀有材料
 						rewards = new Item[]{new Material(rareMaterial,1)};
+
+						// 显示奖励栏
 						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+
 						break;
 						// 钥匙开宝箱一定成功
 					case MapItemType.TreasureBox:
+						
 						rewards = (mapItem as TreasureBox).rewardItems;
+
 						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+
 						break;
 					}
 
@@ -545,6 +605,24 @@ namespace WordJourney
 		}
 
 
+		/// <summary>
+		/// 退出工具选择栏
+		/// </summary>
+		public void QuitToolChoicePlane(){
+
+			GetComponent<ExploreUICotroller>().HideMask();
+
+			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
+
+			toolChoicesPlane.gameObject.SetActive (false);
+
+		}
+
+
+
+		/// <summary>
+		/// 退出战斗时的逻辑
+		/// </summary>
 		public override void QuitFight(){
 
 			skillButtonPool.AddChildInstancesToPool (skillsContainer);

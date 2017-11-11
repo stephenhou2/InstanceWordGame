@@ -400,6 +400,7 @@ namespace WordJourney
 			Text itemName = btn.transform.Find ("ItemName").GetComponent<Text> ();
 			Text extraInfo = btn.transform.Find ("ExtraInfo").GetComponent<Text> ();
 			Image itemIcon = btn.transform.Find ("ItemIcon").GetComponent<Image>();
+			Image newItemTintIcon = btn.transform.Find ("NewItemTintIcon").GetComponent<Image> ();
 
 			itemName.text = item.itemName;
 
@@ -416,6 +417,9 @@ namespace WordJourney
 			});
 
 			itemIcon.enabled = itemIcon.sprite != null;
+
+			// 如果是新物品，则显示新物品提示图片
+			newItemTintIcon.enabled = item.isNewItem;
 
 			btn.onClick.RemoveAllListeners ();
 
@@ -435,7 +439,10 @@ namespace WordJourney
 					}
 				}
 
+				newItemTintIcon.enabled = false;
+
 				GetComponent<BagViewController> ().OnSelectItemInBag (item);
+
 				SetUpItemDetailHUD (item);
 
 			});

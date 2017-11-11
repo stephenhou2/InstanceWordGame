@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2665813262
+CRC: 1973058609
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6919796a27717377c4ed15f9321026bd
+    Hash: c7367e6d8a7cca154bb2a94ab2e5f352
   TypeTreeHash:
     serializedVersion: 2
     Hash: e0105abeb0f930b1b9483c0f19df9a56
@@ -63,4 +63,5 @@ Assets:
 - Assets/Prefabs/ItemDisplay/ItemDetailsModelInItemDisplayCanvas.prefab
 - Assets/Prefabs/ItemDisplay/ItemDisplayCanvas.prefab
 Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

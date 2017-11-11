@@ -129,6 +129,8 @@ namespace WordJourney
 				return;
 			}
 
+			item.isNewItem = false;
+
 			currentSelectItem = item;
 
 		}

@@ -169,7 +169,7 @@ namespace WordJourney
 			itemDisplayView.QuitCharactersPlane();
 		}
 
-		public void OnGenerateButtonClick(ItemModel itemModel){
+		public void OnGenerateButtonClick(ItemModel itemModel,Transform newFormulaTintIcon,Formula formula){
 
 			for (int i = 0; i < itemModel.materials.Count; i++) {
 
@@ -185,6 +185,14 @@ namespace WordJourney
 
 			}
 
+			if (newFormulaTintIcon != null) {
+				newFormulaTintIcon.gameObject.SetActive (false);
+			}
+
+			if (formula != null) {
+				formula.isNewItem = false;
+			}
+
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.produceCanvasBundleName, "ProduceCanvas", () => {
 
 				TransformManager.FindTransform("ProduceCanvas").GetComponent<ProduceViewController>().SetUpProduceView(itemModel);
@@ -196,12 +204,7 @@ namespace WordJourney
 			});
 
 		}
-
-		public void GenerateAnyItem(){
-
-			OnGenerateButtonClick (null);
-
-		}
+			
 
 		public void OnItemDetailsPlaneClick(){
 			itemDisplayView.QuitItemDetailsPlane ();
