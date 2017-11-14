@@ -142,6 +142,10 @@ namespace WordJourney
 				return;
 			}
 
+			if (equipment.isNewItem) {
+				equipment.isNewItem = false;
+			}
+
 			Player.mainPlayer.EquipEquipment (equipment);
 
 			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelcetType, currentSelectItem);

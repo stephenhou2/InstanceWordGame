@@ -187,7 +187,7 @@ namespace WordJourney
 			
 			Debug.Log ("碰到了item");
 
-			expUICtr.ShowMask ();
+//			expUICtr.ShowMask ();
 
 			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
 
@@ -222,7 +222,7 @@ namespace WordJourney
 
 			if (trapSwitch.switchOff) {
 				
-				expUICtr.HideMask ();
+//				expUICtr.HideMask ();
 
 				return;
 			}
@@ -238,7 +238,7 @@ namespace WordJourney
 
 			mapGenerator.mapWalkableInfoArray[(int)trapTrans.position.x,(int)trapTrans.position.y] = 1;
 
-			expUICtr.HideMask ();
+//			expUICtr.HideMask ();
 
 		}
 
@@ -248,34 +248,35 @@ namespace WordJourney
 
 			// 如果mapitem已打开，则直接返回
 			if (tb.unlocked) {
-				expUICtr.HideMask ();
+//				expUICtr.HideMask ();
 				return;
 			}
-
-			// 如果该地图物品需要使用特殊物品开启
-			if (tb.unlockItemName != string.Empty) {
-
-				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (mapItem);
-
-				Consumables unlockItem = Player.mainPlayer.allConsumablesInBag.Find(delegate(Consumables item) {
-					return item.itemName == tb.unlockItemName;
-				});
-				return;
-			}
-
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips,
-				SoundDetailTypeName.Map, 
-				mapItem.mapItemName);
 
 			// 如果该地图物品不需要使用特殊物品开启
-			tb.UnlockOrDestroyMapItem (()=>{
+			if (tb.unlockItemName == string.Empty) {
 
-				if (tb.walkableAfterUnlockOrDestroy) {
-					mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
-				}
-				expUICtr.SetUpRewardItemsPlane(tb.rewardItems);
-			});
+				GameManager.Instance.soundManager.PlayClips (
+					GameManager.Instance.gameDataCenter.allExploreAudioClips,
+					SoundDetailTypeName.Map, 
+					mapItem.mapItemName);
+
+				// 如果该地图物品不需要使用特殊物品开启
+				tb.UnlockOrDestroyMapItem (()=>{
+
+					if (tb.walkableAfterUnlockOrDestroy) {
+						mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
+					}
+
+					mapGenerator.SetUpRewardInMap(tb.rewardItem,tb.transform.position);
+//					expUICtr.SetUpRewardItemsPlane(tb.rewardItem);
+				});
+
+				return;
+
+			}
+
+			// 如果该地图物品需要使用特殊物品开启,则进入工具选择界面
+			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (mapItem);
 
 		}
 

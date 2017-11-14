@@ -27,12 +27,11 @@ namespace WordJourney
 		public Transform floorModel;
 		// 地图上npc模型
 		public Transform mapNpcModel;
-		// 玩家技能动画特效
-//		public Transform playerSkillEffect;
-		// 怪物技能动画特效
-//		public Transform monsterSkillEffect;
 
 		public Transform skillEffectModel;
+
+		// 地图上掉落的物品模型
+		public Transform rewardItemModel;
 
 		// 地图上所有地图物品列表
 		private List<MapItem> mapItems = new List<MapItem> ();
@@ -49,6 +48,7 @@ namespace WordJourney
 		public Transform itemsContainer;
 		public Transform npcsContainer;
 		public Transform monstersContainer;
+		public Transform rewardsContainer;
 
 		// 所有的缓存池
 		private InstancePool outerWallPool;
@@ -57,6 +57,7 @@ namespace WordJourney
 		private InstancePool itemPool;
 		private InstancePool monsterPool;
 		private InstancePool skillEffectPool;
+		private InstancePool rewardItemPool;
 
 		public Animator destinationAnimator;
 
@@ -68,6 +69,10 @@ namespace WordJourney
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
 		public int[,] mapWalkableInfoArray;
+
+		public float rewardFlyDuration;
+
+		private BattlePlayerController bpCtr;
 
 
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
@@ -84,7 +89,7 @@ namespace WordJourney
 				itemPool = InstancePool.GetOrCreateInstancePool ("ItemPool",poolContainerOfExploreScene.name);
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
 				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
-
+				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
 			}
 
 			MapInstancesToPool ();
@@ -135,11 +140,22 @@ namespace WordJourney
 			skillEffectPool.AddInstanceToPool (skillEffect.gameObject);
 		}
 
+		private BattlePlayerController GetBattlePlayer(){
+
+			if (bpCtr == null) {
+				Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
+				bpCtr = player.GetComponent<BattlePlayerController> ();
+			}
+
+			return bpCtr;
+
+		}
+
 		private void SetUpPlayer(){
 
 			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 
-			BattlePlayerController bpCtr = player.GetComponent<BattlePlayerController> ();
+			bpCtr = player.GetComponent<BattlePlayerController> ();
 
 			// 随机玩家初始位置
 			Vector3 playerOriginPos = RandomPosition ();
@@ -155,7 +171,7 @@ namespace WordJourney
 
 			Camera.main.transform.rotation = Quaternion.identity;
 
-			Camera.main.transform.localPosition = new Vector3 (0, 0, -10);
+			Camera.main.transform.localPosition = new Vector3 (0, 0, -90);
 
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("stand", 0, null);
@@ -404,7 +420,7 @@ namespace WordJourney
 				for(int y = 1; y < rows-1; y++)
 				{
 					//At each index add a new Vector3 to our list with the x and y coordinates of that position.
-					gridPositions.Add (new Vector3(x, y, 0f));
+					gridPositions.Add (new Vector3(x, y, y));
 				}
 			}
 		}
@@ -476,6 +492,91 @@ namespace WordJourney
 			}
 		}
 
+
+		private struct RewardInMap
+		{
+			public Transform rewardTrans;
+			public Item reward;
+
+			public RewardInMap(Transform rewardTrans,Item reward){
+				this.rewardTrans = rewardTrans;
+				this.reward = reward;
+			}
+
+
+		}
+
+		public void SetUpRewardInMap(Item reward, Vector3 rewardPosition){
+
+			Transform rewardTrans = rewardItemPool.GetInstance<Transform> (rewardItemModel.gameObject, rewardsContainer);
+
+			SpriteRenderer sr = rewardTrans.GetComponent<SpriteRenderer> ();
+
+			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == reward.spriteName;
+			});
+
+			sr.sprite = s;
+
+			rewardTrans.position = rewardPosition;
+
+			RewardInMap rewardInMap = new RewardInMap (rewardTrans, reward);
+
+			StartCoroutine ("RewardFlyToPlayer", rewardInMap);
+
+		}
+
+		private IEnumerator RewardFlyToPlayer(RewardInMap rewardInMap){
+
+			Transform rewardTrans = rewardInMap.rewardTrans;
+
+			yield return new WaitForSeconds (2.0f);
+
+			float passedTime = 0;
+
+			float leftTime = rewardFlyDuration - passedTime;
+
+			BattlePlayerController bpCtr = GetBattlePlayer ();
+
+//			Vector3 playerPos = bpCtr.transform.position;
+//
+//			Vector3 rewardPos = rewardInMap.position;
+
+//			float distance = (bpCtr.transform.position - rewardInMap.position).sqrMagnitude;
+
+			float distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
+				+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
+
+			while (distance > 0.2f && leftTime > 0.01f) {
+
+				Vector3 rewardVelocity = new Vector3 ((bpCtr.transform.position.x - rewardTrans.position.x) / leftTime, 
+					(bpCtr.transform.position.y - rewardTrans.position.y) / leftTime, 0);
+
+				Vector3 newRewardPos = new Vector3 (rewardTrans.position.x + rewardVelocity.x * Time.deltaTime, 
+					rewardTrans.position.y + rewardVelocity.y * Time.deltaTime);
+
+				rewardTrans.position = newRewardPos;
+
+//				rewardInMap.position = Vector3.MoveTowards(rewardInMap.position,bpCtr.transform.position,
+
+				passedTime += Time.deltaTime;
+
+				leftTime = rewardFlyDuration - passedTime;
+
+				distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
+					+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
+
+//				Debug.Log (string.Format ("距离{0}，剩余时间{1}", distance, leftTime));
+
+			}
+
+			Player.mainPlayer.AddItem (rewardInMap.reward);
+
+			rewardTrans.position = new Vector3 (0, 0, -100);
+
+			rewardItemPool.AddInstanceToPool (rewardTrans.gameObject);
+
+		}
 
 
 		public void DestroyInstancePools(){

@@ -22,14 +22,14 @@ namespace WordJourney
 		public TreasureBox normalTreasureBoxModel;
 
 		// 每个箱子能开出来的物品数量范围
-		private Count rewardsRange;
+//		private Count rewardsRange;
 		// 每关的宝箱数量范围
 		private Count lockedTreasureBoxRange;
 		// 每关的陷阱数量范围
 		private Count trapRange;
 
 		void Awake(){
-			rewardsRange = new Count (1, 3);
+//			rewardsRange = new Count (1, 3);
 			lockedTreasureBoxRange = new Count (0, 2);
 			trapRange = new Count (0, 2);
 		}
@@ -54,26 +54,30 @@ namespace WordJourney
 
 			for (int i = 0; i < lockedTreasureBoxCount; i++) {
 
-				int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
+//				int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
 
 				TreasureBox lockedTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (lockedTreasureBoxModel.name, lockedTreasureBoxModel.gameObject, itemsContainer);
 
 				lockedTreasureBox.mapItemName = lockedTreasureBoxModel.mapItemName;
 
 				// 宝箱中装的item数组
-				Item[] rewardItems = new Item[rewardItemCount];
+//				Item[] rewardItems = new Item[rewardItemCount];
+//
+//				for (int j = 0; j < rewardItemCount; j++) {
+//
+//					Item item = RandomItem (lockedItems,rewardItems);
+//
+//					rewardItems [j] = item;
+//				}
 
-				for (int j = 0; j < rewardItemCount; j++) {
+				int randomItemIndex = Random.Range (0, lockedItems.Count);
 
-					Item item = RandomItem (lockedItems,rewardItems);
-
-					rewardItems [j] = item;
-				}
+				Item rewardItem = lockedItems [randomItemIndex];
 					
 				// 初始化地图物品
 				lockedTreasureBox.InitMapItem ();
 
-				lockedTreasureBox.rewardItems = rewardItems;
+				lockedTreasureBox.rewardItem = rewardItem;
 
 				mapItems.Add (lockedTreasureBox);
 
@@ -128,25 +132,29 @@ namespace WordJourney
 
 				case MapItemType.TreasureBox:
 
-					int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
+//					int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
 
 					TreasureBox normalTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (normalTreasureBoxModel.name, normalTreasureBoxModel.gameObject, itemsContainer);
 
 					normalTreasureBox.mapItemName = normalTreasureBoxModel.mapItemName;
 
 
-					Item[] rewardItems = new Item[rewardItemCount];
+//					Item[] rewardItems = new Item[rewardItemCount];
 
-					for (int j = 0; j < rewardItemCount; j++) {
+//					for (int j = 0; j < rewardItemCount; j++) {
+//
+//						Item item = RandomItem (normalItems,rewardItems);
+//
+//						rewardItems [j] = item;
+//					}
 
-						Item item = RandomItem (normalItems,rewardItems);
+					int randomItemIndex = Random.Range (0, normalItems.Count);
 
-						rewardItems [j] = item;
-					}
+					Item rewardItem = normalItems [randomItemIndex];
 
 					normalTreasureBox.InitMapItem ();
 
-					normalTreasureBox.rewardItems = rewardItems;
+					normalTreasureBox.rewardItem = rewardItem;
 
 					mapItems.Add (normalTreasureBox);
 

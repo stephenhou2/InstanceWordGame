@@ -13,6 +13,7 @@ namespace WordJourney
 
 		public int rewardExperience;//奖励的经验值
 
+
 		private BattleMonsterController mBaMonsterController;
 
 		// 角色UIView

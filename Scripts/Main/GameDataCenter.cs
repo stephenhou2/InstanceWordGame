@@ -255,7 +255,7 @@ namespace WordJourney
 
 					Transform monsterModelsContainer = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/MonsterModelsContainer");
 
-					monsterModelsContainer.position = new Vector3 (0, 0, -10);
+					monsterModelsContainer.position = new Vector3 (0, 0, -100);
 
 					ResourceLoader monstersLoader = ResourceLoader.CreateNewResourceLoader ();
 

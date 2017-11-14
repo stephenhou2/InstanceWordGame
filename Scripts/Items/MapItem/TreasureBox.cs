@@ -13,7 +13,10 @@ namespace WordJourney
 		public bool unlocked;
 
 		// 奖励的物品数组
-		public Item[] rewardItems;
+//		public Item[] rewardItems;
+
+		// 奖励的物品
+		public Item rewardItem;
 
 		protected override void Awake ()
 		{

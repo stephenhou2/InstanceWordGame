@@ -92,6 +92,8 @@ namespace WordJourney
 		public float dodgeGainScaler;
 		public float critGainScaler;
 
+		public float dodgeFixScaler;//闪避修正系数
+		public float critFixScaler;//暴击修正系数
 
 		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
 
@@ -109,63 +111,24 @@ namespace WordJourney
 
 		public float decreaseHurtScaler;//魔法盾减伤比例
 
+		public float beatBackChance;//反击的基础概率
 
 
 		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
 		public List<Equipment> allEquipedEquipments = new List<Equipment>();
 
-//		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
-//		public List<Equipment> allEquipedEquipments{
-//			get{
-//				if (mAllEquipedEquipments.Count == 0) {
-//					mAllEquipedEquipments.AddRange (new Equipment[3]{ null, null, null});
-//				}
-//				return mAllEquipedEquipments;
-//			}
-//			set{
-//				mAllEquipedEquipments = value;
-//			}
-//		}
-
-
-//		private List<Consumable> mAllEquipedConsumables = new List<Consumable>();
-//		public List<Consumable> allEquipedConsumables{
-//			get{
-//				if (mAllEquipedConsumables.Count == 0) {
-//					mAllEquipedConsumables.AddRange(new Consumable[3]{null,null,null});
-//				}
-//				return mAllEquipedConsumables;
-//			}
-//			set{
-//				mAllEquipedConsumables = value;
-//			}
-//		}
-//			
-//		private List<Equipment> mAllEquipedEquipments = new List<Equipment>();
-//		public List<Equipment> allEquipedEquipments{
-//			get{
-//				if (mAllEquipedEquipments.Count == 0) {
-//					mAllEquipedEquipments.AddRange(new Equipment[3]{null,null,null});
-//				}
-//				return mAllEquipedEquipments;
-//			}
-//			set{
-//				mAllEquipedEquipments = value;
-//			}
-//		}
-
-//		public List<Item> allItems = new List<Item> (); // 所有物品
-
 
 		public int attackTime;//攻击次数
 
+		// 攻击间隔
 		public float attackInterval{
 			get{
 
-				float ai = 1f / (1 + 0.01f * attackSpeed);
-				int tempt = (int)(ai * 100);
-				return tempt/100f;
+//				float ai = 1f / (1 + 0.01f * attackSpeed);
+//				int tempt = (int)(ai * 100);
+//				return tempt/100f;
+				return (1f - attackSpeed / 300f);
 
 			}
 		}

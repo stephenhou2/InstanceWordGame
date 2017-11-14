@@ -17,8 +17,6 @@ namespace WordJourney
 
 		public string skillName;// 技能名称
 
-		public string skillEngName;
-
 		public string sfxName;//音效名称
 
 		public int skillId;
@@ -37,11 +35,11 @@ namespace WordJourney
 
 		public bool isAvalible = true;
 
-		public int unlockAgentLevel;
+//		public int unlockAgentLevel;
 
-		public float dodgeSeed = 0.01f; //计算闪避时的种子数
+		public float dodgeSeed = 0.0035f; //计算闪避时的种子数
 
-		public float critSeed = 0.01f; //计算暴击时的种子数
+		public float critSeed = 0.0035f; //计算暴击时的种子数
 
 		public float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
 

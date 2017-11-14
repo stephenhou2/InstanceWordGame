@@ -134,17 +134,11 @@ namespace WordJourney
 
 			for (int i = 0; i < learnInfo.learnedWordCount; i++) {
 
-				Word w = learnInfo.learnedWords [i];
+				Word word = learnInfo.learnedWords [i];
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordsRecordPlane);
 
-				Text word = wordItem.Find ("Word").GetComponent<Text>();
-
-				Text explaination = wordItem.Find ("Explaination").GetComponent<Text> ();
-
-				word.text = w.spell;
-
-				explaination.text = w.example;
+				wordItem.GetComponent<WordItemView> ().SetUpCellDetailView (word);
 
 			}
 
@@ -172,17 +166,11 @@ namespace WordJourney
 
 			for (int i = 0; i < unlearnedWordsCount; i++) {
 
-				Word w = learnInfo.unlearnedWords [i];
+				Word word = learnInfo.unlearnedWords [i];
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordItemsContainer);
 
-				Text word = wordItem.Find ("Word").gameObject.GetComponent<Text>();
-
-				Text explaination = wordItem.Find ("Explaination").GetComponent<Text> ();
-
-				word.text = w.spell;
-
-				explaination.text = w.explaination;
+				wordItem.GetComponent<WordItemView> ().SetUpCellDetailView (word);
 
 			}
 

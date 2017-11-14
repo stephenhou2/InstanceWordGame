@@ -33,22 +33,26 @@ namespace WordJourney
 
 
 		/**********  RewardPlane UI *************/
-		public Transform rewardPlane;
-		public Transform rewardContainer;
-		private Transform rewardButtonModel;
+//		public Transform rewardPlane;
+//		public Transform rewardContainer;
+//		private Transform rewardButtonModel;
 		/**********  RewardPlane UI *************/
 
 
+		public Transform formulaDetailPlane;
+
+		public Transform materialCardContainer;
+		private Transform materialCardModel;
 
 		private InstancePool choiceButtonPool;
-		private InstancePool rewardButtonPool;
-
+//		private InstancePool rewardButtonPool;
+		private InstancePool materialCardPool;
 
 		private Dialog[] dialogs;
 		private Choice[] choices;
 
-		private List<Item> itemsToPickUp = new List<Item>();
-
+//		private List<Item> itemsToPickUp = new List<Item>();
+		private Item itemToPickUp;
 
 		public void SetUpExploreCanvas(){
 
@@ -63,16 +67,17 @@ namespace WordJourney
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
 			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool",poolContainerOfExploreCanvas.name);
-			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool",poolContainerOfExploreCanvas.name);
-
+//			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool",poolContainerOfExploreCanvas.name);
+			materialCardPool = InstancePool.GetOrCreateInstancePool ("MaterialCardPool", poolContainerOfExploreCanvas.name);
 
 			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
-			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
+//			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
+			materialCardModel = TransformManager.FindTransform ("MaterialCardModel");
 
 
 			choiceButtonModel.SetParent (modelContainerOfExploreScene);
-			rewardButtonModel.SetParent (modelContainerOfExploreScene);
-
+//			rewardButtonModel.SetParent (modelContainerOfExploreScene);
+			materialCardModel.SetParent (modelContainerOfExploreScene);
 
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
 
@@ -94,7 +99,7 @@ namespace WordJourney
 
 
 		public void SetUpTintHUD(string tint){
-			HideMask ();
+//			HideMask ();
 			tintHUD.gameObject.SetActive (true);
 			Text tintText = tintHUD.GetComponentInChildren<Text> ();
 			tintText.color = Color.black;
@@ -195,91 +200,152 @@ namespace WordJourney
 
 		}
 
-		public void ShowMask(){
-			mask.gameObject.SetActive (true);
-		}
+//		public void ShowMask(){
+//			mask.gameObject.SetActive (true);
+//		}
+//
+//		public void HideMask(){
+//			mask.gameObject.SetActive (false);
+//		}
 
-		public void HideMask(){
-			mask.gameObject.SetActive (false);
-		}
 
 
-		public void SetUpRewardItemsPlane(Item[] rewardItems){
+//		public void SetUpRewardItemsPlane(Item rewardItem){
+//
+//			itemToPickUp = null;
+//
+//			if (rewardItem == null) {
+//				HideMask ();
+//				return;
+//			}
+////
+////			for (int i = 0; i < rewardItems.Length; i++) {
+////
+////				Item rewardItem = rewardItems [i];
+//				
+//				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
+//
+//				Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
+//
+//				Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite s) {
+//					return s.name == rewardItem.spriteName;
+//				});
+//					
+//
+//				if (rewardSprite != null) {
+//					rewardItemIcon.sprite = rewardSprite;
+//				} 
+//
+//				rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
+//				rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
+////				itemsToPickUp.Add (rewardItem);
+//				rewardButton.onClick.AddListener (delegate {
+//					ChangeRewardSelection(rewardButton,rewardItem);
+//				});
+//
+////			}
+//				
+//			HideMask ();
+//			rewardPlane.gameObject.SetActive (true);
+//
+//		}
 
-			itemsToPickUp.Clear ();
+//		private void ChangeRewardSelection(Button rewardButton,Item rewardItem){
+//
+//			Image selectionIcon = rewardButton.transform.Find ("SelectIcon").GetComponent<Image>();
+//
+//			if (selectionIcon.IsActive()) {
+//				selectionIcon.gameObject.SetActive (false);
+//				itemsToPickUp.Remove (rewardItem);
+//			} else {
+//				selectionIcon.gameObject.SetActive (true);
+//				itemsToPickUp.Add (rewardItem);
+//			}
+//
+//		}
 
-			if (rewardItems == null || rewardItems.Length == 0) {
-				HideMask ();
-				return;
-			}
+//		public void DiscardAllItems(){
+//
+//			OnQuitRewardPlane ();
+//
+//		}
 
-			for (int i = 0; i < rewardItems.Length; i++) {
+//		public void PickUpSelected(){
+//
+//			for (int i = 0; i < itemsToPickUp.Count; i++) {
+//				Player.mainPlayer.AddItem (itemsToPickUp [i]);
+//			}
+//
+//			OnQuitRewardPlane ();
+//			GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
+//
+//		}
 
-				Item rewardItem = rewardItems [i];
+//		private void OnQuitRewardPlane(){
+//
+//			rewardButtonPool.AddChildInstancesToPool (rewardContainer);
+//
+//			rewardPlane.gameObject.SetActive (false);
+//
+//		}
+
+
+		public void SetUpRewardFormulaPlane(Formula formula){
+
+			ItemModel equipment = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == formula.itemOrSkillId;
+			});
+
+			Transform formulaDetailContainer = formulaDetailPlane.Find ("FormulaDetailContainer");
+
+			Text equipmentName = formulaDetailContainer.Find ("EquipmentName").GetComponent<Text> ();
+			Image equipmentIcon = formulaDetailContainer.Find ("EquipmentIcon").GetComponent<Image> ();
+			Text equipmentDescription = formulaDetailContainer.Find ("EquipmentDescription)").GetComponent<Text> ();
+
+			equipmentName.text = equipment.itemName;
+			equipmentDescription.text = equipment.itemDescription;
+
+			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == equipment.spriteName;
+			});
+
+			equipmentIcon.sprite = s;
+			for (int i = 0; i < equipment.materials.Count; i++) {
 				
-				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
+				Transform materialCard = materialCardPool.GetInstance<Transform> (materialCardModel.gameObject, materialCardContainer);
 
-				Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
+				Material material = equipment.materials [i];
 
-				Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite s) {
-					return s.name == rewardItem.spriteName;
-				});
-					
+				Image materialIcon = materialCard.Find ("MaterialIcon").GetComponent<Image> ();
+				Text materialName = materialCard.Find ("MaterialName").GetComponent<Text> ();
 
-				if (rewardSprite != null) {
-					rewardItemIcon.sprite = rewardSprite;
-				} 
+				materialName.text = material.itemName;
 
-				rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
-				rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
-				itemsToPickUp.Add (rewardItem);
-				rewardButton.onClick.AddListener (delegate {
-					ChangeRewardSelection(rewardButton,rewardItem);
+				Sprite materialSprite = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == material.spriteName;
 				});
 
-			}
-				
-			HideMask ();
-			rewardPlane.gameObject.SetActive (true);
+				materialIcon.sprite = materialSprite;
 
-		}
 
-		private void ChangeRewardSelection(Button rewardButton,Item rewardItem){
-
-			Image selectionIcon = rewardButton.transform.Find ("SelectIcon").GetComponent<Image>();
-
-			if (selectionIcon.IsActive()) {
-				selectionIcon.gameObject.SetActive (false);
-				itemsToPickUp.Remove (rewardItem);
-			} else {
-				selectionIcon.gameObject.SetActive (true);
-				itemsToPickUp.Add (rewardItem);
 			}
 
+			Button confirmButton = formulaDetailContainer.Find ("ConfirmButton").GetComponent<Button> ();
+
+			confirmButton.onClick.RemoveAllListeners ();
+
+			confirmButton.onClick.AddListener (delegate() {
+				AddFormulaAndQuitFormulaDetailPlane (formula);
+			});
+
+			formulaDetailPlane.gameObject.SetActive (true);
 		}
 
-		public void DiscardAllItems(){
+		private void AddFormulaAndQuitFormulaDetailPlane(Formula formula){
 
-			OnQuitRewardPlane ();
+			Player.mainPlayer.AddItem (formula);
 
-		}
-
-		public void PickUpSelected(){
-
-			for (int i = 0; i < itemsToPickUp.Count; i++) {
-				Player.mainPlayer.AddItem (itemsToPickUp [i]);
-			}
-
-			OnQuitRewardPlane ();
-			GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
-
-		}
-
-		private void OnQuitRewardPlane(){
-
-			rewardButtonPool.AddChildInstancesToPool (rewardContainer);
-
-			rewardPlane.gameObject.SetActive (false);
+			formulaDetailPlane.gameObject.SetActive (false);
 
 		}
 

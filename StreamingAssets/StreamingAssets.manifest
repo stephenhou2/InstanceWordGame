@@ -1,11 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3865825817
+CRC: 135386798
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: skills/canvas
       Dependencies:
-        Dependency_0: ui/icons
+        Dependency_0: item/icons
+        Dependency_1: ui/icons
     Info_1:
       Name: bag/canvas
       Dependencies:
@@ -29,8 +30,9 @@ AssetBundleManifest:
     Info_6:
       Name: explore/scene
       Dependencies:
-        Dependency_0: explore/mapicons
-        Dependency_1: ui/icons
+        Dependency_0: item/icons
+        Dependency_1: explore/mapicons
+        Dependency_2: ui/icons
     Info_7:
       Name: item/icons
       Dependencies: {}

@@ -497,7 +497,7 @@ namespace WordJourney
 
 			ExploreUICotroller expUICtr = GetComponent<ExploreUICotroller> ();
 			string tint = string.Empty;
-			Item[] rewards = null;
+			Item rewardItem = null;
 
 			QuitToolChoicePlane ();
 
@@ -521,7 +521,7 @@ namespace WordJourney
 						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
 					}
 
-					GetComponent<ExploreUICotroller>().HideMask();
+//					GetComponent<ExploreUICotroller>().HideMask();
 
 					// 判断武器是否被完全损坏
 					bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.DestroyObstacle);
@@ -547,8 +547,9 @@ namespace WordJourney
 						}
 
 						if (unlockSuccess) {
-							rewards = (mapItem as TreasureBox).rewardItems;
-							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+							rewardItem = (mapItem as TreasureBox).rewardItem;
+							TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+//							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
 						}
 						break;
 					}
@@ -584,18 +585,22 @@ namespace WordJourney
 						Material rareMaterial = allMaterials [rareMaterialIndex];
 
 						// 奖励一种随机稀有材料
-						rewards = new Item[]{new Material(rareMaterial,1)};
+						rewardItem = new Material(rareMaterial,1);
 
-						// 显示奖励栏
-						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+
+//						// 显示奖励栏
+//						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
 
 						break;
 						// 钥匙开宝箱一定成功
 					case MapItemType.TreasureBox:
 						
-						rewards = (mapItem as TreasureBox).rewardItems;
+						rewardItem = (mapItem as TreasureBox).rewardItem;
 
-						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewards);
+						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+
+//						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
 
 						break;
 					}
@@ -610,7 +615,7 @@ namespace WordJourney
 		/// </summary>
 		public void QuitToolChoicePlane(){
 
-			GetComponent<ExploreUICotroller>().HideMask();
+//			GetComponent<ExploreUICotroller>().HideMask();
 
 			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
 

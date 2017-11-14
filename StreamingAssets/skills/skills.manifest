@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1238513901
+CRC: 281088048
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ef34d43f5965a7761e5e91c5afe254c6
+    Hash: de2c3ce5876f06d80d197a13de8eda7d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 41da44b56dbab6763698830f046c9213
+    Hash: a24b7041c819b6690f94063701bfd4d6
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -23,6 +23,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: dd739d243d5b148089d4ef9d1ddf9d01, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 701cb76842b6547b3955f6c0e6154aec, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5204adc80214246b48c3e5b3254ffa73, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: a2f71be8588a74bd599e12a2ba61e0b0, type: 3}
 - Class: 114
@@ -47,6 +49,7 @@ Assets:
 - Assets/Prefabs/Skill/NewSkills/DecreaseArmor.prefab
 - Assets/Prefabs/Skill/NewSkills/ElementBody.prefab
 - Assets/Prefabs/Skill/NewSkills/IronSkin.prefab
+- Assets/Prefabs/Skill/NewSkills/HealthSource.prefab
 - Assets/Prefabs/Skill/NewSkills/WeaponExpert.prefab
 - Assets/Prefabs/Skill/NewSkills/Thunder.prefab
 - Assets/Prefabs/Skill/NewSkills/PowerStrengthen.prefab

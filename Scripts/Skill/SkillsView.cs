@@ -77,7 +77,7 @@ namespace WordJourney
 
 			Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
 			Text skillLevelText = skillButton.transform.Find ("SkillLevel").GetComponent<Text> ();
-			Image skillMask = skillButton.transform.Find ("SkillMask").GetComponent<Image> ();
+			Image skillLockedMask = skillButton.transform.Find ("SkillLockedMask").GetComponent<Image> ();
 
 			if (skillSprite != null) {
 				skillIcon.sprite = skillSprite;
@@ -90,7 +90,8 @@ namespace WordJourney
 				skillLevelText.text = string.Empty;
 			}
 				
-			skillMask.enabled = Player.mainPlayer.agentLevel < skill.unlockAgentLevel;
+//			skillMask.enabled = Player.mainPlayer.agentLevel < skill.unlockAgentLevel;
+			skillLockedMask.enabled = !skill.unlocked;
 
 			skillButton.onClick.AddListener (delegate() {
 				OnSkillTreeButtonClick(skillButton,skillSprite,skill);
@@ -136,15 +137,15 @@ namespace WordJourney
 
 			}
 
-			bool unlock = Player.mainPlayer.agentLevel >= skill.unlockAgentLevel;
+//			bool unlock = Player.mainPlayer.agentLevel >= skill.unlockAgentLevel;
+//
+//			if (!unlock) {
+//				skillUnlock.text = "<color=red>解锁：人物等级≥" + skill.unlockAgentLevel + "</color>";
+//			} else {
+//				skillUnlock.text = "<color=green>已解锁</color>";
+//			}
 
-			if (!unlock) {
-				skillUnlock.text = "<color=red>解锁：人物等级≥" + skill.unlockAgentLevel + "</color>";
-			} else {
-				skillUnlock.text = "<color=green>已解锁</color>";
-			}
-
-			upgradeSkillButton.interactable = unlock && Player.mainPlayer.skillPointsLeft > 0;
+			upgradeSkillButton.interactable = skill.unlocked && Player.mainPlayer.skillPointsLeft > 0;
 
 			GetComponent<SkillsViewController> ().GetCurrentSelectInfo (skill);
 

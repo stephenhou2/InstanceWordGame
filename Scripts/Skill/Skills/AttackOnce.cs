@@ -5,19 +5,18 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class PhysicalAttack : Skill {
+	public class AttackOnce : Skill {
 
 		void Awake(){
 			isPassive = false;
-			skillType = SkillType.Physical;
 		}
 
 		public override void AffectAgents(BattleAgentController self, BattleAgentController enemy){
 
 			TintTextType tintTextType = TintTextType.None;
 
-			//计算对方闪避率
-			float dodge = dodgeSeed * enemy.agent.dodge / (1 + dodgeSeed * enemy.agent.dodge);
+			//计算对方闪避率(敌方的基础闪避率 - 己方的闪避修正)
+			float dodge = dodgeSeed * enemy.agent.dodge / (1 + dodgeSeed * enemy.agent.dodge) - self.agent.dodgeFixScaler;
 			//判断对方是否闪避成功
 			if(isEffective(dodge)){
 				tintTextType = TintTextType.Miss;
@@ -25,10 +24,14 @@ namespace WordJourney
 				return;
 			}
 				
+			//计算己方的暴击率（己方的基础暴击率 - 敌方的暴久修正）
+			float crit = critSeed * self.agent.crit / (1 + critSeed * self.agent.crit) - enemy.agent.dodgeFixScaler;
+
 			//是否打出暴击
-			bool isCrit = isEffective (critSeed * self.agent.crit / (1 + critSeed * self.agent.crit));
+			bool isCrit = isEffective (crit);
 
 			if (isCrit) {
+				#warning 这里暴击倍率暂时固定为2被暴击
 				self.agent.critHurtScaler = 2.0f;
 				tintTextType = TintTextType.Crit;
 			}

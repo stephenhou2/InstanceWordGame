@@ -22,6 +22,8 @@ namespace WordJourney
 
 		public int itemOrSkillId;
 
+//		public string associateSpriteName;// 配方对应物品或技能的图片名称
+
 		public Formula(FormulaType formulaType,int itemOrSkillId){
 
 			this.itemType = ItemType.Formula;
@@ -46,6 +48,8 @@ namespace WordJourney
 
 				this.itemDescription = itemModel.itemDescription;
 
+//				this.associateSpriteName = itemModel.spriteName;
+
 //				GetItemModelUnlock (itemModel);
 
 				break;
@@ -60,6 +64,8 @@ namespace WordJourney
 				this.itemId = skill.skillId + 3000;
 
 				this.itemDescription = skill.skillDescription;
+
+//				this.associateSpriteName = skill.skillIconName;
 
 				GetSkillUnlock (skill);
 
