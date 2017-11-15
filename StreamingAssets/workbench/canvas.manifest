@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1973058609
+CRC: 2463355099
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c7367e6d8a7cca154bb2a94ab2e5f352
+    Hash: 0438ba0807a9071bf41c3df939090097
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e0105abeb0f930b1b9483c0f19df9a56
+    Hash: d8e3430fbbe38fb6cbae0da318f7f45f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -38,6 +38,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1367256648, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 1297475563, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -45,6 +47,10 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 5a90bbcae1e4b411a87b3d7d523bc79b, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 01c70eccef70544598bbb74850bfa3d7, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 63b9353f32e704a94beda829ffa6102a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e3960fef5a54046c48367d896408e271, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -58,10 +64,10 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/ItemDisplay/MaterialModel.prefab
-- Assets/Prefabs/ItemDisplay/ItemDetailTypeBtnModel.prefab
-- Assets/Prefabs/ItemDisplay/ItemDetailsModelInItemDisplayCanvas.prefab
-- Assets/Prefabs/ItemDisplay/ItemDisplayCanvas.prefab
+- Assets/Prefabs/WorkBench/MaterialModel.prefab
+- Assets/Prefabs/WorkBench/ItemDetailTypeBtnModel.prefab
+- Assets/Prefabs/WorkBench/ItemDetailsModelInItemDisplayCanvas.prefab
+- Assets/Prefabs/WorkBench/WorkBenchCanvas.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

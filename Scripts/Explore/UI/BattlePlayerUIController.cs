@@ -517,6 +517,7 @@ namespace WordJourney
 				// 播放地图物品对应的动画
 				mapItem.UnlockOrDestroyMapItem(()=>{
 
+					// 如果物品打开或破坏后地图上该位置可以行走，则更新地图可行走点列表
 					if (mapItem.walkableAfterUnlockOrDestroy) {
 						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
 					}
@@ -548,8 +549,12 @@ namespace WordJourney
 
 						if (unlockSuccess) {
 							rewardItem = (mapItem as TreasureBox).rewardItem;
-							TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-//							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+							if(rewardItem.itemType == ItemType.Formula){
+								GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
+							}else{
+								TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+//								GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+							}
 						}
 						break;
 					}
@@ -598,9 +603,14 @@ namespace WordJourney
 						
 						rewardItem = (mapItem as TreasureBox).rewardItem;
 
-						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+						if(rewardItem.itemType == ItemType.Formula){
+							GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
+						}else{
 
-//						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+							TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+
+//							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+						}
 
 						break;
 					}

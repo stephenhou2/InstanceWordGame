@@ -25,13 +25,17 @@ namespace WordJourney
 
 			for (int i = 0; i < allItems.Count; i++) {
 
-				if (allItems [i].itemType == ItemType.Consumables) {
+				MyItem item = allItems [i];
+
+				if (item.itemType == ItemType.Consumables) {
+					continue;
+				}
+
+				if (item.equipmentType == EquipmentType.Boss) {
 					continue;
 				}
 
 				valences.Clear ();
-
-				MyItem item = allItems [i];
 
 				for (int j = 0; j < item.materials.Count; j++) {
 					valences.Add (item.materials [j].valence);
@@ -98,7 +102,7 @@ namespace WordJourney
 
 				MyItem item = new MyItem (itemStrings[i]);
 
-				if (item.itemType == ItemType.Equipment) {
+				if (item.itemType == ItemType.Equipment && item.equipmentType != EquipmentType.Boss) {
 
 					string[] materialStrings = item.materialString.Split (new char[]{ '+' });
 

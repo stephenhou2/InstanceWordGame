@@ -300,7 +300,7 @@ namespace WordJourney
 
 			Text equipmentName = formulaDetailContainer.Find ("EquipmentName").GetComponent<Text> ();
 			Image equipmentIcon = formulaDetailContainer.Find ("EquipmentIcon").GetComponent<Image> ();
-			Text equipmentDescription = formulaDetailContainer.Find ("EquipmentDescription)").GetComponent<Text> ();
+			Text equipmentDescription = formulaDetailContainer.Find ("EquipmentDescription").GetComponent<Text> ();
 
 			equipmentName.text = equipment.itemName;
 			equipmentDescription.text = equipment.itemDescription;
@@ -346,6 +346,15 @@ namespace WordJourney
 			Player.mainPlayer.AddItem (formula);
 
 			formulaDetailPlane.gameObject.SetActive (false);
+
+		}
+
+
+		public void SetUpWorkBenchPlane(){
+
+			GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.workBenchCanvasBundleName,"WorkBenchCanvas",()=>{
+				TransformManager.FindTransform("WorkBenchCanvas").GetComponent<WorkBenchViewController>().SetUpWorkBenchView();
+			});
 
 		}
 

@@ -51,6 +51,7 @@ namespace WordJourney
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
+			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
@@ -288,6 +289,16 @@ namespace WordJourney
 
 		}
 
+		public void EnterWorkBench(Transform workBench){
+
+			Debug.Log ("进入工作台");
+
+			expUICtr.SetUpWorkBenchPlane ();
+
+
+
+		}
+
 		public void BattlePlayerWin(Transform[] monsterTransArray){
 
 			if (monsterTransArray.Length <= 0) {
@@ -344,8 +355,7 @@ namespace WordJourney
 			if (player.currentLevelIndex > player.maxUnlockLevelIndex) {
 				player.maxUnlockLevelIndex = player.currentLevelIndex;
 			}
-
-
+				
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
 

@@ -50,7 +50,7 @@ namespace WordJourney{
 		public static string homeCanvasBundleName = "home/canvas";
 		public static string recordCanvasBundleName = "record/canvas";
 		public static string materialDisplayCanvasBundleName = "material/canvas";
-		public static string itemDisplayCanvasBundleName = "item/canvas";
+		public static string workBenchCanvasBundleName = "workbench/canvas";
 		public static string skillCanvasBundleName = "skills/canvas";
 		public static string bagCanvasBundleName = "bag/canvas";
 		public static string settingCanvasBundleName = "setting/canvas";

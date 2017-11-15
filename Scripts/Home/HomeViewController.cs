@@ -101,8 +101,8 @@ namespace WordJourney
 
 		public void OnProduceButtonClick(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", () => {
-				TransformManager.FindTransform("ItemDisplayCanvas").GetComponent<ItemDisplayViewController> ().SetUpItemDisplayView();
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", () => {
+				TransformManager.FindTransform("WorkBenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
 				homeView.OnQuitHomeView();
 			});
 		}

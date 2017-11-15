@@ -9,7 +9,6 @@ namespace WordJourney
 		Base,//基础材料
 		Rare,//特殊材料
 		Monster,//怪物掉落材料
-		Boss//boss掉落材料
 	}
 
 	[System.Serializable]

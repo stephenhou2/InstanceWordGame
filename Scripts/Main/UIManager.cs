@@ -106,8 +106,8 @@ namespace WordJourney
 				case "BagCanvas":
 					UIDic [key].GetComponent<BagViewController> ().DestroyInstances ();
 					break;
-				case "ItemDisplayCanvas":
-					UIDic [key].GetComponent<ItemDisplayViewController> ().DestroyInstances ();
+				case "WorkBenchCanvas":
+					UIDic [key].GetComponent<WorkBenchViewController> ().DestroyInstances ();
 					break;
 				case "MaterialDisplayCanvas":
 					UIDic [key].GetComponent<MaterialDisplayViewController> ().DestroyInstances ();

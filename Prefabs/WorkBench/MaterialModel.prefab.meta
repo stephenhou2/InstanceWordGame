@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 0bc8214ddbc2049de85d656b020daf4a
-timeCreated: 1499856240
+guid: e7e03562edaf54df5b11961eab74d57c
+timeCreated: 1509502191
 licenseType: Free
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: item/canvas
+  assetBundleName: workbench/canvas
   assetBundleVariant: 

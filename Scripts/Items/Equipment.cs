@@ -19,6 +19,7 @@ namespace WordJourney
 		Shoes,//鞋子
 		Jewelry,//项链和护符
 		Ring,//戒指
+		Boss//boss掉落
 	}
 
 //	/// <summary>
@@ -188,12 +189,8 @@ namespace WordJourney
 			for (int i = 0; i < materials.Count; i++) {
 
 				Material m = materials [i];
-
-				if (m.materialType == MaterialType.Boss) {
-					continue;
-				}else{
-					returnedMaterials.Add (m);
-				}
+			
+				returnedMaterials.Add (m);
 			}
 				
 			// 返还的材料序号

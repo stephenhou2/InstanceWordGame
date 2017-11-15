@@ -200,8 +200,8 @@ namespace WordJourney
 
 		public void QuitProduceView(){
 			
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", () => {
-				TransformManager.FindTransform ("ItemDisplayCanvas").GetComponent<Canvas> ().enabled = true;
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", () => {
+				TransformManager.FindTransform ("WorkBenchCanvas").GetComponent<Canvas> ().enabled = true;
 			});
 
 			gameObject.SetActive(false);

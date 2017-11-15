@@ -415,7 +415,7 @@ namespace WordJourney
 		/// <summary>
 		/// 清除本次制造信息
 		/// </summary>
-		private void ClearSpellInfos(){
+		public void ClearSpellInfos(){
 
 			charactersEntered = new StringBuilder ();
 

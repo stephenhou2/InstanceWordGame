@@ -21,6 +21,7 @@ namespace WordJourney
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterItem;
 		public ExploreEventHandler enterNpc;
+		public ExploreEventHandler enterWorkBench;
 
 		// 移动速度
 		public float moveDuration = 0.4f;			
@@ -264,13 +265,20 @@ namespace WordJourney
 
 				RaycastHit2D r2d = Physics2D.Linecast (transform.position, pathPosList [0], collosionLayer);
 
+
 				if (r2d.transform != null) {
+
+					moveTweener.Kill (false);
+
+					singleMoveEndPos = transform.position;
+
+					inSingleMoving = false;
+
+					boxCollider.enabled = true;
 
 					switch (r2d.transform.tag) {
 
 					case "monster":
-
-						moveTweener.Kill (false);
 
 						if (modelActive != playerSide) {
 							ActiveBattlePlayer (false, false, true);
@@ -280,27 +288,17 @@ namespace WordJourney
 
 						enterMonster (r2d.transform);
 
-						boxCollider.enabled = true;
-
 						return;
 
 					case "item":
 
-						moveTweener.Kill (false);
-
-						if (modelActive != playerSide) {
-							ActiveBattlePlayer (false, false, true);
-						}
+//						if (modelActive != playerSide) {
+//							ActiveBattlePlayer (false, false, true);
+//						}
 
 						PlayRoleAnim ("stand", 0, null);
 
-						singleMoveEndPos = transform.position;
-
-						inSingleMoving = false;
-
 						enterItem (r2d.transform);
-
-						boxCollider.enabled = true;
 
 						return;
 
@@ -308,24 +306,21 @@ namespace WordJourney
 
 						PlayRoleAnim ("stand", 0, null);
 
-						moveTweener.Kill (false);
-
-						singleMoveEndPos = transform.position;
-
-						inSingleMoving = false;
-
 						enterNpc (r2d.transform);
-
-						boxCollider.enabled = true;
 
 						return;
 
-					default:
-						break;
+					case "workbench":
+
+						PlayRoleAnim ("stand", 0, null);
+
+						enterWorkBench (r2d.transform);
+
+						return;
 
 					}
 
-					boxCollider.enabled = true;
+
 				}
 
 

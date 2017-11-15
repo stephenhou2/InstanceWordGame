@@ -35,9 +35,6 @@ namespace WordJourney
 				case MaterialType.Monster:
 					monsterMaterials.Add (m);
 					break;
-				case MaterialType.Boss:
-					bossMaterials.Add (m);
-					break;
 				}
 
 			}
@@ -76,9 +73,6 @@ namespace WordJourney
 				break;
 			case MaterialType.Monster:
 				materialsOfTargetType = monsterMaterials;
-				break;
-			case MaterialType.Boss:
-				materialsOfTargetType = bossMaterials;
 				break;
 			default:
 				materialsOfTargetType = new List<Material> ();

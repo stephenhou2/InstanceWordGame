@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
-
 
 
 namespace WordJourney
 {
+
+	using UnityEngine.UI;
+	using DG.Tweening;
 
 	public class BagView : MonoBehaviour {
 
@@ -277,9 +277,11 @@ namespace WordJourney
 					colorText = "green";
 				}
 
-				itemDamagePercentage.text = string.Format("耐久度：<color={0}>{1}/{2}</color>",colorText, equipment.durability,equipment.maxDurability);
+				itemDamagePercentage.text = string.Format ("耐久度：<color={0}>{1}/{2}</color>", colorText, equipment.durability, equipment.maxDurability);
 
-				choiceHUDWithTwoBtns.gameObject.SetActive (true);
+
+				choiceHUDWithTwoBtns.gameObject.SetActive (equipment.equipmentType != EquipmentType.Boss);
+
 
 				break;
 			case ItemType.Consumables:

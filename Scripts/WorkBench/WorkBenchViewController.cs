@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class ItemDisplayViewController : MonoBehaviour {
+	public class WorkBenchViewController : MonoBehaviour {
 
-		private ItemDisplayView itemDisplayView;
+		private WorkBenchView workBenchView;
 
 
 //		private Dictionary<string,List<ItemModel>> modelsDic = new Dictionary<string,List<ItemModel>> ();
@@ -41,7 +41,7 @@ namespace WordJourney
 			typeDic.Add (consumablesString, new string[]{ "xxx" });
 			typeDic.Add (taskItemsString, new string[]{ "xxx" });
 
-			itemDisplayView = GetComponent<ItemDisplayView> ();
+			workBenchView = GetComponent<WorkBenchView> ();
 
 			TestMaterials ();
 
@@ -72,10 +72,18 @@ namespace WordJourney
 			Player.mainPlayer.AddItem (f);
 		}
 
+		public void SetUpWorkBenchView(){
+
+			OnMaterialSpellButtonClick ();
+
+			SetUpItemDisplayView ();
+
+		}
+
 		/// <summary>
 		/// 初始化制造界面
 		/// </summary:
-		public void SetUpItemDisplayView(){
+		private void SetUpItemDisplayView(){
 
 			allItemModels = GameManager.Instance.gameDataCenter.allItemModels;
 
@@ -104,11 +112,9 @@ namespace WordJourney
 //
 //			}
 
-			itemDisplayView.Initialize ();
+			workBenchView.Initialize ();
 
 			OnItemTypeButtonClick (0);
-
-			GetComponent<Canvas>().enabled = true; 
 
 		}
 
@@ -141,7 +147,7 @@ namespace WordJourney
 			}
 				
 
-			itemDisplayView.SetUpDetailTypeButtons (typeStrings);
+			workBenchView.SetUpDetailTypeButtons (typeStrings);
 
 			OnItemDetailTypeButtonClick (typeStrings [0]);
 
@@ -154,19 +160,19 @@ namespace WordJourney
 				return obj.detailType == detailTypeString;
 			});
 
-			itemDisplayView.SetUpItemDetailsPlane (itemModelsOfCurrentType);
+			workBenchView.SetUpItemDetailsPlane (itemModelsOfCurrentType);
 
 		}
 			
 
 		public void OnCharactersButtonClick(){
 
-			itemDisplayView.SetUpCharactersPlane ();
+			workBenchView.SetUpCharactersPlane ();
 		}
 
 		public void QuitCharactersPlane(){
 
-			itemDisplayView.QuitCharactersPlane();
+			workBenchView.QuitCharactersPlane();
 		}
 
 		public void OnGenerateButtonClick(ItemModel itemModel,Transform newFormulaTintIcon,Formula formula){
@@ -207,16 +213,29 @@ namespace WordJourney
 			
 
 		public void OnItemDetailsPlaneClick(){
-			itemDisplayView.QuitItemDetailsPlane ();
+			workBenchView.QuitItemDetailsPlane ();
 		}
+
+		public void OnMaterialSpellButtonClick(){
+			GetComponent<SpellViewController> ().ClearSpellInfos ();
+			workBenchView.ChangeToSpellView ();
+		}
+
+		public void OnAllItemDisplayButtonClick(){
+			workBenchView.ChangeToItemDisplayView ();
+		}
+
 
 		public void QuitItemDisplayView(){
 
-			itemDisplayView.QuitItemDisplayView ();
+			workBenchView.QuitItemDisplayView ();
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
-			});
+			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("ExploreCanvas")) {
+
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+					TransformManager.FindTransform ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+				});
+			}
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfItemDisplayCanvas",TransformRoot.PoolContainer);
 
@@ -227,7 +246,7 @@ namespace WordJourney
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.itemDisplayCanvasBundleName, "ItemDisplayCanvas", "PoolContainerOfItemDisplayCanvas", "ModelContainerOfItemDisplayCanvas");
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", "PoolContainerOfItemDisplayCanvas", "ModelContainerOfItemDisplayCanvas");
 
 		}
 

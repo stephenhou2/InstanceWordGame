@@ -43,6 +43,17 @@ namespace WordJourney
 				}
 			}
 
+			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == 513;
+			});
+
+			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == 512;
+			});
+
+			Player.mainPlayer.AddItem (new Consumables (key, 5));
+			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
+
 			resolveCount = 1;
 
 		}

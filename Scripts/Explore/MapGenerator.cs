@@ -33,6 +33,9 @@ namespace WordJourney
 		// 地图上掉落的物品模型
 		public Transform rewardItemModel;
 
+		// 地图上的工作台
+		public Transform workBench;
+
 		// 地图上所有地图物品列表
 		private List<MapItem> mapItems = new List<MapItem> ();
 
@@ -127,6 +130,9 @@ namespace WordJourney
 			// 初始化地图怪物
 			SetUpMonsters ();
 
+			// 初始化地图上的事件建筑
+			SetUpBuildings();
+
 			ClearPools ();
 
 		}
@@ -172,6 +178,8 @@ namespace WordJourney
 			Camera.main.transform.rotation = Quaternion.identity;
 
 			Camera.main.transform.localPosition = new Vector3 (0, 0, -90);
+
+			Camera.main.transform.Find ("Cover").gameObject.SetActive (true);
 
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("stand", 0, null);
@@ -386,6 +394,18 @@ namespace WordJourney
 				}
 
 			}
+
+		}
+
+		public void SetUpBuildings(){
+
+			// 初始化地图上的工作台
+			Vector3 workBenchPos = RandomPosition();
+
+			workBench.position = workBenchPos;
+
+			mapWalkableInfoArray[(int)workBenchPos.x,(int)workBenchPos.y] = 0;
+
 
 		}
 

@@ -8,7 +8,14 @@ using DG.Tweening;
 
 namespace WordJourney
 {
-	public class ItemDisplayView : MonoBehaviour {
+	public class WorkBenchView : MonoBehaviour {
+
+		public Transform workBenchContainer;// 工作台界面容器
+
+		public Transform spellViewContainer;// 材料制作拼写页
+
+
+		public Transform itemDisplayViewContainer;// 物品图鉴展示页
 
 		private InstancePool itemDetailsPool;//物品明细模型缓存池
 		private Transform itemDetailsModel;//物品明细模型
@@ -22,8 +29,6 @@ namespace WordJourney
 
 		private InstancePool materialPool;//材料图鉴模型缓存池
 		private Transform materialModel;//材料图鉴模型
-
-		public Transform itemDisplayViewContainer;
 
 		public Transform[] charactersOwnedPlane;
 
@@ -39,6 +44,19 @@ namespace WordJourney
 		public Transform charactersContainer;
 
 		private int currentSelectItemIndex;
+
+
+		public void ChangeToSpellView(){
+			GetComponent<SpellViewController> ().SetUpSpellViewForCreateMaterial (null);
+			GetComponent<SpellView> ().ClearEnteredCharactersPlane ();
+			spellViewContainer.gameObject.SetActive (true);
+			itemDisplayViewContainer.gameObject.SetActive (false);
+		}
+
+		public void ChangeToItemDisplayView(){
+			itemDisplayViewContainer.gameObject.SetActive (true);
+			spellViewContainer.gameObject.SetActive (false);
+		}
 
 		public void Initialize(){
 			
@@ -90,7 +108,7 @@ namespace WordJourney
 				int index = i;
 
 				itemDetailTypeBtn.onClick.AddListener (delegate {
-					GetComponent<ItemDisplayViewController>().OnItemDetailTypeButtonClick(detailTypes[index]);
+					GetComponent<WorkBenchViewController>().OnItemDetailTypeButtonClick(detailTypes[index]);
 				});
 					
 			}
@@ -164,7 +182,7 @@ namespace WordJourney
 				produceButton.onClick.RemoveAllListeners ();
 
 				produceButton.onClick.AddListener (delegate() {
-					GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel,newFormulaTintIcon,formula);
+					GetComponent<WorkBenchViewController>().OnGenerateButtonClick(itemModel,newFormulaTintIcon,formula);
 				});
 
 
@@ -303,7 +321,7 @@ namespace WordJourney
 					return obj.itemOrSkillId == itemModel.itemId;
 				});
 				
-				GetComponent<ItemDisplayViewController>().OnGenerateButtonClick(itemModel,null,formula);
+				GetComponent<WorkBenchViewController>().OnGenerateButtonClick(itemModel,null,formula);
 			});
 
 			List<Material> materialsNeed = itemModel.materials;
@@ -346,17 +364,17 @@ namespace WordJourney
 			this.itemSprites = null;
 			this.materialSprites = null;
 
-			itemDisplayViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+//			itemDisplayViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
-			Vector3 originalPosition = itemDisplayPlane.localPosition;
+			Vector3 originalPosition = workBenchContainer.localPosition;
 
-			itemDisplayPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+			workBenchContainer.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
 
 				gameObject.SetActive(false);
 
-				itemDisplayPlane.localPosition = originalPosition;
+				workBenchContainer.localPosition = originalPosition;
 
 			});
 
