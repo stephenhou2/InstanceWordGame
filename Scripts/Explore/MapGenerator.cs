@@ -255,7 +255,7 @@ namespace WordJourney
 
 				Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
-				Vector2 pos = RandomPosition ();
+				Vector3 pos = RandomPosition ();
 
 				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
@@ -263,7 +263,7 @@ namespace WordJourney
 
 				monster.gameObject.SetActive (true);
 
-				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("stand",0,null);
+				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("wait",0,null);
 
 				monsters.Add (monster.GetComponent<Monster>());
 

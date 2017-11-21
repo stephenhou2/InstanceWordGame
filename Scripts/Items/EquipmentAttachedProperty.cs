@@ -108,7 +108,7 @@ namespace WordJourney
 				agent.healthAbsorbScalser += healthAbsorbGain / 100f;
 			}
 			if (hardBeatGain > 0) {
-				agent.hardBeatChance += hardBeatGain / 100f;
+				agent.hardBeatProbability += hardBeatGain / 100f;
 			}
 			if (brambleShiledGain > 0) {
 				agent.reflectScaler += brambleShiledGain / 100f;

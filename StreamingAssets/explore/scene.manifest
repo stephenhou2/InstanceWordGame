@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3983364581
+CRC: 24950925
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: eb1e5596840e2715c5ec008842c7ce8d
+    Hash: dca116750a06f1f009a1ff3b3ed098bd
   TypeTreeHash:
     serializedVersion: 2
     Hash: cb0c9e8b0c0bb634d99ed0eba3bcf150
@@ -102,6 +102,5 @@ Assets:
 - Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
 Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

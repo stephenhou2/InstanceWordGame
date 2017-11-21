@@ -92,25 +92,6 @@ namespace WordJourney{
 		Plain
 	}
 
-	public enum ItemQuality{
-		C,
-		B,
-		A,
-		S,
-		Random
-	}
-
-
-	public enum PropertyType{
-		Attack,
-		Magic,
-		armor,
-		MagicResist,
-		Crit,
-		dodge,
-		Health,
-		Strength
-	}
 
 	public enum EventType{
 		Monster,
@@ -129,20 +110,20 @@ namespace WordJourney{
 		None
 	}
 
-	public enum ValidActionType{
-		All,
-		PhysicalExcption,
-		MagicException,
-		PhysicalOnly,
-		MagicOnly,
-		None
-
-	}
+//	public enum ValidActionType{
+//		All,
+//		PhysicalExcption,
+//		MagicException,
+//		PhysicalOnly,
+//		MagicOnly,
+//		None
+//
+//	}
 
 	public enum SkillEffectTarget{
+		None,
 		Self,
 		Enemy,
-		None
 	}
 
 	public enum EffectType{

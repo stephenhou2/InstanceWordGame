@@ -7,6 +7,18 @@ using DG.Tweening;
 
 namespace WordJourney
 {
+
+	public enum PropertyType{
+		Attack,
+		AttackSpeed,
+		Armor,
+		MagicResist,
+		Dodge,
+		Crit,
+		Health,
+		Mana
+	}
+
 	public abstract class Agent : MonoBehaviour {
 
 		public string agentName;
@@ -43,7 +55,7 @@ namespace WordJourney
 			get{ return mHealth; }
 			set{ 
 				if (value >= 0) {
-					mHealth = value;
+					mHealth = value >= maxHealth ? maxHealth : value;
 				} else {
 					mHealth = 0;
 				}
@@ -55,7 +67,7 @@ namespace WordJourney
 			get{ return mMana; }
 			set{
 				if (value >= 0) {
-					mMana = value;
+					mMana = value >= maxMana ? maxMana : value;
 				} else {
 					mMana = 0;
 				}
@@ -95,7 +107,6 @@ namespace WordJourney
 		public float dodgeFixScaler;//闪避修正系数
 		public float critFixScaler;//暴击修正系数
 
-		public ValidActionType validActionType = ValidActionType.All;// 有效的行动类型
 
 		public float physicalHurtScaler;//物理伤害系数
 
@@ -105,49 +116,32 @@ namespace WordJourney
 
 		public float healthAbsorbScalser;//回血比例
 
-		public float hardBeatChance;//打出重击的基础概率
+		public float hardBeatProbability;//打出重击的基础概率
 
 		public float reflectScaler;//荆棘护甲反弹伤害比例
 
 		public float decreaseHurtScaler;//魔法盾减伤比例
 
-		public float beatBackChance;//反击的基础概率
+		public float attachMagicHurtScaler;//附加魔法伤害比例
 
-
-		public List<Skill> equipedSkills = new List<Skill>();//技能数组
 
 		public List<Equipment> allEquipedEquipments = new List<Equipment>();
 
 
-		public int attackTime;//攻击次数
-
 		// 攻击间隔
 		public float attackInterval{
 			get{
-
-//				float ai = 1f / (1 + 0.01f * attackSpeed);
-//				int tempt = (int)(ai * 100);
-//				return tempt/100f;
+				if (attackSpeed > 240) {
+					return 0.2f;
+				}
 				return (1f - attackSpeed / 300f);
-
 			}
 		}
-
-
-
-
+			
 
 		public virtual void Awake(){
 
 			isActive = true; // 角色初始化后默认可以行动
-
-			validActionType = ValidActionType.All;// 有效的行动类型
-
-			critHurtScaler = 1.0f;//暴击伤害系数
-
-			healthAbsorbScalser = 0f;//回血比例
-
-			attackTime = 1;//攻击次数
 
 			mHealth = maxHealth;
 			mMana = maxMana;
@@ -333,15 +327,7 @@ namespace WordJourney
 			maxHealth = (int)(maxHealth * (1 + maxHealthGainScaler));
 			maxMana = (int)(maxMana * (1 + maxManaGainScaler));
 
-
-		
-
-			critHurtScaler = 1.0f;//暴击伤害系数
-			healthAbsorbScalser = 0f;//吸血比例
-			attackTime = 1;
-
 			if (toOriginalState) {
-				validActionType = ValidActionType.All;
 				health = maxHealth;
 				mana = maxMana;
 
@@ -393,6 +379,197 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 角色属性加一定值
+		/// </summary>
+		/// <param name="propertyType">Property type.</param>
+		/// <param name="gain">Gain.</param>
+		public void AgentPropertyGain(PropertyType propertyType,int gain){
+
+			switch (propertyType) {
+			case PropertyType.Attack:
+				attack += gain;
+				if (attack < 0) {
+					attack = 0;
+				}
+				break;
+			case PropertyType.AttackSpeed:
+				attackSpeed += gain;
+				if (attackSpeed < 0) {
+					attackSpeed = 0;
+				}
+				break;
+			case PropertyType.Armor:
+				armor += gain;
+				if (armor < 0) {
+					armor = 0;
+				}
+				break;
+			case PropertyType.MagicResist:
+				manaResist += gain;
+				if (manaResist < 0) {
+					manaResist = 0;
+				}
+				break;
+			case PropertyType.Dodge:
+				dodge += gain;
+				if (dodge < 0) {
+					dodge = 0;
+				}
+				break;
+			case PropertyType.Crit:
+				crit += gain;
+				if (crit < 0) {
+					crit = 0;
+				}
+				break;
+			case PropertyType.Health:
+				health += gain;
+				break;
+			case PropertyType.Mana:
+				mana += gain;
+				break;
+			}
+
+		}
+
+		/// <summary>
+		/// 角色属性加成一定比例
+		/// </summary>
+		/// <param name="propertyType">Property type.</param>
+		/// <param name="gainScaler">Gain scaler.</param>
+		public void AgentPropertyGainByScaler(PropertyType propertyType,int gainScaler){
+
+			switch (propertyType) {
+			case PropertyType.Attack:
+				attack = (int)(attack * (1 + gainScaler));
+				if (attack < 0) {
+					attack = 0;
+				}
+				break;
+			case PropertyType.AttackSpeed:
+				attackSpeed = (int)(attackSpeed * (1 + gainScaler));
+				if (attackSpeed < 0) {
+					attackSpeed = 0;
+				}
+				break;
+			case PropertyType.Armor:
+				armor = (int)(armor * (1 + gainScaler));
+				if (armor < 0) {
+					armor = 0;
+				}
+				break;
+			case PropertyType.MagicResist:
+				manaResist = (int)(manaResist * (1 + gainScaler));
+				if (manaResist < 0) {
+					manaResist = 0;
+				}
+				break;
+			case PropertyType.Dodge:
+				dodge = (int)(dodge * (1 + gainScaler));
+				if (dodge < 0) {
+					dodge = 0;
+				}
+				break;
+			case PropertyType.Crit:
+				crit = (int)(crit * (1 + gainScaler));
+				if (crit < 0) {
+					crit = 0;
+				}
+				break;
+			case PropertyType.Health:
+				health = (int)(health * (1 + gainScaler));
+				break;
+			case PropertyType.Mana:
+				mana = (int)(mana * (1 + gainScaler));
+				break;
+			}
+
+		}
+
+		public void AgentPropertySetToValue(PropertyType propertyType,int propertyValue){
+			
+			switch (propertyType) {
+			case PropertyType.Attack:
+				attack = propertyValue;
+				if (attack < 0) {
+					attack = 0;
+				}
+				break;
+			case PropertyType.AttackSpeed:
+				attackSpeed = propertyValue;
+				if (attackSpeed < 0) {
+					attackSpeed = 0;
+				}
+				break;
+			case PropertyType.Armor:
+				armor = propertyValue;
+				if (armor < 0) {
+					armor = 0;
+				}
+				break;
+			case PropertyType.MagicResist:
+				manaResist = propertyValue;
+				if (manaResist < 0) {
+					manaResist = 0;
+				}
+				break;
+			case PropertyType.Dodge:
+				dodge = propertyValue;
+				if (dodge < 0) {
+					dodge = 0;
+				}
+				break;
+			case PropertyType.Crit:
+				crit = propertyValue;
+				if (crit < 0) {
+					crit = 0;
+				}
+				break;
+			case PropertyType.Health:
+				health = propertyValue;
+				break;
+			case PropertyType.Mana:
+				mana = propertyValue;
+				break;
+			}
+
+
+		}
+
+		public int GetAgentPropertyWithType(PropertyType propertyType){
+
+			int propertyValue = 0;
+
+			switch (propertyType) {
+			case PropertyType.Attack:
+				propertyValue = attack;
+				break;
+			case PropertyType.AttackSpeed:
+				propertyValue = attackSpeed;
+				break;
+			case PropertyType.Armor:
+				propertyValue = armor;
+				break;
+			case PropertyType.MagicResist:
+				propertyValue = manaResist;
+				break;
+			case PropertyType.Dodge:
+				propertyValue = dodge;
+				break;
+			case PropertyType.Crit:
+				propertyValue = crit;
+				break;
+			case PropertyType.Health:
+				propertyValue = health;
+				break;
+			case PropertyType.Mana:
+				propertyValue = mana;
+				break;
+			}
+
+			return propertyValue;
+		}
 
 		public override string ToString ()
 		{

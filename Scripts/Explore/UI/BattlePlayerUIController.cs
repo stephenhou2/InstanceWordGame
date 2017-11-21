@@ -113,9 +113,9 @@ namespace WordJourney
 
 			skillButtons.Clear ();
 
-			for (int i = 0; i < player.equipedSkills.Count; i++) {
+			for (int i = 0; i < player.equipedActiveSkills.Count; i++) {
 
-				Skill skill = player.equipedSkills [i];
+				ActiveSkill skill = player.equipedActiveSkills [i];
 
 				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel.gameObject, skillsContainer);
 
@@ -134,7 +134,7 @@ namespace WordJourney
 				}
 
 				skillName.text = skill.skillName;
-				manaConsume.text = skill.manaConsume.ToString();
+				manaConsume.text = (skill as ActiveSkill).manaConsume.ToString();
 
 				UpdateSkillButtonsStatus ();
 
@@ -171,7 +171,7 @@ namespace WordJourney
 
 				coolenMask.fillAmount = 1;
 
-				coolenMask.DOFillAmount (0, skill.coolenInterval).OnComplete (() => {
+				coolenMask.DOFillAmount (0, player.skillCoolenInterval).OnComplete (() => {
 					coolenMask.enabled = false;
 					UpdateSkillButtonsStatus ();
 				});
@@ -187,7 +187,7 @@ namespace WordJourney
 			for (int i = 0; i < skillButtons.Count; i++) {
 				
 				Button skillButton = skillButtons [i];
-				Skill skill = player.equipedSkills [i];
+				ActiveSkill skill = player.equipedActiveSkills [i];
 				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
 
 				skillButton.interactable = player.mana >= skill.manaConsume;

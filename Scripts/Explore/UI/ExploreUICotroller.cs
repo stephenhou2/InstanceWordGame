@@ -358,6 +358,12 @@ namespace WordJourney
 
 		}
 
+		public void SetUpUpgradeWorkBenchPlane(){
+
+
+
+		}
+
 //		public void HideFightPlane(){
 //			GetComponent<BattlePlayerUIController> ().QuitFight ();
 //			GetComponent<BattleMonsterUIController>().QuitFight ();

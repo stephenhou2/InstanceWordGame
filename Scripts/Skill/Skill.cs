@@ -7,11 +7,11 @@ namespace WordJourney
 {
 
 	public enum SkillType{
+		None,
 		Physical,
-		Magic,
+		Magical,
 		Passive
 	}
-
 
 	public abstract class Skill:MonoBehaviour {
 
@@ -27,27 +27,40 @@ namespace WordJourney
 
 		public string skillDescription;
 
-		public int manaConsume;//技能的魔法消耗
 
-		public float coolenInterval;// 技能的冷却时间
 
-		public int skillLevel;// 技能等级
+		// 技能等级
+		[SerializeField]private int mySkillLevel;
+
+
+		public int skillLevel{
+			get{
+				return mySkillLevel;
+			}
+			set{
+				if (value > 0) {
+					mySkillLevel = value;
+					levelChanged = true;
+				}
+			}
+		}
+
+		protected bool levelChanged;
 
 		public bool isAvalible = true;
 
-//		public int unlockAgentLevel;
+		public bool canOverlay;// 技能效果是否可以叠加
 
-		public float dodgeSeed = 0.0035f; //计算闪避时的种子数
+		public static float dodgeSeed = 0.0035f; //计算闪避时的种子数
 
-		public float critSeed = 0.0035f; //计算暴击时的种子数
+		public static float critSeed = 0.0035f; //计算暴击时的种子数
 
-		public float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
+		public static float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
 
-		public float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
+		public static float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
 
-		public float baseNum;
 
-		public bool isPassive;
+//		public bool isPassive;// 技能是否是被动技能
 
 		public string selfAnimName;
 		public string enemyAnimName;
@@ -57,33 +70,11 @@ namespace WordJourney
 
 		public bool unlocked;
 
-		/// <summary>
-		/// 技能作用效果
-		/// </summary>
-		/// <param name="self">Self.</param>
-		/// <param name="enemy">Enemy.</param>
-		/// <param name="skillLevel">Skill level.</param>
-		public abstract void AffectAgents(BattleAgentController self, BattleAgentController enemy);
-//		{
-//			for (int i = 0; i < skillEffects.Length; i++) {
-//
-//				BaseSkillEffect bse = skillEffects [i];
-//
-//				// 如果是状态类效果，将状态添加到对象身上
-//				if (bse.isStateEffect) {
-//
-//					StateSkillEffect sse = bse as StateSkillEffect;
-//
-//					BattleAgentStatesManager.AddStateCopyToBattleAgents (self, enemy, sse, skillLevel, effectDuration);
-//
-//					continue;
-//				}
-//
-//				// 如果不是状态类效果
-//				bse.AffectAgents (self, enemy, skillLevel, TriggerType.None);
-//
-//			}
-//		}
+		public virtual void AffectAgents (BattleAgentController self, BattleAgentController enemy){
+		}
+
+		protected abstract void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy);
+
 
 		// 判断概率性技能是否生效
 		protected bool isEffective(float chance){
@@ -93,8 +84,7 @@ namespace WordJourney
 
 		public override string ToString ()
 		{
-	//		return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume + "\n[ActionConsume]:" + actionConsume + "\n[effect1]:" + skillEffects[0].effectName + "\n[effect2]:" + skillEffects[1].effectName);
-			return string.Format ("[Skill]" + "\n[SkillName]:" + skillName + "\n[manaConsume]:" + manaConsume);
+			return string.Format ("[Skill]" + "\n[SkillName]:" + skillName);
 		}
 
 		public static Skill LoadSkillFromWithSkillInfo(SkillInfo skillInfo){

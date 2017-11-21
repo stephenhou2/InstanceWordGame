@@ -414,9 +414,14 @@ namespace WordJourney
 				extraInfo.text = string.Empty;
 			}
 
-			itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
+
+			Sprite s = sprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
 			});
+
+			if(s != null){
+				itemIcon.sprite = s;
+			}
 
 			itemIcon.enabled = itemIcon.sprite != null;
 

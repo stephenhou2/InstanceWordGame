@@ -36,8 +36,8 @@ namespace WordJourney
 		void Awake(){
 
 			typeDic.Add (weaponsString, new string[]{ "剑", "刀", "斧子", "锤", "法杖", "匕首" });
-			typeDic.Add (clothString, new string[]{ "罩袍", "盔甲", "裤子", "盔帽", "鞋子" });
-			typeDic.Add (ornamentString, new string[]{ "挂饰", "戒指" });
+			typeDic.Add (clothString, new string[]{ "头盔", "衣服", "腰带", "靴子" });
+			typeDic.Add (ornamentString, new string[]{ "挂饰", "指环" });
 			typeDic.Add (consumablesString, new string[]{ "xxx" });
 			typeDic.Add (taskItemsString, new string[]{ "xxx" });
 
@@ -57,7 +57,7 @@ namespace WordJourney
 				return obj.itemName == "铁锭";
 			});
 			Material bandage = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-				return obj.itemName == "绷带";
+				return obj.itemName == "线";
 			});
 
 			wood.itemCount = 5;

@@ -59,11 +59,14 @@ namespace WordJourney
 
 				BattleAgentController bpCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
-				if (skillToUpgradeInLearnedSkills.isPassive) {
+				if (skillToUpgradeInLearnedSkills.skillType == SkillType.Passive) {
 					skillToUpgradeInLearnedSkills.AffectAgents (bpCtr, null);
-				} else {
-					Player.mainPlayer.equipedSkills.Add (skillToUpgradeInLearnedSkills);
+				} else if(skillToUpgradeInLearnedSkills is ActiveSkill){
+					Player.mainPlayer.equipedActiveSkills.Add (skillToUpgradeInLearnedSkills as ActiveSkill);
 				}
+
+				Player.mainPlayer.allLearnedSkills.Add (skillToUpgradeInLearnedSkills);
+
 			} 
 			// 想要升级的技能已经学习过
 			else {

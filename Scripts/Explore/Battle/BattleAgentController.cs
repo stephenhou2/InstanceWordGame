@@ -7,6 +7,9 @@ using DragonBones;
 
 namespace WordJourney
 {
+
+	public delegate void SkillCallBack(BattleAgentController selfBaCtr,BattleAgentController enemyBaCtr);
+
 	public abstract class BattleAgentController : MonoBehaviour {
 
 		// 控制的角色
@@ -15,11 +18,38 @@ namespace WordJourney
 		// 物理攻击技能（角色自带）
 		public Skill defaultSkill;
 
+		// 角色攻击触发的技能
+//		public List<Skill> attackTriggerSkill = new List<Skill> ();
+//
+//		// 角色被攻击触发的技能
+//		public List<Skill> beAttackedTriggerSkill = new List<Skill>();
+//
+//		// 角色死亡触发的技能
+//		public List<Skill> agentDieTriggerSkill = new List<Skill> ();
+//
+//		// 角色完成一次攻击触发事件回调队列
+//		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
+
+		// 进入战斗前触发事件回调队列
+		public List<SkillCallBack> beforeFightTriggerCallBacks = new List<SkillCallBack>();
+
 		// 角色攻击触发事件回调队列
-		public List<CallBack> attackTriggerCallBacks = new List<CallBack>();
+		public List<SkillCallBack> attackTriggerCallBacks = new List<SkillCallBack>();
+
+		// 角色完成一次攻击触发事件回调队列
+		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
 
 		// 角色被攻击触发事件回调队列
-		public List<CallBack> beAttackedTriggerCallBacks = new List<CallBack>();
+		public List<SkillCallBack> beAttackedTriggerCallBacks = new List<SkillCallBack>();
+
+		// 战斗结束触发事件回调队列
+		public List<SkillCallBack> fightEndTriggerCallBacks = new List<SkillCallBack>();
+
+
+		// 角色身上的所有状态名称
+		public List<string> states = new List<string>();
+		// 角色身上所有状态协程
+		public List<Coroutine> stateEffectCoroutines = new List<Coroutine> ();
 
 		// 碰撞检测层
 		public LayerMask collosionLayer;
@@ -27,7 +57,7 @@ namespace WordJourney
 		// 碰撞检测包围盒
 		protected BoxCollider2D boxCollider;
 	
-		// 激活的龙骨状态
+		// 激活的龙骨状态模型
 		protected GameObject modelActive;
 
 		// 自动攻击协程
@@ -36,6 +66,8 @@ namespace WordJourney
 		public Coroutine waitRoleAnimEndCoroutine;
 		// 等待技能动画结束协程
 		public Coroutine waitEffectAnimEndCoroutine;
+
+		protected Skill currentSkill;
 
 		// 骨骼动画控制器
 		protected UnityArmatureComponent armatureCom{
@@ -72,12 +104,43 @@ namespace WordJourney
 		// 角色身上仍然在播放中的技能特效
 		protected Dictionary<string,SkillEffectInfo> skillEffectDic = new Dictionary<string,SkillEffectInfo> ();
 
+		public List<string> currentTriggeredEffectAnim = new List<string>();
+
 
 		protected virtual void Awake(){
 
 			boxCollider = GetComponent <BoxCollider2D> ();
-	
+
+			ListenerDelegate<EventObject> keyFrameListener = KeyFrameMessage;
+
+			if (gameObject.tag == "monster") {
+				armatureCom.AddEventListener (DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
+			} else if (gameObject.tag == "Player") {
+				UnityArmatureComponent test = transform.Find ("PlayerSide").GetComponent<UnityArmatureComponent> ();
+				test.AddEventListener(DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
+			}
+
 		}
+
+
+		protected void KeyFrameMessage<T>(string key,T eventObject){
+
+			EventObject frameObject = eventObject as EventObject;
+
+			switch (frameObject.name) {
+			case "hit":
+				AgentExcuteHitEffect ();
+				break;
+			default:
+				break;
+
+			}
+
+			Debug.Log (frameObject.name);
+
+		}
+
+		protected abstract void AgentExcuteHitEffect ();
 
 
 		/// <summary>
@@ -95,8 +158,56 @@ namespace WordJourney
 				yield return null;
 
 			}
-
+				
 			UseSkill (skill);
+
+		}
+
+		public void PlayShakeAnim(){
+			StartCoroutine ("PlayAgentShake");
+		}
+
+		/// <summary>
+		/// 角色被攻击时的抖动动画
+		/// </summary>
+		/// <returns>The agent shake.</returns>
+		private IEnumerator PlayAgentShake(){
+
+			float backwardTime = 0.1f;
+			float forwardTime = 0.1f;
+
+			float timer = 0f;
+
+			float deltaX = 0.1f;
+
+			float backwardSpeed = deltaX / backwardTime;
+			float forwardSpeed = deltaX / forwardTime;
+
+			Vector3 originPos = modelActive.transform.position;
+
+			Vector3 targetPos = new Vector3 (modelActive.transform.position.x - deltaX * modelActive.transform.localScale.x, transform.position.y);
+
+			while (timer < backwardTime) {
+
+				modelActive.transform.position = Vector3.MoveTowards (modelActive.transform.position, targetPos, backwardSpeed * Time.deltaTime);
+
+				timer += Time.deltaTime;
+
+				yield return null;
+			}
+
+			timer = 0f;
+
+			while (timer < forwardTime) {
+
+				modelActive.transform.position = Vector3.MoveTowards (modelActive.transform.position, originPos, forwardSpeed * Time.deltaTime);
+
+				timer += Time.deltaTime;
+
+				yield return null;
+
+			}
+
 
 		}
 
@@ -242,6 +353,9 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 回收技能特效组件
+		/// </summary>
 		protected void CollectSkillEffectsToPool(){
 
 			string[] keys = new string[skillEffectDic.Keys.Count];
@@ -281,12 +395,55 @@ namespace WordJourney
 		/// <param name="tintTextType">伤害类型 [TintTextType.Crit:暴击伤害 ,TintTextType.Miss: 伤害闪避]</param>
 		public abstract void PlayHurtTextAnim (string hurtStr, TintTextType tintTextType);
 
+		private struct TintTextAnimInfo
+		{
+			public string tintTextStr;
+			public TintTextType tintTextType;
+			public float delay;
+
+			public TintTextAnimInfo(string tintTextStr,TintTextType tintTextType,float delay){
+				this.tintTextStr = tintTextStr;
+				this.tintTextType = tintTextType;
+				this.delay = delay;
+			}
+		}
+
+		/// <summary>
+		/// 延迟一段事件后播放文本动画
+		/// </summary>
+		/// <param name="hurtStr">Hurt string.</param>
+		/// <param name="tintTextType">Tint text type.</param>
+		/// <param name="delay">Delay.</param>
+		public void PlayHurtTextAnim(string hurtStr,TintTextType tintTextType,float delay){
+			TintTextAnimInfo info = new TintTextAnimInfo(hurtStr, tintTextType, delay);
+			StartCoroutine ("LatelyPlayHurtTextAnim", info);
+		}
+
+		private IEnumerator LatelyPlayHurtTextAnim(TintTextAnimInfo info){
+
+			yield return new WaitForSeconds (info.delay);
+
+			PlayHurtTextAnim (info.tintTextStr, info.tintTextType);
+
+		}
+
 		/// <summary>
 		/// 血量提升文本动画
 		/// </summary>
 		/// <param name="gainStr">Gain string.</param>
 		public abstract void PlayGainTextAnim(string gainStr);
 
+		public void PlayGainTextAnim(string gainStr,float delay){
+			TintTextAnimInfo info = new TintTextAnimInfo(gainStr, TintTextType.None, delay);
+			StartCoroutine ("LatelyPlayGainTextAnim", info);
+		}
+
+		private IEnumerator LatelyPlayGainTextAnim(TintTextAnimInfo info){
+			
+			yield return new WaitForSeconds (info.delay);
+
+			PlayGainTextAnim (info.tintTextStr);
+		}
 
 		protected abstract void UseSkill (Skill skill);
 
@@ -295,9 +452,65 @@ namespace WordJourney
 		/// </summary>
 		public abstract void Fight ();
 
+		public abstract void AgentDie ();
 
 
+		public void ExcuteBeforeFightSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < beforeFightTriggerCallBacks.Count; i++) {
+				SkillCallBack cb = beforeFightTriggerCallBacks [i];
+				cb (this, enemy);
+			}
+		}
 
+		public void ExcuteAttackSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < attackTriggerCallBacks.Count; i++) {
+				SkillCallBack cb = attackTriggerCallBacks [i];
+				cb (this, enemy);
+			}
+		}
+
+		public void ExcuteBeAttackedSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < beAttackedTriggerCallBacks.Count; i++) {
+				SkillCallBack cb = beAttackedTriggerCallBacks [i];
+				cb (this, enemy);
+			}
+		}
+
+		public void ExcuteAttackFinishSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < attackFinishTriggerCallBacks.Count; i++) {
+				SkillCallBack cb = attackFinishTriggerCallBacks [i];
+				cb (this, enemy);
+			}
+		}
+
+		public void ExcuteFightEndCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < fightEndTriggerCallBacks.Count; i++) {
+				SkillCallBack cb = fightEndTriggerCallBacks [i];
+				cb (this, enemy);
+			}
+		}
+
+
+		/// <summary>
+		/// 清除角色身上的所有效果状态
+		/// </summary>
+		public void ClearAllEffectStatesAndSkillCallBacks(){
+
+			states.Clear ();
+
+			for (int i = 0; i < stateEffectCoroutines.Count; i++) {
+				StopCoroutine (stateEffectCoroutines [i]);
+			}
+
+			stateEffectCoroutines.Clear ();
+
+			beforeFightTriggerCallBacks.Clear ();
+			attackTriggerCallBacks.Clear ();
+			attackFinishTriggerCallBacks.Clear ();
+			beAttackedTriggerCallBacks.Clear ();
+			fightEndTriggerCallBacks.Clear ();
+
+		}
 
 		/// <summary>
 		/// 等待角色动画完成后执行回调

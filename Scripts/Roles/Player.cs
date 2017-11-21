@@ -71,7 +71,11 @@ namespace WordJourney
 			}
 		}
 
-		public List<Skill> allLearnedSkills = new List<Skill>();
+		public List<ActiveSkill> equipedActiveSkills = new List<ActiveSkill>();
+
+		public List<Skill> allLearnedSkills = new List<Skill>();//技能数组
+
+		public float skillCoolenInterval;// 技能的冷却时间
 
 		public int skillPointsLeft;
 
@@ -147,6 +151,10 @@ namespace WordJourney
 				Skill skill = Skill.LoadSkillFromWithSkillInfo (skillInfo);
 
 				allLearnedSkills.Add (skill);
+
+				if (skill is ActiveSkill) {
+					equipedActiveSkills.Add (skill as ActiveSkill);
+				}
 
 			}
 
@@ -227,12 +235,12 @@ namespace WordJourney
 		public void UpdateValidActionType(){
 
 			// 如果技能还在冷却中或者玩家气力值小于技能消耗的气力值，则相应按钮不可用
-			for (int i = 0;i < equipedSkills.Count;i++) {
+			for (int i = 0;i < equipedActiveSkills.Count;i++) {
 
-				Skill s = equipedSkills [i];
+				ActiveSkill s = equipedActiveSkills [i];
 				// 如果是冷却中的技能
 				if (mana > s.manaConsume) {
-						s.isAvalible = true;
+					s.isAvalible = true;
 				}
 			}
 		}
@@ -700,6 +708,7 @@ namespace WordJourney
 		public int maxUnlockLevelIndex;//最大解锁关卡序号
 		public int currentLevelIndex;//当前所在关卡序号
 
+//		public List<SkillInfo> allEquipedActiveSkillInfo = new List<SkillInfo> ();//所有已装备的主动技能信息
 		public List<SkillInfo> allLearnedSkillInfo = new List<SkillInfo>();//所有已学习的技能信息
 
 		public int skillPointsLeft;//剩余可用技能点

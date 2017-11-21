@@ -160,7 +160,10 @@ namespace WordJourney
 		}
 
 
-
+		/// <summary>
+		/// 遭遇怪物时的响应方法
+		/// </summary>
+		/// <param name="monsterTrans">Monster trans.</param>
 		public void EnterMonster(Transform monsterTrans){
 
 			CallBack<Transform> playerWinCallBack = BattlePlayerWin;
@@ -171,15 +174,62 @@ namespace WordJourney
 
 			battleMonsterCtr.InitMonster (monsterTrans);
 
+			AdjustAgentsPosotion (battlePlayerCtr.transform,battleMonsterCtr.transform);
+
+			// 初始化人物被动技能
+			for (int i = 0; i < (battlePlayerCtr.agent as Player).allLearnedSkills.Count; i++) {
+				Skill skill = (battlePlayerCtr.agent as Player).allLearnedSkills [i];
+				if (skill.skillType == SkillType.Passive) {
+					skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
+				}
+			}
+
+			// 初始化怪物被动技能
+			for (int i = 0; i < (battleMonsterCtr.agent as Monster).allEquipedSkills.Length; i++) {
+				Skill skill = (battleMonsterCtr.agent as Monster).allEquipedSkills [i].skill;
+				if (skill.skillType == SkillType.Passive) {
+					skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
+				}
+
+			}
+
+			// 执行玩家角色战斗前技能回调
+			battlePlayerCtr.ExcuteBeforeFightSkillCallBacks(battleMonsterCtr);
+
+			// 执行怪物角色战斗前技能回调
+			battleMonsterCtr.ExcuteBeforeFightSkillCallBacks(battlePlayerCtr);
 
 			battleMonsterCtr.StartFight (battlePlayerCtr,playerWinCallBack);
 			battlePlayerCtr.StartFight (battleMonsterCtr,playerLoseCallBack);
-
 
 			expUICtr.ShowFightPlane ();
 
 		}
 
+		/// <summary>
+		/// 调整人物角色和怪物角色的位置到战斗位置
+		/// </summary>
+		/// <param name="playerTrans">Player trans.</param>
+		/// <param name="monsterTrans">Monster trans.</param>
+		private void AdjustAgentsPosotion(Transform playerTrans,Transform monsterTrans){
+
+			Vector3 playerOriPos = playerTrans.position;
+			Vector3 monsterOriPos = monsterTrans.position;
+
+			if ((int)playerTrans.position.y == (int)monsterTrans.position.y) {
+
+				playerTrans.position = new Vector3 (0.2f * (monsterTrans.position.x - playerTrans.position.x ) + playerTrans.position.x,
+					playerTrans.position.y,playerOriPos.y);
+
+			} else {
+				float newPosX = playerTrans.position.x - 0.2f;
+				float newPosY = playerTrans.position.y + 0.5f * (monsterTrans.position.y-  playerTrans.position.y);
+
+				playerTrans.position = new Vector3 (newPosX, newPosY,playerOriPos.z);
+
+			}
+
+		}
 
 	
 
@@ -222,8 +272,6 @@ namespace WordJourney
 			TrapSwitch trapSwitch = mapItem as TrapSwitch;
 
 			if (trapSwitch.switchOff) {
-				
-//				expUICtr.HideMask ();
 
 				return;
 			}
@@ -239,7 +287,6 @@ namespace WordJourney
 
 			mapGenerator.mapWalkableInfoArray[(int)trapTrans.position.x,(int)trapTrans.position.y] = 1;
 
-//			expUICtr.HideMask ();
 
 		}
 
@@ -249,7 +296,6 @@ namespace WordJourney
 
 			// 如果mapitem已打开，则直接返回
 			if (tb.unlocked) {
-//				expUICtr.HideMask ();
 				return;
 			}
 
@@ -299,7 +345,18 @@ namespace WordJourney
 
 		}
 
+		public void EnterUpgradeWorkBench(Transform upgradeWorkBench){
+
+			Debug.Log("进入升级工作台");
+
+			expUICtr.SetUpUpgradeWorkBenchPlane ();
+				
+
+		}
+
 		public void BattlePlayerWin(Transform[] monsterTransArray){
+
+			FightEndCallBacks ();
 
 			if (monsterTransArray.Length <= 0) {
 				return;
@@ -321,14 +378,14 @@ namespace WordJourney
 			player.LevelUpIfExperienceEnough ();//判断是否升级
 
 			#warning 消灭怪物后需要走到怪物原位置的话开启下面这段代卖
-//			battlePlayerCtr.ContinueMove ();
+			battlePlayerCtr.ContinueMove ();
 
 
 		}
 
 		private void BattlePlayerLose(){
 
-			Debug.Log ("dead");
+			FightEndCallBacks ();
 
 			Player player = Player.mainPlayer;
 
@@ -338,6 +395,20 @@ namespace WordJourney
 			Item lostItem = player.LostItemWhenDie ();
 
 			QuitExploreScene ();
+		}
+
+		private void FightEndCallBacks(){
+
+			// 执行玩家角色战斗结束技能回调
+			battlePlayerCtr.ExcuteFightEndCallBacks(battleMonsterCtr);
+
+			// 执行怪物角色战斗结束技能回调
+			battleMonsterCtr.ExcuteFightEndCallBacks(battlePlayerCtr);
+
+			// 清理所有状态和技能回调
+			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
+			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
+
 		}
 
 

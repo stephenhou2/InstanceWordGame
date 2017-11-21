@@ -4,7 +4,10 @@ using UnityEngine;
 
 namespace WordJourney
 {
+
 	public class BattleMonsterController : BattleAgentController {
+
+
 
 		// 怪物UI控制器
 		private BattleMonsterUIController bmUICtr;
@@ -20,13 +23,14 @@ namespace WordJourney
 
 			agent = GetComponent<Monster> ();
 
-			defaultSkill.selfAnimName = "fight";
+			defaultSkill.selfAnimName = "attack";
 
 			modelActive = this.gameObject;
 
 			base.Awake ();
 
 		}
+
 
 
 		/// <summary>
@@ -54,9 +58,21 @@ namespace WordJourney
 		protected override void UseSkill (Skill skill)
 		{
 
+			this.armatureCom.animation.Stop ();
+
+			currentSkill = skill;
+
 			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-				AttackerRoleAnimEnd(skill);
+
+				// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+				if(!FightEnd()){
+					attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+				}
+
+//				AttackerRoleAnimEnd(skill);
+
+				this.PlayRoleAnim("interval",0,null);
 			});
 
 			// 播放技能对应的怪物动画
@@ -67,42 +83,32 @@ namespace WordJourney
 
 		}
 
-
-		/// <summary>
-		/// 怪物角色动画（攻击动作）结束后的逻辑
-		/// </summary>
-		/// <param name="skill">Skill.</param>
-		private void AttackerRoleAnimEnd(Skill skill){
-
-			skill.AffectAgents(this,bpCtr);
+		protected override void AgentExcuteHitEffect ()
+		{
+			currentSkill.AffectAgents(this,bpCtr);
 
 			this.UpdateStatusPlane();
 
 			bpCtr.UpdateStatusPlane();
 
-			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if(!FightEnd()){
-				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
-			}
-
 			// 播放技能对应的玩家技能特效动画
-			if (skill.selfEffectName != string.Empty) {
-				SetEffectAnim (skill.selfEffectName);
+			if (currentSkill.selfEffectName != string.Empty) {
+				SetEffectAnim (currentSkill.selfEffectName);
 			}
 
 			// 播放技能对应的怪物技能特效动画
-			if (skill.enemyEffectName != string.Empty) {
-				bpCtr.SetEffectAnim (skill.enemyEffectName);
+			if (currentSkill.enemyEffectName != string.Empty) {
+				bpCtr.SetEffectAnim (currentSkill.enemyEffectName);
 			}
 
 			GameManager.Instance.soundManager.PlayClips (
 				GameManager.Instance.gameDataCenter.allExploreAudioClips,
 				SoundDetailTypeName.Skill, 
-				skill.sfxName);
+				currentSkill.sfxName);
 
 			Player player = Player.mainPlayer;
 
-			switch (skill.skillType) {
+			switch (currentSkill.skillType) {
 			case SkillType.Physical:
 
 				// 玩家受到物理攻击，已装备的护具中随机一个护具的耐久度降低
@@ -126,9 +132,9 @@ namespace WordJourney
 					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
 
 				}
-	
+
 				break;
-			case SkillType.Magic:
+			case SkillType.Magical:
 
 				List<Equipment> allEquipedOrnaments = player.allEquipedEquipments.FindAll (delegate(Equipment obj) {
 					int equipmentTypeToInt = (int)obj.equipmentType;
@@ -153,8 +159,22 @@ namespace WordJourney
 			case SkillType.Passive:
 				break;
 			}
-
 		}
+
+
+		/// <summary>
+		/// 怪物角色动画（攻击动作）结束后的逻辑
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+//		private void AttackerRoleAnimEnd(Skill skill){
+//
+//
+//
+//
+//
+//
+//
+//		}
 
 
 
@@ -213,7 +233,7 @@ namespace WordJourney
 		private bool FightEnd(){
 
 			if (bpCtr.agent.health <= 0) {
-				bpCtr.PlayerDie ();
+				bpCtr.AgentDie ();
 				return true;
 			} else if (agent.health <= 0) {
 				return true;
@@ -230,7 +250,7 @@ namespace WordJourney
 		/// <summary>
 		/// 怪物死亡
 		/// </summary>
-		public void MonsterDie(){
+		override public void AgentDie(){
 
 			if (attackCoroutine != null) {
 				StopCoroutine (attackCoroutine);
@@ -240,20 +260,31 @@ namespace WordJourney
 			}
 				
 
-			bpCtr.PlayRoleAnim ("stand", 0, null);
+			bpCtr.PlayRoleAnim ("wait", 0, null);
 
-			PlayRoleAnim ("death", 1, () => {
-				
-				playerWinCallBack (new Transform[]{ transform });
+			playerWinCallBack (new Transform[]{ transform });
 
-				ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
+			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
 
-				expUICtr.QuitFight ();
+			expUICtr.QuitFight ();
 
-				CollectSkillEffectsToPool();
+			CollectSkillEffectsToPool();
 
-				gameObject.SetActive(false);
-			});
+			gameObject.SetActive(false);
+
+
+//			PlayRoleAnim ("death", 1, () => {
+//				playerWinCallBack (new Transform[]{ transform });
+//
+//				ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
+//
+//				expUICtr.QuitFight ();
+//
+//				CollectSkillEffectsToPool();
+//
+//				gameObject.SetActive(false);
+//
+//			});
 
 		}
 

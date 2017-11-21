@@ -8,7 +8,9 @@ using Transform = UnityEngine.Transform;
 
 namespace WordJourney
 {
+
 	public class BattlePlayerController : BattleAgentController {
+
 
 
 		public GameObject playerForward;
@@ -64,6 +66,7 @@ namespace WordJourney
 			base.Awake ();
 
 		}
+
 
 		/// <summary>
 		/// 按照指定路径 pathPosList 移动到终点 endPos
@@ -174,13 +177,13 @@ namespace WordJourney
 		/// <summary>
 		/// 继续当前未完成的单步移动
 		/// </summary>
-//		public void ContinueMove(){
-//
-//			MoveToNextPosition ();
-//
-//			boxCollider.enabled = true;
-//
-//		}
+		public void ContinueMove(){
+
+			MoveToNextPosition ();
+
+			boxCollider.enabled = true;
+
+		}
 
 
 
@@ -446,7 +449,7 @@ namespace WordJourney
 			int btnIndex = btnIndexArray [0];
 
 			// 获得选择的技能
-			Skill skill = agent.equipedSkills [btnIndex];
+			Skill skill = (agent as Player).equipedActiveSkills [btnIndex];
 
 			// 停止自动攻击的协程
 			if (attackCoroutine != null) {
@@ -462,10 +465,23 @@ namespace WordJourney
 		/// <param name="skill">Skill.</param>
 		protected override void UseSkill (Skill skill)
 		{
+			// 停止播放当前的等待动画
+			this.armatureCom.animation.Stop ();
+
+			currentSkill = skill;
 
 			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
 			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-				AttackerRoleAnimEnd(skill);
+
+				// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+				if(!FightEnd()){
+					attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+				}
+
+//				AttackerRoleAnimEnd(skill);
+
+				// 播放等待动画
+				this.PlayRoleAnim("stand",0,null);
 			});
 				
 			// 播放技能对应的怪物动画
@@ -476,14 +492,10 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 玩家角色动画（攻击动作）结束后的逻辑
-		/// </summary>
-		/// <param name="skill">Skill.</param>
-		private void AttackerRoleAnimEnd(Skill skill){
-
+		protected override void AgentExcuteHitEffect ()
+		{
 			// 技能效果影响玩家和怪物
-			skill.AffectAgents(this,bmCtr);
+			currentSkill.AffectAgents(this,bmCtr);
 
 			// 更新玩家状态栏
 			this.UpdateStatusPlane();
@@ -491,30 +503,24 @@ namespace WordJourney
 			// 更新怪物状态栏
 			bmCtr.UpdateStatusPlane();
 
-			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if(!FightEnd()){
-				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
-			}
-
-
 			// 播放技能对应的玩家技能特效动画
-			if (skill.selfEffectName != string.Empty) {
-				SetEffectAnim (skill.selfEffectName);
+			if (currentSkill.selfEffectName != string.Empty) {
+				SetEffectAnim (currentSkill.selfEffectName);
 			}
 
 			// 播放技能对应的怪物技能特效动画
-			if (skill.enemyEffectName != string.Empty) {
-				bmCtr.SetEffectAnim (skill.enemyEffectName);
+			if (currentSkill.enemyEffectName != string.Empty) {
+				bmCtr.SetEffectAnim (currentSkill.enemyEffectName);
 			}
 
 			// 播放技能对应的音效
 			GameManager.Instance.soundManager.PlayClips (
 				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
 				SoundDetailTypeName.Skill, 
-				skill.sfxName);
+				currentSkill.sfxName);
 
 			// 如果该次攻击是物理攻击，对应减少当前武器的耐久度
-			switch (skill.skillType) {
+			switch (currentSkill.skillType) {
 			case SkillType.Physical:
 
 				Equipment equipment = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
@@ -532,13 +538,14 @@ namespace WordJourney
 					bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
 				}
 				break;
-			case SkillType.Magic:
+			case SkillType.Magical:
 				break;
 			case SkillType.Passive:
 				break;
 			}
 
 		}
+
 
 		/// <summary>
 		/// 判断本次战斗是否结束,如果怪物死亡则执行怪物死亡对应的方法
@@ -547,7 +554,7 @@ namespace WordJourney
 		private bool FightEnd(){
 
 			if (bmCtr.agent.health <= 0) {
-				bmCtr.MonsterDie ();
+				bmCtr.AgentDie ();
 				agent.ResetBattleAgentProperties ();
 				return true;
 			} else if (agent.health <= 0) {
@@ -626,12 +633,12 @@ namespace WordJourney
 				consumablesEffectState.effectTime++;
 				player.health += healthGain;
 				player.mana += manaGain;
-				if (player.health >= player.maxHealth) {
-					player.health = player.maxHealth;
-				}
-				if (player.mana >= player.maxMana) {
-					player.mana = player.maxMana;
-				}
+//				if (player.health >= player.maxHealth) {
+//					player.health = player.maxHealth;
+//				}
+//				if (player.mana >= player.maxMana) {
+//					player.mana = player.maxMana;
+//				}
 
 				bpUICtr.UpdatePlayerStatusPlane ();
 			}
@@ -700,7 +707,7 @@ namespace WordJourney
 		/// <summary>
 		/// 玩家死亡
 		/// </summary>
-		public void PlayerDie(){
+		override public void AgentDie(){
 
 			// 停止玩家和怪物的攻击
 			if (attackCoroutine != null) {
@@ -709,7 +716,7 @@ namespace WordJourney
 			if (bmCtr.attackCoroutine != null) {
 				bmCtr.StopCoroutine (bmCtr.attackCoroutine);
 			}
-
+				
 			PlayRoleAnim("die", 1, () => {
 
 				playerLoseCallBack ();

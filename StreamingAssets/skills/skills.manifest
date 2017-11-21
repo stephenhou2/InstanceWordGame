@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 281088048
+CRC: 3167311088
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: de2c3ce5876f06d80d197a13de8eda7d
+    Hash: bbd97f0f7ec8547d89d277ba91a94411
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a24b7041c819b6690f94063701bfd4d6
+    Hash: b1cc868399bd07fa8529e1cf59a5e287
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -30,6 +30,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: c037fff9d1189408293e95977384aa67, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: e7dea69a7c23e43adabf2e0fec231394, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: df774facefd22450cbe4bcc1b5700fb4, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 95f0c2cd4cd4d4839b012cac3af5a732, type: 3}
@@ -46,19 +48,20 @@ ClassTypes:
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Skill/NewSkills/DecreaseArmor.prefab
-- Assets/Prefabs/Skill/NewSkills/ElementBody.prefab
-- Assets/Prefabs/Skill/NewSkills/IronSkin.prefab
-- Assets/Prefabs/Skill/NewSkills/HealthSource.prefab
-- Assets/Prefabs/Skill/NewSkills/WeaponExpert.prefab
-- Assets/Prefabs/Skill/NewSkills/Thunder.prefab
-- Assets/Prefabs/Skill/NewSkills/PowerStrengthen.prefab
-- Assets/Prefabs/Skill/NewSkills/IceExplosion.prefab
-- Assets/Prefabs/Skill/NewSkills/BrambleShield.prefab
-- Assets/Prefabs/Skill/NewSkills/HardBeat.prefab
-- Assets/Prefabs/Skill/NewSkills/MagicShield.prefab
-- Assets/Prefabs/Skill/NewSkills/Vision.prefab
-- Assets/Prefabs/Skill/NewSkills/SneakAttack.prefab
-- Assets/Prefabs/Skill/NewSkills/MagicStrengthen.prefab
-- Assets/Prefabs/Skill/NewSkills/FastAttack.prefab
+- Assets/Prefabs/Skill/PlayerSkills/ActiveSkills/ArmorPenetration.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/ElementBody.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/IronSkin.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/HealthSource.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/WeaponExpert.prefab
+- Assets/Prefabs/Skill/PlayerSkills/ActiveSkills/Thunder.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/PowerStrengthen.prefab
+- Assets/Prefabs/Skill/PlayerSkills/ActiveSkills/IceExplosion.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/BrambleShield.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/HardBeat.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/MagicShield.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/Vision.prefab
+- Assets/Prefabs/Skill/PlayerSkills/ActiveSkills/SneakAttack.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/MagicAttachedAttack.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/MagicStrengthen.prefab
+- Assets/Prefabs/Skill/PlayerSkills/PassiveSkills/FastAttack.prefab
 Dependencies: []

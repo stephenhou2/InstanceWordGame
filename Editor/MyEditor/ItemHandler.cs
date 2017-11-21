@@ -76,7 +76,7 @@ namespace WordJourney
 
 		private void LoadAllMaterial(){
 
-			string materialSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/材料和属性-表格 1.csv");
+			string materialSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统和材料/材料和属性-表格 1.csv");
 
 			string[] materialStrings = materialSource.Split (new string[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -94,7 +94,7 @@ namespace WordJourney
 
 		private void LoadAllItem(){
 
-			string itemSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/物品和属性-表格 1.csv");
+			string itemSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统和材料/物品和属性-表格 1.csv");
 
 			string[] itemStrings = itemSource.Split (new String[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -142,7 +142,7 @@ namespace WordJourney
 
 		private void LoadAllAttachedProperties(){
 
-			string attachedPropertiesSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统/附加属性-表格 1.csv");
+			string attachedPropertiesSource = File.ReadAllText ("/Users/houlianghong/Desktop/MyGameData/物品系统和材料/附加属性-表格 1.csv");
 
 			string[] attachedPropertyStrings = attachedPropertiesSource.Split (new string[]{ "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -177,7 +177,7 @@ namespace WordJourney
 		public float physicalHurtScaler;
 		public float magicHurtScaler;
 		public int effectDuration;
-		public int maxAttachedPropertyCount;
+//		public int maxAttachedPropertyCount;
 		public string attachedPropertyString;
 		public int attachedPropertyId;
 		public EquipmentType equipmentType;
@@ -217,18 +217,18 @@ namespace WordJourney
 			physicalHurtScaler = Convert.ToSingle (itemStrings [13]);
 			magicHurtScaler = Convert.ToSingle (itemStrings [14]);
 			effectDuration = Convert.ToInt16 (itemStrings [15]);
-			maxAttachedPropertyCount = Convert.ToInt16(itemStrings[16]);
-			attachedPropertyString = itemStrings[17];
-			attachedPropertyId = Convert.ToInt16(itemStrings[18]);
-			itemType = (ItemType)(Convert.ToInt16(itemStrings[19]));
-			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[20]));
-			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [21]));
-			detailType = itemStrings [22];
-			formulaUnlocked = Convert.ToInt16 (itemStrings [23]) == 1;
-			spriteName = itemStrings [24];
+//			maxAttachedPropertyCount = Convert.ToInt16(itemStrings[16]);
+			attachedPropertyString = itemStrings[16];
+			attachedPropertyId = Convert.ToInt16(itemStrings[17]);
+			itemType = (ItemType)(Convert.ToInt16(itemStrings[18]));
+			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[19]));
+			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [20]));
+			detailType = itemStrings [21];
+			formulaUnlocked = Convert.ToInt16 (itemStrings [22]) == 1;
+			spriteName = itemStrings [23];
 
 			itemDescription = itemDescription.Replace ("_", "\n"); 
-
+			spriteName = spriteName.Replace ("\r", "");
 
 			AdjustData (attackGain,out attackGain);
 			AdjustData (attackSpeedGain,out attackSpeedGain);
@@ -257,8 +257,8 @@ namespace WordJourney
 
 		public override string ToString ()
 		{
-			return string.Format ("[Item]\nname:{0},itemDescription:{1},materialString:{2},failMaterialString:{3}maxAttachedProperties:{4},attachedPropertyString:{5},attachedPropertyId:{6}",
-				itemName,itemDescription,materialString,failMaterialString,maxAttachedPropertyCount,attachedPropertyString,attachedPropertyId);
+			return string.Format ("[Item]\nname:{0},itemDescription:{1},materialString:{2},failMaterialString:{3},attachedPropertyName:{4},attachedPropertyId:{5}",
+				itemName,itemDescription,materialString,failMaterialString,attachedPropertyString,attachedPropertyId);
 		}
 
 	}
@@ -316,6 +316,8 @@ namespace WordJourney
 			if (itemDescription == "-1") {
 				itemDescription = string.Empty;
 			}
+
+			spriteName = spriteName.Replace ("\r", "");
 
 		}
 

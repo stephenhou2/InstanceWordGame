@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3146752485
+CRC: 2975254286
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d8c2e3151e251360f80fad3e3e6bad22
+    Hash: 1cedabc76d54d60622f8cb8ebc2c0139
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -14,129 +14,169 @@ ClassTypes:
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Textures/ItemIcon/187.png
-- Assets/Textures/ItemIcon/55 (4).png
-- Assets/Textures/ItemIcon/71 (3).png
-- Assets/Textures/ItemIcon/24 (6).png
-- Assets/Textures/ItemIcon/57 (4).png
-- Assets/Textures/ItemIcon/22.png
-- Assets/Textures/ItemIcon/11 (8).png
-- Assets/Textures/ItemIcon/100.png
-- Assets/Textures/ItemIcon/79 (3).png
-- Assets/Textures/ItemIcon/1 (16).png
-- Assets/Textures/ItemIcon/13 (6).png
-- Assets/Textures/ItemIcon/82 (3).png
-- Assets/Textures/ItemIcon/106 (2).png
-- Assets/Textures/ItemIcon/152 (2).png
-- Assets/Textures/ItemIcon/128.png
-- Assets/Textures/ItemIcon/23 (7).png
-- Assets/Textures/ItemIcon/45 (6).png
-- Assets/Textures/ItemIcon/53 (5).png
-- Assets/Textures/ItemIcon/108.png
-- Assets/Textures/ItemIcon/leather.jpg
-- Assets/Textures/ItemIcon/14 (7).png
-- Assets/Textures/ItemIcon/46 (6).png
-- Assets/Textures/ItemIcon/164.png
-- Assets/Textures/ItemIcon/78 (2).png
-- Assets/Textures/ItemIcon/184.png
-- Assets/Textures/ItemIcon/26.png
-- Assets/Textures/ItemIcon/48 (7).png
-- Assets/Textures/ItemIcon/good1.png
-- Assets/Textures/ItemIcon/73 (5).png
-- Assets/Textures/ItemIcon/0000000.png
-- Assets/Textures/ItemIcon/21 (9).png
-- Assets/Textures/ItemIcon/113..png
-- Assets/Textures/ItemIcon/24.png
-- Assets/Textures/ItemIcon/49 (5).png
-- Assets/Textures/ItemIcon/0 (18).png
-- Assets/Textures/ItemIcon/10 (8).png
-- Assets/Textures/ItemIcon/staff.jpg
-- Assets/Textures/ItemIcon/193.png
-- Assets/Textures/ItemIcon/106 (3).png
-- Assets/Textures/ItemIcon/114.png
-- Assets/Textures/ItemIcon/25.png
-- Assets/Textures/ItemIcon/182.png
-- Assets/Textures/ItemIcon/0 (3).png
-- Assets/Textures/ItemIcon/74 (7).png
-- Assets/Textures/ItemIcon/161.png
-- Assets/Textures/ItemIcon/175 (2).png
-- Assets/Textures/ItemIcon/51 (5).png
-- Assets/Textures/ItemIcon/0 (2).png
-- Assets/Textures/ItemIcon/-2 (2).png
-- Assets/Textures/ItemIcon/25 (6).png
-- Assets/Textures/ItemIcon/172 (2).png
-- Assets/Textures/ItemIcon/cloak.jpg
-- Assets/Textures/ItemIcon/47 (5).png
-- Assets/Textures/ItemIcon/27.png
-- Assets/Textures/ItemIcon/67 (4).png
-- Assets/Textures/ItemIcon/knife.jpg
-- Assets/Textures/ItemIcon/131.png
-- Assets/Textures/ItemIcon/98 (2).png
-- Assets/Textures/ItemIcon/-1 (4).png
-- Assets/Textures/ItemIcon/sword.jpg
-- Assets/Textures/ItemIcon/26 (6).png
-- Assets/Textures/ItemIcon/70 (4).png
-- Assets/Textures/ItemIcon/1 (39).png
-- Assets/Textures/ItemIcon/67 (2).png
-- Assets/Textures/ItemIcon/141 (2).png
-- Assets/Textures/ItemIcon/10.png
-- Assets/Textures/ItemIcon/49 (6).png
-- Assets/Textures/ItemIcon/77 (4).png
-- Assets/Textures/ItemIcon/sandal.jpg
-- Assets/Textures/ItemIcon/huili.jpg
-- Assets/Textures/ItemIcon/72 (5).png
-- Assets/Textures/ItemIcon/102.png
-- Assets/Textures/ItemIcon/15 (6).png
-- Assets/Textures/ItemIcon/56 (4).png
-- Assets/Textures/ItemIcon/axe.jpg
-- Assets/Textures/ItemIcon/-1 (3).png
-- Assets/Textures/ItemIcon/1 (18).png
-- Assets/Textures/ItemIcon/110.png
-- Assets/Textures/ItemIcon/58 (4).png
-- Assets/Textures/ItemIcon/69 (3).png
-- Assets/Textures/ItemIcon/23.png
-- Assets/Textures/ItemIcon/76 (3).png
-- Assets/Textures/ItemIcon/20 (8).png
-- Assets/Textures/ItemIcon/50.png
-- Assets/Textures/ItemIcon/127 (2).png
-- Assets/Textures/ItemIcon/54 (5).png
-- Assets/Textures/ItemIcon/46 (7).png
-- Assets/Textures/ItemIcon/0 (8).png
-- Assets/Textures/ItemIcon/113 (3).png
-- Assets/Textures/ItemIcon/18 (5).png
-- Assets/Textures/ItemIcon/0 (9).png
-- Assets/Textures/ItemIcon/33.png
-- Assets/Textures/ItemIcon/1 (20).png
-- Assets/Textures/ItemIcon/101 (2).png
-- Assets/Textures/ItemIcon/125.png
-- Assets/Textures/ItemIcon/80 (2).png
-- Assets/Textures/ItemIcon/112 (2).png
-- Assets/Textures/ItemIcon/1 (7).png
-- Assets/Textures/ItemIcon/1 (36).png
-- Assets/Textures/ItemIcon/64 (5).png
-- Assets/Textures/ItemIcon/-2 (3).png
-- Assets/Textures/ItemIcon/17 (5).png
-- Assets/Textures/ItemIcon/shield.jpeg
-- Assets/Textures/ItemIcon/1 (13).png
-- Assets/Textures/ItemIcon/71 (4).png
-- Assets/Textures/ItemIcon/68 (4).png
-- Assets/Textures/ItemIcon/116.png
-- Assets/Textures/ItemIcon/81 (3).png
-- Assets/Textures/ItemIcon/0 (7).png
-- Assets/Textures/ItemIcon/3 (15).png
-- Assets/Textures/ItemIcon/9 (7).png
-- Assets/Textures/ItemIcon/good2.png
-- Assets/Textures/ItemIcon/179.png
-- Assets/Textures/ItemIcon/1 (26).png
-- Assets/Textures/ItemIcon/19 (7).png
-- Assets/Textures/ItemIcon/74 (5).png
-- Assets/Textures/ItemIcon/73 (8).png
-- Assets/Textures/ItemIcon/59 (5).png
-- Assets/Textures/ItemIcon/cloth.jpg
-- Assets/Textures/ItemIcon/113 (4).png
-- Assets/Textures/ItemIcon/146.png
-- Assets/Textures/ItemIcon/75 (5).png
-- Assets/Textures/ItemIcon/104 (2).png
-- Assets/Textures/ItemIcon/52 (4).png
-- Assets/Textures/ItemIcon/21.png
+- Assets/Textures/ItemIcons/13_longling.png
+- Assets/Textures/ItemIcons/41_trainee_staff.png
+- Assets/Textures/ItemIcons/58_red_dragger.png
+- Assets/Textures/ItemIcons/01_tiaozhantoujing.png
+- Assets/Textures/ItemIcons/03_challenge_shoe.png
+- Assets/Textures/ItemIcons/07_jiangshichangmao.png
+- Assets/Textures/ItemIcons/06_warrior_helmet.png
+- Assets/Textures/ItemIcons/05_bigHealingPotion.png
+- Assets/Textures/ItemIcons/13_pharaoh_armor.png
+- Assets/Textures/ItemIcons/12_xianrenzhangxueye.png
+- Assets/Textures/ItemIcons/27_curse_axe.png
+- Assets/Textures/ItemIcons/09_resistancePaper.png
+- Assets/Textures/ItemIcons/07_ice_ring.png
+- Assets/Textures/ItemIcons/03_great_sword.png
+- Assets/Textures/ItemIcons/20_sadanzhixin.png
+- Assets/Textures/ItemIcons/06_attackPaper.png
+- Assets/Textures/ItemIcons/02_leather_armor.png
+- Assets/Textures/ItemIcons/46_curse_staff.png
+- Assets/Textures/ItemIcons/06_ice_belt.png
+- Assets/Textures/ItemIcons/52_carving_dragger.png
+- Assets/Textures/ItemIcons/17_dominate_armor.png
+- Assets/Textures/ItemIcons/22_battle_axe.png
+- Assets/Textures/ItemIcons/18_ghost_blade.PNG
+- Assets/Textures/ItemIcons/28_doom_axe.png
+- Assets/Textures/ItemIcons/01_bamboo_necklace.png
+- Assets/Textures/ItemIcons/06_knight_ring.png
+- Assets/Textures/ItemIcons/10_demon_necklace.png
+- Assets/Textures/ItemIcons/01_wood_ring.png
+- Assets/Textures/ItemIcons/16_nishizhiwo.png
+- Assets/Textures/ItemIcons/38_glory_harmer.png
+- Assets/Textures/ItemIcons/26_split_hill_axe.png
+- Assets/Textures/ItemIcons/09_fear_belt.png
+- Assets/Textures/ItemIcons/05_forrest_belt.png
+- Assets/Textures/ItemIcons/07_demon_shoe.png
+- Assets/Textures/ItemIcons/09_swordman_armor.png
+- Assets/Textures/ItemIcons/15_shourenxueye.png
+- Assets/Textures/ItemIcons/42_bone_staff.png
+- Assets/Textures/ItemIcons/08_night_necklace.png
+- Assets/Textures/ItemIcons/30_poseidon_axe.png
+- Assets/Textures/ItemIcons/01_smallHealthPotion.png
+- Assets/Textures/ItemIcons/05_bone_armor.png
+- Assets/Textures/ItemIcons/12_knight_armor.png
+- Assets/Textures/ItemIcons/59_fire_dragger.png
+- Assets/Textures/ItemIcons/8_qiheijizhui.png
+- Assets/Textures/ItemIcons/29_ghost_axe.png
+- Assets/Textures/ItemIcons/06_wild_armor.png
+- Assets/Textures/ItemIcons/07_demon_belt.png
+- Assets/Textures/ItemIcons/06_cloud_shoe.png
+- Assets/Textures/ItemIcons/03_rune_armor.png
+- Assets/Textures/ItemIcons/08_battle_armor.png
+- Assets/Textures/ItemIcons/18_canglangpifeng.png
+- Assets/Textures/ItemIcons/02_stone_necklace.png
+- Assets/Textures/ItemIcons/07_speedPaper.png
+- Assets/Textures/ItemIcons/10_miracle_belt.png
+- Assets/Textures/ItemIcons/10_alloy_armor.png
+- Assets/Textures/ItemIcons/08_tyrfing_sword.png
+- Assets/Textures/ItemIcons/25_explosion_axe.png
+- Assets/Textures/ItemIcons/04_gear_necklace.png
+- Assets/Textures/ItemIcons/15_returnPaper.png
+- Assets/Textures/ItemIcons/06_light_necklace.png
+- Assets/Textures/ItemIcons/44_bramble_staff.png
+- Assets/Textures/ItemIcons/02_leather_belt.png
+- Assets/Textures/ItemIcons/13_picker.png
+- Assets/Textures/ItemIcons/01_cloth_armor.png
+- Assets/Textures/ItemIcons/54_hidden_dragger.png
+- Assets/Textures/ItemIcons/45_master_staff.png
+- Assets/Textures/ItemIcons/02_rune_helmet.png
+- Assets/Textures/ItemIcons/16_carving_armor.png
+- Assets/Textures/ItemIcons/05_bone_shoe.png
+- Assets/Textures/ItemIcons/10_flash_ring.png
+- Assets/Textures/ItemIcons/56_telson_dragger.png
+- Assets/Textures/ItemIcons/02_kongzhuguan.png
+- Assets/Textures/ItemIcons/08_justice_belt.png
+- Assets/Textures/ItemIcons/07_glory_necklace.png
+- Assets/Textures/ItemIcons/04_knight_sword.png
+- Assets/Textures/ItemIcons/11_bishop_armor.png
+- Assets/Textures/ItemIcons/47_souleater_staff.png
+- Assets/Textures/ItemIcons/43_grass_staff.png
+- Assets/Textures/ItemIcons/08_alloy_shoe.png
+- Assets/Textures/ItemIcons/53_ice_cone_dragger.png
+- Assets/Textures/ItemIcons/02_leather_shoe.png
+- Assets/Textures/ItemIcons/04_lvyezhimao.png
+- Assets/Textures/ItemIcons/12_tang_blade.png
+- Assets/Textures/ItemIcons/49_dragon_staff.png
+- Assets/Textures/ItemIcons/16_doom_blade.PNG
+- Assets/Textures/ItemIcons/37_storm_harmer.png
+- Assets/Textures/ItemIcons/57_light_dragger.png
+- Assets/Textures/ItemIcons/40_Thor_harmer.png
+- Assets/Textures/ItemIcons/05_ice_sword.png
+- Assets/Textures/ItemIcons/10_mijiaer_sword.png
+- Assets/Textures/ItemIcons/10_fear_shoe.png
+- Assets/Textures/ItemIcons/07_paladin_armor.png
+- Assets/Textures/ItemIcons/05_tengman.png
+- Assets/Textures/ItemIcons/10_dodgePaper.png
+- Assets/Textures/ItemIcons/19_amber_blade.PNG
+- Assets/Textures/ItemIcons/18_conquer_armor.png
+- Assets/Textures/ItemIcons/05_carving_ring.png
+- Assets/Textures/ItemIcons/03_slurry_ring.png
+- Assets/Textures/ItemIcons/03_stone_belt.png
+- Assets/Textures/ItemIcons/23_great_battle_axe.png
+- Assets/Textures/ItemIcons/15_flame_blade.PNG
+- Assets/Textures/ItemIcons/04_turtle_armor.png
+- Assets/Textures/ItemIcons/14_key.png
+- Assets/Textures/ItemIcons/33_thunderous_harmer.png
+- Assets/Textures/ItemIcons/50_merlin_staff.png
+- Assets/Textures/ItemIcons/60_ghost_dragger.png
+- Assets/Textures/ItemIcons/31_long_harmer.png
+- Assets/Textures/ItemIcons/01_cloth_shoe.png
+- Assets/Textures/ItemIcons/34_shootingstar_harmer.png
+- Assets/Textures/ItemIcons/02_broad_sword.png
+- Assets/Textures/ItemIcons/21_hand_axe.png
+- Assets/Textures/ItemIcons/08_oracle_helmet.png
+- Assets/Textures/ItemIcons/15_gild_armor.png
+- Assets/Textures/ItemIcons/08_armorPaper.png
+- Assets/Textures/ItemIcons/04_wild_belt.png
+- Assets/Textures/ItemIcons/01_long_sword.png
+- Assets/Textures/ItemIcons/01_linen_helmet.png
+- Assets/Textures/ItemIcons/04_alloy_helmet.png
+- Assets/Textures/ItemIcons/03_horn_necklace.png
+- Assets/Textures/ItemIcons/13_desert_blade.PNG
+- Assets/Textures/ItemIcons/09_battle_necklace.png
+- Assets/Textures/ItemIcons/04_mediumHealiingPotion.png
+- Assets/Textures/ItemIcons/48_sleep_staff.png
+- Assets/Textures/ItemIcons/03_smallHealingPotion.png
+- Assets/Textures/ItemIcons/11_posuichibang.png
+- Assets/Textures/ItemIcons/20_satan_blade.png
+- Assets/Textures/ItemIcons/01_linen_belt.png
+- Assets/Textures/ItemIcons/09_glory_shoe.png
+- Assets/Textures/ItemIcons/03_wizard_helmet.png
+- Assets/Textures/ItemIcons/17_fuwenniujiao.png
+- Assets/Textures/ItemIcons/55_terror_dragger.png
+- Assets/Textures/ItemIcons/09_finger_ring.png
+- Assets/Textures/ItemIcons/02_smallMagicPotion.png
+- Assets/Textures/ItemIcons/17_hate_blade.png
+- Assets/Textures/ItemIcons/11_critPaper.png
+- Assets/Textures/ItemIcons/09_king_helmet.png
+- Assets/Textures/ItemIcons/10_cikeyanqiu.png
+- Assets/Textures/ItemIcons/09_zheduanjianren.png
+- Assets/Textures/ItemIcons/10_ancient_helmet.png
+- Assets/Textures/ItemIcons/11_horse_blade.png
+- Assets/Textures/ItemIcons/14_conqueror_blade.PNG
+- Assets/Textures/ItemIcons/19_mofabiji.png
+- Assets/Textures/ItemIcons/20_god_armor.png
+- Assets/Textures/ItemIcons/05_assassin_helmet.png
+- Assets/Textures/ItemIcons/14_changmaotou.png
+- Assets/Textures/ItemIcons/24_cystal_axe.png
+- Assets/Textures/ItemIcons/39_hell_roar_harmer.png
+- Assets/Textures/ItemIcons/32_nail_harmer.png
+- Assets/Textures/ItemIcons/09_demon_sword.png
+- Assets/Textures/ItemIcons/04_bone_ring.png
+- Assets/Textures/ItemIcons/04_rune_shoe.png
+- Assets/Textures/ItemIcons/12_magicPaper.png
+- Assets/Textures/ItemIcons/06_doom_sword.png
+- Assets/Textures/ItemIcons/05_curse_necklace.png
+- Assets/Textures/ItemIcons/07_knight_helmet.png
+- Assets/Textures/ItemIcons/02_vine_ring.png
+- Assets/Textures/ItemIcons/36_warrior_harmer.png
+- Assets/Textures/ItemIcons/07_stone_sword.png
+- Assets/Textures/ItemIcons/03_bianfuxueye.png
+- Assets/Textures/ItemIcons/51_stone_dragger.png
+- Assets/Textures/ItemIcons/19_dragon_armor.png
+- Assets/Textures/ItemIcons/06_xiangjiao.png
+- Assets/Textures/ItemIcons/08_ruby_ring.png
+- Assets/Textures/ItemIcons/35_breakbone_harmer.png
+- Assets/Textures/ItemIcons/14_ruffian_armor.png
 Dependencies: []

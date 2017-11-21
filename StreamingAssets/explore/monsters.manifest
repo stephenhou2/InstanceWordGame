@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4062601069
+CRC: 169613214
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8714362710be304f748c6299bc23b103
+    Hash: cfbdf2b3febaa19acd64bd0f97f0d0ee
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 761411298659ee82dd8c065f8d352d7e
+    Hash: 2f8e842da7081ab88cb69dbf1eceb265
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -47,5 +47,7 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Explore/Monsters/Monster.prefab
+- Assets/Prefabs/Explore/Monsters/Spider.prefab
 - Assets/Resources/RoleBones/monster1/monster_tex.png
+- Assets/Prefabs/Explore/Monsters/Monster2.prefab
 Dependencies: []
