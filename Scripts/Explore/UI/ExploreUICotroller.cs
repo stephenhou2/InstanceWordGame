@@ -83,18 +83,19 @@ namespace WordJourney
 
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 					Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
-					bagCanvas.GetComponent<BagViewController> ().SetUpBagView ();
-					bagCanvas.GetComponent<Canvas> ().enabled = false;
-				}, true);
+					bagCanvas.GetComponent<BagViewController> ().SetUpBagView (false);
+				}, true,true);
 			}
 
 		}
 
 
 		public void ShowFightPlane(){
-
 			battlePlane.gameObject.SetActive (true);
+		}
 
+		public void HideFightPlane(){
+			battlePlane.gameObject.SetActive (false);
 		}
 
 
@@ -352,15 +353,9 @@ namespace WordJourney
 
 		public void SetUpWorkBenchPlane(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.workBenchCanvasBundleName,"WorkBenchCanvas",()=>{
-				TransformManager.FindTransform("WorkBenchCanvas").GetComponent<WorkBenchViewController>().SetUpWorkBenchView();
-			});
-
-		}
-
-		public void SetUpUpgradeWorkBenchPlane(){
-
-
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
+				TransformManager.FindTransform ("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView ();
+			}, false, true);
 
 		}
 
@@ -372,7 +367,7 @@ namespace WordJourney
 		public void QuitFight(){
 			GetComponent<BattlePlayerUIController> ().QuitFight ();
 			GetComponent<BattleMonsterUIController>().QuitFight ();
-			battlePlane.gameObject.SetActive (false);
+			HideFightPlane ();
 		}
 
 

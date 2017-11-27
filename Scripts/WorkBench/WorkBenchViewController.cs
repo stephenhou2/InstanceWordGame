@@ -21,9 +21,9 @@ namespace WordJourney
 
 
 
-		private List<ItemModel> allItemModels;
-
-		private List<ItemModel> itemModelsOfCurrentType;
+//		private List<ItemModel> allItemModels;
+//
+//		private List<ItemModel> itemModelsOfCurrentType;
 
 		private string weaponsString = "weapons";
 		private string clothString = "cloth";
@@ -85,7 +85,7 @@ namespace WordJourney
 		/// </summary:
 		private void SetUpItemDisplayView(){
 
-			allItemModels = GameManager.Instance.gameDataCenter.allItemModels;
+//			allItemModels = GameManager.Instance.gameDataCenter.allItemModels;
 
 //			for (int i = 0; i < allItemModels.Count; i++) {
 //
@@ -156,7 +156,7 @@ namespace WordJourney
 
 		public void OnItemDetailTypeButtonClick(string detailTypeString){
 
-			itemModelsOfCurrentType = allItemModels.FindAll (delegate(ItemModel obj) {
+			List<ItemModel> itemModelsOfCurrentType = GameManager.Instance.gameDataCenter.allItemModels.FindAll (delegate(ItemModel obj) {
 				return obj.detailType == detailTypeString;
 			});
 
@@ -231,22 +231,23 @@ namespace WordJourney
 			workBenchView.QuitItemDisplayView ();
 
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("ExploreCanvas")) {
-
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 					TransformManager.FindTransform ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 				});
 			}
 
+
+
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfItemDisplayCanvas",TransformRoot.PoolContainer);
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});
+//			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});
 
 		}
 
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", "PoolContainerOfItemDisplayCanvas", "ModelContainerOfItemDisplayCanvas");
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", "PoolContainerOfItemDisplayCanvas", "ModelContainerOfItemDisplayCanvas");
 
 		}
 

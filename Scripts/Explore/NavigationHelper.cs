@@ -88,7 +88,7 @@ namespace WordJourney
 						p.fatherPoint = currentPoint;
 
 						while (p.fatherPoint != null) {
-							pathPos.Add (new Vector3 (p.x, p.y, p.y));
+							pathPos.Add (new Vector3 (p.x, p.y, 0));
 							p = p.fatherPoint;
 
 						}

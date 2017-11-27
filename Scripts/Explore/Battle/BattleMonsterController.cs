@@ -23,8 +23,6 @@ namespace WordJourney
 
 			agent = GetComponent<Monster> ();
 
-			defaultSkill.selfAnimName = "attack";
-
 			modelActive = this.gameObject;
 
 			base.Awake ();
@@ -51,41 +49,47 @@ namespace WordJourney
 
 		}
 			
+
+
+
+
+
 		/// <summary>
-		/// 使用技能之后的逻辑
+		/// 怪物进入战斗
 		/// </summary>
-		/// <param name="skill">Skill.</param>
-		protected override void UseSkill (Skill skill)
-		{
+		/// <param name="bpCtr">Bp ctr.</param>
+		/// <param name="playerWinCallBack">Player window call back.</param>
+		public void StartFight(BattlePlayerController bpCtr,CallBack<Transform> playerWinCallBack){
 
-			this.armatureCom.animation.Stop ();
+			this.bpCtr = bpCtr;
 
-			currentSkill = skill;
+			this.playerWinCallBack = playerWinCallBack;
 
-			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-
-				// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-				if(!FightEnd()){
-					attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
-				}
-
-//				AttackerRoleAnimEnd(skill);
-
-				this.PlayRoleAnim("interval",0,null);
-			});
-
-			// 播放技能对应的怪物动画
-			if (skill.enemyAnimName != string.Empty) {
-				bpCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
-			}
-
+			// 怪物比玩家延迟0.5s进入战斗状态
+			Invoke ("Fight", 0.5f);
 
 		}
 
+		#warning 后面这里要加入怪物战斗逻辑,现在默认一直使用普通攻击
+		/// <summary>
+		/// 角色战斗逻辑
+		/// </summary>
+		public override void Fight(){
+			currentSkill = (agent as Monster).InteligentSelectSkill ();
+			UseSkill (currentSkill);
+		}
+			
+
 		protected override void AgentExcuteHitEffect ()
 		{
+
 			currentSkill.AffectAgents(this,bpCtr);
+
+			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+			if(!FightEnd()){
+				currentSkill = (agent as Monster).InteligentSelectSkill ();
+				attackCoroutine = StartCoroutine("InvokeAttack",currentSkill);
+			}
 
 			this.UpdateStatusPlane();
 
@@ -121,7 +125,7 @@ namespace WordJourney
 					break;
 				}
 
-				int randomIndex = Random.Range (0, allEquipedProtector.Count + 1);
+				int randomIndex = Random.Range (0, allEquipedProtector.Count);
 
 				Equipment damagedEquipment = allEquipedProtector [randomIndex];
 
@@ -161,48 +165,6 @@ namespace WordJourney
 			}
 		}
 
-
-		/// <summary>
-		/// 怪物角色动画（攻击动作）结束后的逻辑
-		/// </summary>
-		/// <param name="skill">Skill.</param>
-//		private void AttackerRoleAnimEnd(Skill skill){
-//
-//
-//
-//
-//
-//
-//
-//		}
-
-
-
-
-		/// <summary>
-		/// 怪物进入战斗
-		/// </summary>
-		/// <param name="bpCtr">Bp ctr.</param>
-		/// <param name="playerWinCallBack">Player window call back.</param>
-		public void StartFight(BattlePlayerController bpCtr,CallBack<Transform> playerWinCallBack){
-
-			this.bpCtr = bpCtr;
-
-			this.playerWinCallBack = playerWinCallBack;
-
-			// 怪物比玩家延迟0.5s进入战斗状态
-			Invoke ("Fight", 0.5f);
-
-		}
-
-		#warning 后面这里要加入怪物战斗逻辑,现在默认一直使用普通攻击
-		/// <summary>
-		/// 角色战斗逻辑
-		/// </summary>
-		public override void Fight(){
-			UseSkill(defaultSkill);
-		}
-
 		/// <summary>
 		/// 伤害文本动画
 		/// </summary>
@@ -224,7 +186,11 @@ namespace WordJourney
 		/// <param name="gainStr">Gain string.</param>
 		public override void PlayGainTextAnim (string gainStr)
 		{
-			bmUICtr.PlayGainTextAnim (gainStr,this.transform.position);
+			if (this.transform.position.x < bpCtr.transform.position.x) {
+				bmUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Left);
+			} else {
+				bmUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Right);
+			}
 		}
 
 		/// <summary>
@@ -252,15 +218,25 @@ namespace WordJourney
 		/// </summary>
 		override public void AgentDie(){
 
-			if (attackCoroutine != null) {
-				StopCoroutine (attackCoroutine);
-			}
-			if (waitRoleAnimEndCoroutine != null) {
-				StopCoroutine (waitRoleAnimEndCoroutine);
-			}
-				
+			Debug.Log ("monsterDie");
+
+			this.armatureCom.animation.Stop ();
 
 			bpCtr.PlayRoleAnim ("wait", 0, null);
+
+			StopAllCoroutines ();
+
+//			bpCtr.StopAllCoroutines ();
+
+			if (bpCtr.attackCoroutine != null) {
+				StopCoroutine (bpCtr.attackCoroutine);
+			}
+				
+			if (bpCtr.waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (bpCtr.waitRoleAnimEndCoroutine);
+			}
+				
+			boxCollider.enabled = false;
 
 			playerWinCallBack (new Transform[]{ transform });
 
@@ -273,18 +249,6 @@ namespace WordJourney
 			gameObject.SetActive(false);
 
 
-//			PlayRoleAnim ("death", 1, () => {
-//				playerWinCallBack (new Transform[]{ transform });
-//
-//				ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
-//
-//				expUICtr.QuitFight ();
-//
-//				CollectSkillEffectsToPool();
-//
-//				gameObject.SetActive(false);
-//
-//			});
 
 		}
 

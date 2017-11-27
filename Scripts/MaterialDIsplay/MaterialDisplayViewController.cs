@@ -14,7 +14,6 @@ namespace WordJourney
 		private List<Material> baseMaterials = new List<Material>();//基础材料列表
 		private List<Material> rareMaterials = new List<Material>();//稀有材料列表
 		private List<Material> monsterMaterials = new List<Material>();//怪物材料列表
-		private List<Material> bossMaterials = new List<Material>();//boss材料列表
 
 		/// <summary>
 		/// 初始化图鉴界面
@@ -46,7 +45,7 @@ namespace WordJourney
 			//默认进入材料图鉴界面展示的是基础材料
 			materialDisplayView.SetUpMaterials(baseMaterials);
 
-			GetComponent<Canvas> ().enabled = true;
+//			GetComponent<Canvas> ().enabled = true;
 		}
 
 		/// <summary>
@@ -91,7 +90,7 @@ namespace WordJourney
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 			});
 
-			gameObject.SetActive(false);
+//			GetComponent<Canvas>().enabled = false;
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
 

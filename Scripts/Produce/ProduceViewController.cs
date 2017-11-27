@@ -199,12 +199,12 @@ namespace WordJourney
 		}
 
 		public void QuitProduceView(){
-			
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", () => {
-				TransformManager.FindTransform ("WorkBenchCanvas").GetComponent<Canvas> ().enabled = true;
-			});
 
-			gameObject.SetActive(false);
+//			GetComponent<Canvas>().enabled = false;
+
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
+				TransformManager.FindTransform ("WorkbenchCanvas").GetComponent<Canvas> ().enabled = true;
+			});
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfProduceCanvas", TransformRoot.PoolContainer);
 

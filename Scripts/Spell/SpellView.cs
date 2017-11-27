@@ -84,7 +84,7 @@ namespace WordJourney
 				break; 
 			}
 				
-			GetComponent<Canvas>().enabled = true;
+//			GetComponent<Canvas>().enabled = true;
 
 		}
 
@@ -304,7 +304,7 @@ namespace WordJourney
 			Vector3 originalPosition = spellPlane.localPosition;
 
 			spellPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-				gameObject.SetActive(false);
+//				GetComponent<Canvas>().enabled = false;
 				spellPlane.localPosition = originalPosition;
 			});
 		}

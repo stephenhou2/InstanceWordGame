@@ -59,9 +59,6 @@ namespace WordJourney
 
 		public static float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
 
-
-//		public bool isPassive;// 技能是否是被动技能
-
 		public string selfAnimName;
 		public string enemyAnimName;
 

@@ -64,6 +64,8 @@ namespace WordJourney
 
 			SetUpMaterialButtons (materialsForProduce,totalValence,totalUnstableness);
 
+//			GetComponent<Canvas>().enabled = true;
+
 		}
 
 		/// <summary>
@@ -330,7 +332,7 @@ namespace WordJourney
 
 			DisableProduceButton ();
 
-			itemDetailsPlane.gameObject.SetActive (false);
+//			itemDetailsPlane.gameObject.SetActive (false);
 
 		}
 

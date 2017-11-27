@@ -14,7 +14,7 @@ namespace WordJourney
 
 		void Awake(){
 			skillType = SkillType.Physical;
-			skillName = "背刺";
+			skillName = "偷袭";
 			skillDescription = string.Format ("对敌方造成额外<color=orange>{0}+{1}*技能等级*攻击力点</color>的物理伤害,并将实际伤害的<color=orange>{2}%</color>转化为自身生命值(不可闪避)", hurtBase, (int)(hurtScalerBase * 100),(int)(healthAbsorbScaler * 100));
 
 		}

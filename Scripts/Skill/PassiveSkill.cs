@@ -28,7 +28,7 @@ namespace WordJourney
 		public TriggerInfo beforeFightTriggerInfo;
 		public TriggerInfo attackTriggerInfo;
 		public TriggerInfo attackFinishTriggerInfo;
-		public TriggerInfo BeAttackedTriggerInfo;
+		public TriggerInfo beAttackedTriggerInfo;
 		public TriggerInfo fightEndTriggerInfo;
 
 		public string stateName;
@@ -84,8 +84,8 @@ namespace WordJourney
 				}
 				targetBa.attackFinishTriggerCallBacks.Add (AttackFinishTriggerCallBack);
 			}
-			if (BeAttackedTriggerInfo.triggered) {
-				switch (BeAttackedTriggerInfo.excutor) {
+			if (beAttackedTriggerInfo.triggered) {
+				switch (beAttackedTriggerInfo.excutor) {
 				case SkillEffectTarget.Self:
 					targetBa = self;
 					break;
@@ -129,5 +129,30 @@ namespace WordJourney
 
 		}
 
+
+		protected void SetEffectAnims(TriggerInfo triggerInfo,BattleAgentController self,BattleAgentController enemy){
+
+			// 播放技能对应的玩家技能特效动画
+			switch(triggerInfo.excutor){
+			case SkillEffectTarget.Self://如果被动逻辑由自己执行
+				if (selfEffectName != string.Empty) {
+					self.SetEffectAnim (selfEffectName);
+				}
+				if (enemyEffectName != string.Empty) {
+					enemy.SetEffectAnim (enemyEffectName);
+				}
+				break;
+
+			case SkillEffectTarget.Enemy:// 如果被动逻辑由对方执行
+				if (selfEffectName != string.Empty) {
+					enemy.SetEffectAnim (selfEffectName);
+				}
+				if (enemyEffectName != string.Empty) {
+					self.SetEffectAnim (enemyEffectName);
+				}
+				break;
+			}
+
+		}
 	}
 }

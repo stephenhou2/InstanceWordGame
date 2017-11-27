@@ -51,11 +51,13 @@ namespace WordJourney
 			GetComponent<SpellView> ().ClearEnteredCharactersPlane ();
 			spellViewContainer.gameObject.SetActive (true);
 			itemDisplayViewContainer.gameObject.SetActive (false);
+//			GetComponent<Canvas>().enabled = true;
 		}
 
 		public void ChangeToItemDisplayView(){
 			itemDisplayViewContainer.gameObject.SetActive (true);
 			spellViewContainer.gameObject.SetActive (false);
+//			GetComponent<Canvas> ().enabled = true;
 		}
 
 		public void Initialize(){
@@ -67,15 +69,10 @@ namespace WordJourney
 			Transform modelContainerOfItemDisplayCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfItemDisplayCanvas");
 
 			if (poolContainerOfItemDisplayCanvas.childCount == 0) {
-
 				// 创建缓存池
 				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfItemDisplayCanvas.name);
 				itemDetailTypeBtnPool = InstancePool.GetOrCreateInstancePool ("ItemDetailTypeBtnPool",poolContainerOfItemDisplayCanvas.name);
 				materialPool = InstancePool.GetOrCreateInstancePool ("MaterialBtnPool",poolContainerOfItemDisplayCanvas.name);
-
-//				itemDetailsPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
-//				itemDetailTypeBtnPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
-//				materialPool.transform.SetParent (poolContainerOfItemDisplayCanvas);
 			}
 
 			if (modelContainerOfItemDisplayCanvas.childCount == 0) {
@@ -92,6 +89,8 @@ namespace WordJourney
 		}
 
 		public void SetUpDetailTypeButtons(string[] detailTypes){
+
+			Debug.Log (itemDetailTypeBtnPool);
 
 			itemDetailTypeBtnPool.AddChildInstancesToPool (itemDetailTypeBtnsContainer);
 
@@ -371,9 +370,7 @@ namespace WordJourney
 			Vector3 originalPosition = workBenchContainer.localPosition;
 
 			workBenchContainer.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-
-				gameObject.SetActive(false);
-
+				GameManager.Instance.UIManager.HideCanvas(gameObject.name);
 				workBenchContainer.localPosition = originalPosition;
 
 			});

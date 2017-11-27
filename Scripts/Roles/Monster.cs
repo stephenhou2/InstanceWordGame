@@ -19,7 +19,9 @@ namespace WordJourney
 
 		public int rewardExperience;//奖励的经验值
 
-		public MonsterSkill[] allEquipedSkills;
+		public MonsterSkill[] allEquipedActiveSkills;
+
+		public Skill[] allEquipedPassiveSkills;
 
 
 		private BattleMonsterController mBaMonsterController;
@@ -49,7 +51,33 @@ namespace WordJourney
 
 		public Skill InteligentSelectSkill(){
 
-			return null;
+			int randomNum = Random.Range (0, 100);
+
+			#if UNITY_STANDALONE || UNITY_EDITOR
+			float totalProbability = 0f;
+			for(int i = 0;i<allEquipedActiveSkills.Length;i++){
+				totalProbability += allEquipedActiveSkills[i].probability;
+			}
+
+			if(totalProbability != 1f){
+				Debug.LogError("total probability = " + totalProbability.ToString());
+			}
+			#endif
+
+			Skill inteligentSelectedSkill = null;
+
+			int chip = 0;
+
+			for (int i = 0; i < allEquipedActiveSkills.Length; i++) {
+				chip += (int)(allEquipedActiveSkills [i].probability * 100);
+				if (randomNum < chip) {
+					inteligentSelectedSkill = allEquipedActiveSkills [i].skill;
+					break;
+				}
+			}
+
+			return inteligentSelectedSkill;
+
 		}
 
 

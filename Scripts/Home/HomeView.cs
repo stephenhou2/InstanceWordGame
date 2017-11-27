@@ -14,9 +14,9 @@ namespace WordJourney
 
 		public Slider playerHealthBar;
 
-		public Transform votexImage;
+//		public Transform votexImage;
 
-		private Tweener votexRotate;
+//		private Tweener votexRotate;
 
 		public Image maskImage;
 
@@ -45,7 +45,7 @@ namespace WordJourney
 
 			SetUpTopBar ();
 
-			VotexRotate ();
+//			VotexRotate ();
 
 		}
 		public void ShowMaskImage (){
@@ -56,11 +56,11 @@ namespace WordJourney
 			maskImage.gameObject.SetActive (false);
 		}
 
-		private void VotexRotate(){
-			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
-			votexRotate.SetLoops (-1);
-			votexRotate.SetEase (Ease.Linear);
-		}
+//		private void VotexRotate(){
+//			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
+//			votexRotate.SetLoops (-1);
+//			votexRotate.SetEase (Ease.Linear);
+//		}
 
 
 		// 初始化顶部bar
@@ -106,11 +106,13 @@ namespace WordJourney
 
 			chapterSelectPlane.gameObject.SetActive (false);
 
-			gameObject.SetActive(false);
+//			gameObject.SetActive(false);
 
-			votexImage.localRotation = Quaternion.identity;
+//			GetComponent<Canvas> ().targetDisplay = 1;
 
-			votexRotate.Kill (false);
+//			votexImage.localRotation = Quaternion.identity;
+//
+//			votexRotate.Kill (false);
 
 			HideMaskImage ();
 

@@ -254,10 +254,9 @@ namespace WordJourney
 			// 初始化背包界面并显示
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
-				bagCanvas.GetComponent<BagViewController>().SetUpBagView();
-				bagCanvas.GetComponent<Canvas>().enabled =true;
-				bagCanvas.gameObject.SetActive(true);
-			}, false);
+				bagCanvas.GetComponent<BagViewController>().SetUpBagView(true);
+//				bagCanvas.gameObject.SetActive(true);
+			}, false,true);
 
 		}
 
@@ -643,7 +642,6 @@ namespace WordJourney
 			skillButtonPool.AddChildInstancesToPool (skillsContainer);
 
 			skillsContainer.gameObject.SetActive (false);
-
 		}
 	}
 }

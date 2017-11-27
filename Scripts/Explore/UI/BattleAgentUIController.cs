@@ -157,9 +157,18 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="gainStr">Gain string.</param>
 		/// <param name="agentPos">Agent position.</param>
-		public void PlayGainTextAnim(string gainStr, Vector3 agentPos){
+		public void PlayGainTextAnim(string gainStr, Vector3 agentPos, Towards towards){
+			
+			Vector3 pos = Vector3.zero;
 
-			Vector3 pos = ToPointInCanvas(agentPos) + new Vector3(50f,100f,0);
+			switch (towards) {
+			case Towards.Left:
+				pos = ToPointInCanvas (agentPos) + new Vector3 (-50f, 150f, 0);
+				break;
+			case Towards.Right:
+				pos = ToPointInCanvas (agentPos) + new Vector3 (50f, 150f, 0);
+				break;
+			}
 
 			Text gainText = tintTextPool.GetInstance<Text> (tintTextModel.gameObject, tintTextContainer);
 
@@ -169,7 +178,7 @@ namespace WordJourney
 
 			gainText.gameObject.SetActive (true);
 
-			float endY = pos.y + 50f;
+			float endY = pos.y + 100f;
 
 			gainText.transform.DOLocalMoveY (endY, 1f).OnComplete(()=>{
 				gainText.gameObject.SetActive(false);

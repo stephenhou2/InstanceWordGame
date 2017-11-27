@@ -55,7 +55,7 @@ namespace WordJourney{
 				break;
 			}
 
-			GetComponent<Canvas> ().enabled = true;
+//			GetComponent<Canvas> ().enabled = true;
 
 		}
 
@@ -86,14 +86,14 @@ namespace WordJourney{
 
 		public void QuitSettingView(){
 
-			settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
+//			settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
 
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
 			Vector3 originalPosition = settingPlane.localPosition;
 
 			settingPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
-				gameObject.SetActive(false);
+//				GetComponent<Canvas>().enabled = false;
 				settingPlane.localPosition = originalPosition;
 			});
 		}

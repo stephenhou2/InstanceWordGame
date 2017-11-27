@@ -14,7 +14,8 @@ using UnityEngine.EventSystems;
 
 using WordJourney;
 
-namespace WordJourney{
+namespace WordJourney
+{
 	public class EditHelper {
 		
 		[MenuItem("EditHelper/GameLevelDatasHelper")]

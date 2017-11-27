@@ -160,6 +160,13 @@ namespace WordJourney
 		}
 
 
+		public void ObtainReward(Item reward){
+
+			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
+
+		}
+
+
 		/// <summary>
 		/// 遭遇怪物时的响应方法
 		/// </summary>
@@ -185,8 +192,8 @@ namespace WordJourney
 			}
 
 			// 初始化怪物被动技能
-			for (int i = 0; i < (battleMonsterCtr.agent as Monster).allEquipedSkills.Length; i++) {
-				Skill skill = (battleMonsterCtr.agent as Monster).allEquipedSkills [i].skill;
+			for (int i = 0; i < (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills.Length; i++) {
+				Skill skill = (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills [i];
 				if (skill.skillType == SkillType.Passive) {
 					skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 				}
@@ -342,17 +349,8 @@ namespace WordJourney
 			expUICtr.SetUpWorkBenchPlane ();
 
 
-
 		}
-
-		public void EnterUpgradeWorkBench(Transform upgradeWorkBench){
-
-			Debug.Log("进入升级工作台");
-
-			expUICtr.SetUpUpgradeWorkBenchPlane ();
-				
-
-		}
+			
 
 		public void BattlePlayerWin(Transform[] monsterTransArray){
 

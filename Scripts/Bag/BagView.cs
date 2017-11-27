@@ -11,8 +11,8 @@ namespace WordJourney
 
 	public class BagView : MonoBehaviour {
 
-		public Transform bagViewContainer;
-		public GameObject bagPlane;
+//		public Transform bagViewContainer;
+//		public GameObject bagPlane;
 
 		public Transform playerPropertiesPlane;
 		public Transform playerStatusPlane;
@@ -20,14 +20,13 @@ namespace WordJourney
 		public Button[] bagTypeButtons;
 		public Button[] allEquipedEquipmentsButtons;
 
+		public Transform itemsDisplayPlane;
 		private InstancePool itemDisplayButtonsPool;
 		public Transform itemDisplayButtonsContainer;
 		private Transform itemDisplayButtonModel;
 		private int maxPreloadCountOfItem;
 
 		private Player player;
-
-		private List<Sprite> sprites = new List<Sprite> ();
 
 		public Transform itemDetailHUD;
 
@@ -51,12 +50,12 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化背包界面
 		/// </summary>
-		public void SetUpBagView(Item currentSelectItem){
+		public void SetUpBagView(Item currentSelectItem,bool setVisible){
 
-			this.GetComponent<Canvas> ().enabled = true;
+			this.GetComponent<Canvas> ().enabled = setVisible;
 
 			//获取所有item的图片
-			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
+//			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
 			this.player = Player.mainPlayer;
 
 			Transform poolContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfBagCanvas");
@@ -82,7 +81,7 @@ namespace WordJourney
 			}
 
 			// 背包中单类物品最大预加载数量
-			maxPreloadCountOfItem = 30;
+			maxPreloadCountOfItem = 24;
 
 			SetUpPlayerStatusPlane ();
 
@@ -137,24 +136,27 @@ namespace WordJourney
 		/// 初始化已装备物品界面
 		/// </summary>
 		private void SetUpEquipedEquipmentsPlane(){
-			
-			for(int i = 0;i<player.allEquipedEquipments.Count;i++){
-				
-				Equipment equipment = player.allEquipedEquipments[i];
 
-				int buttonIndex = (int)(equipment.equipmentType);
+			for(int i = 0;i<allEquipedEquipmentsButtons.Length;i++){
 
-				Button equipedEquipmentButton = allEquipedEquipmentsButtons[buttonIndex];
+				int equipmentTypeNum = i;
 
+				Button equipedEquipmentButton = allEquipedEquipmentsButtons[i];
+
+				Equipment equipment = player.allEquipedEquipments.Find (delegate(Equipment obj) {
+					return (int)(obj.equipmentType) == equipmentTypeNum;
+				});
+					
 				Image itemIcon = equipedEquipmentButton.transform.Find ("ItemIcon").GetComponent<Image> ();
 
-				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == equipment.spriteName;
-				});
-
-				if (s != null) {
+				if (equipment != null) {
+					Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+						return obj.name == equipment.spriteName;
+					});
 					itemIcon.sprite = s;
 					itemIcon.enabled = true;
+				} else {
+					itemIcon.enabled = false;
 				}
 
 			}
@@ -162,13 +164,14 @@ namespace WordJourney
 		}
 			
 		private struct MyParams{
-			public Item targetItem;
+			public List<Item> items;
 			public Item currentSelectItem;
-			public Button itemDisplayButton;
+//			public Button itemDisplayButton;
+//			public ItemButtonView itemDisplayButton;
 
-			public MyParams(Item targetItem, Button itemDisplayButton, Item currentSelectItem){
-				this.targetItem = targetItem;
-				this.itemDisplayButton = itemDisplayButton;
+			public MyParams(List<Item> items, Item currentSelectItem){
+				this.items = items;
+//				this.itemDisplayButton = itemDisplayButton;
 				this.currentSelectItem = currentSelectItem;
 			}
 		}
@@ -180,6 +183,32 @@ namespace WordJourney
 			where T:Item
 		{
 
+//			int lastItemCount = itemDisplayButtonsContainer.childCount;
+//
+//			for (int i = 0; i < lastItemCount; i++) {
+//
+//				Button itemDisplayButton = itemDisplayButtonsContainer.GetChild (i).GetComponent<Button>();
+//
+//				Item item = items [i];
+//
+//				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
+//
+//			}
+//
+//			for (int i = lastItemCount; i < items.Count; i++) {
+//
+//				Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
+//
+//				Item item = items [i];
+//
+//				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
+//
+//			}
+
+			itemsDisplayPlane.GetComponent<ScrollRect> ().velocity = Vector2.zero;
+
+			itemDisplayButtonsContainer.localPosition = Vector3.zero;
+
 			itemDisplayButtonsPool.AddChildInstancesToPool (itemDisplayButtonsContainer);
 
 			int loadCount = items.Count <= maxPreloadCountOfItem ? items.Count : maxPreloadCountOfItem;
@@ -190,31 +219,37 @@ namespace WordJourney
 
 				Item item = items [i] as Item;
 
+//				itemDisplayButton.SetUpItemButtonView (item, itemDisplayButtonsContainer, currentSelectItem);
+
 				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
 
 			}
 
+			List<Item> myItems = new List<Item> ();
+
 			if (loadCount < items.Count) {
-
-				for (int i = maxPreloadCountOfItem; i < items.Count; i++) {
-
-					Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
-
-					Item item = items [i] as Item;
-
-					MyParams myParams = new MyParams (item, itemDisplayButton, currentSelectItem);
-
-					StartCoroutine ("LoadItemDisplayButtonAsync", myParams);
-
+				for (int i = 0; i < items.Count; i++) {
+					myItems.Add (items [i]);
 				}
-
 			}
+
+			MyParams myParams = new MyParams (myItems, currentSelectItem);
+			StartCoroutine ("LoadItemDisplayButtonsAsync", myParams);
 				
 		}
 
-		private IEnumerator LoadItemDisplayButtonAsync(MyParams myParams){
+		private IEnumerator LoadItemDisplayButtonsAsync(MyParams myParams){
+
 			yield return null;
-			SetUpItemButton (myParams.targetItem, myParams.itemDisplayButton, myParams.currentSelectItem);
+			
+			for (int i = maxPreloadCountOfItem; i < myParams.items.Count; i++) {
+
+				Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
+
+				Item item = myParams.items [i] as Item;
+
+				SetUpItemButton (item, itemDisplayButton, myParams.currentSelectItem);
+			}
 		}
 
 
@@ -222,7 +257,7 @@ namespace WordJourney
 		/// 初始化物品详细介绍页面
 		/// </summary>
 		/// <param name="item">Item.</param>
-		private void SetUpItemDetailHUD(Item item){
+		public void SetUpItemDetailHUD(Item item){
 
 			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
 			Text itemName = itemDetailsContainer.Find("ItemName").GetComponent<Text>();
@@ -237,9 +272,16 @@ namespace WordJourney
 			choiceHUDWithOneBtn.gameObject.SetActive (false);
 			choiceHUDWithTwoBtns.gameObject.SetActive (false);
 
-			itemIcon.sprite = sprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
-			});
+			if (item.itemType == ItemType.Material) {
+				itemIcon.sprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
+			} else {
+				itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
+			}
+
 			itemIcon.enabled = true;
 
 			itemName.text = item.itemName;
@@ -404,6 +446,9 @@ namespace WordJourney
 			Image itemIcon = btn.transform.Find ("ItemIcon").GetComponent<Image>();
 			Image newItemTintIcon = btn.transform.Find ("NewItemTintIcon").GetComponent<Image> ();
 
+			itemIcon.enabled = false;
+			newItemTintIcon.enabled = false;
+
 			itemName.text = item.itemName;
 
 			if (item.itemType == ItemType.Equipment && (item as Equipment).equiped) {
@@ -415,9 +460,17 @@ namespace WordJourney
 			}
 
 
-			Sprite s = sprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
-			});
+			Sprite s = null;
+
+			if (item.itemType == ItemType.Material) {
+				s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
+			} else {
+				s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == item.spriteName;
+				});
+			}
 
 			if(s != null){
 				itemIcon.sprite = s;
@@ -468,7 +521,7 @@ namespace WordJourney
 
 				Text resolveGainName = resolveGain.Find ("ResolveGainName").GetComponent<Text> ();
 
-				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
 					return obj.name == resolveGainItem.spriteName;
 				});
 
@@ -552,6 +605,8 @@ namespace WordJourney
 
 			SetUpEquipedEquipmentsPlane ();
 
+			SetUpEquipedEquipmentsPlane ();
+
 			SetUpItemsDiaplayPlane<T> (currentSelectedTypeItemsInBag,currentSelectItem);
 
 		}
@@ -588,19 +643,19 @@ namespace WordJourney
 		// 关闭背包界面
 		public void OnQuitBagPlane(CallBack cb){
 			
-			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+//			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
-			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+//			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+//
+//			Vector3 originalPosition = bagPlane.transform.localPosition;
 
-			Vector3 originalPosition = bagPlane.transform.localPosition;
-
-			bagPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+//			bagPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+				GetComponent<Canvas>().enabled = false;
 				if(cb != null){
 					cb();
-					bagPlane.transform.localPosition = originalPosition;
-					gameObject.SetActive(false);
+
 				}
-			});
+//			});
 
 		}
 

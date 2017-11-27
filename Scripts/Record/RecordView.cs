@@ -62,7 +62,7 @@ namespace WordJourney
 				wordItemModel.SetParent (modelContainerOfRecordCanvas);
 			}
 
-
+//			GetComponent<Canvas>().enabled = true;
 
 		}
 
@@ -213,7 +213,7 @@ namespace WordJourney
 
 			wordItemPool = null;
 
-			recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
+//			recordViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
 			Vector3 originalPosition = recordPlane.localPosition;
 
@@ -221,7 +221,11 @@ namespace WordJourney
 
 			recordPlane.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
 
-				gameObject.SetActive(false);
+//				GetComponent<Canvas>().enabled = false;
+
+//				gameObject.SetActive(false);
+
+//				GetComponent<Canvas> ().targetDisplay = 1;
 
 				recordPlane.localPosition = originalPosition;
 			});

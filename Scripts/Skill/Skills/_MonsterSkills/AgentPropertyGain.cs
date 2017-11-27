@@ -42,21 +42,42 @@ namespace WordJourney
 
 		protected override void AttackTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			ExcuteAgentPropertyGain ();
-		}
-
-		protected override void BeAttackedTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
-		{
-			ExcuteAgentPropertyGain ();
-		}
-
-		private void ExcuteAgentPropertyGain(){
-
 			bool skillEffective = isEffective (probabilityBase * skillLevel);
 
 			if (!skillEffective) {
 				return;
 			}
+
+			ExcuteAgentPropertyGain ();
+
+
+		}
+
+		protected override void BeAttackedTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
+		{
+			bool skillEffective = isEffective (probabilityBase * skillLevel);
+
+			if (!skillEffective) {
+				return;
+			}
+
+			ExcuteAgentPropertyGain ();
+
+			// 播放技能对应的玩家技能特效动画
+			if (enemyEffectName != string.Empty) {
+				affectedBattleAgent.SetEffectAnim (enemyEffectName);
+			}
+
+		}
+
+		private void ExcuteAgentPropertyGain(){
+
+//			bool skillEffective = isEffective (probabilityBase * skillLevel);
+//
+//			if (!skillEffective) {
+//				return;
+//			}
+
 			if (!affectedBattleAgent.states.Contains (this.stateName)) {
 
 				affectedBattleAgent.states.Add (this.stateName);

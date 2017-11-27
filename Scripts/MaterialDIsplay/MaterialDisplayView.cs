@@ -39,6 +39,7 @@ namespace WordJourney
 				materialBtnModel = TransformManager.FindTransform ("MaterialBtnModel");
 				materialBtnModel.transform.SetParent (modelContainerOfMaterialDisplayCanvas);
 			}
+			GetComponent<Canvas>().enabled = true;
 
 		}
 

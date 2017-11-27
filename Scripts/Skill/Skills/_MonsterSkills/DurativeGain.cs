@@ -38,6 +38,8 @@ namespace WordJourney
 
 		private Coroutine effectCoroutine;
 
+		private float effectDelay = 0.2f;
+
 		void Awake(){
 			this.skillType = SkillType.Passive;
 
@@ -56,9 +58,6 @@ namespace WordJourney
 			// 记录增长前的属性状态
 			affectedBattleAgent.agent.GetAgentPropertyWithType (propertyType);
 
-
-
-
 		}
 
 		protected override void AttackTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
@@ -68,9 +67,14 @@ namespace WordJourney
 				return;
 			}
 
+			// 播放技能对应的玩家技能特效动画
+			SetEffectAnims(attackTriggerInfo,self,enemy);
+
+			// 如果技能效果不可叠加，并且作用对象身上已经有该技能效果，则直接返回
 			if (!canOverlay && affectedBattleAgent.stateEffectCoroutines.Contains (effectCoroutine)) {
-				StopCoroutine (effectCoroutine);
-				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
+//				StopCoroutine (effectCoroutine);
+//				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
+				return;
 			}
 
 			effectCoroutine = StartCoroutine ("ExcuteAgentGain", affectedBattleAgent);
@@ -85,9 +89,14 @@ namespace WordJourney
 				return;
 			}
 
+			// 播放技能对应的玩家技能特效动画
+			SetEffectAnims(beAttackedTriggerInfo,self,enemy);
+				
+
 			if (!canOverlay && affectedBattleAgent.stateEffectCoroutines.Contains (effectCoroutine)) {
-				StopCoroutine (effectCoroutine);
-				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
+//				StopCoroutine (effectCoroutine);
+//				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
+				return;
 			}
 
 			effectCoroutine = StartCoroutine ("ExcuteAgentGain", affectedBattleAgent);
@@ -112,7 +121,7 @@ namespace WordJourney
 						affectedBattleAgent.PlayGainTextAnim (tintStr);
 					} else {
 						tintStr = string.Format ("<color=red>{0}</color>", singleGain);
-						affectedBattleAgent.PlayHurtTextAnim (tintStr, TintTextType.None);
+						affectedBattleAgent.PlayGainTextAnim (tintStr,effectDelay);
 					}
 				} else if (propertyType == PropertyType.Mana) {
 					if (singleGain > 0) {
@@ -120,7 +129,7 @@ namespace WordJourney
 						affectedBattleAgent.PlayGainTextAnim (tintStr);
 					} else {
 						tintStr = string.Format ("<color=blue>{0}</color>", singleGain);
-						affectedBattleAgent.PlayGainTextAnim (tintStr);
+						affectedBattleAgent.PlayGainTextAnim (tintStr,effectDelay);
 					}
 				}
 

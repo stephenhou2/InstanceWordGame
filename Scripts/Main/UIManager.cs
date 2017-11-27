@@ -13,46 +13,123 @@ namespace WordJourney
 		public Dictionary<string,Transform> UIDic = new Dictionary<string, Transform> ();
 
 
-		public void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb,bool isSync = false){
+		public void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb,bool isSync = false,bool othersVisible = false){
 
-			Transform canvas = UIDic.ContainsKey (canvasName) ? UIDic [canvasName] : null;
+			IDictionaryEnumerator dicEnumerator = UIDic.GetEnumerator ();
 
-			if (canvas != null) {
+			if (!UIDic.ContainsKey (canvasName)) {
 
-				canvas.gameObject.SetActive (true);
-
-				if(cb != null){
-					cb ();
-				}
-
-				canvas.SetAsLastSibling ();
-
-			} else {
-				
 				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader ();
 
 				ResourceManager.Instance.LoadAssetsWithBundlePath (loader, bundleName, () => {
 
-					canvas = loader.gos.Find(delegate(GameObject obj){
+					if(!othersVisible){
+						while (dicEnumerator.MoveNext ()) {
+							Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
+							canvas.enabled = false;
+//							canvas.targetDisplay = 1;
+//							canvas.sortingOrder = -1;
+						}
+					}
+
+					Canvas c = loader.gos.Find (delegate(GameObject obj) {
 						return obj.name == canvasName;
-					}).transform;
+					}).GetComponent<Canvas> ();
 
 
-					canvas.gameObject.SetActive (true);
+					c.enabled = true;
 
-					if(cb != null){
+//					c.targetDisplay = 0;
+//
+//					c.sortingOrder = 0;
+
+					if (cb != null) {
 						cb ();
 					}
 
-					canvas.SetAsLastSibling ();
+					c.transform.SetAsLastSibling ();
 
-					UIDic.Add(canvasName,canvas);
+					UIDic.Add (canvasName, c.transform);
 
-				},isSync);
+				}, isSync);
+
+			} else {
+				while (dicEnumerator.MoveNext ()) {
+
+					Canvas c = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
+
+					if (dicEnumerator.Key as string == canvasName) {
+//						c.targetDisplay = 0;
+//						c.sortingOrder = 0;
+						c.enabled = true;
+						c.transform.SetAsLastSibling ();
+					} else if(!othersVisible){
+//						c.targetDisplay = 1;
+//						c.sortingOrder = -1;
+						c.enabled = false;
+					}
+				}
+
+				if (cb != null) {
+					cb ();
+				}
 			}
-				
+
+//			Transform canvas = UIDic.ContainsKey (canvasName) ? UIDic [canvasName] : null;
+//
+//			if (canvas != null) {
+//
+//				canvas.gameObject.SetActive (true);
+//
+////				canvas.GetComponent<Canvas> ().targetDisplay = 0;
+////
+////				canvas.GetComponent<Canvas> ().sortingOrder = 0;
+//
+//				if(cb != null){
+//					cb ();
+//				}
+//
+//				canvas.SetAsLastSibling ();
+//
+//			} else {
+//				
+//				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader ();
+//
+//				ResourceManager.Instance.LoadAssetsWithBundlePath (loader, bundleName, () => {
+//
+//					canvas = loader.gos.Find(delegate(GameObject obj){
+//						return obj.name == canvasName;
+//					}).transform;
+//
+//
+//					canvas.gameObject.SetActive (true);
+//
+////					canvas.GetComponent<Canvas> ().targetDisplay = 0;
+////
+////					canvas.GetComponent<Canvas> ().sortingOrder = 0;
+//
+//					if(cb != null){
+//						cb ();
+//					}
+//
+//					canvas.SetAsLastSibling ();
+//
+//					UIDic.Add(canvasName,canvas);
+//
+//				},isSync);
+//			}
+			
+
 			Resources.UnloadUnusedAssets ();
 			System.GC.Collect ();
+		}
+
+		public void HideCanvas(string canvasName){
+
+			if(UIDic.ContainsKey(canvasName)){
+				UIDic [canvasName].GetComponent<Canvas> ().enabled = false;
+			}
+
 		}
 
 		public void DestroryCanvasWith(string bundleName,string canvasName,string poolContainerName,string modelContainerName){
@@ -106,7 +183,7 @@ namespace WordJourney
 				case "BagCanvas":
 					UIDic [key].GetComponent<BagViewController> ().DestroyInstances ();
 					break;
-				case "WorkBenchCanvas":
+				case "WorkbenchCanvas":
 					UIDic [key].GetComponent<WorkBenchViewController> ().DestroyInstances ();
 					break;
 				case "MaterialDisplayCanvas":

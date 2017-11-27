@@ -15,8 +15,7 @@ namespace WordJourney
 		// 控制的角色
 		[HideInInspector]public Agent agent;
 
-		// 物理攻击技能（角色自带）
-		public Skill defaultSkill;
+
 
 		// 角色攻击触发的技能
 //		public List<Skill> attackTriggerSkill = new List<Skill> ();
@@ -116,8 +115,8 @@ namespace WordJourney
 			if (gameObject.tag == "monster") {
 				armatureCom.AddEventListener (DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
 			} else if (gameObject.tag == "Player") {
-				UnityArmatureComponent test = transform.Find ("PlayerSide").GetComponent<UnityArmatureComponent> ();
-				test.AddEventListener(DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
+				UnityArmatureComponent playerArmature = transform.Find ("PlayerSide").GetComponent<UnityArmatureComponent> ();
+				playerArmature.AddEventListener(DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
 			}
 
 		}
@@ -127,16 +126,12 @@ namespace WordJourney
 
 			EventObject frameObject = eventObject as EventObject;
 
-			switch (frameObject.name) {
-			case "hit":
+			if (frameObject.name == "hit") {
 				AgentExcuteHitEffect ();
-				break;
-			default:
-				break;
 
+			} else {
+				Debug.LogError ("事件帧消息名称必须是hit");
 			}
-
-			Debug.Log (frameObject.name);
 
 		}
 
@@ -445,7 +440,24 @@ namespace WordJourney
 			PlayGainTextAnim (info.tintTextStr);
 		}
 
-		protected abstract void UseSkill (Skill skill);
+		/// <summary>
+		/// 使用技能
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		protected void UseSkill (Skill skill)
+		{
+			// 停止播放当前的等待动画
+			this.armatureCom.animation.Stop ();
+
+			currentSkill = skill;
+
+			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
+			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
+				// 播放等待动画
+				this.PlayRoleAnim("interval",0,null);
+			});
+
+		}
 
 		/// <summary>
 		/// 角色默认的战斗方法

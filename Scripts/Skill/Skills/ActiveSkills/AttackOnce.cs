@@ -34,7 +34,7 @@ namespace WordJourney
 
 			// 敌方执行被攻击触发事件回调
 			foreach (SkillCallBack cb in enemy.beAttackedTriggerCallBacks) {
-				cb (self,enemy);
+				cb (enemy,self);
 			}
 
 

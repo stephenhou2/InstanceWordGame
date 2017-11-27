@@ -76,6 +76,12 @@ namespace WordJourney
 				// 玩家可用技能点 - 1
 				Player.mainPlayer.skillPointsLeft--;
 
+				BattleAgentController bpCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
+
+				if (skillToUpgradeInLearnedSkills.skillType == SkillType.Passive) {
+					skillToUpgradeInLearnedSkills.AffectAgents (bpCtr, null);
+				} 
+
 				// 更新技能界面
 				skillsView.OnUpgradeSkillButtonClicked (skillToUpgradeInLearnedSkills);
 

@@ -17,7 +17,8 @@ namespace WordJourney
 		public GameObject playerBackWard;
 		public GameObject playerSide;
 
-
+		// 普通攻击技能（角色自带）
+		public Skill defaultSkill;
 
 		// 事件回调
 		public ExploreEventHandler enterMonster;
@@ -61,12 +62,13 @@ namespace WordJourney
 
 			agent = GetComponentInParent<Player> ();
 
-			defaultSkill.selfAnimName = "fightWithAxe";
-
 			base.Awake ();
 
 		}
 
+		public void SetOrderInLayer(int order){
+			armatureCom.sortingOrder = order;
+		}
 
 		/// <summary>
 		/// 按照指定路径 pathPosList 移动到终点 endPos
@@ -89,7 +91,7 @@ namespace WordJourney
 
 				moveTweener.OnComplete (() => {
 					inSingleMoving = false;
-					PlayRoleAnim ("stand", 0, null);
+					PlayRoleAnim ("wait", 0, null);
 				});
 					
 				Debug.Log ("无有效路径");
@@ -135,6 +137,8 @@ namespace WordJourney
 		private void MoveToPosition(Vector3 targetPos){
 
 //			Debug.Log (string.Format ("Player pos:[{0},{1}],target pos:[{2},{3}]", transform.position.x, transform.position.y,targetPos.x,targetPos.y));
+
+			SetOrderInLayer(-(int)targetPos.y);
 
 			moveTweener =  transform.DOMove (targetPos, moveDuration).OnComplete (() => {
 
@@ -277,8 +281,6 @@ namespace WordJourney
 
 					inSingleMoving = false;
 
-					boxCollider.enabled = true;
-
 					switch (r2d.transform.tag) {
 
 					case "monster":
@@ -299,25 +301,31 @@ namespace WordJourney
 //							ActiveBattlePlayer (false, false, true);
 //						}
 
-						PlayRoleAnim ("stand", 0, null);
+						PlayRoleAnim ("wait", 0, null);
 
 						enterItem (r2d.transform);
+
+						boxCollider.enabled = true;
 
 						return;
 
 					case "npc":
 
-						PlayRoleAnim ("stand", 0, null);
+						PlayRoleAnim ("wait", 0, null);
 
 						enterNpc (r2d.transform);
+
+						boxCollider.enabled = true;
 
 						return;
 
 					case "workbench":
 
-						PlayRoleAnim ("stand", 0, null);
+						PlayRoleAnim ("wait", 0, null);
 
 						enterWorkBench (r2d.transform);
+
+						boxCollider.enabled = true;
 
 						return;
 
@@ -337,7 +345,7 @@ namespace WordJourney
 				// 走到了终点
 				if (ArriveEndPoint ()) {
 					moveTweener.Kill (true);
-					PlayRoleAnim ("stand", 0, null);
+					PlayRoleAnim ("wait", 0, null);
 					Debug.Log ("到达终点");
 				} else {
 					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,endPos,singleMoveEndPos));
@@ -395,7 +403,12 @@ namespace WordJourney
 		/// <param name="gainStr">Gain string.</param>
 		public override void PlayGainTextAnim (string gainStr)
 		{
-			bpUICtr.PlayGainTextAnim (gainStr,this.transform.position);
+			// 伤害文字的动画方向根据玩家和怪物的位置信息进行调整
+			if (this.transform.position.x <= bmCtr.transform.position.x) {
+				bpUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Left);
+			} else {
+				bpUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Right);
+			}
 		}
 			
 
@@ -459,43 +472,17 @@ namespace WordJourney
 			UseSkill (skill);
 		}
 
-		/// <summary>
-		/// 使用技能
-		/// </summary>
-		/// <param name="skill">Skill.</param>
-		protected override void UseSkill (Skill skill)
-		{
-			// 停止播放当前的等待动画
-			this.armatureCom.animation.Stop ();
 
-			currentSkill = skill;
-
-			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-
-				// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-				if(!FightEnd()){
-					attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
-				}
-
-//				AttackerRoleAnimEnd(skill);
-
-				// 播放等待动画
-				this.PlayRoleAnim("stand",0,null);
-			});
-				
-			// 播放技能对应的怪物动画
-			if (skill.enemyAnimName != string.Empty) {
-				bmCtr.PlayRoleAnim (skill.enemyAnimName, 1, null);
-			}
-
-
-		}
 
 		protected override void AgentExcuteHitEffect ()
 		{
 			// 技能效果影响玩家和怪物
 			currentSkill.AffectAgents(this,bmCtr);
+
+			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+			if(!FightEnd()){
+				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+			}
 
 			// 更新玩家状态栏
 			this.UpdateStatusPlane();
@@ -673,26 +660,26 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 按照默认攻击方式自动攻击的协程
-		/// </summary>
-		/// <returns>The player attack.</returns>
-		/// <param name="skill">Skill.</param>
-		protected IEnumerator InvokePlayerAttack(Skill skill){
-
-			float timePassed = 0;
-
-			while (timePassed < agent.attackInterval) {
-
-				timePassed += Time.deltaTime;
-
-				yield return null;
-
-			}
-
-			UseSkill (skill);
-
-		}
+//		/// <summary>
+//		/// 按照默认攻击方式自动攻击的协程
+//		/// </summary>
+//		/// <returns>The player attack.</returns>
+//		/// <param name="skill">Skill.</param>
+//		protected IEnumerator InvokePlayerAttack(Skill skill){
+//
+//			float timePassed = 0;
+//
+//			while (timePassed < agent.attackInterval) {
+//
+//				timePassed += Time.deltaTime;
+//
+//				yield return null;
+//
+//			}
+//
+//			UseSkill (skill);
+//
+//		}
 
 		public void QuitExplore(){
 
@@ -715,6 +702,10 @@ namespace WordJourney
 			}
 			if (bmCtr.attackCoroutine != null) {
 				bmCtr.StopCoroutine (bmCtr.attackCoroutine);
+			}
+
+			if (waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (waitRoleAnimEndCoroutine);
 			}
 				
 			PlayRoleAnim("die", 1, () => {

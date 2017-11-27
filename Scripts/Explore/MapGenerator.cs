@@ -168,6 +168,8 @@ namespace WordJourney
 
 			player.position = playerOriginPos;
 
+			bpCtr.SetOrderInLayer (-(int)playerOriginPos.y);
+
 			bpCtr.singleMoveEndPos = playerOriginPos;
 
 			player.rotation = Quaternion.identity;
@@ -182,7 +184,7 @@ namespace WordJourney
 			Camera.main.transform.Find ("Cover").gameObject.SetActive (true);
 
 			// 默认进入关卡后播放的角色动画
-			bpCtr.PlayRoleAnim ("stand", 0, null);
+			bpCtr.PlayRoleAnim ("wait", 0, null);
 
 		}
 
@@ -201,6 +203,8 @@ namespace WordJourney
 				Vector3 pos = RandomPosition ();
 
 				mapItem.transform.position = pos;
+
+				mapItem.GetComponent<SpriteRenderer> ().sortingOrder = -(int)pos.y;
 
 				if (mapItem.mapItemType == MapItemType.Trap) {
 					#warning 这里为了测试，先把陷阱做成和普通地板一样的消耗值
@@ -232,6 +236,8 @@ namespace WordJourney
 
 				mapNpc.transform.position = pos;
 
+				mapNpc.GetComponent<SpriteRenderer> ().sortingOrder = -(int)pos.y;
+
 				mapNpc.npc = npc;
 
 				mapNpc.name = npc.npcName;
@@ -256,6 +262,8 @@ namespace WordJourney
 				Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
 				Vector3 pos = RandomPosition ();
+
+				monster.GetComponent<UnityArmatureComponent> ().sortingOrder = -(int)pos.y;
 
 				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
@@ -341,7 +349,7 @@ namespace WordJourney
 
 							wall.SetParent (outerWallsContainer, true);
 
-							wall.GetComponent<SpriteRenderer> ().sortingOrder = 2;
+							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y) + 1;
 
 							wall.GetComponent<BoxCollider2D> ().enabled = false;
 
@@ -366,7 +374,7 @@ namespace WordJourney
 
 							wall.SetParent (outerWallsContainer, true);
 
-							wall.GetComponent<SpriteRenderer> ().sortingOrder = 0;
+							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y);
 
 							wall.GetComponent<BoxCollider2D> ().enabled = true;
 			
@@ -404,6 +412,8 @@ namespace WordJourney
 
 			workBench.position = workBenchPos;
 
+			workBench.GetComponent<SpriteRenderer> ().sortingOrder = -(int)workBenchPos.y;
+
 			mapWalkableInfoArray[(int)workBenchPos.x,(int)workBenchPos.y] = 0;
 
 
@@ -440,7 +450,8 @@ namespace WordJourney
 				for(int y = 1; y < rows-1; y++)
 				{
 					//At each index add a new Vector3 to our list with the x and y coordinates of that position.
-					gridPositions.Add (new Vector3(x, y, y));
+//					gridPositions.Add (new Vector3(x, y, y));
+					gridPositions.Add (new Vector3(x, y, 0));
 				}
 			}
 		}
@@ -513,7 +524,7 @@ namespace WordJourney
 		}
 
 
-		private struct RewardInMap
+		private class RewardInMap
 		{
 			public Transform rewardTrans;
 			public Item reward;
@@ -528,17 +539,29 @@ namespace WordJourney
 
 		public void SetUpRewardInMap(Item reward, Vector3 rewardPosition){
 
+			Debug.Log (reward.itemName);
+
 			Transform rewardTrans = rewardItemPool.GetInstance<Transform> (rewardItemModel.gameObject, rewardsContainer);
 
 			SpriteRenderer sr = rewardTrans.GetComponent<SpriteRenderer> ();
 
-			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-				return obj.name == reward.spriteName;
-			});
+			Sprite s = null;
+
+			if (reward.itemType == ItemType.Material) {
+				s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+					return obj.name == reward.spriteName;
+				});
+			} else {
+				s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == reward.spriteName;
+				});
+			}
 
 			sr.sprite = s;
 
 			rewardTrans.position = rewardPosition;
+
+			sr.sortingOrder = -(int)rewardPosition.y;
 
 			RewardInMap rewardInMap = new RewardInMap (rewardTrans, reward);
 
@@ -567,7 +590,7 @@ namespace WordJourney
 			float distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
 				+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
 
-			while (distance > 0.2f && leftTime > 0.01f) {
+			while (distance > 0.5f) {
 
 				Vector3 rewardVelocity = new Vector3 ((bpCtr.transform.position.x - rewardTrans.position.x) / leftTime, 
 					(bpCtr.transform.position.y - rewardTrans.position.y) / leftTime, 0);
@@ -586,11 +609,15 @@ namespace WordJourney
 				distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
 					+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
 
-//				Debug.Log (string.Format ("距离{0}，剩余时间{1}", distance, leftTime));
+				yield return null;
 
 			}
 
-			Player.mainPlayer.AddItem (rewardInMap.reward);
+			Item reward = rewardInMap.reward;
+
+			Player.mainPlayer.AddItem (reward);
+
+			GetComponent<ExploreManager> ().ObtainReward (reward);
 
 			rewardTrans.position = new Vector3 (0, 0, -100);
 

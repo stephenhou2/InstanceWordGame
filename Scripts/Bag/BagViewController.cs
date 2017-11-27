@@ -9,7 +9,7 @@ namespace WordJourney
 
 		public BagView bagView;
 
-		private List<Item> allItemsOfCurrentSelcetType = new List<Item>();
+		private List<Item> allItemsOfCurrentSelectType = new List<Item>();
 
 //		private List<Equipment> allEquipmentsOfSelectType = new List<Equipment>();
 
@@ -43,6 +43,19 @@ namespace WordJourney
 				}
 			}
 
+			for (int i = 0; i < 114; i++) {
+
+				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+					return obj.itemId == 1000 + i;
+				});
+
+				Material material = new Material (m, 2);
+
+				Player.mainPlayer.allMaterialsInBag.Add (material);
+
+			}
+
+
 			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
 				return obj.itemId == 513;
 			});
@@ -58,13 +71,13 @@ namespace WordJourney
 
 		}
 
-		public void SetUpBagView(){
+		public void SetUpBagView(bool setVisible){
 
 			currentSelectItemType = ItemType.Equipment;
 
-			bagView.SetUpBagView (currentSelectItem);
-
 			InitItemsOfCurrentSelectType<Equipment> (Player.mainPlayer.allEquipmentsInBag);
+
+			bagView.SetUpBagView (currentSelectItem,setVisible);
 
 		}
 			
@@ -114,7 +127,7 @@ namespace WordJourney
 				break;
 			}
 
-			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelcetType,currentSelectItem);
+			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelectType,currentSelectItem);
 
 		}
 
@@ -126,10 +139,10 @@ namespace WordJourney
 			where T:Item
 		{
 			
-			allItemsOfCurrentSelcetType.Clear ();
+			allItemsOfCurrentSelectType.Clear ();
 
 			for (int i = 0; i < itemsInBag.Count; i++) {
-				allItemsOfCurrentSelcetType.Add (itemsInBag [i]);
+				allItemsOfCurrentSelectType.Add (itemsInBag [i]);
 			}
 		}
 			
@@ -159,7 +172,7 @@ namespace WordJourney
 
 			Player.mainPlayer.EquipEquipment (equipment);
 
-			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelcetType, currentSelectItem);
+			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelectType, currentSelectItem);
 
 		}
 
@@ -181,6 +194,7 @@ namespace WordJourney
 				break;
 			case ItemType.FuseStone:
 				ResolveAndGetCharacters (currentSelectItem);
+				allItemsOfCurrentSelectType.Remove (currentSelectItem);
 				break;
 			}
 
@@ -192,12 +206,13 @@ namespace WordJourney
 
 			switch (currentSelectItem.itemType) {
 			case ItemType.Material:
-				ResolveAndGetCharacters (currentSelectItem);
+				ResolveAndGetCharacters (new Material(currentSelectItem as Material,resolveCount));
 				break;
 			case ItemType.Consumables:
-				ResolveAndGetMaterials (currentSelectItem);
+				ResolveAndGetMaterials (new Consumables(currentSelectItem as Consumables,resolveCount));
 				break;
 			}
+
 
 			bagView.QuitResolveCountHUD ();
 
@@ -220,6 +235,10 @@ namespace WordJourney
 					resolveGainCharacterFragments.Add (new CharacterFragment (c));
 				}
 
+			}
+
+			if (resolveCount >= currentSelectItem.itemCount) {
+				allItemsOfCurrentSelectType.Remove (currentSelectItem);
 			}
 
 			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
@@ -246,6 +265,8 @@ namespace WordJourney
 			List<Item> returnedMaterials = (item as Equipment).ResolveEquipment ();
 
 			bagView.SetUpResolveGainHUD (returnedMaterials);
+
+			allItemsOfCurrentSelectType.Remove (currentSelectItem);
 
 			currentSelectItem = null;
 
@@ -338,7 +359,7 @@ namespace WordJourney
 
 						GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-						GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
+//						GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
 
 //						TransformManager.DestroyTransfromWithName ("PoolContainerOfBagCanvas", TransformRoot.PoolContainer);
 					});

@@ -101,8 +101,8 @@ namespace WordJourney
 
 		public void OnProduceButtonClick(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkBenchCanvas", () => {
-				TransformManager.FindTransform("WorkBenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
+				TransformManager.FindTransform("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
 				homeView.OnQuitHomeView();
 			});
 		}
@@ -119,7 +119,7 @@ namespace WordJourney
 		public void OnBagButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
-				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView ();
+				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView (true);
 				homeView.OnQuitHomeView();
 			});
 		}
