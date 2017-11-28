@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class IronSkin : PassiveSkill {
+	public class IronSkin : TalentSkill {
 
 		public float armorScalerBase;
 

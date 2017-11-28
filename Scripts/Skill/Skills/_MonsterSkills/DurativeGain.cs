@@ -18,7 +18,7 @@ namespace WordJourney
 //	}
 		
 	// 持续加／减血量或者魔量
-	public class DurativeGain : PassiveSkill {
+	public class DurativeGain : TriggeredPassiveSkill {
 
 		public int singleGain;
 
@@ -30,19 +30,19 @@ namespace WordJourney
 
 		private BattleAgentController affectedBattleAgent;
 
-		public SkillCallBack attackTriggerCallBack;
-
 		public PropertyType propertyType;
+
+		public bool removeWhenQuitFight;
 
 		private int originalProperty;
 
-		private Coroutine effectCoroutine;
+		private SkillState state;
 
 		private float effectDelay = 0.2f;
 
 		void Awake(){
 			this.skillType = SkillType.Passive;
-
+			originalProperty = 0;
 		}
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy)
@@ -70,16 +70,15 @@ namespace WordJourney
 			// 播放技能对应的玩家技能特效动画
 			SetEffectAnims(attackTriggerInfo,self,enemy);
 
-			// 如果技能效果不可叠加，并且作用对象身上已经有该技能效果，则直接返回
-			if (!canOverlay && affectedBattleAgent.stateEffectCoroutines.Contains (effectCoroutine)) {
-//				StopCoroutine (effectCoroutine);
-//				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
-				return;
+			// 如果技能效果可叠加，或者首次触发时添加状态，并执行状态效果
+			if (canOverlay || !affectedBattleAgent.CheckStateExist (stateName)) {
+				IEnumerator effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
+				state = new SkillState (this, stateName, removeWhenQuitFight, effectCoroutine);
+				affectedBattleAgent.states.Add (state);
+				StartCoroutine (effectCoroutine);
 			}
 
-			effectCoroutine = StartCoroutine ("ExcuteAgentGain", affectedBattleAgent);
 
-			affectedBattleAgent.stateEffectCoroutines.Add (effectCoroutine);
 		}
 
 		protected override void BeAttackedTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
@@ -90,18 +89,16 @@ namespace WordJourney
 			}
 
 			// 播放技能对应的玩家技能特效动画
-			SetEffectAnims(beAttackedTriggerInfo,self,enemy);
-				
+			SetEffectAnims(attackTriggerInfo,self,enemy);
 
-			if (!canOverlay && affectedBattleAgent.stateEffectCoroutines.Contains (effectCoroutine)) {
-//				StopCoroutine (effectCoroutine);
-//				affectedBattleAgent.stateEffectCoroutines.Remove (effectCoroutine);
-				return;
+			// 如果技能效果可叠加，或者首次触发时添加状态，并执行状态效果
+			if (canOverlay || !affectedBattleAgent.CheckStateExist (stateName)) {
+				IEnumerator effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
+				state = new SkillState (this, stateName, removeWhenQuitFight, effectCoroutine);
+				affectedBattleAgent.states.Add (state);
+				StartCoroutine (effectCoroutine);
 			}
 
-			effectCoroutine = StartCoroutine ("ExcuteAgentGain", affectedBattleAgent);
-
-			affectedBattleAgent.stateEffectCoroutines.Add (effectCoroutine);
 		}
 			
 
@@ -110,6 +107,8 @@ namespace WordJourney
 			float timer = 0f;
 
 			while (timer < duration) {
+
+				Debug.Log (timer);
 
 				ba.agent.AgentPropertyGain (propertyType, singleGain);
 
@@ -139,21 +138,20 @@ namespace WordJourney
 
 			}
 
-			ba.states.Remove (stateName);
-
-			ba.stateEffectCoroutines.Remove (effectCoroutine);
-
-
+			ba.states.Remove (state);
 		}
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
+
 			// 如果状态增长是攻击，攻速，护甲，抗性，闪避，暴击，在状态结束后将属性重置为初始值
 			if (propertyType == PropertyType.Health || propertyType == PropertyType.Mana) {
 				return;
 			}
 
 			affectedBattleAgent.agent.AgentPropertySetToValue (propertyType, originalProperty);
+
+
 
 		}
 

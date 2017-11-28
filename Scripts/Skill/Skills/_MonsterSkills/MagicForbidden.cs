@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class MagicForbidden : PassiveSkill {
+	public class MagicForbidden : TriggeredPassiveSkill {
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy){
 

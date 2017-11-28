@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class MagicStrengthen : PassiveSkill {
+	public class MagicStrengthen : TalentSkill {
 
 		public float manaScalerBase;
 

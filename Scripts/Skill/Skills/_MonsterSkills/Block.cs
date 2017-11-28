@@ -6,7 +6,7 @@ using UnityEngine;
 namespace WordJourney
 {
 	// 格挡这个被动加在攻击方身上
-	public class Block : PassiveSkill {
+	public class Block : TriggeredPassiveSkill {
 
 		public float decreasePhysicalHurtDecreaseScaler;
 

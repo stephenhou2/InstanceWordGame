@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class ElementBody : PassiveSkill {
+	public class ElementBody : TalentSkill {
 
 		public float magicResistScalerBase;
 

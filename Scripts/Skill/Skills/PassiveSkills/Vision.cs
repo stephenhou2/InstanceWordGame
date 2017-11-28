@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class Vision : PassiveSkill {
+	public class Vision : TalentSkill {
 
 		public float dodgeScalerBase;
 

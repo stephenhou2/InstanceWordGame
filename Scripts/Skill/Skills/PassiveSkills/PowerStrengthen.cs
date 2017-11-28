@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class PowerStrengthen : PassiveSkill {
+	public class PowerStrengthen : TalentSkill {
 
 		public float attackScalerBase;
 

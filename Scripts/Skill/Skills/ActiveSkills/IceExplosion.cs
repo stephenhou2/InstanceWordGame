@@ -15,6 +15,8 @@ namespace WordJourney
 
 		public int magicHurtBase;
 
+		public bool removeWhenQuitFight;
+
 		void Awake(){
 			skillType = SkillType.Magical;
 			skillName = "冰爆";
@@ -26,18 +28,17 @@ namespace WordJourney
 
 			self.agent.mana -= manaConsume;
 
-			// 如果可以叠加，每次使用该技能都会减对方攻速，如果不能叠加，则首次使用该技能时减对方攻速
-			if (canOverlay) {
-
+			// 首次触发时添加状态，并执行状态效果
+			if (!enemy.CheckStateExist (stateName)) {
+				SkillState state = new SkillState (this, stateName, removeWhenQuitFight, null);
+				enemy.states.Add (state);
 				enemy.agent.attackSpeed -= attackSpeedDecreaseBase;
-
-			} else if(!enemy.states.Contains (stateName) ){
-
-				enemy.states.Add (stateName);
-
-				enemy.agent.attackSpeed -= attackSpeedDecreaseBase;
-
 			}
+
+			// 如果可以叠加，每次使用该技能都会减对方攻速
+			if (canOverlay) {
+				enemy.agent.attackSpeed -= attackSpeedDecreaseBase;
+			} 
 
 			if (enemy.agent.attackSpeed < 0) {
 				enemy.agent.attackSpeed = 0;

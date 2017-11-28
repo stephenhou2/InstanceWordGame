@@ -52,6 +52,7 @@ namespace WordJourney
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
 			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
+			battlePlayerCtr.enterCrystal = new ExploreEventHandler (EnterCrystal);
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
@@ -158,7 +159,6 @@ namespace WordJourney
 			battlePlayerCtr.MoveToEndByPath (pathPosList, targetPos);
 
 		}
-
 
 		public void ObtainReward(Item reward){
 
@@ -349,6 +349,10 @@ namespace WordJourney
 			expUICtr.SetUpWorkBenchPlane ();
 
 
+		}
+
+		public void EnterCrystal(Transform crystal){
+			Debug.Log ("进入水晶");
 		}
 			
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class BrambleShield : PassiveSkill {
+	public class BrambleShield : TriggeredPassiveSkill {
 
 		public float reflectScalerBase;
 

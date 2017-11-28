@@ -28,29 +28,6 @@ namespace WordJourney
 		public string skillDescription;
 
 
-
-		// 技能等级
-		[SerializeField]private int mySkillLevel;
-
-
-		public int skillLevel{
-			get{
-				return mySkillLevel;
-			}
-			set{
-				if (value > 0) {
-					mySkillLevel = value;
-					levelChanged = true;
-				}
-			}
-		}
-
-		protected bool levelChanged;
-
-		public bool isAvalible = true;
-
-		public bool canOverlay;// 技能效果是否可以叠加
-
 		public static float dodgeSeed = 0.0035f; //计算闪避时的种子数
 
 		public static float critSeed = 0.0035f; //计算暴击时的种子数
@@ -59,11 +36,21 @@ namespace WordJourney
 
 		public static float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
 
+
+		public int skillLevel;
+
+		public bool isAvalible = true;
+
+		public bool canOverlay;// 技能效果是否可以叠加
+
+
 		public string selfAnimName;
+		public string selfIntervalAnimName;
 		public string enemyAnimName;
 
 		public string selfEffectName;
 		public string enemyEffectName;
+
 
 		public bool unlocked;
 
@@ -79,11 +66,6 @@ namespace WordJourney
 			return randomNum <= chance;
 		}
 
-		public override string ToString ()
-		{
-			return string.Format ("[Skill]" + "\n[SkillName]:" + skillName);
-		}
-
 		public static Skill LoadSkillFromWithSkillInfo(SkillInfo skillInfo){
 
 			List<Skill> allSkills = GameManager.Instance.gameDataCenter.allSkills;
@@ -96,6 +78,11 @@ namespace WordJourney
 
 			return skill;
 
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[Skill]" + "\n[SkillName]:" + skillName);
 		}
 
 	}

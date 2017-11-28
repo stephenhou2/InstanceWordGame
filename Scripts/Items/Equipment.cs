@@ -56,7 +56,7 @@ namespace WordJourney
 		public int maxAttachedProperties;//附加属性最大数量
 		public int attachedPropertyId;//一定有的附加属性id
 		public EquipmentType equipmentType;//装备类型
-//		public bool formulaUnlocked;//装备配方是否已经解锁
+		public string detailType;//详细类型
 
 		public List<Material> materials = new List<Material> ();//合成材料需求
 		public List<Material> failMaterials = new List<Material>();//合成失败时可能掉落的特殊材料
@@ -85,6 +85,7 @@ namespace WordJourney
 
 			this.itemType = ItemType.Equipment;
 			this.itemCount = 1;
+			this.detailType = itemModel.detailType;
 
 			// 初始化物品基本属性
 			InitBaseProperties (itemModel);

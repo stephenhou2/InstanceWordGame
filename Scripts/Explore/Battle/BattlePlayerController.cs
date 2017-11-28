@@ -25,9 +25,10 @@ namespace WordJourney
 		public ExploreEventHandler enterItem;
 		public ExploreEventHandler enterNpc;
 		public ExploreEventHandler enterWorkBench;
+		public ExploreEventHandler enterCrystal;
 
 		// 移动速度
-		public float moveDuration = 0.4f;			
+		public float moveDuration;			
 
 		// 当前的单步移动动画对象
 		private Tweener moveTweener;
@@ -240,26 +241,48 @@ namespace WordJourney
 					return;
 				}
 
+				bool resetWalkAnim = false;
+
 				if (nextPos.x == transform.position.x) {
 
 					if (nextPos.y < transform.position.y) {
+						if (modelActive != playerForward) {
+							resetWalkAnim = true;
+						}
 						ActiveBattlePlayer (true, false, false);
 					} else if (nextPos.y > transform.position.y) {
+						if (modelActive != playerBackWard) {
+							resetWalkAnim = true;
+						}
 						ActiveBattlePlayer (false, true, false);
 					}
 
 				}
-
-
+					
 				if(nextPos.y == transform.position.y){
-					ActiveBattlePlayer (false, false, true);
 					if (nextPos.x > transform.position.x) {
+						if(modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3(1,1,1))){
+							resetWalkAnim = true;
+						}
 						playerSide.transform.localScale = new Vector3 (1, 1, 1);
+
 					} else if (nextPos.x < transform.position.x) {
+						if(modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3(-1,1,1))){
+							resetWalkAnim = true;
+						}
+
 						playerSide.transform.localScale = new Vector3 (-1, 1, 1);
 					}
+					ActiveBattlePlayer (false, false, true);
 				}
 
+				if (armatureCom.animation.lastAnimationName == "wait"){
+					resetWalkAnim = true;
+				}
+
+				if (resetWalkAnim) {
+					PlayRoleAnim ("walk", 0, null);
+				}
 			}
 
 			// 到达终点前的单步移动开始前进行碰撞检测
@@ -328,7 +351,15 @@ namespace WordJourney
 						boxCollider.enabled = true;
 
 						return;
+					case "crystal":
+						
+						PlayRoleAnim ("wait", 0, null);
 
+						enterCrystal (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
 					}
 
 
@@ -362,14 +393,12 @@ namespace WordJourney
 					SoundDetailTypeName.Steps, 
 					null);
 
-
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
 
 				// 向下一节点移动
 				MoveToPosition (nextPos);
 
-				PlayRoleAnim ("walk", 0, null);
 
 				// 标记单步移动中
 				inSingleMoving = true;
@@ -449,7 +478,75 @@ namespace WordJourney
 		/// 角色默认战斗逻辑
 		/// </summary>
 		public override void Fight(){
-			attackCoroutine = StartCoroutine ("InvokeAttack");
+			attackCoroutine = InvokeAttack (defaultSkill);
+//			attackCoroutine = StartCoroutine ("InvokeAttack");
+		}
+
+		/// <summary>
+		/// 使用技能
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		protected override void UseSkill (Skill skill)
+		{
+			// 停止播放当前的等待动画
+			this.armatureCom.animation.Stop ();
+
+			currentSkill = skill;
+
+			string skillRoleAnimName = string.Empty;
+			string skillIntervalRoleAnimName = string.Empty;
+
+			if (skill.selfAnimName == "AttackOnce") {
+
+				Equipment weapon = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
+					return obj.equipmentType == EquipmentType.Weapon;
+				});
+
+				if (weapon == null) {
+					skillRoleAnimName = "attackDefault";
+					skillIntervalRoleAnimName = "intervalDefault";
+				} else {
+					switch (weapon.detailType) {
+					case "剑":
+						skillRoleAnimName = "attackSword";
+						skillIntervalRoleAnimName = "intervalSword";
+						break;
+					case "刀":
+						skillRoleAnimName = "attackBlade";
+						skillIntervalRoleAnimName = "intervalBlade";
+						break;
+					case "斧子":
+						skillRoleAnimName = "attackAxe";
+						skillIntervalRoleAnimName = "intervalAxe";
+						break;
+					case "锤":
+						skillRoleAnimName = "attackHammer";
+						skillIntervalRoleAnimName = "intervalHammer";
+						break;
+					case "法杖":
+						skillRoleAnimName = "attackStaff";
+						skillIntervalRoleAnimName = "intervalStaff";
+						break;
+					case "匕首":
+						skillRoleAnimName = "attackDragger";
+						skillIntervalRoleAnimName = "intervalDragger";
+						break;
+					}
+				}
+
+			} else {
+				skillRoleAnimName = skill.selfAnimName;
+				skillIntervalRoleAnimName = skill.selfIntervalAnimName;
+			}
+
+
+
+			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
+			this.PlayRoleAnim (skillRoleAnimName, 1, () => {
+				// 播放等待动画
+				this.PlayRoleAnim(skillIntervalRoleAnimName,0,null);
+			});
+
 		}
 			
 
@@ -481,7 +578,9 @@ namespace WordJourney
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if(!FightEnd()){
-				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
+				attackCoroutine = InvokeAttack (defaultSkill);
+				StartCoroutine (attackCoroutine);
+//				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
 			}
 
 			// 更新玩家状态栏
@@ -656,30 +755,8 @@ namespace WordJourney
 
 			bpUICtr = null;
 
-
-
 		}
 
-//		/// <summary>
-//		/// 按照默认攻击方式自动攻击的协程
-//		/// </summary>
-//		/// <returns>The player attack.</returns>
-//		/// <param name="skill">Skill.</param>
-//		protected IEnumerator InvokePlayerAttack(Skill skill){
-//
-//			float timePassed = 0;
-//
-//			while (timePassed < agent.attackInterval) {
-//
-//				timePassed += Time.deltaTime;
-//
-//				yield return null;
-//
-//			}
-//
-//			UseSkill (skill);
-//
-//		}
 
 		public void QuitExplore(){
 
@@ -696,17 +773,18 @@ namespace WordJourney
 		/// </summary>
 		override public void AgentDie(){
 
-			// 停止玩家和怪物的攻击
-			if (attackCoroutine != null) {
-				this.StopCoroutine (attackCoroutine);
-			}
+			StopAllCoroutines ();
+
+			// 停止怪物的攻击
 			if (bmCtr.attackCoroutine != null) {
 				bmCtr.StopCoroutine (bmCtr.attackCoroutine);
 			}
 
-			if (waitRoleAnimEndCoroutine != null) {
-				StopCoroutine (waitRoleAnimEndCoroutine);
+			if (bmCtr.waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (bmCtr.waitRoleAnimEndCoroutine);
 			}
+
+			exploreManager.GetComponent<MapGenerator> ().PlayDeathOrTpAnim ("Death", transform.position);
 				
 			PlayRoleAnim("die", 1, () => {
 

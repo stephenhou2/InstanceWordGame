@@ -36,6 +36,8 @@ namespace WordJourney
 		// 地图上的工作台
 		public Transform workBench;
 
+		public Transform crystalModel;
+
 		// 地图上所有地图物品列表
 		private List<MapItem> mapItems = new List<MapItem> ();
 
@@ -52,6 +54,7 @@ namespace WordJourney
 		public Transform npcsContainer;
 		public Transform monstersContainer;
 		public Transform rewardsContainer;
+		public Transform crystalsContainer;
 
 		// 所有的缓存池
 		private InstancePool outerWallPool;
@@ -61,8 +64,11 @@ namespace WordJourney
 		private InstancePool monsterPool;
 		private InstancePool skillEffectPool;
 		private InstancePool rewardItemPool;
+		private InstancePool crystalPool;
 
 		public Animator destinationAnimator;
+
+		public Animator otherAnimator;
 
 		// 关卡数据
 		private GameLevelData levelData;
@@ -93,6 +99,7 @@ namespace WordJourney
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
 				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
 				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
+				crystalPool = InstancePool.GetOrCreateInstancePool ("CrystalPool", poolContainerOfExploreScene.name);
 			}
 
 			MapInstancesToPool ();
@@ -271,7 +278,9 @@ namespace WordJourney
 
 				monster.gameObject.SetActive (true);
 
-				monster.GetComponent<BattleMonsterController> ().PlayRoleAnim ("wait",0,null);
+				BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
+
+				bmCtr.PlayRoleAnim ("wait",0,null);
 
 				monsters.Add (monster.GetComponent<Monster>());
 
@@ -416,7 +425,19 @@ namespace WordJourney
 
 			mapWalkableInfoArray[(int)workBenchPos.x,(int)workBenchPos.y] = 0;
 
+			// 初始化单词水晶
+			for (int i = 0; i < 4; i++) {
+				
+				Vector3 crystalPos = RandomPosition();
 
+				Transform crystal = crystalPool.GetInstance<Transform> (crystalModel.gameObject, crystalsContainer);
+
+				crystal.position = crystalPos;
+
+				crystal.GetComponent<SpriteRenderer> ().sortingOrder = -(int)crystalPos.y;
+
+				mapWalkableInfoArray[(int)crystalPos.x,(int)crystalPos.y] = 0;
+			}
 		}
 
 
@@ -436,6 +457,13 @@ namespace WordJourney
 
 		}
 
+		public void PlayDeathOrTpAnim(string triggerName,Vector3 targetPos){
+
+			otherAnimator.transform.position = targetPos;
+
+			otherAnimator.SetTrigger (triggerName);
+
+		}
 
 		//Clears our list gridPositions and prepares it to generate a new board.
 		void ResetGridList ()
@@ -637,6 +665,7 @@ namespace WordJourney
 			Destroy (npcPool.gameObject);
 			Destroy (itemPool.gameObject);
 			Destroy (monsterPool.gameObject);
+			Destroy (crystalPool.gameObject);
 
 		}
 
@@ -651,6 +680,7 @@ namespace WordJourney
 			npcPool.AddChildInstancesToPool (npcsContainer);
 			itemPool.AddChildInstancesToPool (itemsContainer);
 			monsterPool.AddChildInstancesToPool (monstersContainer);
+			crystalPool.AddChildInstancesToPool (crystalsContainer);
 
 		}
 

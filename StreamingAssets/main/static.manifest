@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 570676546
+CRC: 90723063
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2f29c2a6173284be0ecf069494fb4106
+    Hash: 977efd2e003452e6d41bfaaadb070990
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6ad8ffe9d2503c48f7c579111954a386
+    Hash: 71f3007ca05d87bbf10b01e1c33d5f9e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -50,9 +50,6 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/RoleBones/NewPlayer/1/playerFront_tex.png
-- Assets/Resources/RoleBones/NewPlayer/3/playerBack_tex.png
-- Assets/Resources/RoleBones/NewPlayer/2/playerSide_tex.png
 - Assets/Prefabs/Main/GameManager.prefab
 - Assets/Prefabs/Main/Player.prefab
 Dependencies: []

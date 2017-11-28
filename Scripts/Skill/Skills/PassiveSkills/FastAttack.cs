@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class FastAttack : PassiveSkill	{
+	public class FastAttack : TalentSkill{
 
 		public float attackSpeedScalerBase;
 

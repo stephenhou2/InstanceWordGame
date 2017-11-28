@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class WeaponExpert : PassiveSkill {
+	public class WeaponExpert : TalentSkill {
 
 		public float critScalerBase;
 

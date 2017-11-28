@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class HardBeat : PassiveSkill {
+	public class HardBeat : TriggeredPassiveSkill {
 
 		public float duration;
 

@@ -44,11 +44,13 @@ namespace WordJourney
 		// 战斗结束触发事件回调队列
 		public List<SkillCallBack> fightEndTriggerCallBacks = new List<SkillCallBack>();
 
+		// 角色身上的所有状态
+		public List<SkillState> states = new List<SkillState>();
 
-		// 角色身上的所有状态名称
-		public List<string> states = new List<string>();
-		// 角色身上所有状态协程
-		public List<Coroutine> stateEffectCoroutines = new List<Coroutine> ();
+//		// 角色身上的所有状态名称
+//		public List<string> states = new List<string>();
+//		// 角色身上所有状态协程
+//		public List<IEnumerator> stateEffectCoroutines = new List<IEnumerator> ();
 
 		// 碰撞检测层
 		public LayerMask collosionLayer;
@@ -60,11 +62,11 @@ namespace WordJourney
 		protected GameObject modelActive;
 
 		// 自动攻击协程
-		public Coroutine attackCoroutine;
+		public IEnumerator attackCoroutine;
 		// 等待角色动画结束协程
-		public Coroutine waitRoleAnimEndCoroutine;
+		public IEnumerator waitRoleAnimEndCoroutine;
 		// 等待技能动画结束协程
-		public Coroutine waitEffectAnimEndCoroutine;
+		public IEnumerator waitEffectAnimEndCoroutine;
 
 		protected Skill currentSkill;
 
@@ -224,7 +226,9 @@ namespace WordJourney
 
 			// 如果有角色动画结束后要执行的回调，则开启一个新的等待角色动画结束的协程，等待角色动画结束后执行回调
 			if (cb != null) {
-				waitRoleAnimEndCoroutine = StartCoroutine ("ExcuteCallBackAtEndOfRoleAnim", cb);
+				waitRoleAnimEndCoroutine = ExcuteCallBackAtEndOfRoleAnim (cb);
+//				waitRoleAnimEndCoroutine = StartCoroutine ("ExcuteCallBackAtEndOfRoleAnim", cb);
+				StartCoroutine(waitRoleAnimEndCoroutine);
 			}
 		}
 
@@ -313,9 +317,12 @@ namespace WordJourney
 
 				skillEffectAnim.SetTrigger (triggerName);
 
-//				if (gameObject.activeInHierarchy) {
-				waitEffectAnimEndCoroutine = StartCoroutine ("AddSkillEffectToPoolAfterAnimEnd", effectInfo);
-//				}
+				waitEffectAnimEndCoroutine = AddSkillEffectToPoolAfterAnimEnd (effectInfo);
+
+				StartCoroutine (waitEffectAnimEndCoroutine);
+
+//				waitEffectAnimEndCoroutine = StartCoroutine ("AddSkillEffectToPoolAfterAnimEnd", effectInfo);
+
 
 			}
 		}
@@ -340,7 +347,7 @@ namespace WordJourney
 
 			}
 
-			animator.SetTrigger ("Empty");
+//			animator.SetTrigger ("Empty");
 
 			exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (animator.transform);
 
@@ -444,20 +451,7 @@ namespace WordJourney
 		/// 使用技能
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		protected void UseSkill (Skill skill)
-		{
-			// 停止播放当前的等待动画
-			this.armatureCom.animation.Stop ();
-
-			currentSkill = skill;
-
-			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
-				// 播放等待动画
-				this.PlayRoleAnim("interval",0,null);
-			});
-
-		}
+		protected abstract void UseSkill (Skill skill);
 
 		/// <summary>
 		/// 角色默认的战斗方法
@@ -502,19 +496,30 @@ namespace WordJourney
 			}
 		}
 
+		public bool CheckStateExist(string stateName){
+			bool result = false;
+			for (int i = 0; i < states.Count; i++) {
+				if (states [i].stateName == stateName) {
+					result = true;
+					break;
+				}
+			}
+			return result;
+		}
 
 		/// <summary>
-		/// 清除角色身上的所有效果状态
+		/// 清除角色身上所有的非持续性效果状态
 		/// </summary>
 		public void ClearAllEffectStatesAndSkillCallBacks(){
 
-			states.Clear ();
-
-			for (int i = 0; i < stateEffectCoroutines.Count; i++) {
-				StopCoroutine (stateEffectCoroutines [i]);
+			for (int i = 0; i < states.Count; i++) {
+				SkillState state = states [i];
+				if (state.removeWhenQuitFight) {
+					state.sourceSkill.StopCoroutine (state.durativeSkillEffect);
+					states.Remove (state);
+					i--;
+				}
 			}
-
-			stateEffectCoroutines.Clear ();
 
 			beforeFightTriggerCallBacks.Clear ();
 			attackTriggerCallBacks.Clear ();

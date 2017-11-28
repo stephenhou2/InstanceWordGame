@@ -162,19 +162,6 @@ namespace WordJourney
 			}
 
 		}
-			
-		private struct MyParams{
-			public List<Item> items;
-			public Item currentSelectItem;
-//			public Button itemDisplayButton;
-//			public ItemButtonView itemDisplayButton;
-
-			public MyParams(List<Item> items, Item currentSelectItem){
-				this.items = items;
-//				this.itemDisplayButton = itemDisplayButton;
-				this.currentSelectItem = currentSelectItem;
-			}
-		}
 
 		/// <summary>
 		/// 初始化背包物品界面
@@ -224,31 +211,32 @@ namespace WordJourney
 				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
 
 			}
-
-			List<Item> myItems = new List<Item> ();
-
+				
 			if (loadCount < items.Count) {
+				
+				List<Item> myItems = new List<Item> ();
+
 				for (int i = 0; i < items.Count; i++) {
 					myItems.Add (items [i]);
 				}
-			}
 
-			MyParams myParams = new MyParams (myItems, currentSelectItem);
-			StartCoroutine ("LoadItemDisplayButtonsAsync", myParams);
-				
+				IEnumerator coroutine = LoadItemDisplayButtonsAsync (myItems, currentSelectItem);
+
+				StartCoroutine (coroutine);
+			}	
 		}
-
-		private IEnumerator LoadItemDisplayButtonsAsync(MyParams myParams){
+			
+		private IEnumerator LoadItemDisplayButtonsAsync(List<Item> items,Item currentSelectItem){
 
 			yield return null;
-			
-			for (int i = maxPreloadCountOfItem; i < myParams.items.Count; i++) {
+
+			for (int i = maxPreloadCountOfItem; i < items.Count; i++) {
 
 				Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
 
-				Item item = myParams.items [i] as Item;
+				Item item = items [i] as Item;
 
-				SetUpItemButton (item, itemDisplayButton, myParams.currentSelectItem);
+				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
 			}
 		}
 
@@ -257,7 +245,7 @@ namespace WordJourney
 		/// 初始化物品详细介绍页面
 		/// </summary>
 		/// <param name="item">Item.</param>
-		public void SetUpItemDetailHUD(Item item){
+		public void SetUpItemDetailHUD(Item item,Sprite itemSprite){
 
 			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
 			Text itemName = itemDetailsContainer.Find("ItemName").GetComponent<Text>();
@@ -272,15 +260,17 @@ namespace WordJourney
 			choiceHUDWithOneBtn.gameObject.SetActive (false);
 			choiceHUDWithTwoBtns.gameObject.SetActive (false);
 
-			if (item.itemType == ItemType.Material) {
-				itemIcon.sprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
-					return obj.name == item.spriteName;
-				});
-			} else {
-				itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == item.spriteName;
-				});
-			}
+//			if (item.itemType == ItemType.Material) {
+//				itemIcon.sprite = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+//					return obj.name == item.spriteName;
+//				});
+//			} else {
+//				itemIcon.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+//					return obj.name == item.spriteName;
+//				});
+//			}
+
+			itemIcon.sprite = itemSprite;
 
 			itemIcon.enabled = true;
 
@@ -460,20 +450,20 @@ namespace WordJourney
 			}
 
 
-			Sprite s = null;
+			Sprite itemSprite = null;
 
 			if (item.itemType == ItemType.Material) {
-				s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				itemSprite = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 			} else {
-				s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 			}
 
-			if(s != null){
-				itemIcon.sprite = s;
+			if(itemSprite != null){
+				itemIcon.sprite = itemSprite;
 			}
 
 			itemIcon.enabled = itemIcon.sprite != null;
@@ -503,7 +493,7 @@ namespace WordJourney
 
 				GetComponent<BagViewController> ().OnSelectItemInBag (item);
 
-				SetUpItemDetailHUD (item);
+				SetUpItemDetailHUD (item,itemSprite);
 
 			});
 

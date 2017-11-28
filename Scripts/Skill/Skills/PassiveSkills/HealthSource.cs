@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class HealthSource : PassiveSkill {
+	public class HealthSource : TalentSkill {
 
 		public float healthScalerBase;
 

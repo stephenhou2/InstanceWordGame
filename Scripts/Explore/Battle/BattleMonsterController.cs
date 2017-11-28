@@ -29,7 +29,10 @@ namespace WordJourney
 
 		}
 
-
+		public void SetAlive(){
+			armatureCom.enabled = true;
+			boxCollider.enabled = true;
+		}
 
 		/// <summary>
 		/// 初始化碰到的怪物
@@ -46,6 +49,7 @@ namespace WordJourney
 
 			// 初始化怪物状态栏
 			bmUICtr.SetUpMonsterStatusPlane (monster);
+
 
 		}
 			
@@ -79,6 +83,25 @@ namespace WordJourney
 			UseSkill (currentSkill);
 		}
 			
+		/// <summary>
+		/// 使用技能
+		/// </summary>
+		/// <param name="skill">Skill.</param>
+		protected override void UseSkill (Skill skill)
+		{
+			// 停止播放当前的等待动画
+			this.armatureCom.animation.Stop ();
+
+			currentSkill = skill;
+
+			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
+			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
+				// 播放等待动画
+				this.PlayRoleAnim("interval",0,null);
+			});
+
+		}
+
 
 		protected override void AgentExcuteHitEffect ()
 		{
@@ -88,7 +111,9 @@ namespace WordJourney
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if(!FightEnd()){
 				currentSkill = (agent as Monster).InteligentSelectSkill ();
-				attackCoroutine = StartCoroutine("InvokeAttack",currentSkill);
+				attackCoroutine = InvokeAttack (currentSkill);
+				StartCoroutine (attackCoroutine);
+//				attackCoroutine = StartCoroutine("InvokeAttack",currentSkill);
 			}
 
 			this.UpdateStatusPlane();
@@ -224,10 +249,18 @@ namespace WordJourney
 
 			bpCtr.PlayRoleAnim ("wait", 0, null);
 
-			StopAllCoroutines ();
+			CancelInvoke ();
 
-//			bpCtr.StopAllCoroutines ();
+//			StopAllCoroutines ();
 
+			if (attackCoroutine != null) {
+				StopCoroutine (attackCoroutine);
+			}
+
+			if (waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (waitRoleAnimEndCoroutine);
+			}
+				
 			if (bpCtr.attackCoroutine != null) {
 				StopCoroutine (bpCtr.attackCoroutine);
 			}
@@ -246,9 +279,9 @@ namespace WordJourney
 
 			CollectSkillEffectsToPool();
 
-			gameObject.SetActive(false);
+			exploreManager.GetComponent<MapGenerator> ().PlayDeathOrTpAnim ("Death", transform.position);
 
-
+			transform.position = new Vector3 (0, 0, 100);
 
 		}
 

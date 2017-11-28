@@ -311,6 +311,9 @@ namespace WordJourney
 			});
 
 			equipmentIcon.sprite = s;
+
+			materialCardPool.AddChildInstancesToPool (materialCardContainer);
+
 			for (int i = 0; i < equipment.materials.Count; i++) {
 				
 				Transform materialCard = materialCardPool.GetInstance<Transform> (materialCardModel.gameObject, materialCardContainer);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class MaigcShield : PassiveSkill {
+	public class MaigcShield : TriggeredPassiveSkill {
 
 		public int duration;
 
