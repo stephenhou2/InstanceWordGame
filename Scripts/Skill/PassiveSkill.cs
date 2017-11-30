@@ -25,15 +25,11 @@ namespace WordJourney
 		protected bool levelChanged;
 
 		void Start(){
-			if (skillType != SkillType.Passive) {
+			if (skillType != SkillType.TalentPassive && skillType != SkillType.TriggeredPassive) {
 				Debug.LogError (string.Format ("{0}技能类型必须是被动类型", skillName));
 			}
 		}
 
-		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)
-		{
-			ExcuteSkillLogic (self, enemy);
-		}
 
 	}
 }

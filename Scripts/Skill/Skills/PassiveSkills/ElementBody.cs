@@ -9,19 +9,17 @@ namespace WordJourney
 
 		public float magicResistScalerBase;
 
-		void Awake(){
-			skillType = SkillType.Passive;
+		protected override void Awake ()
+		{
+			base.Awake ();
 			skillName = "元素体质";
 			skillDescription = string.Format("提升<color=orange>{0}*技能等级%</color>抗性",(int)(magicResistScalerBase * 100));
 		}
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy)
 		{
-			if (levelChanged) {
-				self.agent.SetBasePropertyGainScalers (0, 0, 0, magicResistScalerBase * skillLevel, 0, 0, 0, 0);
-				self.agent.ResetBattleAgentProperties (false);
-				levelChanged = false;
-			}
+			self.agent.SetBasePropertyGainScalers (0, 0, 0, magicResistScalerBase * skillLevel, 0, 0, 0, 0);
+			self.agent.ResetBattleAgentProperties (false);
 		}
 	}
 }

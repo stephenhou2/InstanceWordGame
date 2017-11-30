@@ -9,6 +9,8 @@ namespace WordJourney
 
 		public string stateName;
 
+		public string stateSpriteName;
+
 		public int attackSpeedDecreaseBase;
 
 		public float magicHurtScalerBase;
@@ -30,7 +32,7 @@ namespace WordJourney
 
 			// 首次触发时添加状态，并执行状态效果
 			if (!enemy.CheckStateExist (stateName)) {
-				SkillState state = new SkillState (this, stateName, removeWhenQuitFight, null);
+				SkillState state = new SkillState (stateName,stateSpriteName);
 				enemy.states.Add (state);
 				enemy.agent.attackSpeed -= attackSpeedDecreaseBase;
 			}

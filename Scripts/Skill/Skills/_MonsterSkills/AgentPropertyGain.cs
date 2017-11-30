@@ -19,11 +19,10 @@ namespace WordJourney
 
 		public SkillEffectTarget effectTarget;
 
-		public bool removeWhenQuitFight;
+		public string stateSpriteName;
 
-		void Awake(){
-			this.skillType = SkillType.Passive;
-		}
+//		public bool removeWhenQuitFight;
+
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy)
 		{
@@ -76,7 +75,7 @@ namespace WordJourney
 
 			// 首次触发时添加状态，并执行状态效果
 			if (!affectedBattleAgent.CheckStateExist (stateName)) {
-				SkillState state = new SkillState (this, stateName, removeWhenQuitFight, null);
+				SkillState state = new SkillState (stateName,stateSpriteName);
 				affectedBattleAgent.states.Add (state);
 			}
 

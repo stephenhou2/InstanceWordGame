@@ -13,8 +13,9 @@ namespace WordJourney
 
 		private Coroutine hardBeatCoroutine;
 
-		void Awake(){
-			skillType = SkillType.Passive;
+		protected override void Awake ()
+		{
+			base.Awake ();
 			skillName = "重击";
 			skillDescription = string.Format ("<color=orange>{0}*技能等级</color>%的概率将对方击晕，持续<color=orange>{1}s</color>",(int)(probabilityBase * 100),duration);
 		}

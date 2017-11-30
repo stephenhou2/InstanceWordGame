@@ -14,7 +14,7 @@ namespace WordJourney
 
 		public override void SetUpCellDetailView (object data)
 		{
-			Word word = data as Word;
+			LearnWord word = data as LearnWord;
 
 			spellText.text = word.spell;
 

@@ -15,10 +15,13 @@ namespace WordJourney
 
 		public string stateName;
 
+		public string stateSpriteName;
+
 		public bool removeWhenQuitFight;
 
 		void Awake(){
 			skillType = SkillType.Physical;
+			skillName = "破甲";
 			skillDescription = string.Format("造成额外<color=orange>{0}+{1}*技能等级*攻击力点</color>的物理伤害,并减少对方<color=orange>{2}点</color>护甲直至战斗结束(可叠加)", hurtBase, (int)(hurtScalerBase*100),armorDecreaseBase);
 		}
 
@@ -30,7 +33,7 @@ namespace WordJourney
 			// 首次触发时添加状态，并执行状态效果
 			if (!enemy.CheckStateExist (stateName)) {
 				
-				SkillState state = new SkillState (this, stateName, removeWhenQuitFight, null);
+				SkillState state = new SkillState (stateName,stateSpriteName);
 
 				enemy.states.Add (state);
 

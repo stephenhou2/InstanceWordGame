@@ -55,6 +55,7 @@ namespace WordJourney
 		public Transform monstersContainer;
 		public Transform rewardsContainer;
 		public Transform crystalsContainer;
+		public Transform otherAnimContainer;
 
 		// 所有的缓存池
 		private InstancePool outerWallPool;
@@ -65,10 +66,11 @@ namespace WordJourney
 		private InstancePool skillEffectPool;
 		private InstancePool rewardItemPool;
 		private InstancePool crystalPool;
+		private InstancePool otherAnimPool;
 
 		public Animator destinationAnimator;
 
-		public Animator otherAnimator;
+		public Animator otherAnimModel;
 
 		// 关卡数据
 		private GameLevelData levelData;
@@ -100,6 +102,7 @@ namespace WordJourney
 				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
 				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
 				crystalPool = InstancePool.GetOrCreateInstancePool ("CrystalPool", poolContainerOfExploreScene.name);
+				otherAnimPool = InstancePool.GetOrCreateInstancePool ("OtherAnimPool", poolContainerOfExploreScene.name);
 			}
 
 			MapInstancesToPool ();
@@ -457,11 +460,35 @@ namespace WordJourney
 
 		}
 
-		public void PlayDeathOrTpAnim(string triggerName,Vector3 targetPos){
+		public void PlayMapOtherAnim(string triggerName,Vector3 targetPos){
 
-			otherAnimator.transform.position = targetPos;
+			Animator otherAnim = otherAnimPool.GetInstance<Animator> (otherAnimModel.gameObject, otherAnimContainer);
 
-			otherAnimator.SetTrigger (triggerName);
+			otherAnim.transform.position = targetPos;
+
+
+			otherAnim.SetTrigger (triggerName);
+
+			IEnumerator coroutine = CollectOtherAnimToPoolWhenAnimEnd (otherAnim, triggerName);
+
+			StartCoroutine (coroutine);
+
+		}
+
+		private IEnumerator CollectOtherAnimToPoolWhenAnimEnd(Animator anim,string trigger){
+
+			yield return null;
+
+			AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo (0);
+
+			while (info.normalizedTime < 1.0f) {
+				yield return null;
+				info = anim.GetCurrentAnimatorStateInfo (0);
+			}
+
+			otherAnimPool.AddInstanceToPool (anim.gameObject);
+
+			anim.ResetTrigger (trigger);
 
 		}
 

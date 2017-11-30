@@ -335,19 +335,16 @@ namespace WordJourney
 		/// <param name="effectInfo">Effect info.</param>
 		protected IEnumerator AddSkillEffectToPoolAfterAnimEnd(SkillEffectInfo effectInfo){
 
+			yield return null;
+
 			Animator animator = effectInfo.skillEffectTrans.GetComponent<Animator> ();
 
 			AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 
-			float time = 0;
-
-			while (time < stateInfo.length) {
+			while (stateInfo.normalizedTime < 1.0f) {
 				yield return null;
-				time += Time.deltaTime;
-
+				stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 			}
-
-//			animator.SetTrigger ("Empty");
 
 			exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (animator.transform);
 
@@ -496,6 +493,25 @@ namespace WordJourney
 			}
 		}
 
+		/// <summary>
+		/// 添加技能状态到角色身上
+		/// </summary>
+		/// <param name="state">State.</param>
+		public void AddState(SkillState state){
+			states.Add (state);
+
+		}
+
+
+		/// <summary>
+		/// 删除角色身上的技能状态
+		/// </summary>
+		/// <param name="state">State.</param>
+		public void RemoveState(SkillState state){
+			states.Remove (state);
+
+		}
+
 		public bool CheckStateExist(string stateName){
 			bool result = false;
 			for (int i = 0; i < states.Count; i++) {
@@ -512,21 +528,13 @@ namespace WordJourney
 		/// </summary>
 		public void ClearAllEffectStatesAndSkillCallBacks(){
 
-			for (int i = 0; i < states.Count; i++) {
-				SkillState state = states [i];
-				if (state.removeWhenQuitFight) {
-					state.sourceSkill.StopCoroutine (state.durativeSkillEffect);
-					states.Remove (state);
-					i--;
-				}
-			}
-
 			beforeFightTriggerCallBacks.Clear ();
 			attackTriggerCallBacks.Clear ();
 			attackFinishTriggerCallBacks.Clear ();
 			beAttackedTriggerCallBacks.Clear ();
 			fightEndTriggerCallBacks.Clear ();
 
+			states.Clear ();
 		}
 
 		/// <summary>

@@ -9,8 +9,9 @@ namespace WordJourney
 
 		public float attackScalerBase;
 
-		void Awake(){
-			skillType = SkillType.Passive;
+		protected override void Awake ()
+		{
+			base.Awake ();
 			skillName = "力量强化";
 			skillDescription = string.Format("提升<color=orange>{0}*技能等级%</color>的攻击力",(int)(attackScalerBase*100));
 
@@ -18,11 +19,8 @@ namespace WordJourney
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy)
 		{
-			if (levelChanged) {
-				self.agent.SetBasePropertyGainScalers (attackScalerBase * skillLevel, 0, 0, 0, 0, 0, 0, 0);
-				self.agent.ResetBattleAgentProperties (false);
-				levelChanged = false;
-			}
+			self.agent.SetBasePropertyGainScalers (attackScalerBase * skillLevel, 0, 0, 0, 0, 0, 0, 0);
+			self.agent.ResetBattleAgentProperties (false);
 		}
 	}
 

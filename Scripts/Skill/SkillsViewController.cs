@@ -59,12 +59,16 @@ namespace WordJourney
 
 				BattleAgentController bpCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
-				if (skillToUpgradeInLearnedSkills.skillType == SkillType.Passive) {
+				// 如果是天赋技能，则在升级的时候直接执行技能效果
+				if (skillToUpgradeInLearnedSkills.skillType == SkillType.TalentPassive) {
 					skillToUpgradeInLearnedSkills.AffectAgents (bpCtr, null);
-				} else if(skillToUpgradeInLearnedSkills is ActiveSkill){
+				} 
+				// 如果是主动技能，则将技能加入到主动技能表中
+				else if(skillToUpgradeInLearnedSkills is ActiveSkill){
 					Player.mainPlayer.equipedActiveSkills.Add (skillToUpgradeInLearnedSkills as ActiveSkill);
 				}
 
+				// 将技能加入到已学习技能表中
 				Player.mainPlayer.allLearnedSkills.Add (skillToUpgradeInLearnedSkills);
 
 			} 
@@ -78,7 +82,8 @@ namespace WordJourney
 
 				BattleAgentController bpCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
-				if (skillToUpgradeInLearnedSkills.skillType == SkillType.Passive) {
+				// 如果是天赋技能，则在升级的时候直接执行技能效果
+				if (skillToUpgradeInLearnedSkills.skillType == SkillType.TalentPassive) {
 					skillToUpgradeInLearnedSkills.AffectAgents (bpCtr, null);
 				} 
 

@@ -102,7 +102,7 @@ namespace WordJourney
 		/// 初始化拼写界面（强化）
 		/// </summary>
 		/// <param name="item">Item.</param>
-		public void SetUpSpellViewForFix(Equipment equipment, Word word){
+		public void SetUpSpellViewForFix(Equipment equipment, GeneralWord word){
 			
 			this.spellPurpose = SpellPurpose.Fix;
 

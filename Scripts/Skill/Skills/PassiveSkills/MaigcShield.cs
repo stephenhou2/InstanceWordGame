@@ -9,34 +9,38 @@ namespace WordJourney
 
 		public int duration;
 
-		public float decreaseHurtScaler;
+		public float decreaseHurtScalerBase;
 
-		public float probabilityBase;
+		public float probability;
 
 		private Coroutine magicShieldCoroutine;
 
-		void Awake(){
-			skillType = SkillType.Passive;
+		protected override void Awake ()
+		{
+			base.Awake ();
 			skillName = "魔法盾";
-			skillDescription = string.Format ("受到攻击时有<color=orange>{0}*技能等级%</color>的概率产生一个魔法盾,魔法盾存期间可以减少<color=orange>{1}%</color>的伤害，持续时间<color=orange>{2}s</color>",(int)(probabilityBase * 100),decreaseHurtScaler,duration);
-			selfEffectName = "MagicShield";
+			skillDescription = string.Format ("受到攻击时有<color=orange>{0}%</color>的概率产生一个魔法盾,魔法盾存期间可以减少<color=orange>{1}*技能等级%</color>的伤害，持续时间<color=orange>{2}s</color>",(int)(probability * 100),(int)(decreaseHurtScalerBase * 100),duration);
 		}
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy){
 		
+//			if (levelChanged) {
+//				self.agent.decreaseHurtScaler = decreaseHurtScalerBase * skillLevel;
+//				self.agent.ResetBattleAgentProperties (false);
+//				levelChanged = false;
+//			}
 		}
 
 		protected override void BeAttackedTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			float createShieldProbability = probabilityBase * skillLevel;
 
-			if (isEffective (createShieldProbability)) {
+			if (isEffective (probability)) {
 
 				StopCoroutine (magicShieldCoroutine);
 
 				self.SetEffectAnim (selfEffectName, true);
 
-				self.agent.decreaseHurtScaler = decreaseHurtScaler;
+				self.agent.decreaseHurtScaler = decreaseHurtScalerBase * skillLevel;
 
 				magicShieldCoroutine = StartCoroutine ("EndMagicShield",self);
 			}

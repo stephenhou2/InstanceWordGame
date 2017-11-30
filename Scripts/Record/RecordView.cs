@@ -107,7 +107,7 @@ namespace WordJourney
 
 			completionPercentage.text = ((int)(percentage * 100)).ToString() + "%";
 
-			learnedTime.text = learnInfo.learnTime.ToString();
+			learnedTime.text = learnInfo.totalLearnTime.ToString();
 
 			learnedCount.text = learnInfo.learnedWordCount.ToString ();
 
@@ -134,7 +134,7 @@ namespace WordJourney
 
 			for (int i = 0; i < learnInfo.learnedWordCount; i++) {
 
-				Word word = learnInfo.learnedWords [i];
+				LearnWord word = learnInfo.learnedWords [i];
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordsRecordPlane);
 
@@ -166,7 +166,7 @@ namespace WordJourney
 
 			for (int i = 0; i < unlearnedWordsCount; i++) {
 
-				Word word = learnInfo.unlearnedWords [i];
+				LearnWord word = learnInfo.unlearnedWords [i];
 
 				Transform wordItem = wordItemPool.GetInstance <Transform> (wordItemModel.gameObject, wordItemsContainer);
 

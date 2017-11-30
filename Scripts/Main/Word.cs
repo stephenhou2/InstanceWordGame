@@ -1,70 +1,100 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Data;
+
 
 
 namespace WordJourney
 {
 
+	using System.Data;
 
-
-	// 单词模型  
+	// 普通单词模型  
 	[System.Serializable]
-	public class Word{
+	public struct GeneralWord{
 
+		// 单词id
 		public int wordId;
-
+		// 单词拼写
 		public string spell;
-
+		// 单词释义
 		public string explaination;
-
-		public string example;
-
+		// 单词是否可用于制造融合石
 		public bool valid;
 
 
-		public Word(int wordId,string spell,string explaination,string example,bool valid){
+		public GeneralWord(int wordId, string spell, string explaination,bool valid){
 			this.wordId = wordId;
 			this.spell = spell;
 			this.explaination = explaination;
-			this.example = example;
 			this.valid = valid;
 		}
-
-//		public static Word FindWordInAllWords(string spell){
-//
-//			string tableName = "AllWordsData";
-//
-//			MySQLiteHelper sql = MySQLiteHelper.Instance;
-//
-//			// 连接数据库
-//			sql.GetConnectionWith (CommonData.dataBaseName);
-//
-//			string[] conditions = new string[]{ string.Format ("Spell={0}",spell) };
-//
-//			IDataReader reader =  sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
-//
-//			reader.Read ();
-//
-//			if (reader == null) {
-//				Debug.Log ("没有对应单词");
-//				return null;
-//			}
-//
-//			int wordId = reader.GetInt32 (0);
-//			string explaination = reader.GetString (2);
-//			int type = reader.GetInt16 (3);
-//			bool valid = reader.GetBoolean (4);
-
-//			sql.CloseConnection (CommonData.dataBaseName);
-//
-//			return new Word (wordId, spell, explaination,string.Empty,valid);
-
-//		}
+			
 
 
-		public static Word RandomWord(){
+		public static GeneralWord RandomGeneralWord(){
+
+			string tableName = "AllWordsData";
+
+			MySQLiteHelper sql = MySQLiteHelper.Instance;
+
+			// 连接数据库
+			sql.GetConnectionWith (CommonData.dataBaseName);
+
+			int wordsCount = sql.GetItemCountOfTable (tableName);
+
+			int wordId = Random.Range (0, wordsCount);
+
+			string[] conditions = new string[]{string.Format ("wordId={0}", wordId)};
+
+			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
+
+			reader.Read ();
+
+			string spell = reader.GetString (1);
+
+			string explaination = reader.GetString (2);
+
+			string example = reader.GetString (3);
+
+			bool valid = reader.GetBoolean (4);
+
+			return new GeneralWord (wordId, spell, explaination, valid);
+
+		}
+			
+
+	}
+
+	// 普通单词模型  
+	[System.Serializable]
+	public class LearnWord{
+
+		// 单词id
+		public int wordId;
+		// 单词拼写
+		public string spell;
+		// 单词音标
+		public string phoneticSymbol;
+		// 单词释义
+		public string explaination;
+		// 例句
+		public string example;
+		// 单词已学次数
+		public int learnedTimes;
+
+
+		public LearnWord(int wordId, string spell, string phoneticSymbol, string explaination,string example,int learnedTimes){
+			this.wordId = wordId;
+			this.spell = spell;
+			this.phoneticSymbol = phoneticSymbol;
+			this.explaination = explaination;
+			this.example = example;
+			this.learnedTimes = learnedTimes;
+		}
+
+
+		public static LearnWord RandomWord(){
 
 			LearningInfo learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
 
@@ -117,13 +147,18 @@ namespace WordJourney
 
 			string explaination = reader.GetString (2);
 
-			string example = reader.GetString (3);
+			string phoneticSymbol = reader.GetString (3);
 
-			return new Word (wordId, spell, explaination, example, true);
+			string example = reader.GetString (4);
+
+			int learnedTimes = reader.GetInt16 (5);
+
+			return new LearnWord (wordId, spell, explaination, phoneticSymbol, example, learnedTimes);
 
 		}
-			
+
 
 	}
+
 
 }

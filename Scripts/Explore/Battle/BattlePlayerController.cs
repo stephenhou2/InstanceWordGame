@@ -624,9 +624,7 @@ namespace WordJourney
 					bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
 				}
 				break;
-			case SkillType.Magical:
-				break;
-			case SkillType.Passive:
+			default:
 				break;
 			}
 
@@ -784,7 +782,7 @@ namespace WordJourney
 				StopCoroutine (bmCtr.waitRoleAnimEndCoroutine);
 			}
 
-			exploreManager.GetComponent<MapGenerator> ().PlayDeathOrTpAnim ("Death", transform.position);
+			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
 				
 			PlayRoleAnim("die", 1, () => {
 

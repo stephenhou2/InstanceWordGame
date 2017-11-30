@@ -22,8 +22,9 @@ namespace WordJourney
 
 		public string stateName;
 
-
-
+		protected virtual void Awake(){
+			this.skillType = SkillType.TriggeredPassive;
+		}
 
 
 		public override void AffectAgents (BattleAgentController self, BattleAgentController enemy)

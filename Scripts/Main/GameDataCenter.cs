@@ -35,7 +35,7 @@ namespace WordJourney
 						mLearnInfo = new LearningInfo ();
 					}
 				}
-				mLearnInfo.SetUpWords ();
+				mLearnInfo.GetCurrentLearningTypeWords ();
 				return mLearnInfo;
 			}
 //			set{

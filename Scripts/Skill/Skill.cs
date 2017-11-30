@@ -10,7 +10,8 @@ namespace WordJourney
 		None,
 		Physical,
 		Magical,
-		Passive
+		TalentPassive,
+		TriggeredPassive
 	}
 
 	public abstract class Skill:MonoBehaviour {
@@ -54,7 +55,14 @@ namespace WordJourney
 
 		public bool unlocked;
 
+		/// <summary>
+		/// 技能作用效果
+		/// </summary>
+		/// <param name="self">Self.</param>
+		/// <param name="enemy">Enemy.</param>
+		/// <param name="skillLevel">Skill level.</param>
 		public virtual void AffectAgents (BattleAgentController self, BattleAgentController enemy){
+			ExcuteSkillLogic (self, enemy);
 		}
 
 		protected abstract void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy);

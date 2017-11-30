@@ -581,7 +581,7 @@ namespace WordJourney{
 
 
 		/// <summary>
-		/// 删除如何指定条件的行数据
+		/// 删除指定条件的行数据
 		/// </summary>
 		/// <returns>IDataReader.</returns>
 		/// <param name="tableName">Table name.</param>

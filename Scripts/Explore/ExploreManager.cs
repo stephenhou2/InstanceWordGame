@@ -186,7 +186,7 @@ namespace WordJourney
 			// 初始化人物被动技能
 			for (int i = 0; i < (battlePlayerCtr.agent as Player).allLearnedSkills.Count; i++) {
 				Skill skill = (battlePlayerCtr.agent as Player).allLearnedSkills [i];
-				if (skill.skillType == SkillType.Passive) {
+				if (skill.skillType == SkillType.TriggeredPassive) {
 					skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
 				}
 			}
@@ -194,7 +194,7 @@ namespace WordJourney
 			// 初始化怪物被动技能
 			for (int i = 0; i < (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills.Length; i++) {
 				Skill skill = (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills [i];
-				if (skill.skillType == SkillType.Passive) {
+				if (skill.skillType == SkillType.TriggeredPassive) {
 					skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 				}
 

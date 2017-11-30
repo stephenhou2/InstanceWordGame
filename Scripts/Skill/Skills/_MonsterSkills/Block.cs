@@ -14,9 +14,6 @@ namespace WordJourney
 
 		public float probabilityBase;
 
-		void Awake(){
-			this.skillType = SkillType.Passive;
-		}
 			
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy)
 		{

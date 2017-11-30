@@ -26,13 +26,13 @@ namespace WordJourney
 			}
 		}
 
-		// 已学习时间
-		public int learnTime;
+		// 总学习时长
+		public int totalLearnTime;
 
 		// 装载所有已学习单词的列表容器
-		public List<Word> learnedWords = new List<Word> ();
+		public List<LearnWord> learnedWords = new List<LearnWord> ();
 		// 装载所有未学习单词的列表容器
-		public List<Word> unlearnedWords = new List<Word>();
+		public List<LearnWord> unlearnedWords = new List<LearnWord>();
 
 		// 当前设置状态下的单词类型
 		public WordType wordType{
@@ -43,22 +43,10 @@ namespace WordJourney
 
 		}
 
-		// 单词是否已经学习过, 根据需要决定是否扩展'不熟悉'
-		private enum WordStatus
-		{
-			Learned,
-			Unlearned
-		}
-
-//		// 空构造函数
-//		public LearningInfo(){
-//
-//		}
-
 		/// <summary>
 		/// 从数据库中读取对应类型的单词
 		/// </summary>
-		public void SetUpWords(){
+		public void GetCurrentLearningTypeWords(){
 
 			string tableName = string.Empty;
 
@@ -104,16 +92,13 @@ namespace WordJourney
 				int wordId = reader.GetInt32 (0);
 				string spell = reader.GetString (1);
 				string explaination = reader.GetString (2);
-				string example = reader.GetString (3);
-				bool learned = reader.GetBoolean (4);
+				string phoneticSymble = reader.GetString (3);
+				string example = reader.GetString (4);
+				int learnedTimes = reader.GetInt16 (5);
 
-				Word w = new Word (wordId, spell, explaination, example,true);
+				LearnWord w = new LearnWord (wordId, spell, explaination, phoneticSymble, example, learnedTimes);
 
-				if (learned) {
-					learnedWords.Add (w);
-				} else {
-					unlearnedWords.Add (w);
-				}
+
 			}
 		}
 

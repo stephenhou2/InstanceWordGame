@@ -7,13 +7,14 @@ namespace WordJourney
 	public class StrengthenWhenEndangered : TriggeredPassiveSkill {
 
 		public float endangeredHealthScaler;
-		public int endangeredAttack;
-		public int endangeredAttackSpeed;
-		public bool removeWhenQuitFight;
 
-		void Awake(){
-			this.skillType = SkillType.Passive;
-		}
+		public int endangeredAttack;
+
+		public int endangeredAttackSpeed;
+
+//		public bool removeStateWhenQuitFight;
+
+		public string stateSpriteName;
 
 		protected override void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy){
 		
@@ -22,7 +23,7 @@ namespace WordJourney
 		protected override void BeAttackedTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
 			if (!self.CheckStateExist (stateName)) {
-				SkillState state = new SkillState (this, stateName, removeWhenQuitFight, null);
+				SkillState state = new SkillState (stateName,stateSpriteName);
 				self.states.Add (state);
 			}
 
@@ -30,8 +31,6 @@ namespace WordJourney
 				self.agent.attack = endangeredAttack;
 				self.agent.attackSpeed = endangeredAttackSpeed;
 			}
-
-
 		}
 
 	}

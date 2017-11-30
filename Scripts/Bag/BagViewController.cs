@@ -300,7 +300,7 @@ namespace WordJourney
 
 			Equipment equipment = currentSelectItem as Equipment;
 
-			Word word = Word.RandomWord();
+			GeneralWord word = GeneralWord.RandomGeneralWord();
 				
 			Transform spellCanvas = TransformManager.FindTransform ("SpellCanvas");
 

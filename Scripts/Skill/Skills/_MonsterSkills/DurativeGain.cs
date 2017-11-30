@@ -28,20 +28,27 @@ namespace WordJourney
 
 		public SkillEffectTarget effectTarget;
 
-		private BattleAgentController affectedBattleAgent;
-
 		public PropertyType propertyType;
 
 		public bool removeWhenQuitFight;
 
+		public string stateSpriteName;
+
 		private int originalProperty;
+
+		private BattleAgentController affectedBattleAgent;
+
+		private IEnumerator effectCoroutine;
+
+		private List<IEnumerator> effectCoroutines = new List<IEnumerator>();
 
 		private SkillState state;
 
 		private float effectDelay = 0.2f;
 
-		void Awake(){
-			this.skillType = SkillType.Passive;
+		protected override void Awake ()
+		{
+			base.Awake ();
 			originalProperty = 0;
 		}
 
@@ -72,10 +79,21 @@ namespace WordJourney
 
 			// 如果技能效果可叠加，或者首次触发时添加状态，并执行状态效果
 			if (canOverlay || !affectedBattleAgent.CheckStateExist (stateName)) {
-				IEnumerator effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
-				state = new SkillState (this, stateName, removeWhenQuitFight, effectCoroutine);
-				affectedBattleAgent.states.Add (state);
+
+				// 创建持续性状态的执行协程
+				effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
+
+				// 创建对应的状态
+				state = new SkillState (stateName,stateSpriteName);
+
+				// 作用对象身上添加状态
+				affectedBattleAgent.AddState (state);
+
+				// 开启持续性状态的协程
 				StartCoroutine (effectCoroutine);
+
+				// 将该协程添加到所有协程表中
+				effectCoroutines.Add (effectCoroutine);
 			}
 
 
@@ -93,10 +111,21 @@ namespace WordJourney
 
 			// 如果技能效果可叠加，或者首次触发时添加状态，并执行状态效果
 			if (canOverlay || !affectedBattleAgent.CheckStateExist (stateName)) {
-				IEnumerator effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
-				state = new SkillState (this, stateName, removeWhenQuitFight, effectCoroutine);
-				affectedBattleAgent.states.Add (state);
+				
+				// 创建持续性状态的执行协程
+				effectCoroutine = ExcuteAgentGain (affectedBattleAgent);
+
+				// 创建对应的状态
+				state = new SkillState (stateName,stateSpriteName);
+
+				// 作用对象身上添加状态
+				affectedBattleAgent.AddState (state);
+
+				// 开启持续性状态的协程
 				StartCoroutine (effectCoroutine);
+
+				// 将该协程添加到所有协程表中
+				effectCoroutines.Add (effectCoroutine);
 			}
 
 		}
@@ -107,8 +136,6 @@ namespace WordJourney
 			float timer = 0f;
 
 			while (timer < duration) {
-
-				Debug.Log (timer);
 
 				ba.agent.AgentPropertyGain (propertyType, singleGain);
 
@@ -138,11 +165,19 @@ namespace WordJourney
 
 			}
 
-			ba.states.Remove (state);
+			effectCoroutines.Remove (effectCoroutine);
+
+			ba.RemoveState (state);
 		}
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
+
+			if (removeWhenQuitFight) {
+				for (int i = 0; i < effectCoroutines.Count; i++) {
+					StopCoroutine (effectCoroutines [i]);
+				}
+			}
 
 			// 如果状态增长是攻击，攻速，护甲，抗性，闪避，暴击，在状态结束后将属性重置为初始值
 			if (propertyType == PropertyType.Health || propertyType == PropertyType.Mana) {

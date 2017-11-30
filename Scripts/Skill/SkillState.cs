@@ -7,21 +7,17 @@ namespace WordJourney
 {
 	public class SkillState {
 
-		public Skill sourceSkill;
 
 		public string stateName;
 
-		public bool removeWhenQuitFight;
-
-		public IEnumerator durativeSkillEffect;
+		public string stateSpriteName;
 
 
-		public SkillState(Skill sourceSkill, string stateName, bool removeWhenQuitFight, IEnumerator durativeSkillEffect){
+		public SkillState(string stateName,string stateSpriteName){
 
-			this.sourceSkill = sourceSkill;
 			this.stateName = stateName;
-			this.removeWhenQuitFight = removeWhenQuitFight;
-			this.durativeSkillEffect = durativeSkillEffect;
+
+			this.stateSpriteName = stateSpriteName;
 
 		}
 	}

@@ -122,7 +122,7 @@ namespace WordJourney
 
 			skillDesc.text = skill.skillDescription;
 
-			if (skill.skillType == SkillType.Passive) {
+			if (skill.skillType == SkillType.TalentPassive || skill.skillType == SkillType.TriggeredPassive) {
 				
 				skillConsume.text = "<color=orange>被动</color>";
 
@@ -130,7 +130,7 @@ namespace WordJourney
 
 			} else {
 
-				int manaConsume = skill.skillType == SkillType.Passive ? 0 : (skill as ActiveSkill).manaConsume;
+				int manaConsume = (skill as ActiveSkill).manaConsume;
 
 				skillConsume.text = "魔法消耗: " + manaConsume.ToString ();
 

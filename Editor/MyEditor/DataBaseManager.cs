@@ -54,17 +54,19 @@ namespace WordJourney{
 			sql.DeleteTable ("CET4");
 
 			sql.CreateTable ("CET4",
-				new string[]{ "wordId", "spell", "explaination", "example","learned" },
-				new string[]{ "PRIMARY KEY", "UNIQUE NOT NULL", "NOT NULL", "","" },
-				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT","INTEGER" });
+				new string[]{ "wordId", "spell", "explaination", "phoneticSymbol", "example","learnedTimes" },
+				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "", "" },
+				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT", "TEXT","INTEGER DEFAULT 0" });
 
-			int[] stringTypeCols = new int[]{ 1, 2, 3 };
+			int[] stringTypeCols = new int[]{ 1, 2, 3,4 };
 
 			itemsProperties.Clear ();
 
-			LoadItemsData ("wordTest.csv");
+			LoadItemsData ("CET4Words.csv");
 
 			sql.CheckFiledNames ("CET4", fieldNames);
+
+			sql.BeginTransaction ();
 
 			for(int i = 0;i<itemsProperties.Count;i++){
 
@@ -77,6 +79,8 @@ namespace WordJourney{
 					 
 				sql.InsertValues ("CET4", values);
 			}
+
+			sql.EndTransaction ();
 
 			sql.CloseConnection (CommonData.dataBaseName);
 
@@ -99,5 +103,111 @@ namespace WordJourney{
 			}
 
 		}
+
+
+
+
+
+		private void ToLower(){
+			MySQLiteHelper sql = MySQLiteHelper.Instance;
+			sql.GetConnectionWith (CommonData.dataBaseName);
+
+			for (int i = 0; i < 37336; i++) {
+
+				IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (
+					"AllWordsData",
+					"Spell",
+					new string[]{ string.Format ("Id={0}", i) },
+					true);
+				reader.Read ();
+
+				string spell = reader.GetString (0);
+
+				string lowerSpell = spell.ToLower ();
+
+				if (lowerSpell == spell) {
+					continue;
+				}
+
+				lowerSpell = lowerSpell.Replace("'","''");
+
+				sql.UpdateSpecificColsWithValues ("AllWordsData", 
+					new string[]{ "Spell" },
+					new string[]{ string.Format("'{0}'",lowerSpell) },
+					new string[]{string.Format("Id = {0}",i)},
+					true);
+
+				reader.Close ();
+
+			}
+
+
+
+			sql.CloseConnection (CommonData.dataBaseName);
+		}
+
+		private void MoveData(){
+			MySQLiteHelper sql = MySQLiteHelper.Instance;
+
+			sql.GetConnectionWith (CommonData.dataBaseName);
+
+			sql.CreateTable ("AllWordsData",
+				new string[]{ "wordId", "Spell", "Explaination", "Valid" },
+				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL" },
+				new string[]{ "INTEGER", "TEXT", "TEXT", "INTEGER DEFAULT 1" });
+
+			sql.DeleteAllDataFromTable ("AllWordsData");
+
+			IDataReader reader = null;
+			int pad = 0;
+
+			for (int i = 0; i < 39286; i++) {
+
+				if (i == 34250) {
+					pad++;
+					continue;
+				}
+
+				reader = sql.ReadSpecificRowsAndColsOfTable ("AllWords", "*",
+					new string[]{ string.Format ("ID={0}", i) },
+					true);
+
+				reader.Read ();
+
+
+
+				int id = i - pad;
+				string spell = reader.GetString (1);
+				string explaination = reader.GetString (2);
+				int type = 0;
+				int valid = 1;
+
+				if (spell == string.Empty || explaination == string.Empty || spell == null || explaination == null) {
+					pad++;
+					continue;
+				}
+
+				spell = spell.Replace ("'", "''");
+				explaination = explaination.Replace ("'", "''");
+
+				sql.InsertValues ("AllWordsData",
+					new string[] {id.ToString (),
+						"'" + spell + "'",
+						"'" + explaination + "'",
+						type.ToString (),
+						valid.ToString ()
+					});
+
+				reader.Close ();
+			}
+
+
+			Debug.Log ("Finished");
+
+			sql.CloseConnection (CommonData.dataBaseName);
+
+		}
+
+
 	}
 }

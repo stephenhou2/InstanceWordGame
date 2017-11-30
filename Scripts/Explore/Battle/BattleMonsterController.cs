@@ -185,7 +185,7 @@ namespace WordJourney
 					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
 				}
 				break;
-			case SkillType.Passive:
+			default:
 				break;
 			}
 		}
@@ -279,7 +279,7 @@ namespace WordJourney
 
 			CollectSkillEffectsToPool();
 
-			exploreManager.GetComponent<MapGenerator> ().PlayDeathOrTpAnim ("Death", transform.position);
+			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
 
 			transform.position = new Vector3 (0, 0, 100);
 

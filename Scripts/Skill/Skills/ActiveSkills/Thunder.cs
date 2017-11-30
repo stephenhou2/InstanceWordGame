@@ -22,6 +22,7 @@ namespace WordJourney
 
 		void Awake(){
 			skillType = SkillType.Magical;
+			skillName = "天雷";
 			skillDescription = string.Format ("对敌方造成<color=orange>{0}+{1}*技能等级%*最大魔法值</color>点魔法伤害",magicHurtBase,(int)(magicHurtScalerBase * 100));
 		}
 			
