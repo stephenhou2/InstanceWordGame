@@ -17,9 +17,9 @@ namespace WordJourney{
 
 			MySQLiteHelper sql = MySQLiteHelper.Instance;
 
-			sql.CreateDatabase (CommonData.dataBaseName);
+			sql.GetConnectionWith (CommonData.dataBaseName,"/Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/Data");
 
-			sql.GetConnectionWith (CommonData.dataBaseName);
+
 
 	//		sql.CreatTable (CommonData.itemsTable,
 	//			new string[] {"itemId","itemName","itemDescription","spriteName","itemType","itemNameInEnglish",
@@ -50,21 +50,36 @@ namespace WordJourney{
 	//			sql.InsertValues (CommonData.itemsTable, values);
 	//		}
 	//
+			if (sql.CheckTableExist (CommonData.CET4Table)) {
+				sql.DeleteTable (CommonData.CET4Table);
+			}
 
-			sql.DeleteTable ("CET4");
+			sql.CreateTable (CommonData.CET4Table,
+				new string[]{ "wordId", "spell", "phoneticSymbol", "explaination", "example","learnedTimes","ungraspTimes" },
+				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL" },
+				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT", "TEXT","INTEGER DEFAULT 0","INTEGER DEFAULT 0" });
 
-			sql.CreateTable ("CET4",
-				new string[]{ "wordId", "spell", "explaination", "phoneticSymbol", "example","learnedTimes" },
-				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "", "" },
-				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT", "TEXT","INTEGER DEFAULT 0" });
+//			sql.CreateTable (CommonData.CET4Table,
+//				new string[]{ "wordId", "spell", "phoneticSymbol", "explaination", "example","learnedTimes","ungraspTimes" },
+//				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "", "NOT NULL", "","",""},
+//				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT", "TEXT","INTEGER DEFAULT 0","INTEGER DEFAULT 0" });
+			
 
-			int[] stringTypeCols = new int[]{ 1, 2, 3,4 };
+			// 为单词表创建索引，以id为索引
+			sql.CreateIndex ("wordId_index", CommonData.CET4Table, new string[]{ "wordId" }, true);
+			// 为单词表创建索引，以学习次数为索引
+			sql.CreateIndex ("learnedTimes_index", CommonData.CET4Table, new string[]{ "learnedTimes" }, false);
+			// 为单词表创建索引，以点击 不熟悉&选错 的次数 为索引
+			sql.CreateIndex("ungraspTimes_index",CommonData.CET4Table, new string[]{ "ungraspTimes" }, false);
+
+
+			int[] stringTypeCols = new int[]{ 1, 2, 3, 4 };
 
 			itemsProperties.Clear ();
 
-			LoadItemsData ("CET4Words.csv");
+			LoadCET4WordsData ();
 
-			sql.CheckFiledNames ("CET4", fieldNames);
+//			sql.CheckFiledNames (CommonData.CET4Table, fieldNames);
 
 			sql.BeginTransaction ();
 
@@ -77,7 +92,7 @@ namespace WordJourney{
 
 				}
 					 
-				sql.InsertValues ("CET4", values);
+				sql.InsertValues (CommonData.CET4Table, values);
 			}
 
 			sql.EndTransaction ();
@@ -85,24 +100,53 @@ namespace WordJourney{
 			sql.CloseConnection (CommonData.dataBaseName);
 
 
+
+		}
+
+		private static void LoadCET4WordsData(){
+
+			string wordsPath = "/Users/houlianghong/Desktop/WordsCET4.csv";
+
+			string wordsString = DataHandler.LoadDataString (wordsPath);
+
+			string[] wordsStrings = wordsString.Split (new string[]{ "\n" },System.StringSplitOptions.RemoveEmptyEntries);
+
+//			MySQLiteHelper sql = MySQLiteHelper.Instance;
+//
+//			sql.GetConnectionWith (CommonData.dataBaseName);
+
+			itemsProperties.Clear ();
+
+			for (int i = 0; i < wordsStrings.Length; i++) {
+				string[] wordDataArray = wordsStrings [i].Split (new char[]{ ' ' }, 3);
+				string wordId = i.ToString ();
+				string spell = wordDataArray[1];
+				string phoneticSymbol = "Test";
+				string explaination = wordDataArray [2];
+				string example = "Test";
+
+
+
+				itemsProperties.Add (new string[]{ wordId, spell, phoneticSymbol, explaination, example, "0", "0"});
+			}
+
+
 		}
 
 		// 从指定文件（txt／csv等文本文件）中读取数据 csv为从excel中导出的文本文件，导入unity之后需要选择结尾格式（mono里是这样的，在mono中打开csv文件后会有提示），否则在读取数据库时会报字段名不同的错误
-		private static void LoadItemsData(string dataFileName){
-
-			string dataFilePath = CommonData.persistDataPath + "/" + dataFileName;
-
-			string itemsString = DataHandler.LoadDataString (dataFilePath);
-
-			string[] stringsByLine = itemsString.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
-
-			fieldNames = stringsByLine [0].Split (new char[]{ ',' });
-
-			for (int i = 1; i < stringsByLine.Length; i++) {
-				itemsProperties.Add(stringsByLine [i].Split (new char[]{ ',' }));
-			}
-
-		}
+//		private static void LoadWordsData(string dataPaths){
+//
+//			string itemsString = DataHandler.LoadDataString (dataPaths);
+//
+//			string[] stringsByLine = itemsString.Split (new string[]{ "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+//
+//			fieldNames = stringsByLine [0].Split (new char[]{ ',' });
+//
+//			for (int i = 1; i < stringsByLine.Length; i++) {
+//				itemsProperties.Add(stringsByLine [i].Split (new char[]{ ',' }));
+//			}
+//
+//		}
 
 
 
@@ -112,9 +156,13 @@ namespace WordJourney{
 			MySQLiteHelper sql = MySQLiteHelper.Instance;
 			sql.GetConnectionWith (CommonData.dataBaseName);
 
+			string tableName = "AllWordsTable";
+
+			int wordsCount = sql.GetItemCountOfTable (tableName);
+
 			for (int i = 0; i < 37336; i++) {
 
-				IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (
+				IDataReader reader = sql.ReadSpecificRowsOfTable (
 					"AllWordsData",
 					"Spell",
 					new string[]{ string.Format ("Id={0}", i) },
@@ -131,7 +179,7 @@ namespace WordJourney{
 
 				lowerSpell = lowerSpell.Replace("'","''");
 
-				sql.UpdateSpecificColsWithValues ("AllWordsData", 
+				sql.UpdateValues ("AllWordsData", 
 					new string[]{ "Spell" },
 					new string[]{ string.Format("'{0}'",lowerSpell) },
 					new string[]{string.Format("Id = {0}",i)},
@@ -168,7 +216,7 @@ namespace WordJourney{
 					continue;
 				}
 
-				reader = sql.ReadSpecificRowsAndColsOfTable ("AllWords", "*",
+				reader = sql.ReadSpecificRowsOfTable ("AllWords", "*",
 					new string[]{ string.Format ("ID={0}", i) },
 					true);
 

@@ -91,7 +91,16 @@ namespace WordJourney
 			});
 		}
 
-		public void OnThinkingButtonClick(){
+		public void OnLearnButtonClick(){
+
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
+				homeView.OnQuitHomeView();
+			});
+
+		}
+
+		public void OnMaterialsButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", () => {
 				TransformManager.FindTransform("MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();

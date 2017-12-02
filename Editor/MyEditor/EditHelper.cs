@@ -38,7 +38,6 @@ namespace WordJourney
 
 
 
-
 		// 将物品csv数据转化为json文件并存储直接使用这个方法
 		private static void ConvertItemToJson(){
 			

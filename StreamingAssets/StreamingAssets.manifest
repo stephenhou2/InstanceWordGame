@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3041663843
+CRC: 3833995281
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -68,5 +68,9 @@ AssetBundleManifest:
       Dependencies: {}
     Info_18:
       Name: workbench/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_19:
+      Name: learn/canvas
       Dependencies:
         Dependency_0: ui/icons

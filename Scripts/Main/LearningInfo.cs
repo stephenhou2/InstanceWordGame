@@ -27,7 +27,10 @@ namespace WordJourney
 		}
 
 		// 总学习时长
-		public int totalLearnTime;
+		public int totalLearnDuration;
+
+		// 总背诵次数
+		public int totalLearnTimeCount;
 
 		// 装载所有已学习单词的列表容器
 		public List<LearnWord> learnedWords = new List<LearnWord> ();
@@ -52,7 +55,7 @@ namespace WordJourney
 
 			switch (wordType) {
 			case WordType.CET4:
-				tableName = "CET4";
+				tableName = CommonData.CET4Table;
 				break;
 			case WordType.CET6:
 				tableName = "CET6";
@@ -77,7 +80,7 @@ namespace WordJourney
 			}
 
 			// 检查表中字段名称（目前设定表中字段为：单词id，拼写，释义，例句，是否学习过）
-			sql.CheckFiledNames (tableName, new string[]{ "wordId", "spell", "explaination", "example","learned" });
+			sql.CheckFiledNames (tableName, new string[]{ "wordId", "spell", "phoneticSymbol", "explaination", "example","learnedTimes", "ungraspTimes" });
 
 			// 读取器
 			IDataReader reader = sql.ReadFullTable (tableName);
@@ -94,11 +97,10 @@ namespace WordJourney
 				string explaination = reader.GetString (2);
 				string phoneticSymble = reader.GetString (3);
 				string example = reader.GetString (4);
-				int learnedTimes = reader.GetInt16 (5);
 
-				LearnWord w = new LearnWord (wordId, spell, explaination, phoneticSymble, example, learnedTimes);
+				LearnWord w = new LearnWord (wordId, spell, explaination, phoneticSymble, example);
 
-
+				#warning 学习记录中应该展示哪些单词？
 			}
 		}
 

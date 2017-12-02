@@ -19,15 +19,15 @@ namespace WordJourney
 		public string spell;
 		// 单词释义
 		public string explaination;
-		// 单词是否可用于制造融合石
-		public bool valid;
+//		// 单词是否可用于制造融合石
+//		public bool valid;
 
 
-		public GeneralWord(int wordId, string spell, string explaination,bool valid){
+		public GeneralWord(int wordId, string spell, string explaination){
 			this.wordId = wordId;
 			this.spell = spell;
 			this.explaination = explaination;
-			this.valid = valid;
+//			this.valid = valid;
 		}
 			
 
@@ -47,7 +47,7 @@ namespace WordJourney
 
 			string[] conditions = new string[]{string.Format ("wordId={0}", wordId)};
 
-			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
+			IDataReader reader = sql.ReadSpecificRowsOfTable (tableName, null, conditions, true);
 
 			reader.Read ();
 
@@ -55,11 +55,9 @@ namespace WordJourney
 
 			string explaination = reader.GetString (2);
 
-			string example = reader.GetString (3);
+//			bool valid = reader.GetBoolean (4);
 
-			bool valid = reader.GetBoolean (4);
-
-			return new GeneralWord (wordId, spell, explaination, valid);
+			return new GeneralWord (wordId, spell, explaination);
 
 		}
 			
@@ -81,16 +79,16 @@ namespace WordJourney
 		// 例句
 		public string example;
 		// 单词已学次数
-		public int learnedTimes;
+//		public int learnedTimes;
 
 
-		public LearnWord(int wordId, string spell, string phoneticSymbol, string explaination,string example,int learnedTimes){
+		public LearnWord(int wordId, string spell, string phoneticSymbol, string explaination,string example){
 			this.wordId = wordId;
 			this.spell = spell;
 			this.phoneticSymbol = phoneticSymbol;
 			this.explaination = explaination;
 			this.example = example;
-			this.learnedTimes = learnedTimes;
+//			this.learnedTimes = learnedTimes;
 		}
 
 
@@ -115,7 +113,7 @@ namespace WordJourney
 
 			switch (wt) {
 			case WordType.CET4:
-				tableName = "CET4";
+				tableName = CommonData.CET4Table;
 				break;
 			case WordType.CET6:
 				tableName = "CET6";
@@ -139,7 +137,7 @@ namespace WordJourney
 
 			string[] conditions = new string[]{string.Format ("wordId={0}", wordId)};
 
-			IDataReader reader = sql.ReadSpecificRowsAndColsOfTable (tableName, null, conditions, true);
+			IDataReader reader = sql.ReadSpecificRowsOfTable (tableName, null, conditions, true);
 
 			reader.Read ();
 
@@ -151,13 +149,16 @@ namespace WordJourney
 
 			string example = reader.GetString (4);
 
-			int learnedTimes = reader.GetInt16 (5);
+//			int learnedTimes = reader.GetInt16 (5);
 
-			return new LearnWord (wordId, spell, explaination, phoneticSymbol, example, learnedTimes);
+			return new LearnWord (wordId, spell, explaination, phoneticSymbol, example);
 
 		}
 
-
+		public override string ToString ()
+		{
+			return string.Format ("[LearnWord]---{0}:{1}",spell,explaination);
+		}
 	}
 
 

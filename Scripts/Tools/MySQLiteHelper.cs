@@ -32,8 +32,10 @@ namespace WordJourney{
 		/// 连接指定名称的数据库
 		/// </summary>
 		/// <returns>The connection with.</returns>
-		/// <param name="DbName">Db name.</param>
-		public IDbConnection GetConnectionWith(string dbName,string password = null){
+		/// <param name="dbName">数据库名称.</param>
+		/// <param name="directoryPath">null：数据库存储在当前平台的持久化文件夹下.</param>
+		/// <param name="password">数据库密码.</param>
+		public IDbConnection GetConnectionWith(string dbName,string directoryPath = null, string password = null){
 
 			// 如果数据库连接字典中查询到指定名称的数据库连接，则直接返回该连接
 			foreach (KeyValuePair<string,IDbConnection> kv in connectionDic) {
@@ -51,12 +53,16 @@ namespace WordJourney{
 			// 则在本地文件中根据文件名进行查询，查到后重新建立连接
 
 			// 根据运行平台获取存放数据库的文件夹路径
-			string dbDirectoryPath = GetDbDirectoryPath ();
+			string dbDirectoryPath = directoryPath;
+			if (dbDirectoryPath == null) {
+				dbDirectoryPath = CommonData.persistDataPath;
+			}
 
 			DirectoryInfo folder = new DirectoryInfo (dbDirectoryPath);
 			
 			// 根据运行平台获取数据库的存储路径
-			string dbBuildString = GetDbStrBuilder (dbName,password);
+			string dbBuildString = GetDbStrBuilder (dbName, directoryPath, password);
+
 
 			foreach (FileInfo fileInfo in folder.GetFiles("*.db"))
 			{
@@ -101,8 +107,10 @@ namespace WordJourney{
 		/// 创建数据库
 		/// </summary>
 		/// <returns>The database.</returns>
-		/// <param name="DbName">Db name.</param>
-		public IDbConnection CreateDatabase(string dbName,string password = null){
+		/// <param name="dbName">数据库名称.</param>
+		/// <param name="directoryPath">数据库存放位置（null：存储在当前平台的持久化文件夹下）</param>
+		/// <param name="password">数据库密码.</param>
+		public IDbConnection CreateDatabase(string dbName,string directoryPath = null, string password = null){
 
 			// 如果数据库连接字典中查询到指定名称的数据库连接，则直接返回该连接
 			foreach (KeyValuePair<string,IDbConnection> kv in connectionDic) {
@@ -117,7 +125,8 @@ namespace WordJourney{
 			// 如果数据库连接字典中未能查询到指定名称的数据库连接，则根据文件名进行连接
 			// 没有指定名称的数据库则创建新数据库
 			// 与数据库建立连接
-			string dbBuildString = GetDbStrBuilder (dbName,password);
+			// 根据运行平台获取数据库的存储路径
+			string dbBuildString = GetDbStrBuilder (dbName, directoryPath, password);
 
 			try{
 				// 创建数据库
@@ -151,34 +160,34 @@ namespace WordJourney{
 		/// 获取不同平台下存储数据库的文件夹路径
 		/// </summary>
 		/// <returns>存储数据库的文件夹路径.</returns>
-		private string GetDbDirectoryPath(){
-			
-			string dbDirectoryPath = string.Empty;
-
-	//		// pc平台 or 编译器环境
-	//		if (Application.platform == RuntimePlatform.WindowsEditor ||
-	//		    Application.platform == RuntimePlatform.OSXEditor ||
-	//		    Application.platform == RuntimePlatform.WindowsPlayer ||
-	//		    Application.platform == RuntimePlatform.OSXPlayer) {
-	//			dbDirectoryPath = Application.streamingAssetsPath;
-	//		} 
-	//		// android平台
-	//		else if (Application.platform == RuntimePlatform.Android) {
-	//			dbDirectoryPath =  Application.persistentDataPath;
-	//		}
-	//		// ios平台
-	//		else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-	//			dbDirectoryPath =  Application.persistentDataPath;
-	//		}
-
-			dbDirectoryPath = CommonData.persistDataPath;
-
-			return dbDirectoryPath;
-
-		}
+//		private string GetDbDirectoryPath(){
+//			
+//			string dbDirectoryPath = string.Empty;
+//
+//	//		// pc平台 or 编译器环境
+//	//		if (Application.platform == RuntimePlatform.WindowsEditor ||
+//	//		    Application.platform == RuntimePlatform.OSXEditor ||
+//	//		    Application.platform == RuntimePlatform.WindowsPlayer ||
+//	//		    Application.platform == RuntimePlatform.OSXPlayer) {
+//	//			dbDirectoryPath = Application.streamingAssetsPath;
+//	//		} 
+//	//		// android平台
+//	//		else if (Application.platform == RuntimePlatform.Android) {
+//	//			dbDirectoryPath =  Application.persistentDataPath;
+//	//		}
+//	//		// ios平台
+//	//		else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+//	//			dbDirectoryPath =  Application.persistentDataPath;
+//	//		}
+//
+//			dbDirectoryPath = CommonData.persistDataPath;
+//
+//			return dbDirectoryPath;
+//
+//		}
 
 		// 数据库名称 -> 数据库完整路径
-		private string GetDbStrBuilder(string dbName,string password = null){
+		private string GetDbStrBuilder(string dbName, string directoryPath, string password){
 					
 			SqliteConnectionStringBuilder connBuilder = new SqliteConnectionStringBuilder ();
 
@@ -198,7 +207,11 @@ namespace WordJourney{
 //				connBuilder.DataSource = string.Format ("{0}/{1}", Application.persistentDataPath,dbName);
 //			}
 
-			connBuilder.DataSource = string.Format ("{0}/{1}", CommonData.persistDataPath,dbName);
+			if (directoryPath == null) {
+				connBuilder.DataSource = string.Format ("{0}/{1}", CommonData.persistDataPath, dbName);
+			} else {
+				connBuilder.DataSource = string.Format ("{0}/{1}", directoryPath, dbName);
+			}
 
 			if(password != null){
 				connBuilder.Password = password;
@@ -289,6 +302,7 @@ namespace WordJourney{
 		/// <param name="queryString">SQL命令字符串</param>
 		public IDataReader ExecuteQuery(string queryString)
 		{
+			Debug.Log (queryString);
 			return ExecuteQuery (queryString, null);
 		}
 
@@ -321,9 +335,10 @@ namespace WordJourney{
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(e);
 
 				CloseAllConnections ();
+
+				Debug.LogError(e);
 
 	//			if (m_connection != null && m_connection.State != System.Data.ConnectionState.Closed) {
 	//				m_connection.Close ();
@@ -453,7 +468,7 @@ namespace WordJourney{
 		/// <param name="tableName">表名.</param>
 		/// <param name="fieldName">字段名,如果为null则读取指定条件下的条目中存储的所有数据项.</param>
 		/// <param name="condition">查询条件.</param>
-		public IDataReader ReadSpecificRowsAndColsOfTable(string tableName,string fieldName,string[] conditions,bool isLinkStrAND){
+		public IDataReader ReadSpecificRowsOfTable(string tableName,string fieldName,string[] conditions,bool isLinkStrAND){
 
 			StringBuilder queryString = new StringBuilder ();
 
@@ -508,14 +523,14 @@ namespace WordJourney{
 
 			for (int i = 1; i < values.Length; i++)
 			{
-				queryString.AppendFormat(", {0}", values[i]);
+				queryString.AppendFormat(",{0}", values[i]);
 			}
 			queryString.Append(" )");
 
 			return ExecuteQuery(queryString.ToString());
 		}
 
-		public IDataReader AddTableColumn(string tableName,string colName,string colType){
+		public IDataReader AddColumnToTable(string tableName,string colName,string colType){
 
 			if (!CheckTableExist (tableName)) {
 				return null;
@@ -546,7 +561,7 @@ namespace WordJourney{
 		/// <param name="cols">字段名.</param>
 		/// <param name="values">赋值数组.</param>
 		/// <param name="condition">查询条件字符串.</param>
-		public IDataReader UpdateSpecificColsWithValues(string tableName,string[] cols,string[] values,string[] conditions,bool isLinkStrAND){
+		public IDataReader UpdateValues(string tableName,string[] cols,string[] values,string[] conditions,bool isLinkStrAND){
 
 			if (cols.Length != values.Length) {
 				throw new SqliteException ("字段数量和赋值数量不匹配");
@@ -557,7 +572,7 @@ namespace WordJourney{
 			queryString.AppendFormat ("UPDATE {0} SET {1} = {2}", tableName, cols [0], values [0]);
 
 			for (int i = 1; i < cols.Length; i++) {
-				queryString.AppendFormat (" ,{0} = {1}", cols [i], values [i]);
+				queryString.AppendFormat (",{0} = {1}", cols [i], values [i]);
 			}
 
 			if (conditions != null && conditions.Length > 0) {
@@ -611,6 +626,11 @@ namespace WordJourney{
 			return ExecuteQuery (queryString.ToString());
 		}
 
+		/// <summary>
+		/// 删除数据表中所有的数据
+		/// </summary>
+		/// <returns>The all data from table.</returns>
+		/// <param name="tableName">Table name.</param>
 		public IDataReader DeleteAllDataFromTable(string tableName){
 
 			string queryString = "DELETE FROM " + tableName;
@@ -683,6 +703,37 @@ namespace WordJourney{
 			string queryString = "ROLLBACK";
 
 			return ExecuteQuery (queryString);
+		}
+
+		/// <summary>
+		/// 添加索引
+		/// </summary>
+		/// <param name="indexName">索引名.</param>
+		/// <param name="tableName">表名.</param>
+		/// <param name="columnNames">指定索引列；如果数量>1则是联合索引</param>.</param>
+		/// <param name="unique">是否是唯一索引.</param>
+		public IDataReader CreateIndex(string indexName, string tableName,string[] columnNames,bool unique){
+
+			StringBuilder queryString = new StringBuilder ();
+
+			queryString.AppendFormat ("CREATE {0} INDEX {1} ON {2}",
+				unique ? "UNIQUE" : string.Empty,
+				indexName,
+				tableName);
+			if (columnNames != null) {
+				for (int i = 0; i < columnNames.Length; i++) {
+					if (i == 0) {
+						queryString.AppendFormat (" ({0}", columnNames [0]);
+					} else {
+						queryString.AppendFormat (",{0}", columnNames [i]);
+					}
+				}
+				queryString.Append (")");
+			}
+
+
+			return ExecuteQuery (queryString.ToString());
+
 		}
 
 

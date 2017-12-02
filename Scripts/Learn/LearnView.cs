@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace WordJourney
 {
-
 	using UnityEngine.UI;
 	using DG.Tweening;
 
@@ -32,7 +31,10 @@ namespace WordJourney
 		// 单词答案选项按钮数组
 		public Button[] answerButtons;
 
+		// 单词释义淡出时间
 		public float explainationFadeOutDuration;
+
+
 
 		public void SetUpLearnViewWithWord(LearnWord word){
 
@@ -47,12 +49,15 @@ namespace WordJourney
 			ShowButtonsContainers (true, false, false);
 
 
+
 		}
+
+
 
 		public void SetUpLearningProgress(){
 
 			explainationText.enabled = true;
-			explainationText.color = new Color (0, 0, 0, 1);
+			explainationText.color = new Color (1, 1, 1, 1);
 
 			ShowButtonsContainers (false, false, false);
 
@@ -63,12 +68,18 @@ namespace WordJourney
 
 		private IEnumerator ExplainationShowAndHideAnim(){
 
-			yield return new WaitForSeconds (1.5f);
+			yield return new WaitForSeconds (2.5f);
 
-			explainationText.DOColor (new Color (0, 0, 0, 0), explainationFadeOutDuration).OnComplete (delegate {
+			explainationText.DOColor (new Color (1, 1, 1, 0), explainationFadeOutDuration).OnComplete (delegate {
 				wordsLearnOperationButtonsContainer.gameObject.SetActive (true);
+				explainationText.enabled = false;
+				explainationText.color = new Color(1,1,1,1);
 			});
 
+		}
+
+		public void ShowExplaination(){
+			explainationText.enabled = true;
 		}
 			
 
@@ -126,6 +137,10 @@ namespace WordJourney
 			graspConditionButtonsContainer.gameObject.SetActive (graspCondition);
 			wordsLearnOperationButtonsContainer.gameObject.SetActive (wordsLearnOperation);
 			answerButtonsContainer.gameObject.SetActive (answers);
+
+		}
+
+		public void QuitLearnView(){
 
 		}
 

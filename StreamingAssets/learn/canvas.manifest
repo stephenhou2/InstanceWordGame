@@ -1,0 +1,53 @@
+ManifestFileVersion: 0
+CRC: 2695834078
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c6b97a487ae0b2073f02957752f90044
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 7a2a1ed7976f085c19aedc5c43a59544
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0d760c878eab74a4fb55b0d2e4bdcbd6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4e4ea71d1dbd5452e9a0952b7a46af47, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+Assets:
+- Assets/Prefabs/Learn/LearnCanvas.prefab
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

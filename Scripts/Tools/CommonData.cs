@@ -57,6 +57,7 @@ namespace WordJourney{
 		public static string spellCanvasBundleName = "spell/canvas";
 		public static string exploreSceneBundleName = "explore/scene";
 		public static string produceCanvasBundleName = "produce/canvas";
+		public static string learnCanvasBundleName = "learn/canvas";
 
 
 		public static string allMaterialSpritesBundleName = "material/icons";

@@ -257,6 +257,37 @@ namespace WordJourney
 		}
 
 		/// <summary>
+		/// 用户获得字母碎片
+		/// </summary>
+		/// <param name="character">Character.</param>
+		/// <param name="count">Count.</param>
+		public void AddCharacterFragment(char character,int count){
+
+			int characterIndex = (int)(character) - CommonData.aInASCII;
+
+			charactersCount [characterIndex] += count;
+
+		}
+
+		/// <summary>
+		/// 用户损失字母碎片
+		/// </summary>
+		/// <param name="character">Character.</param>
+		/// <param name="count">Count.</param>
+		public void RemoveCharacterFragment(char character,int count){
+			
+			int characterIndex = (int)(character) - CommonData.aInASCII;
+
+			int characterCount = charactersCount [characterIndex];
+
+			if (characterCount < count) {
+				charactersCount [characterIndex] = 0;
+			} else {
+				charactersCount [characterIndex] -= count;
+			}
+		}
+
+		/// <summary>
 		/// 添加物品到背包中
 		/// </summary>
 		/// <param name="item">Item.</param>

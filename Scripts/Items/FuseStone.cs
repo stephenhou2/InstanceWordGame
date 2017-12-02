@@ -49,7 +49,7 @@ namespace WordJourney
 
 			sql.GetConnectionWith (CommonData.dataBaseName);
 
-			IDataReader reader =  sql.ReadSpecificRowsAndColsOfTable ("AllWordsData", "*",
+			IDataReader reader =  sql.ReadSpecificRowsOfTable ("AllWordsData", "*",
 				new string[]{ string.Format ("Spell='{0}'", spell)},
 				true);
 
@@ -82,7 +82,7 @@ namespace WordJourney
 
 			fuseStoneName = string.Format ("{0}之石", fuseStoneName);
 
-			sql.UpdateSpecificColsWithValues ("AllWordsData",
+			sql.UpdateValues ("AllWordsData",
 				new string[]{ "Valid" },
 				new string[]{ "0" },
 				new string[]{ string.Format("Id={0}",id) },

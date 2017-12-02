@@ -107,7 +107,7 @@ namespace WordJourney
 
 			completionPercentage.text = ((int)(percentage * 100)).ToString() + "%";
 
-			learnedTime.text = learnInfo.totalLearnTime.ToString();
+			learnedTime.text = learnInfo.totalLearnTimeCount.ToString();
 
 			learnedCount.text = learnInfo.learnedWordCount.ToString ();
 

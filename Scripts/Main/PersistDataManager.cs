@@ -30,7 +30,7 @@ namespace WordJourney
 		/// </summary>
 		public void SaveLearnInfo(){
 			
-			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearnInfo.json");
+			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
 
 			DataHandler.SaveInstanceDataToFile<LearningInfo> (GameManager.Instance.gameDataCenter.learnInfo, learnInfoPath);
 		}

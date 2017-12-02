@@ -11,6 +11,8 @@ namespace WordJourney{
 
 		public bool isPronunciationEnable = true;
 
+		public bool autoPronounce = true;
+
 		public bool isDownloadEnable = false;
 
 		public int systemVolume = 50;
