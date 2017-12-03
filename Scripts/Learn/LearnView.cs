@@ -83,13 +83,15 @@ namespace WordJourney
 		}
 			
 
-		public void SetUpLearnViewWithExamination(Examination exam){
+		public void SetUpLearnViewWithExamination(Examination exam,Examination.ExaminationType examType){
 
-			switch (exam.examType) {
+			switch (examType) {
 
 			case Examination.ExaminationType.EngToChn:
 
 				questionText.text = exam.question.spell;
+
+				questionText.fontSize = 100;
 
 				for (int i = 0; i < answerButtons.Length; i++) {
 
@@ -110,6 +112,8 @@ namespace WordJourney
 			case Examination.ExaminationType.ChnToEng:
 
 				questionText.text = exam.question.explaination;
+
+				questionText.fontSize = 60;
 
 				for (int i = 0; i < answerButtons.Length; i++) {
 
@@ -141,7 +145,7 @@ namespace WordJourney
 		}
 
 		public void QuitLearnView(){
-
+			GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
 		}
 
 

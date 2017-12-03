@@ -32,6 +32,7 @@ namespace WordJourney
 
 		private ExploreUICotroller expUICtr;
 
+		private Transform currentEnteredTransform;
 
 		void Awake()
 		{
@@ -353,8 +354,14 @@ namespace WordJourney
 
 		public void EnterCrystal(Transform crystal){
 			Debug.Log ("进入水晶");
+			currentEnteredTransform = crystal;
+			expUICtr.SetUpLearnPlane ();
 		}
 			
+		public void FinishLearning(){
+			currentEnteredTransform.GetComponent<Animator> ().SetTrigger ("Highlight");
+		}
+
 
 		public void BattlePlayerWin(Transform[] monsterTransArray){
 

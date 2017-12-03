@@ -362,6 +362,14 @@ namespace WordJourney
 
 		}
 
+		public void SetUpLearnPlane(){
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
+
+			}, false, true);
+		}
+
+
 //		public void HideFightPlane(){
 //			GetComponent<BattlePlayerUIController> ().QuitFight ();
 //			GetComponent<BattleMonsterUIController>().QuitFight ();
