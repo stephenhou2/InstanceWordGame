@@ -9,7 +9,7 @@ namespace WordJourney
 	public static class DataHandler{
 
 		// 数据转模型
-		public static T[] LoadDataToModelWithPath<T>(string fileName){
+		public static T[] LoadDataToModelsWithPath<T>(string fileName){
 
 			string jsonStr = LoadDataString (fileName);
 
@@ -87,6 +87,73 @@ namespace WordJourney
 				Debug.Log (e);
 
 			}
+
+		}
+
+		public static void  CopyDirectory(string sourcePath,string destPath,bool deleteOriDirectoryIfExist){
+
+			DirectoryInfo destDirectoryInfo = new DirectoryInfo (destPath);
+
+			if (deleteOriDirectoryIfExist && destDirectoryInfo.Exists) {
+				DeleteDirectory (destPath);
+			}
+
+			if (!destDirectoryInfo.Exists) {
+				destDirectoryInfo.Create ();
+			}
+
+			DirectoryInfo sourceDirectoryInfo = new DirectoryInfo (sourcePath);
+
+			FileInfo[] fiArray = sourceDirectoryInfo.GetFiles ();
+
+			for (int i = 0; i < fiArray.Length; i++) {
+				FileInfo fi = fiArray [i];
+				string newPath = Path.Combine (destPath, fi.Name);
+				fi.CopyTo (newPath);
+			}
+
+			DirectoryInfo[] diArray = sourceDirectoryInfo.GetDirectories ();
+
+			for (int i = 0; i < diArray.Length; i++) {
+				DirectoryInfo di = diArray [i];
+				string newDestPath = Path.Combine (destPath, di.Name);
+				CopyDirectory (di.FullName, newDestPath,deleteOriDirectoryIfExist);
+			}
+
+		}
+
+		public static void CopyFile(string sourceFileName,string destFileName){
+
+			try{
+				File.Copy (sourceFileName, destFileName);
+			}catch(System.Exception e){
+				Debug.Log (e);
+			}
+
+		}
+
+		public static void DeleteDirectory(string directoryPath){
+
+			DirectoryInfo di = new DirectoryInfo (directoryPath);
+
+			if (!di.Exists) {
+				Debug.LogError (string.Format("{0} doesn't exist!", directoryPath));
+			}
+
+			FileInfo[] fiArray = di.GetFiles ();
+
+			for (int i = 0; i < fiArray.Length; i++) {
+				FileInfo fi = fiArray [i];
+				fi.Delete ();
+			}
+
+			DirectoryInfo[] diArray = di.GetDirectories ();
+
+			for (int i = 0; i < diArray.Length; i++) {
+				DirectoryInfo subDi = diArray [i];
+				DeleteDirectory (subDi.FullName);
+			}
+
 
 		}
 

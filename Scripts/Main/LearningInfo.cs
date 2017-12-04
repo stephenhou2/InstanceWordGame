@@ -97,8 +97,10 @@ namespace WordJourney
 				string explaination = reader.GetString (2);
 				string phoneticSymble = reader.GetString (3);
 				string example = reader.GetString (4);
+				int learnedTimes = reader.GetInt16 (5);
+				int ungraspTimes = reader.GetInt16 (6);
 
-				LearnWord w = new LearnWord (wordId, spell, explaination, phoneticSymble, example);
+				LearnWord w = new LearnWord (wordId, spell, explaination, phoneticSymble, example,learnedTimes,ungraspTimes);
 
 				#warning 学习记录中应该展示哪些单词？
 			}

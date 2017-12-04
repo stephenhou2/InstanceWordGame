@@ -79,16 +79,19 @@ namespace WordJourney
 		// 例句
 		public string example;
 		// 单词已学次数
-//		public int learnedTimes;
+		public int learnedTimes;
+		// 单词背错的次数
+		public int ungraspTimes;
 
 
-		public LearnWord(int wordId, string spell, string phoneticSymbol, string explaination,string example){
+		public LearnWord(int wordId, string spell, string phoneticSymbol, string explaination,string example,int learnedTimes,int ungraspTimes){
 			this.wordId = wordId;
 			this.spell = spell;
 			this.phoneticSymbol = phoneticSymbol;
 			this.explaination = explaination;
 			this.example = example;
-//			this.learnedTimes = learnedTimes;
+			this.learnedTimes = learnedTimes;
+			this.ungraspTimes = ungraspTimes;
 		}
 
 
@@ -149,9 +152,11 @@ namespace WordJourney
 
 			string example = reader.GetString (4);
 
-//			int learnedTimes = reader.GetInt16 (5);
+			int learnedTimes = reader.GetInt16 (5);
 
-			return new LearnWord (wordId, spell, explaination, phoneticSymbol, example);
+			int ungraspTimes = reader.GetInt16 (6);
+
+			return new LearnWord (wordId, spell, explaination, phoneticSymbol, example, learnedTimes, ungraspTimes);
 
 		}
 

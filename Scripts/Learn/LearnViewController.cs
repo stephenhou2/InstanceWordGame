@@ -78,6 +78,7 @@ namespace WordJourney
 		// 未掌握的单词列表
 		private List<LearnWord> ungraspedWordsList;
 
+
 		// 当前正在学习的单词（未掌握单词列表的首项）
 		private LearnWord currentLearningWord{
 			get{
@@ -90,6 +91,8 @@ namespace WordJourney
 				}
 			}
 		}
+
+
 
 		// 单词测试列表
 		private List<Examination> wordsExaminationsList;
@@ -189,7 +192,9 @@ namespace WordJourney
 
 				int learnedTimes = reader.GetInt16 (5);
 
-				LearnWord word = new LearnWord (wordId, spell, phoneticSymble, explaination, example);
+				int ungraspTimes = reader.GetInt16 (6);
+
+				LearnWord word = new LearnWord (wordId, spell, phoneticSymble, explaination, example, learnedTimes, ungraspTimes);
 
 				Debug.LogFormat ("{0}---{1}次",word,learnedTimes);
 
@@ -371,6 +376,7 @@ namespace WordJourney
 				}else{
 					// 当前单词测试未完成
 					Examination exam = currentExamination;
+					exam.question.learnedTimes++;
 					wordsExaminationsList.RemoveAt (0);
 					wordsExaminationsList.Add (exam);
 				}
@@ -381,6 +387,9 @@ namespace WordJourney
 				Examination exam = currentExamination;
 				wordsExaminationsList.RemoveAt (0);
 				wordsExaminationsList.Add (exam);
+
+				// 单词的背错次数+1
+				exam.question.ungraspTimes++;
 
 				// 扣除用户字母碎片
 				int characterIndex = Random.Range (0, currentExamination.question.spell.Length);
@@ -398,15 +407,24 @@ namespace WordJourney
 
 				sql.GetConnectionWith (CommonData.dataBaseName);
 
-				// 当前单词的背诵次数+1（转为字符串，用于写入数据库）
-				string newLearnedTime = (++currentWordsLearnedTime).ToString();
-
 				// 边界条件
-				string condition1 = string.Format ("wordId>={0}",firstIdOfCurrentLearningWords);
-				string condition2 = string.Format ("wordId<{0}", firstIdOfCurrentLearningWords + 9);
+//				string condition1 = string.Format ("wordId>={0}",firstIdOfCurrentLearningWords);
+//				string condition2 = string.Format ("wordId<{0}", firstIdOfCurrentLearningWords + 9);
 
-				// 更新数据库中当前背诵单词的背诵次数
-				sql.UpdateValues (CommonData.CET4Table,new string[]{"learnedTimes"}, new string[]{ newLearnedTime }, new string[]{ condition1, condition2 }, true);
+				// 当前单词的背诵次数+1（转为字符串，用于写入数据库）
+//				string newLearnedTime = (++currentWordsLearnedTime).ToString();
+
+				for (int i = 0; i < singleLearnWordsCount; i++) {
+					LearnWord word = wordsToLearnArray [i];
+					string condition = string.Format ("wordId={0}", word.wordId);
+					string newLearnedTime = (word.learnedTimes).ToString ();
+					string newUngraspTime = (word.ungraspTimes).ToString();
+					// 更新数据库中当前背诵单词的背诵次数和背错次数
+					sql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[]{ newLearnedTime, newUngraspTime }, new string[] {
+						condition
+					}, true);
+				}
+
 
 				sql.CloseConnection (CommonData.dataBaseName);
 
@@ -434,13 +452,18 @@ namespace WordJourney
 
 			wordsExaminationsList.Clear ();
 
+			pronunciationCache.Clear ();
+
 			// 总背诵次数++
 			GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount++;
 
 			// 退出单词学习界面
 			learnView.QuitLearnView ();
 
-			TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().FinishLearning ();
+			Transform em = TransformManager.FindTransform ("ExploreManager");
+			if(em != null){
+				em.GetComponent<ExploreManager> ().FinishLearning ();
+			}
 
 		}
 

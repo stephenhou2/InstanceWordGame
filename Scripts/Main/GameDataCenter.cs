@@ -48,7 +48,7 @@ namespace WordJourney
 			get{
 				if (mGameLevelDatas.Count == 0) {
 
-					GameLevelData[] gameLevelDatasArray = DataHandler.LoadDataToModelWithPath<GameLevelData> (CommonData.gameLevelDataFilePath);
+					GameLevelData[] gameLevelDatasArray = DataHandler.LoadDataToModelsWithPath<GameLevelData> (CommonData.gameLevelDataFilePath);
 
 					for (int i = 0; i < gameLevelDatasArray.Length; i++) {
 						gameLevelDatasArray[i].LoadAllData ();
@@ -66,7 +66,7 @@ namespace WordJourney
 		public List<Material> allMaterials{
 			get{
 				if (mAllMaterials.Count == 0) {
-					Material[] materials = DataHandler.LoadDataToModelWithPath<Material> (CommonData.materialsDataFilePath);
+					Material[] materials = DataHandler.LoadDataToModelsWithPath<Material> (CommonData.materialsDataFilePath);
 					for (int i = 0; i < materials.Length; i++) {
 						mAllMaterials.Add (materials [i]);
 					}
@@ -99,7 +99,7 @@ namespace WordJourney
 			get{
 				if (mAllEquipmentAttachedProperties.Count == 0) {
 
-					EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
+					EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelsWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
 
 					for (int i = 0; i < attachedPropertiesArray.Length; i++) {
 						mAllEquipmentAttachedProperties.Add (attachedPropertiesArray [i]);
@@ -113,7 +113,7 @@ namespace WordJourney
 		public List<ItemModel> allItemModels{
 			get{
 				if (mAllItemModels.Count == 0) {
-					ItemModel[] itemModels = DataHandler.LoadDataToModelWithPath<ItemModel> (CommonData.itemsDataFilePath);
+					ItemModel[] itemModels = DataHandler.LoadDataToModelsWithPath<ItemModel> (CommonData.itemsDataFilePath);
 					for (int i = 0; i < itemModels.Length; i++) {
 						mAllItemModels.Add (itemModels [i]);
 					}
@@ -277,7 +277,7 @@ namespace WordJourney
 			get{
 				if (mAllNpcs.Count == 0) {
 					
-					NPC[] npcsArray = DataHandler.LoadDataToModelWithPath<NPC> (CommonData.npcsDataFilePath);
+					NPC[] npcsArray = DataHandler.LoadDataToModelsWithPath<NPC> (CommonData.npcsDataFilePath);
 
 					for (int i = 0; i < npcsArray.Length; i++) {
 						mAllNpcs.Add (npcsArray [i]);

@@ -23,7 +23,9 @@ namespace WordJourney{
 		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";
 
 
-		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";
+//		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";
+
+
 //		public static string mapTilesDataFilePath = persistDataPath + "/NewTileJson.json";
 
 //		public static string settingsFilePath = persistDataPath + "/Settings.json";
@@ -111,15 +113,7 @@ namespace WordJourney{
 		None
 	}
 
-//	public enum ValidActionType{
-//		All,
-//		PhysicalExcption,
-//		MagicException,
-//		PhysicalOnly,
-//		MagicOnly,
-//		None
-//
-//	}
+
 
 	public enum SkillEffectTarget{
 		None,
@@ -195,44 +189,8 @@ namespace WordJourney{
 		}
 	}
 
-	[System.Serializable]
-	public struct MapInfo
-	{
-		public TileSet[] tilesets;
-		public int width;
-		public int height;
-		public int tilewidth;
-		public int tileheight;
-		public Layer[] layers;
 
 
-	}
-
-	[System.Serializable]
-	public struct Layer
-	{
-		public int[] data;
-		public int height;
-		public int width;
-		public int x;
-		public int y;
-		public string name;
-
-	}
-
-	[System.Serializable]
-	public struct TileSet{
-		public string image;
-		public int[] walkableInfoArray;
-	}
-
-//	[System.Serializable]
-//	public struct TileInfo
-//	{
-//		
-//		public int[] walkableInfoArray;
-//
-//	}
 
 
 

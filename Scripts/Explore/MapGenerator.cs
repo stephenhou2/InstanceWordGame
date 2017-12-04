@@ -18,7 +18,7 @@ namespace WordJourney
 		private MapItemGenerator mapItemGenerator;
 
 		// 地图信息（用于绘制地图）
-		private MapInfo mapInfo;
+		private MapData mapInfo;
 //		private TileInfo tileInfo;
 
 		// 外墙模型
@@ -111,22 +111,28 @@ namespace WordJourney
 
 			this.levelData = levelData;
 
-			mapInfo = DataHandler.LoadDataToSingleModelWithPath<MapInfo> (CommonData.mapDataFilePath);
+			mapInfo = MapData.GetMapDataOfLevel(levelData.gameLevelIndex);
 
 			// 获取地图建模的行数和列数
-			rows = mapInfo.height;
-			columns = mapInfo.width;
+			rows = mapInfo.rowCount;
+			columns = mapInfo.columnCount;
 
 			// 地图上的可行走信息数组
-			mapWalkableInfoArray = new int[columns,rows];
+			mapWalkableInfoArray = new int[rows,columns];
+
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < columns; j++) {
+					mapWalkableInfoArray [i, j] = -1;
+				}
+			}
 
 			ResetMapWalkableInfoArray ();
 
 			// 重建地图列表（可摆放位置列表）
 			ResetGridList ();
 
-			// 初始化地面和墙
-			SetUpWallAndFloor();
+			// 初始化地面和背景
+			SetUpFloorAndBackground();
 
 			// 初始化玩家
 			SetUpPlayer ();
@@ -303,117 +309,168 @@ namespace WordJourney
 		/// <summary>
 		/// Sets up the outer walls and floor (background) of the game board.
 		/// </summary>
-		private void SetUpWallAndFloor ()
+		private void SetUpFloorAndBackground ()
 		{
 
-			// 获得地图图集名称
-			string mapImageName = mapInfo.tilesets[0].image;
+			// 获得地图图集
+			string floorImageName = mapInfo.floorImageName;
+
+//			Sprite floorImage = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
+//				return obj.name == floorImageName;
+//			});
+
+			// 获得背景图片
+			string backgroundImageName = mapInfo.backgroundImageName;
+
+			Sprite backgroundImage = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
+				return obj.name == backgroundImageName;
+			});
+
+			// 获得地板层和附加信息层的数据
+			Layer floorLayer = null;
+			Layer attachedInfoLayer = null;
+		
+			for (int i = 0; i < mapInfo.layers.Length; i++) {
+				if (mapInfo.layers [i].name == "FloorLayer") {
+					floorLayer = mapInfo.layers [i];
+				} else if (mapInfo.layers [i].name == "AttachedInfoLayer") {
+					attachedInfoLayer = mapInfo.layers [i];
+				}
+			}
+
+			if (floorLayer == null || attachedInfoLayer == null) {
+				Debug.LogError ("地图数据不完整");
+			}
+
+			// 创建地板
+			for (int i = 0; i < floorLayer.tileDatas.Length; i++) {
+				Tile tile = floorLayer.tileDatas [i];
+
+				Transform floorTile = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
+				floorTile.position = tile.position;
+				if (tile.walkable) {
+					mapWalkableInfoArray [(int)tile.position.x, (int)tile.position.y] = 1;
+				}
+
+				string tileSpriteName = string.Format ("{0}_{1}", floorImageName, tile.tileIndex);
+				Sprite tileSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
+					return obj.name == tileSpriteName;
+				});
+
+				floorTile.GetComponent<SpriteRenderer> ().sprite = tileSprite;
+
+			}
+
+			// 生成地图上物品和建筑的摆放信息
+			for (int i = 0; i < attachedInfoLayer.tileDatas.Length; i++) {
+
+			}
 
 			// 创建地面和墙体
 			// x代表列
 			// y代表行
 			// i代表地图层
-			for (int i = 0; i < mapInfo.layers.Length; i++) {
-
-				Layer layer = mapInfo.layers [i];
-
-				for(int y = 0; y < rows; y++)
-				{
-					for(int x = 0; x < columns; x++)
-					{
-
-						int tileIndexInMap = x + y * columns;
-
-						Vector3 tilePos = new Vector3 (x,rows - y - 1,0);
-
-						int tileIndex = layer.data [tileIndexInMap] - 1;
-
-						if (tileIndex == -1) {
-							continue;
-						}
-
-						int walkableInfo = mapInfo.tilesets[0].walkableInfoArray[tileIndex];
-
-						if (walkableInfo < mapWalkableInfoArray [x, rows - y - 1]) {
-							mapWalkableInfoArray [x, rows - y - 1] = walkableInfo;
-						}
-
-						string tileName = string.Format ("{0}_{1}", mapImageName,tileIndex);
-
-						Sprite tileSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
-							return s.name == tileName;
-						});
-
-						// 如果是遮罩层
-						if (layer.name == "Mask") {
-
-							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
-
-							wall.position = tilePos;
-
-							wall.name = tileName;
-
-							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
-
-							sr.sprite = tileSprite;
-
-							sr.material = spriteMaterial;
-
-							wall.SetParent (outerWallsContainer, true);
-
-							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y) + 1;
-
-							wall.GetComponent<BoxCollider2D> ().enabled = false;
-
-							continue;
-
-						}
-
-						// 非遮罩层的墙体
-						if (walkableInfo == -1) {
-							
-							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
-
-							wall.position = tilePos;
-
-							wall.name = tileName;
-
-							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
-
-							sr.sprite = tileSprite;
-
-							sr.material = spriteMaterial;
-
-							wall.SetParent (outerWallsContainer, true);
-
-							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y);
-
-							wall.GetComponent<BoxCollider2D> ().enabled = true;
-			
-						} 
-						// 其他
-						else {
-							
-							Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
-
-							floor.position = tilePos;
-
-							floor.name = tileName;
-
-							SpriteRenderer sr = floor.GetComponent<SpriteRenderer> ();
-
-							sr.sprite = tileSprite;
-
-							sr.material = spriteMaterial;
-
-							floor.SetParent (floorsContainer, true);
-						}
-							
-					}
-
-				}
-
-			}
+//			for (int i = 0; i < mapInfo.layers.Length; i++) {
+//
+//				Layer layer = mapInfo.layers [i];
+//
+//				for(int y = 0; y < rows; y++)
+//				{
+//					for(int x = 0; x < columns; x++)
+//					{
+//
+//						int tileIndexInMap = x + y * columns;
+//
+//						Vector3 tilePos = new Vector3 (x,rows - y - 1,0);
+//
+//						int tileIndex = layer.tileDatas [tileIndexInMap];
+//
+//						if (tileIndex == -1) {
+//							continue;
+//						}
+//
+//						int walkableInfo = mapInfo.tilesets[0].walkableInfoArray[tileIndex];
+//
+//						if (walkableInfo < mapWalkableInfoArray [x, rows - y - 1]) {
+//							mapWalkableInfoArray [x, rows - y - 1] = walkableInfo;
+//						}
+//
+//						string tileName = string.Format ("{0}_{1}", mapImageName,tileIndex);
+//
+//						Sprite tileSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
+//							return s.name == tileName;
+//						});
+//
+//						// 如果是遮罩层
+//						if (layer.name == "Mask") {
+//
+//							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
+//
+//							wall.position = tilePos;
+//
+//							wall.name = tileName;
+//
+//							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
+//
+//							sr.sprite = tileSprite;
+//
+//							sr.material = spriteMaterial;
+//
+//							wall.SetParent (outerWallsContainer, true);
+//
+//							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y) + 1;
+//
+//							wall.GetComponent<BoxCollider2D> ().enabled = false;
+//
+//							continue;
+//
+//						}
+//
+//						// 非遮罩层的墙体
+//						if (walkableInfo == -1) {
+//							
+//							Transform wall = outerWallPool.GetInstance<Transform> (wallModel.gameObject, outerWallsContainer);
+//
+//							wall.position = tilePos;
+//
+//							wall.name = tileName;
+//
+//							SpriteRenderer sr = wall.GetComponent<SpriteRenderer> ();
+//
+//							sr.sprite = tileSprite;
+//
+//							sr.material = spriteMaterial;
+//
+//							wall.SetParent (outerWallsContainer, true);
+//
+//							wall.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(tilePos.y);
+//
+//							wall.GetComponent<BoxCollider2D> ().enabled = true;
+//			
+//						} 
+//						// 其他
+//						else {
+//							
+//							Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
+//
+//							floor.position = tilePos;
+//
+//							floor.name = tileName;
+//
+//							SpriteRenderer sr = floor.GetComponent<SpriteRenderer> ();
+//
+//							sr.sprite = tileSprite;
+//
+//							sr.material = spriteMaterial;
+//
+//							floor.SetParent (floorsContainer, true);
+//						}
+//							
+//					}
+//
+//				}
+//
+//			}
 
 		}
 
@@ -514,7 +571,7 @@ namespace WordJourney
 		private void ResetMapWalkableInfoArray (){
 			for (int i = 0; i < columns; i++) {
 				for (int j = 0; j < rows; j++) {
-					mapWalkableInfoArray [i, j] = 1;
+					mapWalkableInfoArray [i, j] = -1;
 				}
 			}
 		}

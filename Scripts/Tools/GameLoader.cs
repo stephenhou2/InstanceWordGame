@@ -12,7 +12,7 @@ namespace WordJourney
 
 		void Awake(){
 
-			StartCoroutine ("PersistDataAlways");
+			PersistDataAlways ();
 //			StartCoroutine ("PersistDataIfFirstLoad");
 
 		}
@@ -54,42 +54,17 @@ namespace WordJourney
 		}
 
 		#warning 测试时每次都将文件本地化，打包时使用下面的方法，保证只有首次进入游戏会进行文件本地化
-		private IEnumerator PersistDataAlways(){
+		private void PersistDataAlways(){
 
 			Debug.Log ("文件本地化");
 
-			DirectoryInfo persistDi = new DirectoryInfo (CommonData.persistDataPath);
-
-			if (persistDi.Exists) {
-				FileInfo[] dataFiles = persistDi.GetFiles ();
-				if (dataFiles.Length > 0) {
-					for (int i = 0; i < dataFiles.Length; i++) {
-						dataFiles [i].Delete ();
-					}
-				}
-			} else {
-				persistDi.Create ();
-			}
-				
-
-			DirectoryInfo originDi = new DirectoryInfo (CommonData.originDataPath);
-
-			if (persistDi.GetFiles ().Length != originDi.GetFiles ().Length) {
-
-				FileInfo[] dataFiles = originDi.GetFiles ();
-
-				for (int i = 0; i < dataFiles.Length; i++) {
-					FileInfo fi = dataFiles [i];
-					string persistFilePath = string.Format ("{0}/{1}", CommonData.persistDataPath, fi.Name);
-					fi.CopyTo (persistFilePath);
-				}
-
-				yield return null;
-			}
-
-			Debug.Log (CommonData.persistDataPath);
+			DataHandler.CopyDirectory (CommonData.originDataPath, CommonData.persistDataPath, true);
 
 			InitGame ();
+
+		}
+
+		private void CopySubFiles(){
 
 		}
 
