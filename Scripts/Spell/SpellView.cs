@@ -52,9 +52,6 @@ namespace WordJourney
 		public Text materialValence;
 
 
-	//	public void SetUpSpellView(){
-	//
-	//	}
 		public void SetUpSpellViewWith(string wordInChinese,SpellPurpose spellPurpose){
 
 			if (wordInChinese != null) {
@@ -84,7 +81,7 @@ namespace WordJourney
 				break; 
 			}
 				
-//			GetComponent<Canvas>().enabled = true;
+			InitCharacterButtons ();
 
 		}
 
@@ -108,6 +105,17 @@ namespace WordJourney
 //			}
 
 			charactersEntered.text = string.Empty;
+
+		}
+
+		/// <summary>
+		/// 根据玩家拥有的字母碎片初始化所有的字母按钮状态
+		/// </summary>
+		public void InitCharacterButtons(){
+
+			for (int i = 0; i < characterButtons.Length; i++) {
+				characterButtons [i].interactable = Player.mainPlayer.charactersCount[i] > 0;
+			}
 
 		}
 

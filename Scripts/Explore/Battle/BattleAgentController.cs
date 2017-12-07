@@ -130,7 +130,7 @@ namespace WordJourney
 
 			if (frameObject.name == "hit") {
 				AgentExcuteHitEffect ();
-
+//				Debug.LogFormat ("hit---{0}", agent.name);
 			} else {
 				Debug.LogError ("事件帧消息名称必须是hit");
 			}
@@ -255,15 +255,15 @@ namespace WordJourney
 				
 				} else {
 
-					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (this.transform);
+					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
 
 					effectInfo = new SkillEffectInfo (triggerName, skillEffect);
 
 					skillEffectDic.Add (triggerName, effectInfo);
 
-					skillEffect.localPosition = Vector3.zero;
-					skillEffect.localRotation = Quaternion.identity;
-					skillEffect.localScale = Vector3.one;
+//					skillEffect.localPosition = Vector3.zero;
+//					skillEffect.localRotation = Quaternion.identity;
+//					skillEffect.localScale = Vector3.one;
 
 					skillEffectAnim = skillEffect.GetComponent<Animator> ();
 				
@@ -301,21 +301,23 @@ namespace WordJourney
 
 				} else {
 
-					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (this.transform);
+					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
 
 					effectInfo = new SkillEffectInfo (triggerName, skillEffect);
 
 					skillEffectDic.Add (triggerName, effectInfo);
 
-					skillEffect.localPosition = Vector3.zero;
-					skillEffect.localRotation = Quaternion.identity;
-					skillEffect.localScale = Vector3.one;
+//					skillEffect.localPosition = Vector3.zero;
+//					skillEffect.localRotation = Quaternion.identity;
+//					skillEffect.localScale = Vector3.one;
 
 					skillEffectAnim = skillEffect.GetComponent<Animator> ();
 
 				}
 
 				skillEffectAnim.SetTrigger (triggerName);
+
+//				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
 				waitEffectAnimEndCoroutine = AddSkillEffectToPoolAfterAnimEnd (effectInfo);
 
@@ -341,51 +343,52 @@ namespace WordJourney
 
 			AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 
-			while (stateInfo.normalizedTime < 1.0f) {
-				yield return null;
-				stateInfo = animator.GetCurrentAnimatorStateInfo (0);
-			}
+			yield return new WaitForSeconds (stateInfo.length);
 
 			exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (animator.transform);
 
 			skillEffectDic.Remove (effectInfo.triggerName);
+
+			animator.ResetTrigger (effectInfo.triggerName);
+
+//			Debug.LogFormat ("{0}回收技能特效{1}", agent.agentName, effectInfo.triggerName);
 
 		}
 
 		/// <summary>
 		/// 回收技能特效组件
 		/// </summary>
-		protected void CollectSkillEffectsToPool(){
-
-			string[] keys = new string[skillEffectDic.Keys.Count];
-
-			int i = 0;
-
-			IDictionaryEnumerator enumerator = skillEffectDic.GetEnumerator ();
-
-			while (enumerator.MoveNext ()) {
-
-				keys [i] = enumerator.Key as string;
-
-				i++;
-
-			}
-
-			for (int j = 0; j < keys.Length; j++) {
-
-				string key = keys [j];
-
-				Transform effectTrans = skillEffectDic[key].skillEffectTrans;
-
-				effectTrans.GetComponent<Animator> ().SetTrigger ("Empty");
-
-				exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (effectTrans);
-
-				skillEffectDic.Remove (key);
-
-			}
-
-		}
+//		protected void CollectSkillEffectsToPool(){
+//
+//			string[] keys = new string[skillEffectDic.Keys.Count];
+//
+//			int i = 0;
+//
+//			IDictionaryEnumerator enumerator = skillEffectDic.GetEnumerator ();
+//
+//			while (enumerator.MoveNext ()) {
+//
+//				keys [i] = enumerator.Key as string;
+//
+//				i++;
+//
+//			}
+//
+//			for (int j = 0; j < keys.Length; j++) {
+//
+//				string key = keys [j];
+//
+//				Transform effectTrans = skillEffectDic[key].skillEffectTrans;
+//
+//				effectTrans.GetComponent<Animator> ().SetTrigger ("Empty");
+//
+//				exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (effectTrans);
+//
+//				skillEffectDic.Remove (key);
+//
+//			}
+//
+//		}
 
 		/// <summary>
 		/// 伤害文本动画
@@ -546,5 +549,12 @@ namespace WordJourney
 			yield return new WaitUntil (() => armatureCom.animation.isCompleted);
 			cb ();
 		}
+
+		protected void MoveAgentToDieZone(){
+
+			transform.position = new Vector3 (0, 0, 100);
+
+		}
+
 	}
 }

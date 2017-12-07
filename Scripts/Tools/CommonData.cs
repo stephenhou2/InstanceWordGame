@@ -69,7 +69,7 @@ namespace WordJourney{
 		public static string allSkillSpritesBundleName = "skills/icons";
 		public static string allUISpritesBundleName = "ui/icons";
 		public static string allMonstersBundleName = "explore/monsters";
-		public static string allExploreAudioClipsBundleName = "audio/explore";
+//		public static string allExploreAudioClipsBundleName = "audio/explore";
 		public static string allUIAudioClipsBundleName = "audio/ui";
 
 

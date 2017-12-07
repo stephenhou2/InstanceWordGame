@@ -192,7 +192,7 @@ namespace WordJourney
 
 				// 如果最顶部equipment是当前选中类型equipments中的第一个
 				if (currentMinCellIndex <= 0) {
-					Debug.Log ("所有物品加载完毕");
+//					Debug.Log ("所有物品加载完毕");
 					return;
 				}
 

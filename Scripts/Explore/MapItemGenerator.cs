@@ -30,8 +30,8 @@ namespace WordJourney
 
 		void Awake(){
 //			rewardsRange = new Count (1, 3);
-			lockedTreasureBoxRange = new Count (0, 2);
-			trapRange = new Count (0, 2);
+			lockedTreasureBoxRange = new Count (0, 1);
+			trapRange = new Count (0, 1);
 		}
 
 		/// <summary>
@@ -43,13 +43,13 @@ namespace WordJourney
 		/// <param name="itemPool">缓存池</param>
 		/// <param name="itemsContainer">地图物品在场景中的父容器</param>
 		/// <param name="mapItemCount">地图物品数量</param>
-		public List<MapItem> InitMapItems(List<Item> normalItems, List<Item> lockedItems, InstancePool itemPool, Transform itemsContainer, int mapItemCount){
+		public List<MapItem> InitMapItems(List<Item> normalItems, List<Item> lockedItems, InstancePool itemPool, Transform itemsContainer){
 
 			// 本关的所有地图物品列表
 			List<MapItem> mapItems = new List<MapItem> ();
 
 
-			// 首先创建0-2个宝箱，用于装lockedItems
+			// 首先创建0-1个宝箱，用于装lockedItems
 			int lockedTreasureBoxCount = Random.Range (lockedTreasureBoxRange.minimum, lockedTreasureBoxRange.maximum + 1);
 
 			for (int i = 0; i < lockedTreasureBoxCount; i++) {
@@ -83,83 +83,69 @@ namespace WordJourney
 
 			}
 
-			// 创建0-2个陷阱
+			// 创建0-1个陷阱
 			int trapCount = Random.Range (trapRange.minimum, trapRange.maximum + 1);
 
 			for (int i = 0; i < trapCount; i++) {
 
 				Trap trap = itemPool.GetInstanceWithName<Trap> (trapModel.name, trapModel.gameObject, itemsContainer);
 
-				TrapSwitch trapSwitch = itemPool.GetInstanceWithName<TrapSwitch> (trapSwitchModel.name, trapSwitchModel.gameObject, itemsContainer);
+//				TrapSwitch trapSwitch = itemPool.GetInstanceWithName<TrapSwitch> (trapSwitchModel.name, trapSwitchModel.gameObject, itemsContainer);
 
-				trapSwitch.trap = trap;
+//				trapSwitch.trap = trap;
 
 				trap.mapItemName = trapModel.mapItemName;
 
-				trapSwitch.mapItemName = trapSwitchModel.mapItemName;
+//				trapSwitch.mapItemName = trapSwitchModel.mapItemName;
 
-				trapSwitch.InitMapItem ();
+//				trapSwitch.InitMapItem ();
 
 				trap.InitMapItem ();
 
 				mapItems.Add (trap);
 
-				mapItems.Add (trapSwitch);
+//				mapItems.Add (trapSwitch);
 
 			}
 
-			// 创建地图物品总数-宝箱数量-陷阱数量的常规地图物品
-			for (int i = lockedTreasureBoxCount + trapCount; i < mapItemCount; i++) {
+			// 瓦罐数量为0-1个
+			int potCount = Random.Range (0, 2);
 
-				MapItemType type = RandomMapItemType ();
+			for (int i = 0; i < potCount; i++) {
 
-				switch (type) {
-				case MapItemType.Obstacle:
+				TreasureBox normalTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (normalTreasureBoxModel.name, normalTreasureBoxModel.gameObject, itemsContainer);
 
-					int modelIndex = Random.Range (0, obstacleModels.Length);
+				normalTreasureBox.mapItemName = normalTreasureBoxModel.mapItemName;
 
-					Obstacle randomModel = (obstacleModels [modelIndex]);
+				int randomItemIndex = Random.Range (0, normalItems.Count);
 
-					Obstacle obstacle = itemPool.GetInstanceWithName<Obstacle> (randomModel.name, randomModel.gameObject, itemsContainer);
+				Item rewardItem = normalItems [randomItemIndex];
 
-					obstacle.mapItemName = randomModel.mapItemName;
+				normalTreasureBox.InitMapItem ();
 
-					obstacle.InitMapItem ();
+				normalTreasureBox.rewardItem = rewardItem;
 
-					mapItems.Add (obstacle);
+				mapItems.Add (normalTreasureBox);
 
-					break;
+			}
 
-				case MapItemType.TreasureBox:
+			// 障碍物数量为2-4个
+			int obstacleCount = Random.Range (2, 5);
 
-//					int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
+			for (int i = 0; i < obstacleCount; i++) {
 
-					TreasureBox normalTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (normalTreasureBoxModel.name, normalTreasureBoxModel.gameObject, itemsContainer);
+				int modelIndex = Random.Range (0, obstacleModels.Length);
 
-					normalTreasureBox.mapItemName = normalTreasureBoxModel.mapItemName;
+				Obstacle randomModel = (obstacleModels [modelIndex]);
 
+				Obstacle obstacle = itemPool.GetInstanceWithName<Obstacle> (randomModel.name, randomModel.gameObject, itemsContainer);
 
-//					Item[] rewardItems = new Item[rewardItemCount];
+				obstacle.mapItemName = randomModel.mapItemName;
 
-//					for (int j = 0; j < rewardItemCount; j++) {
-//
-//						Item item = RandomItem (normalItems,rewardItems);
-//
-//						rewardItems [j] = item;
-//					}
+				obstacle.InitMapItem ();
 
-					int randomItemIndex = Random.Range (0, normalItems.Count);
+				mapItems.Add (obstacle);
 
-					Item rewardItem = normalItems [randomItemIndex];
-
-					normalTreasureBox.InitMapItem ();
-
-					normalTreasureBox.rewardItem = rewardItem;
-
-					mapItems.Add (normalTreasureBox);
-
-					break;
-				}
 			}
 
 			return mapItems;
@@ -170,23 +156,23 @@ namespace WordJourney
 		/// 随机一种地图物品类型
 		/// </summary>
 		/// <returns>The map item type.</returns>
-		private MapItemType RandomMapItemType(){
-
-			int seed = Random.Range (0, 2);
-
-			MapItemType mip = MapItemType.None;
-
-			switch (seed) {
-			case 0:
-				mip = MapItemType.Obstacle;
-				break;
-			case 1:
-				mip = MapItemType.TreasureBox;
-				break;
-			}
-
-			return mip;
-		}
+//		private MapItemType RandomMapItemType(){
+//
+//			int seed = Random.Range (0, 2);
+//
+//			MapItemType mip = MapItemType.None;
+//
+//			switch (seed) {
+//			case 0:
+//				mip = MapItemType.Obstacle;
+//				break;
+//			case 1:
+//				mip = MapItemType.TreasureBox;
+//				break;
+//			}
+//
+//			return mip;
+//		}
 
 
 		/// <summary>

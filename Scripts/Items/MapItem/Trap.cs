@@ -43,10 +43,12 @@ namespace WordJourney
 
 			GetComponent<BoxCollider2D> ().enabled = false;
 
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-				SoundDetailTypeName.Map, 
-				mapItemName);
+			GameManager.Instance.soundManager.PlayMapEffectClips(mapItemName);
+
+//			GameManager.Instance.soundManager.PlayClips (
+//				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+//				SoundDetailTypeName.Map, 
+//				mapItemName);
 
 			col.GetComponent<BattlePlayerController> ().trapTriggered = this;
 

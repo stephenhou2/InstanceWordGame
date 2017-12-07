@@ -236,8 +236,6 @@ namespace WordJourney
 				});
 			}
 
-
-
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfItemDisplayCanvas",TransformRoot.PoolContainer);
 
 //			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{"AllItemModels","AllItemSprites","AllMaterials","AllMaterialSprites"});

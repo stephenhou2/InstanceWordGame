@@ -53,6 +53,7 @@ namespace WordJourney
 		public Transform itemsContainer;
 		public Transform npcsContainer;
 		public Transform monstersContainer;
+		public Transform skillEffectsContainer;
 		public Transform rewardsContainer;
 		public Transform crystalsContainer;
 		public Transform otherAnimContainer;
@@ -85,6 +86,27 @@ namespace WordJourney
 
 		private BattlePlayerController bpCtr;
 
+		// 获得地板层和附加信息层的数据
+		private Layer floorLayer = null;
+		private Layer attachedInfoLayer = null;
+
+//		public SpriteRenderer background;
+
+		private List<Vector3> totalValablePosGridList;
+		private List<Vector3> treasureBox_npc_produceBuildingPosGridList;
+		private List<Vector3> learnCrystalPosGridList;
+		private List<Vector3> movableFloorPosGridList;
+		private Vector3 bossPos;
+		private List<Vector3> undestroyableObstacleGridList;
+
+		void Awake(){
+			mapItemGenerator = GetComponent<MapItemGenerator> ();
+			totalValablePosGridList = new List<Vector3> ();
+			treasureBox_npc_produceBuildingPosGridList = new List<Vector3> ();
+			learnCrystalPosGridList = new List<Vector3> ();
+			movableFloorPosGridList = new List<Vector3> ();
+			undestroyableObstacleGridList = new List<Vector3> ();
+		}
 
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (GameLevelData levelData)
@@ -107,7 +129,6 @@ namespace WordJourney
 
 			MapInstancesToPool ();
 
-			mapItemGenerator = GetComponent<MapItemGenerator> ();
 
 			this.levelData = levelData;
 
@@ -120,16 +141,10 @@ namespace WordJourney
 			// 地图上的可行走信息数组
 			mapWalkableInfoArray = new int[rows,columns];
 
-			for (int i = 0; i < rows; i++) {
-				for (int j = 0; j < columns; j++) {
-					mapWalkableInfoArray [i, j] = -1;
-				}
-			}
-
 			ResetMapWalkableInfoArray ();
 
-			// 重建地图列表（可摆放位置列表）
-			ResetGridList ();
+			// 初始化地图原始数据
+			InitMapDatas();
 
 			// 初始化地面和背景
 			SetUpFloorAndBackground();
@@ -154,8 +169,12 @@ namespace WordJourney
 		}
 
 
-		public Transform GetSkillEffect(Transform parentTrans){
-			return skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, parentTrans);
+		public Transform GetSkillEffect(Transform agentTrans){
+			Transform skillEffect = skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, skillEffectsContainer);
+			skillEffect.position = agentTrans.position;
+			skillEffect.localScale = agentTrans.localScale;
+			skillEffect.rotation = Quaternion.identity;
+			return skillEffect;
 		}
 
 		public void AddSkillEffectToPool(Transform skillEffect){
@@ -173,6 +192,62 @@ namespace WordJourney
 
 		}
 
+		private void InitMapDatas(){
+			
+			for (int i = 0; i < mapInfo.layers.Length; i++) {
+				if (mapInfo.layers [i].name == "FloorLayer") {
+					floorLayer = mapInfo.layers [i];
+				} else if (mapInfo.layers [i].name == "AttachedInfoLayer") {
+					attachedInfoLayer = mapInfo.layers [i];
+				}
+			}
+
+			for (int j = 0; j < floorLayer.tileDatas.Length; j++) {
+
+				Tile floorTile = floorLayer.tileDatas [j];
+
+				if (floorTile.walkable) {
+					totalValablePosGridList.Add (floorTile.position);
+				}
+
+			}
+
+
+			for (int j = 0; j < attachedInfoLayer.tileDatas.Length; j++) {
+				
+				Tile attachedInfoTile = attachedInfoLayer.tileDatas [j];
+
+				if (attachedInfoTile.tileIndex >= 0) {
+					switch ((AttachedInfoType)attachedInfoTile.tileIndex) {
+					case AttachedInfoType.TreasureBoxOrNPCOrProduceBuilding:
+						treasureBox_npc_produceBuildingPosGridList.Add (attachedInfoTile.position);
+						break;
+					case AttachedInfoType.LearnCrystal:
+						learnCrystalPosGridList.Add (attachedInfoTile.position);
+						break;
+					case AttachedInfoType.MovableFloor:
+						movableFloorPosGridList.Add (attachedInfoTile.position);
+						break;
+					case AttachedInfoType.Boss:
+						bossPos = attachedInfoTile.position;
+						break;
+					case AttachedInfoType.UndestoryableObstacle:
+						undestroyableObstacleGridList.Add (attachedInfoTile.position);
+						break;
+
+					}
+
+					totalValablePosGridList.Remove (attachedInfoTile.position);
+				}
+			}
+
+
+			if (floorLayer == null || attachedInfoLayer == null) {
+				Debug.LogError ("地图数据不完整");
+			}
+
+		}
+
 		private void SetUpPlayer(){
 
 			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
@@ -180,7 +255,7 @@ namespace WordJourney
 			bpCtr = player.GetComponent<BattlePlayerController> ();
 
 			// 随机玩家初始位置
-			Vector3 playerOriginPos = RandomPosition ();
+			Vector3 playerOriginPos = RandomPosition(totalValablePosGridList);
 
 			player.position = playerOriginPos;
 
@@ -195,9 +270,9 @@ namespace WordJourney
 
 			Camera.main.transform.rotation = Quaternion.identity;
 
-			Camera.main.transform.localPosition = new Vector3 (0, 0, -90);
+			Camera.main.transform.localPosition = new Vector3 (0, 0, -10);
 
-			Camera.main.transform.Find ("Cover").gameObject.SetActive (true);
+//			Camera.main.transform.Find ("Cover").gameObject.SetActive (true);
 
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("wait", 0, null);
@@ -206,24 +281,40 @@ namespace WordJourney
 
 		private void SetUpItems(){
 
-			int mapItemCount = Random.Range (levelData.itemCount.minimum, levelData.itemCount.maximum + 1);
+//			int mapItemCount = Random.Range (levelData.itemCount.minimum, levelData.itemCount.maximum + 1);
 
 //			int mapItemCount = 50;
 
-			List<MapItem> randomMapItems = mapItemGenerator.InitMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer, mapItemCount);
+			List<MapItem> randomMapItems = mapItemGenerator.InitMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer);
 
 			for (int i = 0; i < randomMapItems.Count; i++) {
 
 				MapItem mapItem = randomMapItems [i];
 
-				Vector3 pos = RandomPosition ();
+				Vector3 pos = Vector3.zero;
+
+				switch (mapItem.mapItemType) {
+				case MapItemType.TreasureBox:
+					pos = RandomPosition (treasureBox_npc_produceBuildingPosGridList);
+					break;
+				case MapItemType.Obstacle:
+					pos = RandomPosition (totalValablePosGridList);
+					break;
+				case MapItemType.Trap:
+					pos = RandomPosition (totalValablePosGridList);
+					break;
+				case MapItemType.TrapSwitch:
+					pos = RandomPosition (treasureBox_npc_produceBuildingPosGridList);
+					break;
+				default:
+					break;
+				}
 
 				mapItem.transform.position = pos;
 
 				mapItem.GetComponent<SpriteRenderer> ().sortingOrder = -(int)pos.y;
 
 				if (mapItem.mapItemType == MapItemType.Trap) {
-					#warning 这里为了测试，先把陷阱做成和普通地板一样的消耗值
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 1;
 				} else {
 					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
@@ -244,7 +335,7 @@ namespace WordJourney
 
 				NPC npc = levelData.npcs [i];
 
-				Vector3 pos = RandomPosition ();
+				Vector3 pos = RandomPosition (treasureBox_npc_produceBuildingPosGridList);
 
 				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
@@ -277,7 +368,7 @@ namespace WordJourney
 
 				Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
-				Vector3 pos = RandomPosition ();
+				Vector3 pos = RandomPosition (totalValablePosGridList);
 
 				monster.GetComponent<UnityArmatureComponent> ().sortingOrder = -(int)pos.y;
 
@@ -322,25 +413,12 @@ namespace WordJourney
 			// 获得背景图片
 			string backgroundImageName = mapInfo.backgroundImageName;
 
-			Sprite backgroundImage = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
+			Sprite backgroundSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
 				return obj.name == backgroundImageName;
 			});
 
-			// 获得地板层和附加信息层的数据
-			Layer floorLayer = null;
-			Layer attachedInfoLayer = null;
-		
-			for (int i = 0; i < mapInfo.layers.Length; i++) {
-				if (mapInfo.layers [i].name == "FloorLayer") {
-					floorLayer = mapInfo.layers [i];
-				} else if (mapInfo.layers [i].name == "AttachedInfoLayer") {
-					attachedInfoLayer = mapInfo.layers [i];
-				}
-			}
-
-			if (floorLayer == null || attachedInfoLayer == null) {
-				Debug.LogError ("地图数据不完整");
-			}
+			Camera.main.transform.Find ("Background").GetComponent<SpriteRenderer> ().sprite = backgroundSprite;
+//			background.sprite = backgroundSprite;
 
 			// 创建地板
 			for (int i = 0; i < floorLayer.tileDatas.Length; i++) {
@@ -358,11 +436,6 @@ namespace WordJourney
 				});
 
 				floorTile.GetComponent<SpriteRenderer> ().sprite = tileSprite;
-
-			}
-
-			// 生成地图上物品和建筑的摆放信息
-			for (int i = 0; i < attachedInfoLayer.tileDatas.Length; i++) {
 
 			}
 
@@ -477,7 +550,7 @@ namespace WordJourney
 		public void SetUpBuildings(){
 
 			// 初始化地图上的工作台
-			Vector3 workBenchPos = RandomPosition();
+			Vector3 workBenchPos = RandomPosition(treasureBox_npc_produceBuildingPosGridList);
 
 			workBench.position = workBenchPos;
 
@@ -488,7 +561,7 @@ namespace WordJourney
 			// 初始化单词水晶
 			for (int i = 0; i < 4; i++) {
 				
-				Vector3 crystalPos = RandomPosition();
+				Vector3 crystalPos = RandomPosition (learnCrystalPosGridList);
 
 				Transform crystal = crystalPool.GetInstance<Transform> (crystalModel.gameObject, crystalsContainer);
 
@@ -578,7 +651,7 @@ namespace WordJourney
 			
 
 		//RandomPosition returns a random position from our list gridPositions.
-		private Vector3 RandomPosition ()
+		private Vector3 RandomPosition (List<Vector3> gridPositions)
 		{
 
 			//Declare an integer randomIndex, set it's value to a random number between 0 and the count of items in our List gridPositions.
@@ -602,38 +675,6 @@ namespace WordJourney
 			return randomPosition;
 		}
 			
-
-		//LayoutObjectAtRandom accepts an array of game objects to choose from along with a minimum and maximum range for the number of objects to create.
-		private void LayoutObjectAtRandom<T> (List<T> tileList, Count tileCount,Transform container)
-			where T:Component
-		{
-
-			int minimum = tileCount.minimum;
-			int maximum = tileCount.maximum;
-			
-			//Choose a random number of objects to instantiate within the minimum and maximum limits
-			int objectCount = Random.Range (minimum, maximum+1);
-
-			//Instantiate objects until the randomly chosen limit objectCount is reached
-			for(int i = 0; i < objectCount; i++)
-			{
-				//Choose a position for randomPosition by getting a random position from our list of available Vector3s stored in gridPosition
-				Vector3 randomPosition = RandomPosition();
-
-				//Choose a random tile from tileArray and assign it to tileChoice
-				GameObject tileChoice = tileList[Random.Range(0,tileList.Count)].gameObject;
-
-				//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
-				GameObject go =  Instantiate(tileChoice, randomPosition, Quaternion.identity);
-
-				go.name = tileChoice.name;
-
-				go.transform.SetParent (container, true);
-
-				mapWalkableInfoArray [(int)randomPosition.x, (int)randomPosition.y] = 0;
-
-			}
-		}
 
 
 		private class RewardInMap

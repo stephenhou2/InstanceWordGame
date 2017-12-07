@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 3614708977
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f71cdf8a804f85e7aa6f24f9ec04cf99
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c516f2a3b2b6b67ef759f6410a790acd
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Audio/Steps/steps_02.wav
+- Assets/Audio/Steps/steps_01.wav
+- Assets/Audio/Steps/steps_00.wav
+Dependencies: []

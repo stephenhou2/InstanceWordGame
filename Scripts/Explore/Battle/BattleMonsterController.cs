@@ -106,20 +106,6 @@ namespace WordJourney
 		protected override void AgentExcuteHitEffect ()
 		{
 
-			currentSkill.AffectAgents(this,bpCtr);
-
-			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if(!FightEnd()){
-				currentSkill = (agent as Monster).InteligentSelectSkill ();
-				attackCoroutine = InvokeAttack (currentSkill);
-				StartCoroutine (attackCoroutine);
-//				attackCoroutine = StartCoroutine("InvokeAttack",currentSkill);
-			}
-
-			this.UpdateStatusPlane();
-
-			bpCtr.UpdateStatusPlane();
-
 			// 播放技能对应的玩家技能特效动画
 			if (currentSkill.selfEffectName != string.Empty) {
 				SetEffectAnim (currentSkill.selfEffectName);
@@ -130,10 +116,27 @@ namespace WordJourney
 				bpCtr.SetEffectAnim (currentSkill.enemyEffectName);
 			}
 
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips,
-				SoundDetailTypeName.Skill, 
-				currentSkill.sfxName);
+			GameManager.Instance.soundManager.PlaySkillEffectClips (currentSkill.sfxName);
+
+//			GameManager.Instance.soundManager.PlayClips (
+//				GameManager.Instance.gameDataCenter.allExploreAudioClips,
+//				SoundDetailTypeName.Skill, 
+//				currentSkill.sfxName);
+
+			currentSkill.AffectAgents(this,bpCtr);
+
+			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
+			if(!FightEnd()){
+				currentSkill = (agent as Monster).InteligentSelectSkill ();
+				attackCoroutine = InvokeAttack (currentSkill);
+				StartCoroutine (attackCoroutine);
+			}
+
+			this.UpdateStatusPlane();
+
+			bpCtr.UpdateStatusPlane();
+
+
 
 			Player player = Player.mainPlayer;
 
@@ -174,7 +177,7 @@ namespace WordJourney
 					break;
 				}
 
-				randomIndex = Random.Range (0, allEquipedOrnaments.Count + 1);
+				randomIndex = Random.Range (0, allEquipedOrnaments.Count);
 
 				damagedEquipment = allEquipedOrnaments [randomIndex];
 
@@ -189,6 +192,7 @@ namespace WordJourney
 				break;
 			}
 		}
+
 
 		/// <summary>
 		/// 伤害文本动画
@@ -273,17 +277,21 @@ namespace WordJourney
 
 			playerWinCallBack (new Transform[]{ transform });
 
+//			Debug.LogFormat ("怪物位置信息[{0},{1}]", transform.position.x, transform.position.y);
+
 			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
 
 			expUICtr.QuitFight ();
 
-			CollectSkillEffectsToPool();
+//			CollectSkillEffectsToPool();
 
 			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
 
-			transform.position = new Vector3 (0, 0, 100);
+			Invoke ("MoveAgentToDieZone", 0.2f);
 
 		}
+
+
 
 
 

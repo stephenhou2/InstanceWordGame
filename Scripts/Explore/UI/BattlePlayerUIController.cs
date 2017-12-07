@@ -508,10 +508,11 @@ namespace WordJourney
 				});
 
 				// 播放对应的音效
-				GameManager.Instance.soundManager.PlayClips (
-					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-					SoundDetailTypeName.Map, 
-					mapItem.mapItemName);
+				GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.mapItemName);
+//				GameManager.Instance.soundManager.PlayClips (
+//					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+//					SoundDetailTypeName.Map, 
+//					mapItem.mapItemName);
 
 				// 播放地图物品对应的动画
 				mapItem.UnlockOrDestroyMapItem(()=>{
@@ -566,10 +567,11 @@ namespace WordJourney
 				player.RemoveItem (new Consumables (tool, 1));
 
 				// 播放对应的音效
-				GameManager.Instance.soundManager.PlayClips (
-					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-					SoundDetailTypeName.Map, 
-					mapItem.mapItemName);
+				GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.mapItemName);
+//				GameManager.Instance.soundManager.PlayClips (
+//					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+//					SoundDetailTypeName.Map, 
+//					mapItem.mapItemName);
 
 				// 播放地图物品对应的动画
 				mapItem.UnlockOrDestroyMapItem (()=>{
@@ -584,7 +586,7 @@ namespace WordJourney
 						
 						List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
 
-						int rareMaterialIndex = Random.Range (0, allMaterials.Count + 1);
+						int rareMaterialIndex = Random.Range (0, allMaterials.Count);
 
 						Material rareMaterial = allMaterials [rareMaterialIndex];
 

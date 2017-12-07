@@ -82,8 +82,11 @@ namespace WordJourney
 
 			this.pathPosList = pathPosList;
 
-			this.endPos = endPos;
+//			for (int i = 0; i < pathPosList.Count; i++) {
+//				Debug.LogFormat ("[{0},{1}]", pathPosList [i].x,pathPosList[i].y);
+//			}
 
+			this.endPos = endPos;
 
 			if (pathPosList.Count == 0) {
 
@@ -139,7 +142,11 @@ namespace WordJourney
 
 //			Debug.Log (string.Format ("Player pos:[{0},{1}],target pos:[{2},{3}]", transform.position.x, transform.position.y,targetPos.x,targetPos.y));
 
+			Vector3 moveVector = transform.position - targetPos;
+
 			SetOrderInLayer(-(int)targetPos.y);
+
+
 
 			moveTweener =  transform.DOMove (targetPos, moveDuration).OnComplete (() => {
 
@@ -158,9 +165,21 @@ namespace WordJourney
 				MoveToNextPosition();
 			});
 
-
 			// 设置匀速移动
 			moveTweener.SetEase (Ease.Linear);
+
+			// 背景图片按照比例移动相应的位移
+
+			Transform background = Camera.main.transform.Find ("Background");
+
+			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.2f, moveVector.y * 0.2f, 0);
+
+//			Debug.LogFormat ("背景层移动目标位置[{0},{1}]", backgroundImageTargetPos.x, backgroundImageTargetPos.y);
+				
+			Tweener backgroundMoveTweener = background.DOLocalMove(backgroundImageTargetPos,moveDuration);
+
+			backgroundMoveTweener.SetEase (Ease.Linear);
+
 
 		}
 			
@@ -188,23 +207,6 @@ namespace WordJourney
 
 			boxCollider.enabled = true;
 
-		}
-
-
-
-		#warning for test----------------------------------
-		private void SoundListener<Transform>(string type,Transform t){
-
-//			DragonBones.ListenerDelegate<Transform> d;
-
-		}
-
-		#warning for test----------------------------------
-		private void test(){
-			armatureCom.AddEventListener (DragonBones.EventObject.SOUND_EVENT, SoundListener);
-			DragonBones.DataParser dp;
-			DragonBones.BaseFactory fa;
-//			fa.ReplaceSlotDisplay(
 		}
 
 
@@ -238,6 +240,7 @@ namespace WordJourney
 				nextPos = pathPosList [0];
 
 				if (nextPos.x == transform.position.x && nextPos.y == transform.position.y) {
+					PlayRoleAnim ("wait", 0, null);
 					return;
 				}
 
@@ -261,18 +264,18 @@ namespace WordJourney
 					
 				if(nextPos.y == transform.position.y){
 					if (nextPos.x > transform.position.x) {
-						if(modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3(1,1,1))){
+						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (1, 1, 1))) {
 							resetWalkAnim = true;
 						}
 						playerSide.transform.localScale = new Vector3 (1, 1, 1);
 
 					} else if (nextPos.x < transform.position.x) {
-						if(modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3(-1,1,1))){
+						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (-1, 1, 1))) {
 							resetWalkAnim = true;
 						}
 
 						playerSide.transform.localScale = new Vector3 (-1, 1, 1);
-					}
+					} 
 					ActiveBattlePlayer (false, false, true);
 				}
 
@@ -282,7 +285,7 @@ namespace WordJourney
 
 				if (resetWalkAnim) {
 					PlayRoleAnim ("walk", 0, null);
-				}
+				} 
 			}
 
 			// 到达终点前的单步移动开始前进行碰撞检测
@@ -388,10 +391,12 @@ namespace WordJourney
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
 
-				GameManager.Instance.soundManager.PlayClips (
-					GameManager.Instance.gameDataCenter.allExploreAudioClips,
-					SoundDetailTypeName.Steps, 
-					null);
+				GameManager.Instance.soundManager.PlayFootStepClips ();
+
+//				GameManager.Instance.soundManager.PlayClips (
+//					GameManager.Instance.gameDataCenter.allExploreAudioClips,
+//					SoundDetailTypeName.Steps, 
+//					null);
 
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
@@ -573,6 +578,27 @@ namespace WordJourney
 
 		protected override void AgentExcuteHitEffect ()
 		{
+
+
+			// 播放技能对应的玩家技能特效动画
+			if (currentSkill.selfEffectName != string.Empty) {
+				SetEffectAnim (currentSkill.selfEffectName);
+			}
+
+			// 播放技能对应的怪物技能特效动画
+			if (currentSkill.enemyEffectName != string.Empty) {
+				bmCtr.SetEffectAnim (currentSkill.enemyEffectName);
+			}
+
+			// 播放技能对应的音效
+			GameManager.Instance.soundManager.PlaySkillEffectClips(currentSkill.sfxName);
+
+//			GameManager.Instance.soundManager.PlayClips (
+//				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
+//				SoundDetailTypeName.Skill, 
+//				currentSkill.sfxName);
+			
+
 			// 技能效果影响玩家和怪物
 			currentSkill.AffectAgents(this,bmCtr);
 
@@ -589,21 +615,6 @@ namespace WordJourney
 			// 更新怪物状态栏
 			bmCtr.UpdateStatusPlane();
 
-			// 播放技能对应的玩家技能特效动画
-			if (currentSkill.selfEffectName != string.Empty) {
-				SetEffectAnim (currentSkill.selfEffectName);
-			}
-
-			// 播放技能对应的怪物技能特效动画
-			if (currentSkill.enemyEffectName != string.Empty) {
-				bmCtr.SetEffectAnim (currentSkill.enemyEffectName);
-			}
-
-			// 播放技能对应的音效
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-				SoundDetailTypeName.Skill, 
-				currentSkill.sfxName);
 
 			// 如果该次攻击是物理攻击，对应减少当前武器的耐久度
 			switch (currentSkill.skillType) {
@@ -758,7 +769,7 @@ namespace WordJourney
 
 		public void QuitExplore(){
 
-			CollectSkillEffectsToPool ();
+//			CollectSkillEffectsToPool ();
 
 			ClearReference ();
 
@@ -788,7 +799,7 @@ namespace WordJourney
 
 				playerLoseCallBack ();
 
-				CollectSkillEffectsToPool();
+//				CollectSkillEffectsToPool();
 
 				gameObject.SetActive(false);
 

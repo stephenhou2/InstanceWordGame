@@ -289,42 +289,9 @@ namespace WordJourney
 
 		}
 
-		private List<AudioClip> mAllExploreAudioClips = new List<AudioClip>();
-		public List<AudioClip> allExploreAudioClips{
-			get{
-				if (mAllExploreAudioClips.Count == 0) {
-					ResourceLoader exploreAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (exploreAudioLoader, CommonData.allExploreAudioClipsBundleName, () => {
-						CopyClips(exploreAudioLoader.audioClips,mAllExploreAudioClips,false);
-					}, true);
-				}
-				return mAllExploreAudioClips;
-			}
-		}
 
-		private List<AudioClip> mAllUIAudioClips = new List<AudioClip> ();
-		public List<AudioClip> allUIClips{
-			get{
-				if (mAllUIAudioClips.Count == 0) {
-					ResourceLoader UIAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (UIAudioLoader, CommonData.allUIAudioClipsBundleName, () => {
-						CopyClips(UIAudioLoader.audioClips,mAllUIAudioClips,true);
-					}, true);
-				}
-				return mAllUIAudioClips;
-			}
-		}
 
-		private void CopyClips(List<AudioClip> originClips,List<AudioClip> targetClips,bool dontUnload){
 
-			for(int i = 0;i<originClips.Count;i++){
-				targetClips.Add(originClips[i]);
-				if (dontUnload) {
-					originClips [i].hideFlags = HideFlags.DontUnloadUnusedAsset;
-				}
-			}
-
-		}
 			
 
 		public void ReleaseDataWithNames(string[] dataNames){
@@ -388,14 +355,14 @@ namespace WordJourney
 			case "AllNpcs":
 				mAllNpcs.Clear ();
 				break;
-			case "AllExploreAudioClips":
-				mAllExploreAudioClips.Clear ();
-				ResourceManager.Instance.UnloadCaches (CommonData.allExploreAudioClipsBundleName, true);
-				break;
-			case "AllUIAudioClips":
-				mAllUIAudioClips.Clear ();
-				ResourceManager.Instance.UnloadCaches (CommonData.allUIAudioClipsBundleName, true);
-				break;
+//			case "AllExploreAudioClips":
+//				mAllExploreAudioClips.Clear ();
+//				ResourceManager.Instance.UnloadCaches (CommonData.allExploreAudioClipsBundleName, true);
+//				break;
+//			case "AllUIAudioClips":
+//				mAllUIAudioClips.Clear ();
+//				ResourceManager.Instance.UnloadCaches (CommonData.allUIAudioClipsBundleName, true);
+//				break;
 			default:
 				Debug.LogErrorFormat ("{0} is not data managed by data center", dataName);
 				break;

@@ -52,6 +52,7 @@ namespace WordJourney
 		public string selfEffectName;
 		public string enemyEffectName;
 
+//		public string audioClipName;
 
 		public bool unlocked;
 

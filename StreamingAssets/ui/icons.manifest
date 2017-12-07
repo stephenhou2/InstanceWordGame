@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2411317357
+CRC: 3529296113
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 387edfc4a1dcbf449cae76fe19e3bdfa
+    Hash: 08de592fdecd2c32f2d4ac14ef3db877
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -114,7 +114,6 @@ Assets:
 - Assets/Textures/Frame/skillDecorate.png
 - Assets/Textures/Frame/skillAndGoodFrame.png
 - Assets/Textures/imgCard.png
-- Assets/Textures/Icon/explore_minXiangStone.png
 - Assets/Textures/Button/returnPlainButton.png
 - Assets/Textures/processBar&Switch/soundFill.png
 - Assets/Textures/Explore/cutPic/skillTreeLine.png

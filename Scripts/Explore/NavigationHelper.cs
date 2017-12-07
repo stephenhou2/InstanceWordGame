@@ -13,7 +13,7 @@ namespace WordJourney
 		// 0表示障碍物,不可行走
 		// 1表示正常地面
 		// 10表示有陷阱（陷阱的消耗值为10，即如果为了绕过陷阱要多走20步以上时，直接走陷阱，小于10步时，则选择绕路【陷阱消耗可以根据需要进行修改】）
-		// 1和2同时也是寻路参数中的G值
+		// 1和10同时也是寻路参数中的G值
 		public int[,] mapWalkableInfoArray;
 
 		// 可以用来检测的点阵
@@ -25,6 +25,10 @@ namespace WordJourney
 		// 自动寻路路径上的点集
 		private List<Vector3> pathPos = new List<Vector3>();
 
+		// 地图宽度
+		private int mapWidth;
+		// 地图高度
+		private int mapHeight;
 
 		/// <summary>
 		/// 寻路接口
@@ -46,6 +50,8 @@ namespace WordJourney
 			// 拿到全地图信息（包括是否可行走和每个点上的行走消耗）
 			this.mapWalkableInfoArray = mapWalkableInfoArray;
 
+			this.mapHeight = mapWalkableInfoArray.GetLength (0);
+			this.mapWidth = mapWalkableInfoArray.GetLength(1);
 
 			// 起点和终点重合，则将该点加入到路径点集中并直接返回
 			if (startPoint.Equals (endPoint)) {
@@ -82,9 +88,14 @@ namespace WordJourney
 					
 					Point p = surroundedPoints[i];
 
+					if (p.x >= mapWidth || p.y >= mapHeight || p.x < 0 || p.y < 0) {
+						continue;
+					}
+
 					// 如果周围点集中有终点，则停止检测，并利用fatherPoint属性逐级获取路径中的上级点
 					if (p.Equals (endPoint)) {
-						
+
+//						Debug.LogFormat ("{0}监测到终点", p);
 						p.fatherPoint = currentPoint;
 
 						while (p.fatherPoint != null) {
@@ -100,6 +111,7 @@ namespace WordJourney
 
 					// 如果周围点集中有不可行走点或者是已关闭点或者已经在待检测点集中，则这个点什么都不做
 					if (UnwalkableOrClosedOrExistInOpen (p)) {
+//						Debug.LogFormat ("{0}不可行走或已关闭或在待检测点集,可行走信息：{1}", p,mapWalkableInfoArray[p.x,p.y]);
 						continue;
 					}
 
@@ -114,15 +126,18 @@ namespace WordJourney
 
 					// 将可行走待检测点加入到待检测点集中
 					openList.Add (p);
+//					Debug.LogFormat ("将点{0}放入待检测点集中", p);
 
 				}
 
 				// 获取待检测点集中F值做小的点
 				Point minFPoint = GetMinFPoint (openList);
+//				Debug.LogFormat ("点{0}是F最小的点", minFPoint);
+
 
 				if (minFPoint != null) {
 
-					// 将F值最小的点设置未当前点（基点，周围点是由基点找出来的）
+					// 将F值最小的点设置为当前点（基点，周围点是由基点找出来的）
 					currentPoint = minFPoint;
 
 				}
@@ -157,10 +172,9 @@ namespace WordJourney
 		/// <summary>
 		/// 点是否可行走或者是否已关闭或者已经在待检测点集中
 		/// </summary>
-		/// 障碍物或者不可到达点或者是已经关闭或者已经在待检测点集中返回true，其余返回false
+		/// 地图外部或者障碍物或者不可到达点或者是已经关闭或者已经在待检测点集中返回true，其余返回false
 		/// <param name="p">P.</param>
 		private bool UnwalkableOrClosedOrExistInOpen(Point p){
-
 
 			if (mapWalkableInfoArray [p.x, p.y] == 0 || mapWalkableInfoArray [p.x, p.y] == -1) {
 				return true;
@@ -257,5 +271,10 @@ namespace WordJourney
 
 		}
 			
+		public override string ToString ()
+		{
+			return string.Format ("[Point: [{0},{1}],F={2}]", x, y, F);
+		}
+
 	}
 }

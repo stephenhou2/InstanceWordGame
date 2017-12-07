@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 794548950
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a36523d3dcc13ee741befacbe97bc9cb
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: c516f2a3b2b6b67ef759f6410a790acd
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Audio/MapItems/pot.wav
+- Assets/Audio/MapItems/key.wav
+- Assets/Audio/MapItems/treasurebox.wav
+- Assets/Audio/MapItems/tree.wav
+- Assets/Audio/MapItems/trap.wav
+- Assets/Audio/MapItems/stone.wav
+- Assets/Audio/MapItems/buck.wav
+- Assets/Audio/MapItems/switch.wav
+Dependencies: []

@@ -512,7 +512,7 @@ namespace WordJourney
 		/// <returns>The random characters.</returns>
 		private char ReturnRandomCharacters(ref List<char> charList){
 
-			int charIndex = (int)Random.Range (0, charList.Count - float.Epsilon);
+			int charIndex = Random.Range (0, charList.Count);
 
 			char character = charList [charIndex];
 

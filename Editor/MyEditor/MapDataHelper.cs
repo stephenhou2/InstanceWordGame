@@ -45,7 +45,7 @@ namespace WordJourney
 		[System.Serializable]
 		public struct OriginalTileSet{
 			public int firstgid;
-			public string source;
+			public string name;
 		}
 
 		[System.Serializable]
@@ -54,6 +54,7 @@ namespace WordJourney
 			public string floorImageName;
 			public int[] walkableInfoArray;
 		}
+
 
 
 		[MenuItem("EditHelper/MapDataHelper")]
@@ -85,9 +86,9 @@ namespace WordJourney
 
 					OriginalTileSet ts = oriMapData.tilesets [j];
 
-					if (ts.source.Contains ("Floor")) {
+					if (ts.name == "Floor") {
 						oriMapData.floorTileFirstGid = ts.firstgid;
-					} else if (ts.source.Contains ("AttachedInfo")) {
+					} else if (ts.name == "AttachedInfo") {
 						oriMapData.attachedInfoFirstGid = ts.firstgid;
 					} else {
 						Debug.LogError(string.Format("未查询到地图／附加信息的原始贴图数据"));
@@ -108,6 +109,10 @@ namespace WordJourney
 
 					int firstGid = 0;
 
+					int row = 0;
+					int col = 0;
+
+					List<Tile> tileDatas = new List<Tile> ();
 
 					switch (layer.name) {
 					case "FloorLayer":
@@ -122,30 +127,41 @@ namespace WordJourney
 							Debug.LogError (string.Format ("未查询到对应的地板图块信息--地图名称：{0}", fi.Name));
 						}
 
+						for (int k = 0; k < layer.data.Length; k++) {
+							row = oriMapData.height - k / oriMapData.width - 1;
+							col = k % oriMapData.width;
+							int tileIndex = layer.data [k] - firstGid;
+							if (tileIndex >= 0) {
+								bool walkable = tileInfo.walkableInfoArray [tileIndex] == 1;
+								Tile tile = new Tile (new Vector2 (col, row), tileIndex ,walkable);
+								tileDatas.Add (tile);
+								Debug.LogFormat ("{0}-{1}",k,tile);
+							}
+
+						}
+
 						break;
 					case "AttachedInfoLayer":
 						firstGid = oriMapData.attachedInfoFirstGid;
 						backgroundImageName = layer.properties.backgroundImageName;
+
+						for (int k = 0; k < layer.data.Length; k++) {
+							row = oriMapData.height - k / oriMapData.width - 1;
+							col = k % oriMapData.width;
+							int tileIndex = layer.data [k] - firstGid;
+							if (tileIndex >= 0) {
+								Tile tile = new Tile (new Vector2 (col, row), tileIndex ,false);
+								tileDatas.Add (tile);
+								Debug.LogFormat ("{0}-{1}",k,tile);
+							}
+
+						}
+
 						break;
 					}
 
-					int row = 0;
-					int col = 0;
 
-					List<Tile> tileDatas = new List<Tile> ();
 
-					for (int k = 0; k < layer.data.Length; k++) {
-						row = oriMapData.height - k / oriMapData.width - 1;
-						col = k % oriMapData.width;
-						int tileIndex = layer.data [k] - firstGid;
-						if (tileIndex >= 0) {
-							bool walkable = tileInfo.walkableInfoArray [tileIndex] == 1;
-							Tile tile = new Tile (new Vector2 (col, row), tileIndex ,walkable);
-							tileDatas.Add (tile);
-							Debug.LogFormat ("{0}-{1}",k,tile);
-						}
-
-					}
 
 
 					newLayers[j] = new Layer (layer.name, tileDatas.ToArray()); 

@@ -10,6 +10,9 @@ namespace WordJourney
 
 	public class LearnView : MonoBehaviour {
 
+		// 遮罩
+		public Transform mask;
+
 		// 考察的单词时的英文单词文本 或者 考察从中文释义到英文单词时的释义文本
 		public Text questionText;
 
@@ -26,14 +29,23 @@ namespace WordJourney
 		public Transform wordsLearnOperationButtonsContainer;
 
 		// 单词问题的答案按钮容器
-		public Transform answerButtonsContainer;
+		public Transform choicesContainer;
 
 		// 单词答案选项按钮数组
-		public Button[] answerButtons;
+		public Transform[] choices;
 
 		// 单词释义淡出时间
 		public float explainationFadeOutDuration;
 
+		private Transform currentSelectChoice;
+
+		public Transform energySliderContainer;
+		// 单词能量条
+		public Image energyFill;
+
+		public Text characterFragment;
+
+		private Tweener characterFragmentAnim;
 
 
 		public void SetUpLearnViewWithWord(LearnWord word){
@@ -46,9 +58,7 @@ namespace WordJourney
 
 			explainationText.enabled = false;
 
-			ShowButtonsContainers (true, false, false);
-
-
+			ShowContainers (true, false, false,false);
 
 		}
 
@@ -59,7 +69,9 @@ namespace WordJourney
 			explainationText.enabled = true;
 			explainationText.color = new Color (1, 1, 1, 1);
 
-			ShowButtonsContainers (false, false, false);
+			ShowContainers (false, false, false,false);
+
+			mask.gameObject.SetActive (true);
 
 			StartCoroutine ("ExplainationShowAndHideAnim");
 
@@ -76,6 +88,7 @@ namespace WordJourney
 				explainationText.color = new Color(1,1,1,1);
 			});
 
+			mask.gameObject.SetActive (false);
 		}
 
 		public void ShowExplaination(){
@@ -83,7 +96,48 @@ namespace WordJourney
 		}
 			
 
-		public void SetUpLearnViewWithExamination(Examination exam,Examination.ExaminationType examType){
+		public void SetUpLearnViewWithLearnExam(Examination exam){
+
+			explainationText.enabled = false;
+
+			questionText.text = exam.question.spell;
+
+			questionText.fontSize = 100;
+
+			for (int i = 0; i < choices.Length; i++) {
+
+				Transform choice = choices [i];
+
+				Button choiceButton = choice.Find("ChoiceButton").GetComponent<Button>();
+				Transform accordAnswer = choice.Find ("AccordAnswer");
+
+				LearnWord answer = exam.answers [i];
+
+				choiceButton.GetComponentInChildren<Text>().text = answer.explaination;
+				accordAnswer.GetComponentInChildren<Text>().text = answer.spell;
+
+				Debug.Log (accordAnswer.localPosition);
+
+				accordAnswer.localPosition = Vector3.zero;
+
+				Debug.Log (accordAnswer.localPosition);
+
+				choiceButton.onClick.RemoveAllListeners ();
+
+				int currentSelectChoiceIndex = i;
+
+				choiceButton.onClick.AddListener (delegate {
+					currentSelectChoice = choices[currentSelectChoiceIndex];
+					GetComponent<LearnViewController>().OnAnswerChoiceButtonOfLearnExamsClick(answer);
+				});
+
+			}
+
+			ShowContainers (false, false, true,false);
+
+		}
+
+		public void SetUpLearnViewWithFinalExam(Examination exam,Examination.ExaminationType examType){
 
 			switch (examType) {
 
@@ -93,18 +147,29 @@ namespace WordJourney
 
 				questionText.fontSize = 100;
 
-				for (int i = 0; i < answerButtons.Length; i++) {
+				phoneticSymbolText.enabled = true;
 
-					Button answerButton = answerButtons [i];
+				for (int i = 0; i < choices.Length; i++) {
+
+					Transform choice = choices [i];
+
+					Button choiceButton = choice.Find("ChoiceButton").GetComponent<Button>();
+					Transform accordAnswer = choice.Find ("AccordAnswer");
 
 					LearnWord answer = exam.answers [i];
 
-					answerButton.transform.Find ("AnswerText").GetComponent<Text> ().text = answer.explaination;
+					choiceButton.GetComponentInChildren<Text>().text = answer.explaination;
+					accordAnswer.GetComponentInChildren<Text>().text = answer.spell;
 
-					answerButton.onClick.RemoveAllListeners ();
+					accordAnswer.localPosition = Vector3.zero;
 
-					answerButton.onClick.AddListener (delegate {
-						GetComponent<LearnViewController>().OnAnswerChoiceButtonClick(answer);
+					choiceButton.onClick.RemoveAllListeners ();
+
+					int currentSelectChoiceIndex = i;
+
+					choiceButton.onClick.AddListener (delegate {
+						currentSelectChoice = choices[currentSelectChoiceIndex];
+						GetComponent<LearnViewController>().OnAnswerChoiceButtonOfFinalExamsClick(answer);
 					});
 
 				}
@@ -115,39 +180,72 @@ namespace WordJourney
 
 				questionText.fontSize = 60;
 
-				for (int i = 0; i < answerButtons.Length; i++) {
+				phoneticSymbolText.enabled = false;
 
-					Button answerButton = answerButtons [i];
+				for (int i = 0; i < choices.Length; i++) {
+					
+					Transform choice = choices [i];
+
+					Button choiceButton = choices [i].Find("ChoiceButton").GetComponent<Button>();
+					Transform accordAnswer = choice.Find ("AccordAnswer");
 
 					LearnWord answer = exam.answers [i];
 
-					answerButton.transform.Find ("AnswerText").GetComponent<Text> ().text = answer.spell;
+					choiceButton.GetComponentInChildren<Text>().text = answer.spell;
+					accordAnswer.GetComponentInChildren<Text>().text = answer.explaination;
 
-					answerButton.onClick.RemoveAllListeners ();
+					accordAnswer.localPosition = Vector3.zero;
 
-					answerButton.onClick.AddListener (delegate {
-						GetComponent<LearnViewController>().OnAnswerChoiceButtonClick(answer);
+					choiceButton.onClick.RemoveAllListeners ();
+
+					int currentSelectChoiceIndex = i;
+
+					choiceButton.onClick.AddListener (delegate {
+						currentSelectChoice = choices[currentSelectChoiceIndex];
+						GetComponent<LearnViewController>().OnAnswerChoiceButtonOfFinalExamsClick(answer);
 					});
 
 				}
 				break;
 			}
 
-			ShowButtonsContainers (false, false, true);
+			ShowContainers (false, false, true,true);
 		}
 
-		public void ShowButtonsContainers(bool graspCondition,bool wordsLearnOperation,bool answers){
+		public void ShowContainers(bool graspCondition,bool wordsLearnOperation,bool answers,bool energySlider){
 
 			graspConditionButtonsContainer.gameObject.SetActive (graspCondition);
 			wordsLearnOperationButtonsContainer.gameObject.SetActive (wordsLearnOperation);
-			answerButtonsContainer.gameObject.SetActive (answers);
+			choicesContainer.gameObject.SetActive (answers);
+			energySliderContainer.gameObject.SetActive (energySlider);
 
 		}
 
-		public void QuitLearnView(){
-			GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
+		public void ShowAccordAnswerOfCurrentSelectedChoice(){
+			currentSelectChoice.Find("AccordAnswer").DOLocalMoveY (55, 1.0f);
 		}
 
+		public void ResetEnergySlider(char character){
+
+			characterFragment.text = character.ToString ();
+
+		}
+
+		public void UpdateWordEnergySlider(int currentEnergyCount,int energyFullCount){
+			float fillAmount = (float)currentEnergyCount / energyFullCount;;
+			energyFill.fillAmount = fillAmount;
+			if (fillAmount == 1f) {
+				StartCoroutine ("ResetWordEnergySliderAfterDelay", 0.5f);
+			}
+		}
+
+		private IEnumerator ResetWordEnergySliderAfterDelay(float delay){
+
+			yield return new WaitForSeconds (delay);
+
+			energyFill.fillAmount = 0;
+
+		}
 
 	}
 }

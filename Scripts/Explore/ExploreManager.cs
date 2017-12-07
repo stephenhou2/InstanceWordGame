@@ -142,9 +142,15 @@ namespace WordJourney
 
 //			if(r2d.transform != null){
 
+			// 如果点在镂空区域，则直接返回
+			if (mapGenerator.mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] == -1) {
+				return;
+			}
+
+
 			if(battlePlayerCtr != null){
 
-					// 计算自动寻路路径
+				// 计算自动寻路路径
 				pathPosList = navHelper.FindPath(battlePlayerCtr.singleMoveEndPos,targetPos,mapGenerator.mapWalkableInfoArray);
 
 				}
@@ -227,13 +233,13 @@ namespace WordJourney
 			if ((int)playerTrans.position.y == (int)monsterTrans.position.y) {
 
 				playerTrans.position = new Vector3 (0.2f * (monsterTrans.position.x - playerTrans.position.x ) + playerTrans.position.x,
-					playerTrans.position.y,playerOriPos.y);
+					playerTrans.position.y,0);
 
 			} else {
 				float newPosX = playerTrans.position.x - 0.2f;
 				float newPosY = playerTrans.position.y + 0.5f * (monsterTrans.position.y-  playerTrans.position.y);
 
-				playerTrans.position = new Vector3 (newPosX, newPosY,playerOriPos.z);
+				playerTrans.position = new Vector3 (newPosX, newPosY,0);
 
 			}
 
@@ -284,10 +290,12 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayClips (
-				GameManager.Instance.gameDataCenter.allExploreAudioClips,
-				SoundDetailTypeName.Map, 
-				mapItem.mapItemName);
+			GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.mapItemName);
+
+//			GameManager.Instance.soundManager.PlayClips (
+//				GameManager.Instance.gameDataCenter.allExploreAudioClips,
+//				SoundDetailTypeName.Map, 
+//				mapItem.mapItemName);
 
 			trapSwitch.SwitchOffTrap ();
 
@@ -310,10 +318,12 @@ namespace WordJourney
 			// 如果该地图物品不需要使用特殊物品开启
 			if (tb.unlockItemName == string.Empty) {
 
-				GameManager.Instance.soundManager.PlayClips (
-					GameManager.Instance.gameDataCenter.allExploreAudioClips,
-					SoundDetailTypeName.Map, 
-					mapItem.mapItemName);
+				GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.mapItemName);
+
+//				GameManager.Instance.soundManager.PlayClips (
+//					GameManager.Instance.gameDataCenter.allExploreAudioClips,
+//					SoundDetailTypeName.Map, 
+//					mapItem.mapItemName);
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockOrDestroyMapItem (()=>{
@@ -359,6 +369,7 @@ namespace WordJourney
 		}
 			
 		public void FinishLearning(){
+			GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
 			currentEnteredTransform.GetComponent<Animator> ().SetTrigger ("Highlight");
 		}
 
@@ -375,8 +386,9 @@ namespace WordJourney
 
 			Vector3 monsterPos = trans.position;
 
-			int X = (int)monsterPos.x;
-			int Y = (int)monsterPos.y;
+			// 0.1为位置偏差修正【如果怪物在（10，10）点，可能实际的位置数据为（10.023456，9.023455），故加上0.1作为偏差修正】
+			int X = (int)(monsterPos.x + 0.1f);
+			int Y = (int)(monsterPos.y + 0.1f);
 
 			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
 

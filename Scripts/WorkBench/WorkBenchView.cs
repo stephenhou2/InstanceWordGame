@@ -47,11 +47,12 @@ namespace WordJourney
 
 
 		public void ChangeToSpellView(){
+
 			GetComponent<SpellViewController> ().SetUpSpellViewForCreateMaterial (null);
 			GetComponent<SpellView> ().ClearEnteredCharactersPlane ();
 			spellViewContainer.gameObject.SetActive (true);
 			itemDisplayViewContainer.gameObject.SetActive (false);
-//			GetComponent<Canvas>().enabled = true;
+
 		}
 
 		public void ChangeToItemDisplayView(){

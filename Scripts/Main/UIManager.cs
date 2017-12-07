@@ -27,21 +27,15 @@ namespace WordJourney
 						while (dicEnumerator.MoveNext ()) {
 							Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
 							canvas.enabled = false;
-//							canvas.targetDisplay = 1;
-//							canvas.sortingOrder = -1;
 						}
 					}
 
 					Canvas c = loader.gos.Find (delegate(GameObject obj) {
 						return obj.name == canvasName;
 					}).GetComponent<Canvas> ();
-
+						
 
 					c.enabled = true;
-
-//					c.targetDisplay = 0;
-//
-//					c.sortingOrder = 0;
 
 					if (cb != null) {
 						cb ();
@@ -54,25 +48,24 @@ namespace WordJourney
 				}, isSync);
 
 			} else {
+
 				while (dicEnumerator.MoveNext ()) {
 
 					Canvas c = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
 
 					if (dicEnumerator.Key as string == canvasName) {
-//						c.targetDisplay = 0;
-//						c.sortingOrder = 0;
 						c.enabled = true;
 						c.transform.SetAsLastSibling ();
-					} else if(!othersVisible){
-//						c.targetDisplay = 1;
-//						c.sortingOrder = -1;
-						c.enabled = false;
+					} else {
+						c.enabled = c.enabled && othersVisible;
 					}
 				}
 
 				if (cb != null) {
 					cb ();
 				}
+
+
 			}
 
 //			Transform canvas = UIDic.ContainsKey (canvasName) ? UIDic [canvasName] : null;

@@ -59,10 +59,19 @@ namespace WordJourney{
 
 	}
 
+	public enum AttachedInfoType{
+		TreasureBoxOrNPCOrProduceBuilding,
+		LearnCrystal,
+		MovableFloor,
+		Boss,
+		UndestoryableObstacle
+	}
+
 	[System.Serializable]
 	public class Tile{
 		
 		public Vector2 position;
+		// 如果是附加信息层，则该数字代表对应的附加信息,使用（attachedInfoType）进行强制转换
 		public int tileIndex;
 		public bool walkable;
 
@@ -81,9 +90,5 @@ namespace WordJourney{
 	}
 
 
-//	[System.Serializable]
-//	public struct TileSet{
-//		public string image;
-//		public int[] walkableInfoArray;
-//	}
+
 }
