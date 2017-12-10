@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 namespace WordJourney
 {
 	[System.Serializable]
-	public struct MonsterSkill{
+	public struct SkillWithProbability{
 		public Skill skill;
 		public float probability;
 	}
@@ -19,7 +19,7 @@ namespace WordJourney
 
 		public int rewardExperience;//奖励的经验值
 
-		public MonsterSkill[] allEquipedActiveSkills;
+		public SkillWithProbability[] allEquipedActiveSkills;
 
 		public Skill[] allEquipedPassiveSkills;
 

@@ -51,7 +51,7 @@ namespace WordJourney
 					GameLevelData[] gameLevelDatasArray = DataHandler.LoadDataToModelsWithPath<GameLevelData> (CommonData.gameLevelDataFilePath);
 
 					for (int i = 0; i < gameLevelDatasArray.Length; i++) {
-						gameLevelDatasArray[i].LoadAllData ();
+//						gameLevelDatasArray[i].LoadAllData ();
 						mGameLevelDatas.Add(gameLevelDatasArray[i]);
 					}
 				}

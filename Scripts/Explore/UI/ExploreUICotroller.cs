@@ -48,11 +48,18 @@ namespace WordJourney
 //		private InstancePool rewardButtonPool;
 		private InstancePool materialCardPool;
 
-		private Dialog[] dialogs;
-		private Choice[] choices;
+//		private NPC currentEnteredNpc;
+		private DialogGroup currentDialogGroup;
+
+		private int currentDialogId;
+
+//		private Dialog[] dialogs;
+//		private Choice[] choices;
 
 //		private List<Item> itemsToPickUp = new List<Item>();
 		private Item itemToPickUp;
+
+		private bool nextButtonEndDialog;
 
 		public void SetUpExploreCanvas(){
 
@@ -119,15 +126,33 @@ namespace WordJourney
 
 		}
 
-		public void EnterNPC(NPC npc,int dialogGroupIndex){
+		public void EnterNPC(NPC npc,int currentLevelIndex){
+
+//			currentEnteredNpc = npc;
+
+			currentDialogId = 0;
 
 			dialogPlane.gameObject.SetActive (true);
 
-			dialogs = npc.dialogGroups [dialogGroupIndex].dialogs;
+			DialogGroup dg = null;
 
-			choices = npc.choices;
+			for (int i = 0; i < npc.dialogGroups.Length; i++) {
+				if (npc.dialogGroups [i].accordGameLevel == currentLevelIndex) {
+					dg = npc.dialogGroups [i];
+				}
+					
+			}
 
-			Dialog dialog = npc.dialogGroups [dialogGroupIndex].dialogs [0];
+			if (dg == null) {
+				Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevelIndex, npc.npcName));
+			}
+
+			currentDialogGroup = dg;
+
+
+//			dialogs = dg.dialogs;
+//
+//			Dialog dialog = dialogs [0];
 
 			Sprite npcSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
 				return s.name == npc.spriteName;
@@ -139,7 +164,7 @@ namespace WordJourney
 			}
 
 
-			SetUpDialogPlane (dialog);
+			SetUpDialogPlane (currentDialogGroup.dialogs[0]);
 
 		}
 
@@ -147,44 +172,67 @@ namespace WordJourney
 
 			dialogText.text = dialog.dialog;
 
-			int[] choiceIds = dialog.choiceIds;
+			if (dialog.choices.Length == 0) {
+				nextDialogButton.gameObject.SetActive (true);
+			} else {
+				Choice[] choices = dialog.choices;
+				for (int i = 0; i < choices.Length; i++) {
+					
+					Choice choice = choices [i];
 
-			for (int i = 0; i < choiceIds.Length; i++) {
+					Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 
-				int choiceId = choiceIds [i];
+					choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
 
-				Choice choice = choices [choiceId];
+					choiceButton.onClick.RemoveAllListeners ();
 
-				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
-
-				choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
-
-				choiceButton.onClick.RemoveAllListeners ();
-
-				choiceButton.onClick.AddListener (delegate() {
-					MakeChoice(choice);
-				});
-
-
+					choiceButton.onClick.AddListener (delegate() {
+						MakeChoice(choice);
+					});
+				}
 			}
 
+			if (dialog.rewardIds.Length != 0) {
+				for (int i = 0; i < dialog.rewardIds.Length; i++) {
+					Item rewardItem = Item.NewItemWith (dialog.rewardIds [i], dialog.rewardCounts [i]);
+					Player.mainPlayer.AddItem (rewardItem);
+					#warning 提示获得物品的界面逻辑没有做
+				}
+			}
+
+
+		}
+
+		public void OnNextDialogButtonClick (){
+
+			if (currentDialogGroup.dialogs [currentDialogId].isEndingDialog) {
+				QuitDialogPlane ();
+				return;
+			}
+
+			currentDialogId++;
+
+			SetUpDialogPlane(currentDialogGroup.dialogs[currentDialogId]);
 		}
 
 
 
 		private void MakeChoice(Choice choice){
 
-			if (choice.dialogId == -1) {
+			if (choice.isEnd) {
 				QuitDialogPlane ();
 				return;
 			}
 
-			Dialog dialog = dialogs [choice.dialogId];
+			int dialogId = choice.dialogId;
+
+			currentDialogId = dialogId;
+
+			Dialog dialog = currentDialogGroup.dialogs [dialogId];
 
 			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			SetUpDialogPlane (dialog);
-
 
 		}
 

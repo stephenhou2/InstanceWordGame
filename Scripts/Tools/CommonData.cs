@@ -20,7 +20,7 @@ namespace WordJourney{
 		public static string gameLevelDataFilePath = persistDataPath + "/GameLevelDatas.json";
 		public static string itemsDataFilePath = persistDataPath + "/Items.json";
 		public static string materialsDataFilePath = persistDataPath + "/Materials.json";
-		public static string npcsDataFilePath = persistDataPath + "/AllNpcsJson.txt";
+		public static string npcsDataFilePath = persistDataPath + "/AllNpcsData.json";
 
 
 //		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";

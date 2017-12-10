@@ -62,6 +62,8 @@ namespace WordJourney
 		// 测试时选择错误的字母损失数
 //		private int singleLoseCharactersCount;
 
+
+		private WWW pronunciationWWW;
 		// 下载发音的超时时长
 		public float wwwTimeOutInterval;
 
@@ -252,9 +254,9 @@ namespace WordJourney
 
 				string url = string.Format ("https://wordsound.b0.upaiyun.com/voice/{0}/{1}.wav", firstLetter, word.spell);
 
-				WWW www = new WWW (url);
+				pronunciationWWW = new WWW (url);
 
-				StartCoroutine ("PlayPronunciationWhenFinishDownloading", www);
+				StartCoroutine ("PlayPronunciationWhenFinishDownloading", pronunciationWWW);
 			} else {
 				
 //				AudioSource pronunciationAS = GameManager.Instance.soundManager.pronunciationAS;
@@ -307,6 +309,10 @@ namespace WordJourney
 		/// </summary>
 		public void OnHaveGraspedButtonClick(){
 
+			if (!pronunciationWWW.isDone) {
+				pronunciationWWW.Dispose ();
+			}
+
 			// 使用当前学习中的单词（在这时已掌握）生成对应的单词测试
 			Examination exam = new Examination (currentLearningWord, wordsToLearnArray);
 
@@ -357,6 +363,10 @@ namespace WordJourney
 		/// 用户点击了未掌握按钮
 		/// </summary>
 		public void OnHaveNotGraspedButtonClick(){
+			if (ungraspedWordsList.Count == 1) {
+				OnShowExplainationButtonClick ();
+				return;
+			}
 			// 开始单词学习过程
 			learnView.SetUpLearningProgress ();
 

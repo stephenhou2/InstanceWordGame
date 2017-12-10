@@ -24,13 +24,13 @@ namespace WordJourney
 		// 每个箱子能开出来的物品数量范围
 //		private Count rewardsRange;
 		// 每关的宝箱数量范围
-		private Count lockedTreasureBoxRange;
+//		private Count lockedTreasureBoxRange;
 		// 每关的陷阱数量范围
 		private Count trapRange;
 
 		void Awake(){
 //			rewardsRange = new Count (1, 3);
-			lockedTreasureBoxRange = new Count (0, 1);
+//			lockedTreasureBoxRange = new Count (0, 1);
 			trapRange = new Count (0, 1);
 		}
 
@@ -43,15 +43,23 @@ namespace WordJourney
 		/// <param name="itemPool">缓存池</param>
 		/// <param name="itemsContainer">地图物品在场景中的父容器</param>
 		/// <param name="mapItemCount">地图物品数量</param>
-		public List<MapItem> InitMapItems(List<Item> normalItems, List<Item> lockedItems, InstancePool itemPool, Transform itemsContainer){
+		public List<MapItem> InitMapItems(GameLevelData levelData, InstancePool itemPool, Transform itemsContainer){
+
+
+			List<Item> normalItems = levelData.normalItems;
+
+			List<Item> lockedItems = levelData.lockedItems;
+
+			int lockedTreasureBoxCount = levelData.lockedTreasureBoxCount;
+
+			int potCount = Random.Range(levelData.potCount.minimum, levelData.potCount.maximum + 1);
+
+			int obstacleCount = Random.Range(levelData.obstacleCount.minimum, levelData.potCount.maximum + 1);
 
 			// 本关的所有地图物品列表
 			List<MapItem> mapItems = new List<MapItem> ();
 
-
-			// 首先创建0-1个宝箱，用于装lockedItems
-			int lockedTreasureBoxCount = Random.Range (lockedTreasureBoxRange.minimum, lockedTreasureBoxRange.maximum + 1);
-
+			// 创建宝箱
 			for (int i = 0; i < lockedTreasureBoxCount; i++) {
 
 //				int rewardItemCount = Random.Range (rewardsRange.minimum, rewardsRange.maximum);
@@ -107,10 +115,8 @@ namespace WordJourney
 //				mapItems.Add (trapSwitch);
 
 			}
-
-			// 瓦罐数量为0-1个
-			int potCount = Random.Range (0, 2);
-
+				
+			// 创建瓦罐
 			for (int i = 0; i < potCount; i++) {
 
 				TreasureBox normalTreasureBox = itemPool.GetInstanceWithName<TreasureBox> (normalTreasureBoxModel.name, normalTreasureBoxModel.gameObject, itemsContainer);
@@ -128,10 +134,9 @@ namespace WordJourney
 				mapItems.Add (normalTreasureBox);
 
 			}
+				
 
-			// 障碍物数量为2-4个
-			int obstacleCount = Random.Range (2, 5);
-
+			// 创建障碍物
 			for (int i = 0; i < obstacleCount; i++) {
 
 				int modelIndex = Random.Range (0, obstacleModels.Length);
@@ -152,27 +157,6 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 随机一种地图物品类型
-		/// </summary>
-		/// <returns>The map item type.</returns>
-//		private MapItemType RandomMapItemType(){
-//
-//			int seed = Random.Range (0, 2);
-//
-//			MapItemType mip = MapItemType.None;
-//
-//			switch (seed) {
-//			case 0:
-//				mip = MapItemType.Obstacle;
-//				break;
-//			case 1:
-//				mip = MapItemType.TreasureBox;
-//				break;
-//			}
-//
-//			return mip;
-//		}
 
 
 		/// <summary>

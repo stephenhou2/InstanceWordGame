@@ -45,7 +45,7 @@ namespace WordJourney
 		[System.Serializable]
 		public struct OriginalTileSet{
 			public int firstgid;
-			public string name;
+			public string source;
 		}
 
 		[System.Serializable]
@@ -86,9 +86,9 @@ namespace WordJourney
 
 					OriginalTileSet ts = oriMapData.tilesets [j];
 
-					if (ts.name == "Floor") {
+					if (ts.source.Contains("Floor")) {
 						oriMapData.floorTileFirstGid = ts.firstgid;
-					} else if (ts.name == "AttachedInfo") {
+					} else if (ts.source.Contains("AttachedInfo")) {
 						oriMapData.attachedInfoFirstGid = ts.firstgid;
 					} else {
 						Debug.LogError(string.Format("未查询到地图／附加信息的原始贴图数据"));

@@ -15,7 +15,7 @@ namespace WordJourney
 		private MapGenerator mapGenerator;						
 
 		// 当前地图id
-		private int currentMapIndex = 0;	
+		private int currentLevelIndex;	
 	
 		// 当前关卡所有怪物
 //		private List<BattleMonsterController> battleMonsters = new List<BattleMonsterController>();	
@@ -65,6 +65,10 @@ namespace WordJourney
 		//Initializes the game for each level.
 		public void SetupExploreView(GameLevelData levelData)
 		{
+			levelData.LoadAllData ();
+
+			currentLevelIndex = levelData.gameLevelIndex;
+
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
 			//Call the SetupScene function of the BoardManager script, pass it current level number.
@@ -349,7 +353,7 @@ namespace WordJourney
 
 			Debug.Log ("碰到了npc");
 
-			expUICtr.EnterNPC (mapNpcTrans.GetComponent<MapNPC> ().npc, currentMapIndex);
+			expUICtr.EnterNPC (mapNpcTrans.GetComponent<MapNPC> ().npc, currentLevelIndex);
 
 		}
 

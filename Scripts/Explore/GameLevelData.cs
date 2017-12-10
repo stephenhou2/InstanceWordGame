@@ -23,7 +23,7 @@ namespace WordJourney
 		// 关卡中出现的所有可以开出的物品id
 		public int[] itemIds;
 
-		// 关卡中所有可能出现的装备配方id
+		// 关卡中所有可能出现的装备配方对应的装备／技能id
 		public int[] formulaIds;
 
 		// 每个itemId对应的物品是否只能由宝箱开出来
@@ -32,14 +32,23 @@ namespace WordJourney
 		// 关卡中所有npc的id
 		public int[] npcIds;
 
+		// 关卡中所有宝箱的数量
+		public int lockedTreasureBoxCount;
+
+		// 关卡中所有瓦罐的数量范围
+		public Count potCount;
+
+		// 关卡中所有障碍物的数量范围
+		public Count obstacleCount;
+
+		// 关卡中出现的怪物对应的数量
+		public int[] monstersCount;
+
 		// 关卡中怪物相对与prefab的提升比例
 		public float monsterScaler;
 
-		// 关卡中一共出现的地图物品（瓦罐，箱子，宝箱）数量范围
-		public Count itemCount;
-
-		// 关卡中一共出现的怪物数量范围
-		public Count monsterCount;
+		// 关卡中boss的id（-1代表本关不出现boss）
+		public int bossId;
 
 		// 关卡中出现的所有可以直接开出的物品id对应的物品
 		public List<Item> normalItems = new List<Item>();

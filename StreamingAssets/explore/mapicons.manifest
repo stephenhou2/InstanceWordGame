@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2242309843
+CRC: 2116866807
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8444127902903b5926221943cea3a70d
+    Hash: e5778384aee3620e5130162469f37135
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -21,5 +21,4 @@ Assets:
 - Assets/Textures/MapIcons/npc_older.png
 - Assets/Textures/MapIcons/npc_gMonster.png
 - Assets/Textures/MapIcons/tileRock_v1.png
-- Assets/Textures/MapIcons/Floor_0.png
 Dependencies: []

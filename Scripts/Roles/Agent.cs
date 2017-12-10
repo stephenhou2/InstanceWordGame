@@ -95,34 +95,34 @@ namespace WordJourney
 		//*****基础属性加成比例，只由技能影响*******//
 
 
-		public float maxHealthGainScaler;
-		public float maxManaGainScaler;
-		public float attackGainScaler;
-		public float attackSpeedGainScaler;
-		public float armorGainScaler;
-		public float manaResistGainScaler;
-		public float dodgeGainScaler;
-		public float critGainScaler;
+		[HideInInspector]public float maxHealthGainScaler;
+		[HideInInspector]public float maxManaGainScaler;
+		[HideInInspector]public float attackGainScaler;
+		[HideInInspector]public float attackSpeedGainScaler;
+		[HideInInspector]public float armorGainScaler;
+		[HideInInspector]public float manaResistGainScaler;
+		[HideInInspector]public float dodgeGainScaler;
+		[HideInInspector]public float critGainScaler;
 
 		public float dodgeFixScaler;//闪避修正系数
 		public float critFixScaler;//暴击修正系数
 
 
-		public float physicalHurtScaler;//物理伤害系数
+		[HideInInspector]public float physicalHurtScaler;//物理伤害系数
 
-		public float magicalHurtScaler;//魔法伤害系数
+		[HideInInspector]public float magicalHurtScaler;//魔法伤害系数
 
-		public float critHurtScaler;//暴击伤害系数
+		[HideInInspector]public float critHurtScaler;//暴击伤害系数
 
-		public float healthAbsorbScalser;//回血比例
+		[HideInInspector]public float healthAbsorbScalser;//回血比例
 
-		public float hardBeatProbability;//打出重击的基础概率
+		[HideInInspector]public float hardBeatProbability;//打出重击的基础概率
 
-		public float reflectScaler;//荆棘护甲反弹伤害比例
+		[HideInInspector]public float reflectScaler;//荆棘护甲反弹伤害比例
 
-		public float decreaseHurtScaler;//魔法盾减伤比例
+		[HideInInspector]public float decreaseHurtScaler;//魔法盾减伤比例
 
-		public float attachMagicHurtScaler;//附加魔法伤害比例
+		[HideInInspector]public float attachMagicHurtScaler;//附加魔法伤害比例
 
 
 		public List<Equipment> allEquipedEquipments = new List<Equipment>();

@@ -159,7 +159,7 @@ namespace WordJourney
 			SetUpNPCs ();
 
 			// 初始化地图怪物
-			SetUpMonsters ();
+//			SetUpMonsters ();
 
 			// 初始化地图上的事件建筑
 			SetUpBuildings();
@@ -285,7 +285,7 @@ namespace WordJourney
 
 //			int mapItemCount = 50;
 
-			List<MapItem> randomMapItems = mapItemGenerator.InitMapItems (levelData.normalItems,levelData.lockedItems, itemPool, itemsContainer);
+			List<MapItem> randomMapItems = mapItemGenerator.InitMapItems (levelData, itemPool, itemsContainer);
 
 			for (int i = 0; i < randomMapItems.Count; i++) {
 
@@ -358,31 +358,40 @@ namespace WordJourney
 
 		private void SetUpMonsters(){
 
-			int monsterCount = Random.Range (levelData.monsterCount.minimum, levelData.monsterCount.maximum + 1);
+//			int monsterCount = Random.Range (levelData.monsterCount.minimum, levelData.monsterCount.maximum + 1);
 
-			for (int i = 0; i < monsterCount; i++) {
-				
-				int randomMonsterId = Random.Range (0, levelData.monsters.Count);
+			for (int i = 0; i < levelData.monsterIds.Length; i++) {
 
-				Transform monsterModel = levelData.monsters [randomMonsterId];
+				// 获取怪物id
+				int monsterId = levelData.monsterIds[i];
 
-				Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
+				// 获取怪物数量
+				int monsterCount = levelData.monstersCount [i];
 
-				Vector3 pos = RandomPosition (totalValablePosGridList);
+				// 拿到怪物模型
+				Transform monsterModel = levelData.monsters [monsterId];
 
-				monster.GetComponent<UnityArmatureComponent> ().sortingOrder = -(int)pos.y;
+				for (int j = 0; j < monsterCount; j++) {
 
-				mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
+					Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
-				monster.position = pos;
+					Vector3 pos = RandomPosition (totalValablePosGridList);
 
-				monster.gameObject.SetActive (true);
+					monster.GetComponent<UnityArmatureComponent> ().sortingOrder = -(int)pos.y;
 
-				BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
+					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = 0;
 
-				bmCtr.PlayRoleAnim ("wait",0,null);
+					monster.position = pos;
 
-				monsters.Add (monster.GetComponent<Monster>());
+					monster.gameObject.SetActive (true);
+
+					BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
+
+					bmCtr.PlayRoleAnim ("wait", 0, null);
+
+					monsters.Add (monster.GetComponent<Monster> ());
+
+				}
 
 
 			}
@@ -653,7 +662,9 @@ namespace WordJourney
 		//RandomPosition returns a random position from our list gridPositions.
 		private Vector3 RandomPosition (List<Vector3> gridPositions)
 		{
-
+			if (gridPositions.Count <= 0) {
+				Debug.LogError("位置数组元素数量小于地图元素设计数量");
+			}
 			//Declare an integer randomIndex, set it's value to a random number between 0 and the count of items in our List gridPositions.
 			int randomIndex = Random.Range (0, gridPositions.Count);
 

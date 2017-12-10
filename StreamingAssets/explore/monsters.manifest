@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3275165588
+CRC: 2830605798
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 61abb3fc4d34591228d90cb9d399e73f
+    Hash: 7997e832ced59588b3d90e964594d586
   TypeTreeHash:
     serializedVersion: 2
-    Hash: ce58a2c6b34796c0952dee93ae0f5b37
+    Hash: 9e328f5995ebc5fa23a6051d910aaf2d
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -32,24 +32,20 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 1a64e5b0e436d4bed9780211ae245f7b, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 17825c31ef463455abb2547e9380b14f, type: 3}
+  Script: {fileID: 11500000, guid: d92da682ba53f4e5bb0e96f945b42b58, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 6f46fce80bb83409ea50f974a4700dfd, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: c037fff9d1189408293e95977384aa67, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: b7609e5a17e6e4337818965107391bec, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f825bb5ce93d6ab429dfa508444119b0, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: cdb2adfce6e55433d9ebd843d448bb0a, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 0f7abe8e3b1e0497daea0d713eb81d4b, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Explore/Monsters/Monster.prefab
-- Assets/Prefabs/Explore/Monsters/Spider.prefab
+- "Assets/Prefabs/Explore/Monsters/\u5357\u74DC\u7CBE\u7075.prefab"
+- "Assets/Prefabs/Explore/Monsters/\u94C1\u5934\u6D77\u9F9F.prefab"
 - Assets/Resources/RoleBones/monster1/monster_tex.png
-- Assets/Prefabs/Explore/Monsters/Monster2.prefab
+- "Assets/Prefabs/Explore/Monsters/\u9752\u86C7.prefab"
 Dependencies: []
