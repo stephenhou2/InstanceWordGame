@@ -1,1 +1,214 @@
-{"Items":[{"npcId":0,"npcName":"老头","spriteName":"npc_older","attachedFunction":2,"dialogGroups":[{"accordGameLevel":1,"dialogs":[{"dialog":"这里是沃德大陆","dialogId":0,"choices":[],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":false},{"dialog":"我是一个老头,送你一把剑","dialogId":1,"choices":[],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[0],"rewardCounts":[1],"isEndingDialog":false},{"dialog":"如果你能帮我杀10只南瓜精灵,我可以给你一个xxx","dialogId":2,"choices":[{"choice":"好的","dialogId":-1,"isEnd":true,"triggerType":2},{"choice":"我在想想","dialogId":-1,"isEnd":true,"triggerType":2}],"task":{"taskDescription":"击杀南瓜精灵10只","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":10,"dialogIdWhenTaskAccomplished":3},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":true},{"dialog":"年轻人,这是给你的奖励","dialogId":3,"choices":[],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[0],"rewardCounts":[1],"isEndingDialog":true}]}]},{"npcId":1,"npcName":"兽人","spriteName":"npc_monster","attachedFunction":0,"dialogGroups":[{"accordGameLevel":1,"dialogs":[{"dialog":"我们长得丑,但是我们并不可怕","dialogId":0,"choices":[],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":false},{"dialog":"你找我有什么事情吗？","dialogId":1,"choices":[{"choice":"你能给我讲一讲沃德大陆的故事吗？","dialogId":2,"isEnd":false,"triggerType":0},{"choice":"没事","dialogId":3,"isEnd":false,"triggerType":0}],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":false},{"dialog":"懒得讲","dialogId":2,"choices":[{"choice":"…","dialogId":-1,"isEnd":true,"triggerType":0}],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":true},{"dialog":"...真是无聊的年轻人","dialogId":3,"choices":[],"task":{"taskDescription":"","taskType":0,"accordMonsterOrItemId":0,"accordMonsterOrItemCount":0,"dialogIdWhenTaskAccomplished":0},"accordGameLevel":1,"rewardIds":[],"rewardCounts":[],"isEndingDialog":true}]}]}]}
+{
+  "Items": [
+    {
+      "npcId": 0,
+      "npcName": "老头",
+      "spriteName": "npc_older",
+      "attachedFunction": 2,
+      "dialogGroups": [
+        {
+          "accordGameLevel": 1,
+          "dialogs": [
+            {
+              "dialog": "这里是沃德大陆",
+              "dialogId": 0,
+              "choices": [],
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": false,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "我是一个老头,送你一把剑",
+              "dialogId": 1,
+              "choices": [],
+              "rewardIds": [
+                0
+              ],
+              "rewardCounts": [
+                1
+              ],
+              "isEndingDialog": false,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "如果你能帮我杀10只南瓜精灵,我可以给你一个xxx",
+              "dialogId": 2,
+              "choices": [
+                {
+                  "choice": "好的",
+                  "dialogId": -1,
+                  "isEnd": true,
+                  "triggerType": 2
+                },
+                {
+                  "choice": "我在想想",
+                  "dialogId": -1,
+                  "isEnd": true,
+                  "triggerType": 2
+                }
+              ],
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": true,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "年轻人,这是给你的奖励",
+              "dialogId": 3,
+              "choices": [],
+              "rewardIds": [
+                0
+              ],
+              "rewardCounts": [
+                1
+              ],
+              "isEndingDialog": true,
+              "finishRewarding": false
+            }
+          ]
+        }
+      ],
+      "task": [
+        {
+          "dialogGroup": [
+            {
+              "dialog": "最近附近的南瓜精灵经常在农田里面捣乱，如果不好好教训一下这些捣蛋鬼，那今年的收成一定会很差",
+              "dialogId": 2,
+              "choices": [],
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": false,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "如果你能帮我杀10只南瓜精灵,我可以给你一个xxx",
+              "dialogId": 2,
+              "choices": [
+                {
+                  "choice": "好的",
+                  "dialogId": -1,
+                  "isEnd": true,
+                  "triggerType": 2
+                },
+                {
+                  "choice": "我在想想",
+                  "dialogId": -1,
+                  "isEnd": true,
+                  "triggerType": 2
+                }
+              ],
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": true,
+              "finishRewarding": false
+            }
+          ],
+          "taskDescription": "击杀南瓜精灵10只",
+          "taskType": 0,
+          "accordMonsterOrItemId": 0,
+          "accordMonsterOrItemCount": 10,
+          "dialogIdWhenTaskAccomplished": 3
+        }
+      ]
+    },
+    {
+      "npcId": 1,
+      "npcName": "兽人",
+      "spriteName": "npc_monster",
+      "attachedFunction": 0,
+      "dialogGroups": [
+        {
+          "accordGameLevel": 1,
+          "dialogs": [
+            {
+              "dialog": "我们长得丑,但是我们并不可怕",
+              "dialogId": 0,
+              "choices": [],
+              "task": {
+                "taskDescription": "",
+                "taskType": 0,
+                "accordMonsterOrItemId": 0,
+                "accordMonsterOrItemCount": 0,
+                "dialogIdWhenTaskAccomplished": 0
+              },
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": false,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "你找我有什么事情吗？",
+              "dialogId": 1,
+              "choices": [
+                {
+                  "choice": "你能给我讲一讲沃德大陆的故事吗？",
+                  "dialogId": 2,
+                  "isEnd": false,
+                  "triggerType": 0
+                },
+                {
+                  "choice": "没事",
+                  "dialogId": 3,
+                  "isEnd": false,
+                  "triggerType": 0
+                }
+              ],
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": false,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "懒得讲",
+              "dialogId": 2,
+              "choices": [
+                {
+                  "choice": "…",
+                  "dialogId": -1,
+                  "isEnd": true,
+                  "triggerType": 0
+                }
+              ],
+              "task": {
+                "taskDescription": "",
+                "taskType": 0,
+                "accordMonsterOrItemId": 0,
+                "accordMonsterOrItemCount": 0,
+                "dialogIdWhenTaskAccomplished": 0
+              },
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": true,
+              "finishRewarding": false
+            },
+            {
+              "dialog": "...真是无聊的年轻人",
+              "dialogId": 3,
+              "choices": [],
+              "task": {
+                "taskDescription": "",
+                "taskType": 0,
+                "accordMonsterOrItemId": 0,
+                "accordMonsterOrItemCount": 0,
+                "dialogIdWhenTaskAccomplished": 0
+              },
+              "rewardIds": [],
+              "rewardCounts": [],
+              "isEndingDialog": true,
+              "finishRewarding": false
+            }
+          ]
+        }
+      ],
+      "task": {
+        "dialogGroup": [],
+        "taskDescription": "",
+        "taskType": 0,
+        "accordMonsterOrItemId": 0,
+        "accordMonsterOrItemCount": 0,
+        "dialogIdWhenTaskAccomplished": 0
+      }
+    }
+  ]
+}

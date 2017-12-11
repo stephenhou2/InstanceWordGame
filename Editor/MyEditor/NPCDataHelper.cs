@@ -72,7 +72,7 @@ namespace WordJourney
 
 				npc.npcName = npcDatas [1];
 				npc.spriteName = npcDatas [2];
-				npc.attachedFunction = (NPCAttachedFunctionType)(Convert.ToInt16 (npcDatas[3]));
+//				npc.attachedFunction = (NPCAttachedFunctionType)(Convert.ToInt16 (npcDatas[3]));
 
 
 				string dialogString = npcDatas [4].Replace('_',',');
@@ -141,12 +141,12 @@ namespace WordJourney
 					int accordId = Convert.ToInt16 (npcDatas [17]);
 					int accordCount = Convert.ToInt16 (npcDatas [18]);
 					int dialogIdWhenTaskAccomplished = Convert.ToInt16 (npcDatas [19]);
-					task = new Task (taskDescription, taskType, accordId, accordCount, dialogIdWhenTaskAccomplished);
+//					task = new Task (taskDescription, taskType, accordId, accordCount, dialogIdWhenTaskAccomplished);
 
 				}
 
 
-				dialog = new Dialog (dialogString, dialogId, choices.ToArray (), isEndingDialog, task, accordGameLevel, rewardItemIds, rewardItemCount);
+//				dialog = new Dialog (dialogString, dialogId, choices.ToArray (), isEndingDialog, task, accordGameLevel, rewardItemIds, rewardItemCount);
 
 				dialogs.Add (dialog);
 
@@ -154,21 +154,21 @@ namespace WordJourney
 
 			DialogGroup[] dialogGroups = new DialogGroup[existGameLevels.Count];
 
-			for (int i = 0; i < existGameLevels.Count; i++) {
+//			for (int i = 0; i < existGameLevels.Count; i++) {
+//
+//				int accordLevel = existGameLevels [i];
+//
+//				Dialog[] dialogsInGroup = dialogs.FindAll (delegate(Dialog obj) {
+//					return obj.accordGameLevel == accordLevel;
+//				}).ToArray ();
+//
+//				DialogGroup dg = new DialogGroup (accordLevel, dialogsInGroup);
+//
+//				dialogGroups [i] = dg;
+//
+//			}
 
-				int accordLevel = existGameLevels [i];
-
-				Dialog[] dialogsInGroup = dialogs.FindAll (delegate(Dialog obj) {
-					return obj.accordGameLevel == accordLevel;
-				}).ToArray ();
-
-				DialogGroup dg = new DialogGroup (accordLevel, dialogsInGroup);
-
-				dialogGroups [i] = dg;
-
-			}
-
-			npc.dialogGroups = dialogGroups;
+//			npc.dialogGroups = dialogGroups;
 
 			return npc;
 		}

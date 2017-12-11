@@ -136,7 +136,7 @@ namespace WordJourney
 
 			DialogGroup dg = null;
 
-			for (int i = 0; i < npc.dialogGroups.Length; i++) {
+			for (int i = 0; i < npc.dialogGroups.Count; i++) {
 				if (npc.dialogGroups [i].accordGameLevel == currentLevelIndex) {
 					dg = npc.dialogGroups [i];
 				}
@@ -172,11 +172,11 @@ namespace WordJourney
 
 			dialogText.text = dialog.dialog;
 
-			if (dialog.choices.Length == 0) {
+			if (dialog.choices.Count == 0) {
 				nextDialogButton.gameObject.SetActive (true);
 			} else {
-				Choice[] choices = dialog.choices;
-				for (int i = 0; i < choices.Length; i++) {
+				List<Choice> choices = dialog.choices;
+				for (int i = 0; i < choices.Count; i++) {
 					
 					Choice choice = choices [i];
 
@@ -196,6 +196,7 @@ namespace WordJourney
 				for (int i = 0; i < dialog.rewardIds.Length; i++) {
 					Item rewardItem = Item.NewItemWith (dialog.rewardIds [i], dialog.rewardCounts [i]);
 					Player.mainPlayer.AddItem (rewardItem);
+					dialog.finishRewarding = true;
 					#warning 提示获得物品的界面逻辑没有做
 				}
 			}
