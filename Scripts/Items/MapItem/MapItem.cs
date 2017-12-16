@@ -6,22 +6,29 @@ namespace WordJourney
 {
 	// 地图物品类型枚举
 	public enum MapItemType{
-		None,
-		Obstacle,
-		TreasureBox,
-		Trap,
-		TrapSwitch
+		LockedTreasureBox,
+		NormalTreasureBox,
+		Tree,
+		Stone,
+		TrapOn,
+		TrapOff,
+		Switch,
+		Door,
+		MovableFloor,
+		Transport,
+
 	}
 
 	public abstract class MapItem : MonoBehaviour {
 
-		// 地图物品名称
-		public string mapItemName;
+		public string audioClipName;
 
-		// 地图物品开启或破坏之后是否可以行走
-		public bool walkableAfterUnlockOrDestroy;
+		// 地图物品状态变化之后是否可以行走
+		public bool walkableAfterChangeStatus;
 
 		protected Animator mapItemAnimator;
+
+		protected SpriteRenderer mapItemRenderer;
 
 		protected CallBack animEndCallBack;
 
@@ -33,12 +40,19 @@ namespace WordJourney
 
 			mapItemAnimator = GetComponent<Animator> ();
 
+			mapItemRenderer = GetComponent<SpriteRenderer> ();
+
 			bc2d = GetComponent<BoxCollider2D> ();
+
+
 
 		}
 
 		public abstract void InitMapItem ();
 
+		public void SetSortingOrder(int order){
+			mapItemRenderer.sortingOrder = order;
+		}
 
 		/// <summary>
 		/// 地图物品被破坏或开启
@@ -71,7 +85,7 @@ namespace WordJourney
 			}
 
 			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
-			if (walkableAfterUnlockOrDestroy) {
+			if (walkableAfterChangeStatus) {
 				GetComponent<BoxCollider2D> ().enabled = false;
 			}
 

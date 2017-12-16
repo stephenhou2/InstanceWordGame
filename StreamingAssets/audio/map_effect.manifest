@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 794548950
+CRC: 4214213170
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a36523d3dcc13ee741befacbe97bc9cb
+    Hash: 8049716d851ab5f3d77d375fb48df71f
   TypeTreeHash:
     serializedVersion: 2
     Hash: c516f2a3b2b6b67ef759f6410a790acd
@@ -12,12 +12,12 @@ ClassTypes:
 - Class: 83
   Script: {instanceID: 0}
 Assets:
-- Assets/Audio/MapItems/pot.wav
-- Assets/Audio/MapItems/key.wav
-- Assets/Audio/MapItems/treasurebox.wav
-- Assets/Audio/MapItems/tree.wav
-- Assets/Audio/MapItems/trap.wav
-- Assets/Audio/MapItems/stone.wav
-- Assets/Audio/MapItems/buck.wav
-- Assets/Audio/MapItems/switch.wav
+- Assets/Audio/MapItems/Audio_Pot.wav
+- Assets/Audio/MapItems/Audio_Key.wav
+- Assets/Audio/MapItems/Audio_LockedTreasureBox.wav
+- Assets/Audio/MapItems/Audio_Tree.wav
+- Assets/Audio/MapItems/Audio_Trap.wav
+- Assets/Audio/MapItems/Audio_Stone.wav
+- Assets/Audio/MapItems/Audio_Buck.wav
+- Assets/Audio/MapItems/Audio_Switch.wav
 Dependencies: []

@@ -29,43 +29,43 @@ namespace WordJourney
 		void Awake(){
 
 			#warning forTest init some equipments for test
-			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
-				for (int i = 0; i < 128; i++) {
+//			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
+//				for (int i = 0; i < 128; i++) {
+//
+//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+//						return obj.itemId == i;
+//					});
+//
+//					Equipment e = new Equipment (im,5);
+//
+//					Player.mainPlayer.allEquipmentsInBag.Add (e);
+//
+//				}
+//			}
 
-					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
-						return obj.itemId == i;
-					});
-
-					Equipment e = new Equipment (im,5);
-
-					Player.mainPlayer.allEquipmentsInBag.Add (e);
-
-				}
-			}
-
-			for (int i = 0; i < 114; i++) {
-
-				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-					return obj.itemId == 1000 + i;
-				});
-
-				Material material = new Material (m, 2);
-
-				Player.mainPlayer.allMaterialsInBag.Add (material);
-
-			}
+//			for (int i = 0; i < 114; i++) {
+//
+//				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+//					return obj.itemId == 1000 + i;
+//				});
+//
+//				Material material = new Material (m, 2);
+//
+//				Player.mainPlayer.allMaterialsInBag.Add (material);
+//
+//			}
 
 
-			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == 513;
-			});
-
-			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == 512;
-			});
-
-			Player.mainPlayer.AddItem (new Consumables (key, 5));
-			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
+//			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//				return obj.itemId == 513;
+//			});
+//
+//			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//				return obj.itemId == 512;
+//			});
+//
+//			Player.mainPlayer.AddItem (new Consumables (key, 5));
+//			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
 
 			resolveCount = 1;
 

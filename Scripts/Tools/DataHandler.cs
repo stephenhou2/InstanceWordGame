@@ -26,6 +26,8 @@ namespace WordJourney
 
 		public static T LoadDataToSingleModelWithPath<T>(string fileName){
 
+
+
 			string jsonStr = LoadDataString (fileName);
 
 			T instance = default (T);

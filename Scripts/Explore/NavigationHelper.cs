@@ -50,8 +50,8 @@ namespace WordJourney
 			// 拿到全地图信息（包括是否可行走和每个点上的行走消耗）
 			this.mapWalkableInfoArray = mapWalkableInfoArray;
 
-			this.mapHeight = mapWalkableInfoArray.GetLength (0);
-			this.mapWidth = mapWalkableInfoArray.GetLength(1);
+			this.mapHeight = mapWalkableInfoArray.GetLength (1);
+			this.mapWidth = mapWalkableInfoArray.GetLength(0);
 
 			// 起点和终点重合，则将该点加入到路径点集中并直接返回
 			if (startPoint.Equals (endPoint)) {

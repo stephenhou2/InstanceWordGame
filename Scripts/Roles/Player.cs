@@ -42,27 +42,11 @@ namespace WordJourney
 		}
 			
 
-		[SerializeField]private int[] mCharactersCount;
-		public int[] charactersCount{
 
-			get{
-				if (mCharactersCount == null || mCharactersCount.Length == 0) {
-					mCharactersCount = new int[26];
-					#warning 这里测试用，暂时初始化每个字母初始有10个，后面去掉
-//					for(int i = 0;i<mCharactersCount.Length;i++){
-//						mCharactersCount[i] = 10;
-//					}
-				}
-				return mCharactersCount;
-			}
-
-			set{
-				mCharactersCount = value;
-			}
-
-		}
 			
 		public int experience;//玩家经验值
+
+		public int totalCoins;//玩家金币数量
 
 		// 每次升级所需要的经验值
 		public int upgradeExprience{
@@ -335,6 +319,11 @@ namespace WordJourney
 				allFormulasInBag.Add (formula);
 
 				break;
+			case ItemType.CharacterFragment:
+				CharacterFragment characterFragment = item as CharacterFragment;
+				int characterIndex = (int)(characterFragment.character) - CommonData.aInASCII;
+				charactersCount [characterIndex]++;
+				break;
 			}
 				
 		}
@@ -366,6 +355,13 @@ namespace WordJourney
 				break;
 			case ItemType.Material:
 				RemoveMaterial (item as Material);
+				break;
+			case ItemType.CharacterFragment:
+				CharacterFragment characterFragment = item as CharacterFragment;
+				int characterIndex = (int)(characterFragment.character) - CommonData.aInASCII;
+				if (charactersCount [characterIndex] > 0) {
+					charactersCount [characterIndex]--;
+				}
 				break;
 			}
 		}

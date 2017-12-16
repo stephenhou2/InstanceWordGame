@@ -16,6 +16,8 @@ namespace WordJourney
 		//魔法值
 		public Text manaText;
 
+		public Text coinCount;
+
 		public Transform skillsContainer;
 		private Transform skillButtonModel;
 	
@@ -88,6 +90,7 @@ namespace WordJourney
 
 			healthBar.maxValue = player.maxHealth;
 			manaBar.maxValue = player.maxMana;
+			coinCount.text = player.totalCoins.ToString ();
 
 			healthText.text = string.Format ("{0}/{1}", player.health, player.maxHealth);
 			manaText.text = string.Format ("{0}/{1}", player.mana, player.maxMana);
@@ -103,7 +106,9 @@ namespace WordJourney
 		public void UpdatePlayerStatusPlane(){
 			UpdateHealthBarAnim(player);
 			UpdateManaBarAnim (player);
+			coinCount.text = player.totalCoins.ToString ();
 		}
+			
 
 		/// <summary>
 		/// 初始化人物技能栏
@@ -389,7 +394,6 @@ namespace WordJourney
 			manaBar.maxValue = ba.maxMana;
 			manaText.text = ba.mana + "/" + ba.maxMana;
 
-
 			if (firstSetManaBar) {
 				manaBar.value = ba.mana;
 			} else {
@@ -397,91 +401,36 @@ namespace WordJourney
 			}
 
 		}
+			
 
 		/// <summary>
 		/// 初始化工具选择栏
 		/// </summary>
 		/// <param name="mapItem">Map item.</param>
-		public void SetUpToolChoicePlane(MapItem mapItem){
+		public void SetUpToolChoicePlane(MapItem mapItem, Consumables tool){
 
-			Consumables consumablesAsTool = null;
-			Equipment equipedWeapon = null;
 
-			switch (mapItem.mapItemType) {
-			case MapItemType.Obstacle:
+			Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
 
-				// 查找背包中的十字镐
-				consumablesAsTool = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-					return obj.itemId == 512;	
-				});
+			Image toolIcon = toolChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
 
-				break;
-			case MapItemType.TreasureBox:
+			Text toolCount = toolChoiceButton.Find ("ToolCount").GetComponent<Text> ();
 
-				// 查找背包中的钥匙
-				consumablesAsTool = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-					return obj.itemId == 513;	
-				});
-				break;
-			}
-
-			// 获得玩家已装备的武器
-			equipedWeapon = player.allEquipedEquipments.Find (delegate(Equipment obj) {
-				return obj.equipmentType == EquipmentType.Weapon;
+			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == tool.spriteName;
 			});
 
-			// 如果玩家既没有装备武器，背包中又没有对应的工具，则显示提示栏
-			if (consumablesAsTool == null && equipedWeapon == null) {
-				string tint = "这里好像过不去";
-				GetComponent<ExploreUICotroller>().SetUpTintHUD (tint);
-				return;
+			if (s != null) {
+				toolIcon.sprite = s;
 			}
 
-			// 如果背包中又对应的工具，则将该工具的按钮加入到工具选择栏中
-			if (consumablesAsTool != null) {
+			toolCount.text = tool.itemCount.ToString ();
 
-				Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
+			toolChoiceButton.GetComponent<Button> ().onClick.RemoveAllListeners ();
 
-				Image toolIcon = toolChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
-
-				Text toolCount = toolChoiceButton.Find ("ToolCount").GetComponent<Text> ();
-
-				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == consumablesAsTool.spriteName;
-				});
-
-				if (s != null) {
-					toolIcon.sprite = s;
-				}
-
-				toolCount.text = consumablesAsTool.itemCount.ToString ();
-
-				toolChoiceButton.GetComponent<Button> ().onClick.RemoveAllListeners ();
-
-				toolChoiceButton.GetComponent<Button> ().onClick.AddListener (delegate() {
-					OnToolChoiceButtonClick(consumablesAsTool,mapItem);
-				});
-
-			}
-
-			// 如果玩家装备的又武器，则将武器按钮加入到工具选择栏中
-			if (equipedWeapon != null) {
-
-				Transform weaponChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
-				Image weaponIcon = weaponChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
-
-				Sprite weaponChoiceButtonSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == "";
-				});
-
-				weaponIcon.sprite = weaponChoiceButtonSprite;
-
-				weaponChoiceButton.GetComponent<Button> ().onClick.RemoveAllListeners ();
-
-				weaponChoiceButton.GetComponent<Button> ().onClick.AddListener (delegate() {
-					OnToolChoiceButtonClick (null, mapItem);
-				});
-			}
+			toolChoiceButton.GetComponent<Button> ().onClick.AddListener (delegate() {
+				OnToolChoiceButtonClick(tool,mapItem);
+			});
 
 			toolChoicesPlane.gameObject.SetActive (true);
 
@@ -494,130 +443,60 @@ namespace WordJourney
 		/// <param name="mapItem">Map item.</param>
 		private void OnToolChoiceButtonClick(Consumables tool,MapItem mapItem){
 
-			ExploreUICotroller expUICtr = GetComponent<ExploreUICotroller> ();
-			string tint = string.Empty;
-			Item rewardItem = null;
 
 			QuitToolChoicePlane ();
-
-			// 使用武器破坏
-			if (tool == null) {
-
-				Equipment equipment = player.allEquipedEquipments.Find (delegate(Equipment obj) {
-					return obj.equipmentType == EquipmentType.Weapon;
-				});
-
-				// 播放对应的音效
-				GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.mapItemName);
-//				GameManager.Instance.soundManager.PlayClips (
-//					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-//					SoundDetailTypeName.Map, 
-//					mapItem.mapItemName);
-
-				// 播放地图物品对应的动画
-				mapItem.UnlockOrDestroyMapItem(()=>{
-
-					// 如果物品打开或破坏后地图上该位置可以行走，则更新地图可行走点列表
-					if (mapItem.walkableAfterUnlockOrDestroy) {
-						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
-					}
-
-//					GetComponent<ExploreUICotroller>().HideMask();
-
-					// 判断武器是否被完全损坏
-					bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.DestroyObstacle);
-
-					if (completeDamaged) {
-						tint = string.Format ("{0}完全损坏", equipment.itemName);
-						expUICtr.SetUpTintHUD (tint);
-					}
-
-
-					switch (mapItem.mapItemType) {
-					case MapItemType.Obstacle:
-						break;
-					case MapItemType.TreasureBox:
-
-						bool unlockSuccess = false;
-
-						// 使用武器开箱子20%的几率可以拿到箱子里的东西，80%的概率拿不到东西
-						int seed = Random.Range (0, 10);
-
-						if (seed <= 1) {
-							unlockSuccess = true;
-						}
-
-						if (unlockSuccess) {
-							rewardItem = (mapItem as TreasureBox).rewardItem;
-							if(rewardItem.itemType == ItemType.Formula){
-								GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
-							}else{
-								TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-//								GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
-							}
-						}
-						break;
-					}
-
-				});
-
-			} else {//如果使用工具开箱子或清理障碍物
 				
-				// 背包中的工具数量-1
-				player.RemoveItem (new Consumables (tool, 1));
+			// 背包中的工具数量-1
+			player.RemoveItem (new Consumables (tool, 1));
 
-				// 播放对应的音效
-				GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.mapItemName);
-//				GameManager.Instance.soundManager.PlayClips (
-//					GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-//					SoundDetailTypeName.Map, 
-//					mapItem.mapItemName);
+			// 播放对应的音效
+			GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.audioClipName);
 
-				// 播放地图物品对应的动画
-				mapItem.UnlockOrDestroyMapItem (()=>{
+			// 播放地图物品对应的动画
+			mapItem.UnlockOrDestroyMapItem (()=>{
 
-					if (mapItem.walkableAfterUnlockOrDestroy) {
-						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
-					}
+				if (mapItem.walkableAfterChangeStatus) {
+					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
+				}
 
-					switch (mapItem.mapItemType) {
-					// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
-					case MapItemType.Obstacle:
-						
-						List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
+//				switch (mapItem.mapItemType) {
+//				// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
+//				case MapItemType.Obstacle:
+//					
+//					List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
+//
+//					int rareMaterialIndex = Random.Range (0, allMaterials.Count);
+//
+//					Material rareMaterial = allMaterials [rareMaterialIndex];
+//
+//					// 奖励一种随机稀有材料
+//					rewardItem = new Material(rareMaterial,1);
+//
+//					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+//
+////						// 显示奖励栏
+////						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+//
+//					break;
+//					// 钥匙开宝箱一定成功
+//				case MapItemType.TreasureBox:
+//					
+//					rewardItem = (mapItem as TreasureBox).rewardItem;
+//
+//					if(rewardItem.itemType == ItemType.Formula){
+//						GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
+//					}else{
+//
+//						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
+//
+////							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
+//					}
+//
+//					break;
+//				}
 
-						int rareMaterialIndex = Random.Range (0, allMaterials.Count);
+			});
 
-						Material rareMaterial = allMaterials [rareMaterialIndex];
-
-						// 奖励一种随机稀有材料
-						rewardItem = new Material(rareMaterial,1);
-
-						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-
-//						// 显示奖励栏
-//						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
-
-						break;
-						// 钥匙开宝箱一定成功
-					case MapItemType.TreasureBox:
-						
-						rewardItem = (mapItem as TreasureBox).rewardItem;
-
-						if(rewardItem.itemType == ItemType.Formula){
-							GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
-						}else{
-
-							TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-
-//							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
-						}
-
-						break;
-					}
-
-				});
-			}
 		}
 
 

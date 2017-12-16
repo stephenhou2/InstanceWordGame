@@ -9,34 +9,18 @@ namespace WordJourney
 {
 	public class ExploreUICotroller : MonoBehaviour {
 
-
-//		// 图片遮罩
-//		public Image maskImage;
-
 		public Transform tintHUD;
 
-		public Transform mask;
+//		public Transform mask;
 
 		/**********  battlePlane UI *************/
 		public Transform battlePlane;
 
 		/**********  battlePlane UI *************/
 
-		/**********  dialogPlane UI *************/
-		public Transform dialogPlane;
-		public Transform choiceContainer;
-		public Image npcIcon;
-		public Text dialogText;
-		private Transform choiceButtonModel;
-		public Button nextDialogButton;
-		/**********  dialogPlane UI *************/
+//		public NPCUIController npcUIController;
 
-
-		/**********  RewardPlane UI *************/
-//		public Transform rewardPlane;
-//		public Transform rewardContainer;
-//		private Transform rewardButtonModel;
-		/**********  RewardPlane UI *************/
+		private InstancePool materialCardPool;
 
 
 		public Transform formulaDetailPlane;
@@ -44,14 +28,11 @@ namespace WordJourney
 		public Transform materialCardContainer;
 		private Transform materialCardModel;
 
+
 		private InstancePool choiceButtonPool;
-//		private InstancePool rewardButtonPool;
-		private InstancePool materialCardPool;
-
-//		private NPC currentEnteredNpc;
-		private DialogGroup currentDialogGroup;
-
-		private int currentDialogId;
+		private Transform choiceButtonModel;
+		private Transform goodsModel;
+		private InstancePool goodsPool;
 
 //		private Dialog[] dialogs;
 //		private Choice[] choices;
@@ -59,7 +40,8 @@ namespace WordJourney
 //		private List<Item> itemsToPickUp = new List<Item>();
 		private Item itemToPickUp;
 
-		private bool nextButtonEndDialog;
+
+
 
 		public void SetUpExploreCanvas(){
 
@@ -76,15 +58,17 @@ namespace WordJourney
 			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool",poolContainerOfExploreCanvas.name);
 //			rewardButtonPool = InstancePool.GetOrCreateInstancePool ("RewardButtonPool",poolContainerOfExploreCanvas.name);
 			materialCardPool = InstancePool.GetOrCreateInstancePool ("MaterialCardPool", poolContainerOfExploreCanvas.name);
+			goodsPool = InstancePool.GetOrCreateInstancePool ("GoodsPool", poolContainerOfExploreCanvas.name);
 
 			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
 //			rewardButtonModel = TransformManager.FindTransform ("RewardButtonModel");
 			materialCardModel = TransformManager.FindTransform ("MaterialCardModel");
-
+			goodsModel = TransformManager.FindTransform ("GoodsModel");
 
 			choiceButtonModel.SetParent (modelContainerOfExploreScene);
 //			rewardButtonModel.SetParent (modelContainerOfExploreScene);
 			materialCardModel.SetParent (modelContainerOfExploreScene);
+			goodsModel.SetParent (modelContainerOfExploreScene);
 
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
 
@@ -128,216 +112,11 @@ namespace WordJourney
 
 		public void EnterNPC(NPC npc,int currentLevelIndex){
 
-//			currentEnteredNpc = npc;
-
-			currentDialogId = 0;
-
-			dialogPlane.gameObject.SetActive (true);
-
-			DialogGroup dg = null;
-
-			for (int i = 0; i < npc.dialogGroups.Count; i++) {
-				if (npc.dialogGroups [i].accordGameLevel == currentLevelIndex) {
-					dg = npc.dialogGroups [i];
-				}
-					
-			}
-
-			if (dg == null) {
-				Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevelIndex, npc.npcName));
-			}
-
-			currentDialogGroup = dg;
-
-
-//			dialogs = dg.dialogs;
-//
-//			Dialog dialog = dialogs [0];
-
-			Sprite npcSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite s) {
-				return s.name == npc.spriteName;
-			});
-
-			if (npcSprite != null) {
-				npcIcon.sprite = npcSprite;
-				npcIcon.GetComponent<Image> ().enabled = true;
-			}
-
-
-			SetUpDialogPlane (currentDialogGroup.dialogs[0]);
-
-		}
-
-		private void SetUpDialogPlane(Dialog dialog){
-
-			dialogText.text = dialog.dialog;
-
-			if (dialog.choices.Count == 0) {
-				nextDialogButton.gameObject.SetActive (true);
-			} else {
-				List<Choice> choices = dialog.choices;
-				for (int i = 0; i < choices.Count; i++) {
-					
-					Choice choice = choices [i];
-
-					Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
-
-					choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
-
-					choiceButton.onClick.RemoveAllListeners ();
-
-					choiceButton.onClick.AddListener (delegate() {
-						MakeChoice(choice);
-					});
-				}
-			}
-
-			if (dialog.rewardIds.Length != 0) {
-				for (int i = 0; i < dialog.rewardIds.Length; i++) {
-					Item rewardItem = Item.NewItemWith (dialog.rewardIds [i], dialog.rewardCounts [i]);
-					Player.mainPlayer.AddItem (rewardItem);
-					dialog.finishRewarding = true;
-					#warning 提示获得物品的界面逻辑没有做
-				}
-			}
-
-
-		}
-
-		public void OnNextDialogButtonClick (){
-
-			if (currentDialogGroup.dialogs [currentDialogId].isEndingDialog) {
-				QuitDialogPlane ();
-				return;
-			}
-
-			currentDialogId++;
-
-			SetUpDialogPlane(currentDialogGroup.dialogs[currentDialogId]);
-		}
-
-
-
-		private void MakeChoice(Choice choice){
-
-			if (choice.isEnd) {
-				QuitDialogPlane ();
-				return;
-			}
-
-			int dialogId = choice.dialogId;
-
-			currentDialogId = dialogId;
-
-			Dialog dialog = currentDialogGroup.dialogs [dialogId];
-
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
-
-			SetUpDialogPlane (dialog);
+			GetComponent<NPCUIController>().SetupNpcPlane (npc, currentLevelIndex,choiceButtonPool,choiceButtonModel,goodsPool,goodsModel);
 
 		}
 
 
-		private void QuitDialogPlane(){
-
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
-
-			npcIcon.GetComponent<Image> ().enabled = false;
-
-			dialogText.text = string.Empty;
-
-			dialogPlane.gameObject.SetActive (false);
-
-		}
-
-//		public void ShowMask(){
-//			mask.gameObject.SetActive (true);
-//		}
-//
-//		public void HideMask(){
-//			mask.gameObject.SetActive (false);
-//		}
-
-
-
-//		public void SetUpRewardItemsPlane(Item rewardItem){
-//
-//			itemToPickUp = null;
-//
-//			if (rewardItem == null) {
-//				HideMask ();
-//				return;
-//			}
-////
-////			for (int i = 0; i < rewardItems.Length; i++) {
-////
-////				Item rewardItem = rewardItems [i];
-//				
-//				Button rewardButton = rewardButtonPool.GetInstance<Button> (rewardButtonModel.gameObject, rewardContainer);
-//
-//				Image rewardItemIcon = rewardButton.transform.Find ("ItemIcon").GetComponent<Image> ();
-//
-//				Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite s) {
-//					return s.name == rewardItem.spriteName;
-//				});
-//					
-//
-//				if (rewardSprite != null) {
-//					rewardItemIcon.sprite = rewardSprite;
-//				} 
-//
-//				rewardButton.GetComponentInChildren<Text> ().text = rewardItem.itemName;
-//				rewardButton.transform.Find ("SelectIcon").gameObject.SetActive (true);
-////				itemsToPickUp.Add (rewardItem);
-//				rewardButton.onClick.AddListener (delegate {
-//					ChangeRewardSelection(rewardButton,rewardItem);
-//				});
-//
-////			}
-//				
-//			HideMask ();
-//			rewardPlane.gameObject.SetActive (true);
-//
-//		}
-
-//		private void ChangeRewardSelection(Button rewardButton,Item rewardItem){
-//
-//			Image selectionIcon = rewardButton.transform.Find ("SelectIcon").GetComponent<Image>();
-//
-//			if (selectionIcon.IsActive()) {
-//				selectionIcon.gameObject.SetActive (false);
-//				itemsToPickUp.Remove (rewardItem);
-//			} else {
-//				selectionIcon.gameObject.SetActive (true);
-//				itemsToPickUp.Add (rewardItem);
-//			}
-//
-//		}
-
-//		public void DiscardAllItems(){
-//
-//			OnQuitRewardPlane ();
-//
-//		}
-
-//		public void PickUpSelected(){
-//
-//			for (int i = 0; i < itemsToPickUp.Count; i++) {
-//				Player.mainPlayer.AddItem (itemsToPickUp [i]);
-//			}
-//
-//			OnQuitRewardPlane ();
-//			GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
-//
-//		}
-
-//		private void OnQuitRewardPlane(){
-//
-//			rewardButtonPool.AddChildInstancesToPool (rewardContainer);
-//
-//			rewardPlane.gameObject.SetActive (false);
-//
-//		}
 
 
 		public void SetUpRewardFormulaPlane(Formula formula){
@@ -413,7 +192,7 @@ namespace WordJourney
 
 		public void SetUpLearnPlane(){
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
-				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView(false);
 
 			}, false, true);
 		}

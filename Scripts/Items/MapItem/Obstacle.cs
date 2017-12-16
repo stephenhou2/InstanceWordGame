@@ -7,11 +7,8 @@ namespace WordJourney
 {
 	public class Obstacle : MapItem {
 
-		protected override void Awake ()
-		{
-			base.Awake ();
-			this.mapItemType = MapItemType.Obstacle;
-		}
+		public int destroyToolId;
+
 
 		/// <summary>
 		/// 初始化障碍物

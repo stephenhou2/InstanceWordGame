@@ -8,49 +8,37 @@ namespace WordJourney
 	public class TrapSwitch : MapItem {
 
 		// 开关控制的陷阱
-		public Trap trap;
+//		public Trap trap;
 
-		// 已经关闭陷阱
-		public bool switchOff;
+		// 开关控制杆在左边的图片
+		public Sprite switchLeftSprite;
+		// 开关控制杆在右边的图片
+		public Sprite switchRightSprite;
 
-		// 开关的原始图片
-		public Sprite originSprite;
-		// 打开开关后的图片
-		public Sprite unlockedOrDestroyedSprite;
-
-
-		void Awake(){
-			base.Awake ();
-			this.mapItemType = MapItemType.TrapSwitch;
-		}
-
+		private int switchStatusChangeCount;
 
 		/// <summary>
 		/// 初始化开关
 		/// </summary>
 		public override void InitMapItem ()
 		{
-			this.switchOff = false;
-
-			transform.GetComponent<SpriteRenderer> ().sprite = originSprite;
-
+			bc2d.enabled = true;
+			mapItemRenderer.sprite = switchLeftSprite;
 		}
 
 		/// <summary>
 		/// 关闭陷阱
 		/// </summary>
-		public void SwitchOffTrap(){
+		public void ChangeSwitchStatus(){
 
-			if (switchOff) {
-				return;
+			switchStatusChangeCount++;
+
+			if (switchStatusChangeCount % 2 == 0) {
+				mapItemRenderer.sprite = switchLeftSprite;
+			} else {
+				mapItemRenderer.sprite = switchRightSprite;
 			}
-
-			transform.GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
-
-			trap.OnSwitchOff ();
-
-			this.switchOff = true;
-
+				
 		}
 
 	}

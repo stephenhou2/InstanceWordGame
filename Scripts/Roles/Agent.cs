@@ -127,6 +127,26 @@ namespace WordJourney
 
 		public List<Equipment> allEquipedEquipments = new List<Equipment>();
 
+		[SerializeField]private int[] mCharactersCount;
+		public int[] charactersCount{
+
+			get{
+				if (mCharactersCount == null || mCharactersCount.Length == 0) {
+					mCharactersCount = new int[26];
+					#warning 这里测试用，暂时初始化每个字母初始有10个，后面去掉
+//					for(int i = 0;i<mCharactersCount.Length;i++){
+//						mCharactersCount[i] = 10;
+//					}
+				}
+				return mCharactersCount;
+			}
+
+			set{
+				mCharactersCount = value;
+			}
+
+		}
+
 
 		// 攻击间隔
 		public float attackInterval{

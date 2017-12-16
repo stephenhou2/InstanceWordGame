@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 845289113
+CRC: 1501127045
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3550ee30bfd0431bb1097a8f8f1322a5
+    Hash: 014bd5fdd1059adf1f8cf34a05d062da
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 29f034eb1ea84918e0cbd9d64794771d
+    Hash: e3813765b759dd309fe2a7c5d1da3d7a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -50,6 +50,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
+  Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
   Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -60,9 +62,15 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 36de56933c4d74d809e32dcf1f2f3ccb, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 467e8d7647f0f421486ea8f3fd286e90, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: fff182172d726402b9e9eacdb89c9724, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 4a52e0c70b02d4955bbdf99550da80a3, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 5db94a988516743a5a9abf0f59eb69a8, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 728851c800f9c48de90ab4d5e20a0a15, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 04b6c3892597242bb8104b2b8f9cd938, type: 3}
 - Class: 114
@@ -75,6 +83,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: e32e501edbe64452e9c87f3aea1833b4, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 1301a6ee09f0a4aeabf17f4a095d7f53, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: cee4e3dfeadd74f98a0554c2aaa516cb, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -94,6 +104,7 @@ ClassTypes:
 Assets:
 - Assets/Prefabs/Explore/ConsumablesButtonModel.prefab
 - Assets/Prefabs/Explore/RewardButtonModel.prefab
+- Assets/Prefabs/Explore/GoodsModel.prefab
 - Assets/Prefabs/Explore/ChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/SkillButtonModel.prefab
 - Assets/Prefabs/Explore/ExploreManager.prefab
@@ -102,5 +113,7 @@ Assets:
 - Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
 Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

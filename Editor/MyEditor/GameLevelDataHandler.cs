@@ -66,18 +66,6 @@ namespace WordJourney
 		// 关卡中所有npc的id
 		public int[] npcIds;
 
-		// 关卡中所有宝箱的数量
-		public int lockedTreasureBoxCount;
-
-		// 关卡中所有瓦罐的数量范围
-		public Count potCount;
-
-		// 关卡中所有障碍物的数量范围
-		public Count obstacleCount;
-
-		// 关卡中出现的怪物对应的数量
-		public int[] monstersCount;
-
 		// 关卡中怪物相对与prefab的提升比例
 		public float monsterScaler;
 
@@ -95,17 +83,9 @@ namespace WordJourney
 			formulaIds = InitIntArrayWithString (dataStrings [4]);
 			itemLockInfoArray = InitBoolArrayWithString (dataStrings [5]);
 			npcIds = InitIntArrayWithString (dataStrings [6]);
-			lockedTreasureBoxCount = Convert.ToInt16 (dataStrings [7]);
 
-			int[] potCountArray = InitIntArrayWithString (dataStrings [8]);
-			potCount = new Count (potCountArray [0], potCountArray [1]);
-
-			int[] obstacleCountArray = InitIntArrayWithString (dataStrings [9]);
-			obstacleCount = new Count (obstacleCountArray [0], obstacleCountArray [1]);
-
-			monstersCount = InitIntArrayWithString (dataStrings [10]);
-			monsterScaler = Convert.ToSingle (dataStrings [11]);
-			bossId = Convert.ToInt16 (dataStrings [12]);
+			monsterScaler = Convert.ToSingle (dataStrings [7]);
+			bossId = Convert.ToInt16 (dataStrings [8]);
 
 
 		}

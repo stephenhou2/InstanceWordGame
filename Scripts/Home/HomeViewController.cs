@@ -94,7 +94,7 @@ namespace WordJourney
 		public void OnLearnButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
-				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView(false);
 				homeView.OnQuitHomeView();
 			});
 

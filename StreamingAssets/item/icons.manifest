@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3507105527
+CRC: 821012439
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ffcf37b526bcca226d6e7527bd33d349
+    Hash: b0ccf4f60ac7e92fbdfa433c47bcdf06
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -72,6 +72,7 @@ Assets:
 - Assets/Textures/ItemIcons/08_tyrfing_sword.png
 - Assets/Textures/ItemIcons/25_explosion_axe.png
 - Assets/Textures/ItemIcons/04_gear_necklace.png
+- "Assets/Textures/ItemIcons/\u5B57\u6BCD.png"
 - Assets/Textures/ItemIcons/15_returnPaper.png
 - Assets/Textures/ItemIcons/06_light_necklace.png
 - Assets/Textures/ItemIcons/44_bramble_staff.png

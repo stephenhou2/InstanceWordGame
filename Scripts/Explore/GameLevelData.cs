@@ -35,14 +35,6 @@ namespace WordJourney
 		// 关卡中所有宝箱的数量
 		public int lockedTreasureBoxCount;
 
-		// 关卡中所有瓦罐的数量范围
-		public Count potCount;
-
-		// 关卡中所有障碍物的数量范围
-		public Count obstacleCount;
-
-		// 关卡中出现的怪物对应的数量
-		public int[] monstersCount;
 
 		// 关卡中怪物相对与prefab的提升比例
 		public float monsterScaler;

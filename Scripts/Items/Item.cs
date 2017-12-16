@@ -15,7 +15,6 @@ namespace WordJourney{
 		Material,
 		Formula,
 		CharacterFragment
-
 	}
 
 	[System.Serializable]

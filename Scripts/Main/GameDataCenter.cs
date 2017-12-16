@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
+	using System.IO;
 
 	public class GameDataCenter {
 
@@ -276,11 +277,25 @@ namespace WordJourney
 		public List<NPC> allNpcs{
 			get{
 				if (mAllNpcs.Count == 0) {
-					
-					NPC[] npcsArray = DataHandler.LoadDataToModelsWithPath<NPC> (CommonData.npcsDataFilePath);
 
-					for (int i = 0; i < npcsArray.Length; i++) {
-						mAllNpcs.Add (npcsArray [i]);
+					string npcDataDirectory = string.Format ("{0}/NPCs", CommonData.persistDataPath);
+
+					DirectoryInfo npcDirectoryInfo = new DirectoryInfo (npcDataDirectory);
+
+					FileInfo[] npcFiles = npcDirectoryInfo.GetFiles ();
+
+					for (int i = 0; i <npcFiles.Length ; i++) {
+						FileInfo npcData = npcFiles [i];
+						if (npcData.Extension != ".json") {
+							continue;
+						}
+						NPC npc = null;
+						if (npcData.Name.Contains ("Normal")) {
+							npc = DataHandler.LoadDataToSingleModelWithPath<NPC> (npcData.FullName);
+						}else if(npcData.Name.Contains("Trader")){
+							npc = DataHandler.LoadDataToSingleModelWithPath<Trader> (npcData.FullName);
+						}
+						mAllNpcs.Add (npc);
 					}
 
 				}

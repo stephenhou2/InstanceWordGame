@@ -7,19 +7,39 @@ namespace WordJourney
 {
 	public class Trap : MapItem {
 
+
+		public int lifeLose;
+
+		private bool triggered;
+
 		// 陷阱已经关闭
-		public bool trapOff;
+		private bool myTrapOn = false;
+		public bool trapOn{
+			get{
+				return myTrapOn;
+			}
 
-		// 陷阱的原始图片
-		public Sprite originSprite;
-		// 陷阱关闭后的图片
-		public Sprite unlockedOrDestroyedSprite;
+			set{
 
-		protected override void Awake ()
-		{
-			base.Awake ();
-			this.mapItemType = MapItemType.Trap;
+				myTrapOn = value;
+
+				if (myTrapOn) {
+					mapItemRenderer.sprite = trapOnSprite;
+					bc2d.enabled = true;
+				} else {
+					mapItemRenderer.sprite = trapOffSprite;
+					bc2d.enabled = false;
+				}
+			}
+
 		}
+
+		// 陷阱打开状态的图片
+		public Sprite trapOnSprite;
+		// 陷阱关闭状态的图片
+		public Sprite trapOffSprite;
+
+
 
 		/// <summary>
 		/// 初始化陷阱
@@ -27,45 +47,42 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			GetComponent<SpriteRenderer> ().sprite = originSprite;
-			trapOff = false;
+			triggered = false;
 		}
 
+		public void ChangeTrapStatus(){
+
+			trapOn = !trapOn;
+
+		}
+
+
 		/// <summary>
-		/// 陷阱被触发的响应方法
+		/// 进入陷阱
 		/// </summary>
 		/// <param name="col">Col.</param>
 		public void OnTriggerEnter2D(Collider2D col){
 
-			if (trapOff) {
+			triggered = !triggered;
+
+			if (!trapOn || !triggered) {
 				return;
 			}
 
-			GetComponent<BoxCollider2D> ().enabled = false;
+//			bc2d.enabled = false;
 
-			GameManager.Instance.soundManager.PlayMapEffectClips(mapItemName);
+			GameManager.Instance.soundManager.PlayMapEffectClips(audioClipName);
 
-//			GameManager.Instance.soundManager.PlayClips (
-//				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-//				SoundDetailTypeName.Map, 
-//				mapItemName);
+			BattlePlayerController bpCtr = col.GetComponent<BattlePlayerController> ();
 
-			col.GetComponent<BattlePlayerController> ().trapTriggered = this;
+//			bpCtr.trapTriggered = this;
+
+			bpCtr.LoseLifeInTrap (lifeLose);
 
 			Debug.Log ("触发陷阱");
 
 		}
 
-		/// <summary>
-		/// 关闭陷阱
-		/// </summary>
-		public void OnSwitchOff(){
-
-			this.trapOff = true;
-
-			transform.GetComponent<SpriteRenderer> ().sprite = unlockedOrDestroyedSprite;
-
-		}
 
 	}
 }

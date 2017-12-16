@@ -54,7 +54,7 @@ namespace WordJourney
 		// 玩家战斗失败回调
 		private CallBack playerLoseCallBack;
 
-		public Trap trapTriggered;
+//		public Trap trapTriggered;
 
 
 		protected override void Awake(){
@@ -77,6 +77,8 @@ namespace WordJourney
 		/// <param name="pathPosList">Path position list.</param>
 		/// <param name="endPos">End position.</param>
 		public void MoveToEndByPath(List<Vector3> pathPosList,Vector3 endPos){
+
+
 
 			StopCoroutine ("MoveWithNewPath");
 
@@ -156,10 +158,10 @@ namespace WordJourney
 				// 将当前节点从路径点中删除
 				pathPosList.RemoveAt(0);
 
-				if(trapTriggered != null && !trapTriggered.transform.position.Equals(singleMoveEndPos)){
-					trapTriggered.GetComponent<BoxCollider2D>().enabled = true;
-					trapTriggered = null;
-				}
+//				if(trapTriggered != null && !trapTriggered.transform.position.Equals(singleMoveEndPos)){
+//					trapTriggered.GetComponent<BoxCollider2D>().enabled = true;
+//					trapTriggered = null;
+//				}
 
 				// 移动到下一个节点位置
 				MoveToNextPosition();
@@ -322,10 +324,7 @@ namespace WordJourney
 						return;
 
 					case "item":
-
-//						if (modelActive != playerSide) {
-//							ActiveBattlePlayer (false, false, true);
-//						}
+						
 
 						PlayRoleAnim ("wait", 0, null);
 
@@ -365,9 +364,9 @@ namespace WordJourney
 						return;
 					}
 
-
 				}
 
+				boxCollider.enabled = true;
 
 			}
 
@@ -669,6 +668,23 @@ namespace WordJourney
 			bpUICtr.UpdatePlayerStatusPlane ();
 		}
 
+		public void LoseLifeInTrap(int lose){
+
+			agent.health -= lose;
+
+			string hurtString = string.Format ("<color=red>-{0}</color>", lose);
+
+			Towards towards = Towards.Right;
+
+			if (modelActive == playerSide && modelActive.transform.localScale == new Vector3 (1, 1, 1)) {
+				towards = Towards.Left;
+			}
+
+			bpUICtr.PlayHurtTextAnim (hurtString, transform.position, towards, TintTextType.None);
+
+			bpUICtr.UpdatePlayerStatusPlane ();
+		}
+
 
 		public void UseItem(Consumables consumables){
 
@@ -757,7 +773,7 @@ namespace WordJourney
 			attackTriggerCallBacks.Clear ();
 			beAttackedTriggerCallBacks.Clear ();
 
-			trapTriggered = null;
+//			trapTriggered = null;
 			bmCtr = null;
 
 			playerLoseCallBack = null;

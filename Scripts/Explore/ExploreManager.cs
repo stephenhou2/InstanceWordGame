@@ -262,18 +262,41 @@ namespace WordJourney
 
 			switch (mapItem.mapItemType) {
 
-			case MapItemType.Obstacle:
-				EnterObstacle (mapItem);
+			case MapItemType.Door:
+				EnterDoor (mapItem);
 				break;
-			case MapItemType.TrapSwitch:
-				EnterSwitch (mapItem);
-				break;
-			case MapItemType.TreasureBox:
+			case MapItemType.LockedTreasureBox:
 				EnterTreasureBox (mapItem);
 				break;
-			default:
+			case MapItemType.MovableFloor:
+				EnterMovableFloor (mapItem);
+				break;
+			case MapItemType.NormalTreasureBox:
+				EnterTreasureBox (mapItem);
+				break;
+			case MapItemType.Stone:
+				EnterObstacle (mapItem);
+				break;
+			case MapItemType.Switch:
+				EnterSwitch (mapItem);
+				break;
+			case MapItemType.Transport:
+				break;
+			case MapItemType.TrapOff:
+				break;
+			case MapItemType.TrapOn:
+				EnterTrap (mapItem);
+				break;
+			case MapItemType.Tree:
+				EnterObstacle (mapItem);
 				break;
 			}
+
+		}
+
+
+
+		private void EnterMovableFloor(MapItem mapItem){
 
 		}
 
@@ -281,7 +304,25 @@ namespace WordJourney
 
 			Obstacle obstacle = mapItem as Obstacle;
 
-			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle);
+			Consumables tool = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
+				return obj.itemId == obstacle.destroyToolId;
+			});
+
+			if (tool != null) {
+				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
+			} else {
+				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具");
+			}
+
+
+
+		}
+
+		private void EnterTrap(MapItem mapItem){
+
+			Trap trap = mapItem as Trap;
+
+
 
 		}
 
@@ -289,23 +330,11 @@ namespace WordJourney
 
 			TrapSwitch trapSwitch = mapItem as TrapSwitch;
 
-			if (trapSwitch.switchOff) {
+			GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.audioClipName);
 
-				return;
-			}
+			trapSwitch.ChangeSwitchStatus ();
 
-			GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.mapItemName);
-
-//			GameManager.Instance.soundManager.PlayClips (
-//				GameManager.Instance.gameDataCenter.allExploreAudioClips,
-//				SoundDetailTypeName.Map, 
-//				mapItem.mapItemName);
-
-			trapSwitch.SwitchOffTrap ();
-
-			Transform trapTrans = trapSwitch.trap.transform;
-
-			mapGenerator.mapWalkableInfoArray[(int)trapTrans.position.x,(int)trapTrans.position.y] = 1;
+			mapGenerator.ChangeAllTrapStatusInMap ();
 
 
 		}
@@ -315,24 +344,19 @@ namespace WordJourney
 			TreasureBox tb = mapItem as TreasureBox;
 
 			// 如果mapitem已打开，则直接返回
-			if (tb.unlocked) {
+			if (tb.unlockItemId != -1 && !tb.locked) {
 				return;
 			}
 
-			// 如果该地图物品不需要使用特殊物品开启
-			if (tb.unlockItemName == string.Empty) {
+			// 如果该宝箱不需要使用钥匙开启
+			if (tb.unlockItemId == -1) {
 
-				GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.mapItemName);
-
-//				GameManager.Instance.soundManager.PlayClips (
-//					GameManager.Instance.gameDataCenter.allExploreAudioClips,
-//					SoundDetailTypeName.Map, 
-//					mapItem.mapItemName);
+				GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.audioClipName);
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockOrDestroyMapItem (()=>{
 
-					if (tb.walkableAfterUnlockOrDestroy) {
+					if (tb.walkableAfterChangeStatus) {
 						mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
 					}
 
@@ -344,9 +368,25 @@ namespace WordJourney
 
 			}
 
-			// 如果该地图物品需要使用特殊物品开启,则进入工具选择界面
-			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (mapItem);
 
+			// 宝箱需要使用钥匙开启
+			// 查找背包中是否有钥匙
+			Consumables key = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
+				return obj.itemId == tb.unlockItemId;
+			});
+
+			// 如果背包中有钥匙，则进入工具选择栏
+			if (key != null) {
+				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (tb, key);
+			} else {
+				expUICtr.SetUpTintHUD ("缺少钥匙");
+			}
+
+		}
+
+		private void EnterDoor(MapItem mapItem){
+			Debug.Log ("door");
+			battlePlayerCtr.PlayRoleAnim ("wait", 0, null);
 		}
 
 		public void EnterNPC(Transform mapNpcTrans){
@@ -401,6 +441,14 @@ namespace WordJourney
 			player.experience += trans.GetComponent<Monster> ().rewardExperience;//更新玩家经验值
 
 			player.LevelUpIfExperienceEnough ();//判断是否升级
+
+			int characterIndex = Random.Range (0, 26);
+
+			char character = (char)(characterIndex + CommonData.aInASCII);
+
+			CharacterFragment characterFragment = new CharacterFragment (character, 1);
+
+			mapGenerator.SetUpRewardInMap (characterFragment, monsterPos);
 
 			#warning 消灭怪物后需要走到怪物原位置的话开启下面这段代卖
 			battlePlayerCtr.ContinueMove ();

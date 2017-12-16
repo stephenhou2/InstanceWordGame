@@ -7,10 +7,10 @@ namespace WordJourney
 	public class TreasureBox: MapItem {
 
 		// 开启所需物品的名称
-		public string unlockItemName;
+		public int unlockItemId;
 
-		// 是否已经打开
-		public bool unlocked;
+		// 是否有锁
+		public bool locked;
 
 		// 奖励的物品数组
 //		public Item[] rewardItems;
@@ -18,25 +18,20 @@ namespace WordJourney
 		// 奖励的物品
 		public Item rewardItem;
 
-		protected override void Awake ()
-		{
-			base.Awake ();
-			this.mapItemType = MapItemType.TreasureBox;
-		}
+
 
 		/// <summary>
 		/// 初始化箱子类道具
 		/// </summary>
 		public override void InitMapItem ()
 		{
-			unlocked = false;
 			bc2d.enabled = true;
 			mapItemAnimator.ResetTrigger ("Play");
 		}
 
 		protected override void AnimEnd ()
 		{
-			unlocked = true;
+			locked = false;
 			base.AnimEnd ();
 		}
 

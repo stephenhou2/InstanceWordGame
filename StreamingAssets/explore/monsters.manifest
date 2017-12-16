@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2830605798
+CRC: 3268471175
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7997e832ced59588b3d90e964594d586
+    Hash: e670bbcdc205f9bcc61f8dd4699b9990
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9e328f5995ebc5fa23a6051d910aaf2d
+    Hash: ad860d6205a6a02788cd8f24d78c8c96
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -46,6 +46,5 @@ ClassTypes:
 Assets:
 - "Assets/Prefabs/Explore/Monsters/\u5357\u74DC\u7CBE\u7075.prefab"
 - "Assets/Prefabs/Explore/Monsters/\u94C1\u5934\u6D77\u9F9F.prefab"
-- Assets/Resources/RoleBones/monster1/monster_tex.png
 - "Assets/Prefabs/Explore/Monsters/\u9752\u86C7.prefab"
 Dependencies: []

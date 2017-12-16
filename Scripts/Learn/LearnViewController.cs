@@ -23,6 +23,8 @@ namespace WordJourney
 		// 单词学习view
 		public LearnView learnView;
 
+		public bool beginWithLearn;
+
 		// 一次学习的单词数量（单个水晶学习单词数量）
 		private int singleLearnWordsCount;
 
@@ -94,8 +96,6 @@ namespace WordJourney
 			}
 		}
 
-
-
 		// 单词测试列表
 		private List<Examination> finalExaminationsList ;
 
@@ -149,18 +149,24 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化学习界面
 		/// </summary>
-		public void SetUpLearnView(){
+		public void SetUpLearnView(bool beginWithLearn){
 
 			// 查询是否允许自动发音
 			autoPronounce = GameManager.Instance.gameDataCenter.gameSettings.autoPronounce;
 
 			InitWordsToLearn ();
 
-			learnView.SetUpLearnViewWithWord(currentLearningWord);
-
-			if (autoPronounce) {
-				OnPronunciationButtonClick ();
+			if (beginWithLearn) {
+				learnView.SetUpLearnViewWithWord (currentLearningWord);
+				if (autoPronounce) {
+					OnPronunciationButtonClick ();
+				}
+			} else {
+				GenerateFinalExams ();
+				learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0], Examination.ExaminationType.EngToChn);
 			}
+
+
 		}
 
 		/// <summary>
@@ -232,6 +238,24 @@ namespace WordJourney
 //			firstIdOfCurrentLearningWords = wordsToLearnArray [0].wordId;
 
 		}
+
+		/// <summary>
+		/// 直接从本次学习单词生成最终测试列表
+		/// </summary>
+		private void GenerateFinalExams(){
+
+			for (int i = 0; i < ungraspedWordsList.Count; i++) {
+
+				LearnWord word = ungraspedWordsList [i];
+
+				Examination finalExam = new Examination (word, wordsToLearnArray);
+
+				finalExaminationsList.Add (finalExam);
+
+			}
+
+		}
+
 
 		/// <summary>
 		/// 用户点击了发音按钮
@@ -467,41 +491,131 @@ namespace WordJourney
 		/// 用户点击了最终测试界面中的答案选项卡
 		/// </summary>
 		/// <param name="selectWord">Select word.</param>
+//		public void OnAnswerChoiceButtonOfFinalExamsClick(LearnWord selectWord){
+//
+//			// 如果选择正确，则将该单词的测试从测试列表中移除
+//			if (selectWord.wordId == currentExamination.question.wordId) {
+//				Debug.Log ("选择正确");
+//
+//				// 单词能量+1
+//				wordEnergyCount++;
+//
+//
+//				// 更新单词能量条
+//				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
+//
+//				// 如果单词能量条满了，则随机获得一个字母碎片
+//				if (wordEnergyCount >= energyFullCount) {
+//
+//					Player.mainPlayer.AddCharacterFragment(characterAsReward,singleRewardCharactersCount);
+//					Debug.LogFormat ("获得字母碎片{0}{1}个", characterAsReward, singleRewardCharactersCount);
+//
+//					wordEnergyCount = 0;
+//
+//					// 随机字母
+//					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
+//
+//					characterAsReward = characterFragmentGain;
+//
+//					learnView.ResetEnergySlider (characterAsReward);
+//
+//				}
+//
+//
+//				currentExamination.RemoveCurrentExamType ();
+//
+//				// 如果当前单词测试的中译英和英译中都已经完成，则从测试列表中删除该测试
+//				bool currentExamFinished = currentExamination.CheckCurrentExamFinished();
+//				if (currentExamFinished) {
+//					currentExamination.question.learnedTimes++;
+//					finalExaminationsList.RemoveAt (0);
+//
+//				}else{
+//					// 当前单词测试未完成
+//					Examination exam = currentExamination;
+//					finalExaminationsList.RemoveAt (0);
+//					finalExaminationsList.Add (exam);
+//				}
+//
+//				// 单词测试环节结束
+//				if (finalExaminationsList.Count <= 0) {
+//
+//					MySQLiteHelper sql = MySQLiteHelper.Instance;
+//
+//					sql.GetConnectionWith (CommonData.dataBaseName);
+//
+//
+//					for (int i = 0; i < singleLearnWordsCount; i++) {
+//						LearnWord word = wordsToLearnArray [i];
+//						string condition = string.Format ("wordId={0}", word.wordId);
+//						string newLearnedTime = (word.learnedTimes).ToString ();
+//						string newUngraspTime = (word.ungraspTimes).ToString();
+//						// 更新数据库中当前背诵单词的背诵次数和背错次数
+//						sql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[]{ newLearnedTime, newUngraspTime }, new string[] {
+//							condition
+//						}, true);
+//					}
+//
+//
+//					sql.CloseConnection (CommonData.dataBaseName);
+//
+//					CurrentWordsLearningFinished ();
+//
+//					return;
+//
+//				}
+//
+//				// 测试环节还没有结束，则初始化下一个单词的测试
+//				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
+//				learnView.SetUpLearnViewWithFinalExam (currentExamination, examType);
+//			
+//
+//			} else {
+//				// 如果选择错误，则将该单词的测试移至测试列表的尾部
+//				Debug.Log ("选择错误");
+//
+//				Examination exam = currentExamination;
+//
+//				finalExaminationsList.RemoveAt (0);
+//
+//				finalExaminationsList.Add (exam);
+//
+//				// 单词的背错次数+1
+//				GetWordFromWordsToLearnArrayWith(currentExamination.question.wordId).ungraspTimes++;
+//
+//				// 扣除用户字母碎片
+////				int characterIndex = Random.Range (0, currentExamination.question.spell.Length);
+////				char characterFragmentGain = currentExamination.question.spell.ToCharArray () [characterIndex];
+////				Player.mainPlayer.RemoveCharacterFragment(characterFragmentGain,singleRewardCharactersCount);
+////				Debug.LogFormat ("扣除字母碎片{0}{1}个", characterFragmentGain, singleLoseCharactersCount);
+//
+//				// 单词能量数-1
+//				wordEnergyCount--;
+//
+//				if (wordEnergyCount < 0) {
+//					wordEnergyCount = 0;
+//				}
+//
+//				// 更新单词能量条
+//				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
+//
+//				// 显示该选项的单词对应的拼写或释义
+////				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
+//
+//			}
+//
+//		}
+//
+
+
 		public void OnAnswerChoiceButtonOfFinalExamsClick(LearnWord selectWord){
 
 			// 如果选择正确，则将该单词的测试从测试列表中移除
 			if (selectWord.wordId == currentExamination.question.wordId) {
 				Debug.Log ("选择正确");
 
-				// 单词能量+1
-				wordEnergyCount++;
-
-
-				// 更新单词能量条
-				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
-
-				// 如果单词能量条满了，则随机获得一个字母碎片
-				if (wordEnergyCount >= energyFullCount) {
-
-					// 奖励字母碎片
-//					int characterIndex = Random.Range (0, currentExamination.question.spell.Length);
-//					char characterFragmentGain = currentExamination.question.spell.ToCharArray () [characterIndex];
-
-
-					Player.mainPlayer.AddCharacterFragment(characterAsReward,singleRewardCharactersCount);
-					Debug.LogFormat ("获得字母碎片{0}{1}个", characterAsReward, singleRewardCharactersCount);
-
-					wordEnergyCount = 0;
-
-					// 随机字母
-					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
-
-					characterAsReward = characterFragmentGain;
-
-					learnView.ResetEnergySlider (characterAsReward);
-
-				}
-
+				// 玩家金币数量+1
+				Player.mainPlayer.totalCoins++;
 
 				currentExamination.RemoveCurrentExamType ();
 
@@ -549,43 +663,43 @@ namespace WordJourney
 				// 测试环节还没有结束，则初始化下一个单词的测试
 				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
 				learnView.SetUpLearnViewWithFinalExam (currentExamination, examType);
-			
+
 
 			} else {
 				// 如果选择错误，则将该单词的测试移至测试列表的尾部
 				Debug.Log ("选择错误");
 
-//				Examination exam = currentExamination;
-//
-//				finalExaminationsList.RemoveAt (0);
-//
-//				finalExaminationsList.Add (exam);
 
 				// 单词的背错次数+1
 				GetWordFromWordsToLearnArrayWith(currentExamination.question.wordId).ungraspTimes++;
 
-				// 扣除用户字母碎片
-//				int characterIndex = Random.Range (0, currentExamination.question.spell.Length);
-//				char characterFragmentGain = currentExamination.question.spell.ToCharArray () [characterIndex];
-//				Player.mainPlayer.RemoveCharacterFragment(characterFragmentGain,singleRewardCharactersCount);
-//				Debug.LogFormat ("扣除字母碎片{0}{1}个", characterFragmentGain, singleLoseCharactersCount);
 
-				// 单词能量数-1
-				wordEnergyCount--;
+				// 玩家金币数量-2
+				Player.mainPlayer.totalCoins -= 2;
+				if (Player.mainPlayer.totalCoins < 0) {
+					Player.mainPlayer.totalCoins = 0;
+				}
+
+
 
 				if (wordEnergyCount < 0) {
 					wordEnergyCount = 0;
 				}
 
-				// 更新单词能量条
-				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
+				// 当前测试加入到测试列表尾部
+				Examination exam = currentExamination;
 
-				// 显示该选项的单词对应的拼写或释义
-				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
+				finalExaminationsList.RemoveAt (0);
 
+				finalExaminationsList.Add (exam);
+
+				learnView.SetUpLearnViewWithFinalExam (currentExamination, currentExamination.GetCurrentExamType ());
+
+//				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
 			}
 
 		}
+
 
 		/// <summary>
 		/// 当前需要学习的单词组内的单词已经全部学习完毕
