@@ -59,7 +59,7 @@ namespace WordJourney
 
 		protected override void Awake(){
 
-			ActiveBattlePlayer (true, false, false);
+			ActiveBattlePlayer (false, false, false);
 
 			agent = GetComponentInParent<Player> ();
 
@@ -67,9 +67,7 @@ namespace WordJourney
 
 		}
 
-		public void SetOrderInLayer(int order){
-			armatureCom.sortingOrder = order;
-		}
+
 
 		/// <summary>
 		/// 按照指定路径 pathPosList 移动到终点 endPos
@@ -142,13 +140,13 @@ namespace WordJourney
 		/// <param name="targetPos">Target position.</param>
 		private void MoveToPosition(Vector3 targetPos){
 
+			exploreManager.GetComponent<ExploreManager>().ItemsAroundAutoIntoLifeWithBasePoint (targetPos);
+
 //			Debug.Log (string.Format ("Player pos:[{0},{1}],target pos:[{2},{3}]", transform.position.x, transform.position.y,targetPos.x,targetPos.y));
 
 			Vector3 moveVector = transform.position - targetPos;
 
-			SetOrderInLayer(-(int)targetPos.y);
-
-
+			SetSortingOrder(-(int)targetPos.y);
 
 			moveTweener =  transform.DOMove (targetPos, moveDuration).OnComplete (() => {
 
@@ -234,7 +232,6 @@ namespace WordJourney
 		/// </summary>
 		private void MoveToNextPosition ()
 		{
-			
 			Vector3 nextPos = Vector3.zero;
 
 			if (pathPosList.Count > 0) {
@@ -473,17 +470,27 @@ namespace WordJourney
 			// 初始化玩家战斗UI（技能界面）
 			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
 
-			// 默认玩家在战斗中将先出招，首次攻击不用等待
-			UseSkill(defaultSkill);
+			if (autoFight) {
+				// 默认玩家在战斗中将先出招，首次攻击不用等待
+				UseSkill (defaultSkill);
+			} else {
+				PlayRoleAnim ("wait", 0, null);
+			}
 
 		}
+
+		public bool autoFight = false;
+
 
 		/// <summary>
 		/// 角色默认战斗逻辑
 		/// </summary>
 		public override void Fight(){
 			attackCoroutine = InvokeAttack (defaultSkill);
-//			attackCoroutine = StartCoroutine ("InvokeAttack");
+		}
+
+		public void UseDefaultSkill(){
+			UseSkill (defaultSkill);
 		}
 
 		/// <summary>
@@ -602,11 +609,15 @@ namespace WordJourney
 			currentSkill.AffectAgents(this,bmCtr);
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if(!FightEnd()){
-				attackCoroutine = InvokeAttack (defaultSkill);
-				StartCoroutine (attackCoroutine);
-//				attackCoroutine = StartCoroutine("InvokeAttack",defaultSkill);
-			}
+			if (!FightEnd ()) {
+				if (autoFight) {
+					attackCoroutine = InvokeAttack (defaultSkill);
+					StartCoroutine (attackCoroutine);
+				} else {
+					TransformManager.FindTransform("ExploreCanvas").GetComponent<ExploreUICotroller> ().ResetAttackCheckPosition ();
+				}
+
+			} 
 
 			// 更新玩家状态栏
 			this.UpdateStatusPlane();

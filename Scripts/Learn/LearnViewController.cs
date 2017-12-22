@@ -150,6 +150,22 @@ namespace WordJourney
 		/// 初始化学习界面
 		/// </summary>
 		public void SetUpLearnView(bool beginWithLearn){
+			StartCoroutine ("SetUpViewAfterDataReady",beginWithLearn);
+		}
+
+
+		private IEnumerator SetUpViewAfterDataReady(bool beginWithLearn){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.LearnInfo
+				});
+				yield return null;
+			}
 
 			// 查询是否允许自动发音
 			autoPronounce = GameManager.Instance.gameDataCenter.gameSettings.autoPronounce;
@@ -166,7 +182,7 @@ namespace WordJourney
 				learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0], Examination.ExaminationType.EngToChn);
 			}
 
-
+			GetComponent<Canvas> ().enabled = true;
 		}
 
 		/// <summary>

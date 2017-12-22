@@ -42,11 +42,22 @@ namespace WordJourney
 
 
 
+		public RectTransform attackZone;
+
+		public RectTransform attackCheck;
+
+		public RectTransform validZone;
+
+		public float attackCheckMoveSpeed;
+
+		public float attackZoneMoveSpeed;
+
+		public Transform attackCheckContainer;
+
+
 
 		public void SetUpExploreCanvas(){
-
 			Initialize ();
-
 		}
 
 			
@@ -78,16 +89,103 @@ namespace WordJourney
 				}, true,true);
 			}
 
+			GetComponent<Canvas> ().enabled = true;
+
 		}
 
 
 		public void ShowFightPlane(){
 			battlePlane.gameObject.SetActive (true);
+			StartAttackCheck ();
 		}
 
 		public void HideFightPlane(){
 			battlePlane.gameObject.SetActive (false);
 		}
+
+		private float validZoneEdgeLeft{
+			get{ return validZone.rect.center.x - validZone.rect.width / 2; }
+		}
+		private float validZoneEdgeRight{
+			get{ return validZone.rect.center.x + validZone.rect.width / 2;}
+		}
+
+		public void StartAttackCheck(){
+			attackCheck.localPosition = Vector3.zero;
+			attackZone.localPosition = new Vector3 (Random.Range (validZoneEdgeLeft, validZoneEdgeRight), 0, 0);
+			StartCoroutine ("AttackCheckMove");
+			StartCoroutine ("AttackZoneMove");
+
+		}
+
+		public void ResetAttackCheckPosition(){
+			attackCheck.localPosition = Vector3.zero;
+		}
+
+		private IEnumerator AttackCheckMove(){
+
+			Vector3 attackCheckPositionFix = new Vector3 (attackCheckMoveSpeed * Time.fixedDeltaTime, 0, 0);
+
+
+			while (true) {
+
+				attackCheck.localPosition += attackCheckPositionFix;
+
+				if (attackCheck.localPosition.x > validZoneEdgeRight) {
+					attackCheck.localPosition = Vector3.zero;
+				}
+				yield return null;
+			}
+
+		}
+
+
+		private IEnumerator AttackZoneMove(){
+
+			Vector3 attackZonePositionFix = new Vector3 (attackZoneMoveSpeed * Time.fixedDeltaTime, 0, 0);
+
+			while (true) {
+				attackZone.localPosition += attackZonePositionFix;
+				if (attackZone.localPosition.x > validZoneEdgeRight) {
+					attackZone.localPosition = Vector3.zero;
+				}
+				yield return null;
+			}
+
+		}
+
+
+
+		public void AttackButtonClicked(){
+			if (CheckInAttackZone()) {
+				BattlePlayerController bpCtr = Player.mainPlayer.transform.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
+				bpCtr.UseDefaultSkill ();
+			} else {
+				attackCheck.localPosition = Vector3.zero;
+			}
+		}
+
+		private bool CheckInAttackZone(){
+
+			Vector2 checkCenter = attackCheck.localPosition;
+
+			Debug.LogFormat ("check center x:{0}", checkCenter.x);
+
+			Vector2 attackZoneCenter = attackZone.localPosition;
+
+
+			float leftEdgeX = attackZoneCenter.x - attackZone.rect.width / 2;
+
+			float rightEdgeX = attackZoneCenter.x + attackZone.rect.width / 2;
+
+			Debug.LogFormat ("attack zone left:{0}  attack zone right:{1}", leftEdgeX, rightEdgeX);
+
+			return checkCenter.x >= leftEdgeX && checkCenter.x <= rightEdgeX;
+
+		}
+
+
+
 
 
 		public void SetUpTintHUD(string tint){
@@ -206,6 +304,8 @@ namespace WordJourney
 		public void QuitFight(){
 			GetComponent<BattlePlayerUIController> ().QuitFight ();
 			GetComponent<BattleMonsterUIController>().QuitFight ();
+			StopCoroutine ("AttackCheckMove");
+			StopCoroutine ("AttackZoneMove");
 			HideFightPlane ();
 		}
 

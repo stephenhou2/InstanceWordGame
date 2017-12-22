@@ -9,6 +9,10 @@ namespace WordJourney
 
 		public BagView bagView;
 
+
+
+
+
 		private List<Item> allItemsOfCurrentSelectType = new List<Item>();
 
 //		private List<Equipment> allEquipmentsOfSelectType = new List<Equipment>();
@@ -29,49 +33,69 @@ namespace WordJourney
 		void Awake(){
 
 			#warning forTest init some equipments for test
-//			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
-//				for (int i = 0; i < 128; i++) {
-//
-//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
-//						return obj.itemId == i;
-//					});
-//
-//					Equipment e = new Equipment (im,5);
-//
-//					Player.mainPlayer.allEquipmentsInBag.Add (e);
-//
-//				}
-//			}
+			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
+				for (int i = 0; i < 3; i++) {
 
-//			for (int i = 0; i < 114; i++) {
-//
-//				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-//					return obj.itemId == 1000 + i;
-//				});
-//
-//				Material material = new Material (m, 2);
-//
-//				Player.mainPlayer.allMaterialsInBag.Add (material);
-//
-//			}
+					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+						return obj.itemId == i;
+					});
+
+					Equipment e = new Equipment (im,5);
+
+					Player.mainPlayer.allEquipmentsInBag.Add (e);
+
+				}
+			}
+
+			for (int i = 0; i < 114; i++) {
+
+				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+					return obj.itemId == 1000 + i;
+				});
+
+				Material material = new Material (m, 2);
+
+				Player.mainPlayer.allMaterialsInBag.Add (material);
+
+			}
 
 
-//			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-//				return obj.itemId == 513;
-//			});
-//
-//			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-//				return obj.itemId == 512;
-//			});
-//
-//			Player.mainPlayer.AddItem (new Consumables (key, 5));
-//			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
+			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == 513;
+			});
+
+			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == 512;
+			});
+
+			Player.mainPlayer.AddItem (new Consumables (key, 5));
+			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
 
 			resolveCount = 1;
 
 		}
 
 		public void SetUpBagView(bool setVisible){
+
+			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
+		}
+
+		private IEnumerator SetUpViewAfterDataReady(bool setVisible){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.ItemModels,
+					GameDataCenter.GameDataType.ItemSprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites,
+					GameDataCenter.GameDataType.EquipmentAttachedProperties
+				});
+				yield return null;
+			}
+
 
 			currentSelectItemType = ItemType.Equipment;
 
@@ -310,9 +334,9 @@ namespace WordJourney
 
 				return;
 			} else {// 如果当前没有拼写界面的缓存，则从本地加载拼写界面
-				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader ();
+				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader<GameObject> (CommonData.spellCanvasBundleName);
 
-				ResourceManager.Instance.LoadAssetsWithBundlePath (spellCanvasLoader, CommonData.spellCanvasBundleName, () => {
+				ResourceManager.Instance.LoadAssetsUsingWWW (spellCanvasLoader, () => {
 
 					TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
 
@@ -351,13 +375,13 @@ namespace WordJourney
 
 			bagView.OnQuitBagPlane (() => {
 
-				GameObject exploreCanvas = GameObject.Find (CommonData.instanceContainerName + "/ExploreCanvas");
+				GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
 
 				if (exploreCanvas == null) {
 
 						GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.homeCanvasBundleName,"HomeCanvas",()=>{
 
-						GameObject.Find (CommonData.instanceContainerName + "/HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+						GameObject.Find ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
 //						GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
 

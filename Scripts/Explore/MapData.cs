@@ -59,28 +59,34 @@ namespace WordJourney{
 
 	}
 
-	// 商人 水晶 怪物 boss 树木 石头 锄头 宝箱 钥匙 门 可移动石板 药剂 攻击卷轴 陷阱开 陷阱开关 传送阵 人物起始点 陷阱关
-
 	// 附加信息层对应的附加信息
 	public enum AttachedInfoType{
-		Trader,
-		Crystal,
-		Monster,
-		Boss,
-		Tree,
-		Stone,
-		Pickaxe,
-		TreasureBox,
-		Key,
-		Door,
-		MovableFloor,
-		Medicine,
-		Scroll,
-		TrapOn,
-		Switch,
-		Transport,
 		PlayerOriginPosition,
-		TrapOff
+		Crystal,
+		Trader,
+		NPC,
+		Transport,
+		Door,
+		Buck,
+		Pot,
+		TreasureBox,
+		Stone,
+		Tree,
+		Switch,
+		TrapOff,
+		TrapOn,
+		MovableFloor,
+		Boss,
+		Monster
+	}
+
+	public enum AttachedItemType{
+		Key,
+		Saw,
+		PickAxe,
+		Floor,
+		Medicine,
+		Sickle
 	}
 
 	[System.Serializable]

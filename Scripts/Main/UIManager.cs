@@ -19,42 +19,82 @@ namespace WordJourney
 
 			if (!UIDic.ContainsKey (canvasName)) {
 
-				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader ();
+				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader<GameObject> (bundleName);
 
-				ResourceManager.Instance.LoadAssetsWithBundlePath (loader, bundleName, () => {
+//				if (isSync) {
+//					ResourceManager.Instance.LoadAssetsFromFileSync (loader, () => {
+//						if (!othersVisible) {
+//							while (dicEnumerator.MoveNext ()) {
+//								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
+//								canvas.enabled = false;
+//							}
+//						}
+//
+//						Canvas c = null;
+//
+//						foreach (Object asset in loader.assets) {
+//							GameObject obj = loader.InstantiateAsset (asset);
+//							if (obj.name == canvasName) {
+//								c = obj.GetComponent<Canvas> ();
+//								if (cb == null) {
+//									c.enabled = true;
+//								}
+//							}
+//						}
+//
+//						if (cb != null) {
+//							cb ();
+//						}
+//
+//						c.transform.SetAsLastSibling ();
+//
+//						UIDic.Add (canvasName, c.transform);
+//
+//					});
+//				} else {
 
-					if(!othersVisible){
-						while (dicEnumerator.MoveNext ()) {
-							Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
-							canvas.enabled = false;
+					ResourceManager.Instance.LoadAssetsUsingWWW (loader, () => {
+
+						if (!othersVisible) {
+							while (dicEnumerator.MoveNext ()) {
+								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
+								canvas.enabled = false;
+							}
 						}
-					}
 
-					Canvas c = loader.gos.Find (delegate(GameObject obj) {
-						return obj.name == canvasName;
-					}).GetComponent<Canvas> ();
-						
+						Canvas c = null;
 
-					c.enabled = true;
+						foreach (Object asset in loader.assets) {
+							GameObject obj = loader.InstantiateAsset (asset);
+							if (obj.name == canvasName) {
+								c = obj.GetComponent<Canvas> ();
+								if (cb == null) {
+									c.enabled = true;
+								}
+							}
+						}
 
-					if (cb != null) {
-						cb ();
-					}
+						if (cb != null) {
+							cb ();
+						}
 
-					c.transform.SetAsLastSibling ();
+						c.transform.SetAsLastSibling ();
 
-					UIDic.Add (canvasName, c.transform);
+						UIDic.Add (canvasName, c.transform);
 
-				}, isSync);
+					});
+//				}
 
 			} else {
-
+				
 				while (dicEnumerator.MoveNext ()) {
 
 					Canvas c = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
 
 					if (dicEnumerator.Key as string == canvasName) {
-						c.enabled = true;
+						if (cb == null) {
+							c.enabled = true;
+						}
 						c.transform.SetAsLastSibling ();
 					} else {
 						c.enabled = c.enabled && othersVisible;
@@ -65,57 +105,14 @@ namespace WordJourney
 					cb ();
 				}
 
-
 			}
-
-//			Transform canvas = UIDic.ContainsKey (canvasName) ? UIDic [canvasName] : null;
-//
-//			if (canvas != null) {
-//
-//				canvas.gameObject.SetActive (true);
-//
-////				canvas.GetComponent<Canvas> ().targetDisplay = 0;
-////
-////				canvas.GetComponent<Canvas> ().sortingOrder = 0;
-//
-//				if(cb != null){
-//					cb ();
-//				}
-//
-//				canvas.SetAsLastSibling ();
-//
-//			} else {
-//				
-//				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader ();
-//
-//				ResourceManager.Instance.LoadAssetsWithBundlePath (loader, bundleName, () => {
-//
-//					canvas = loader.gos.Find(delegate(GameObject obj){
-//						return obj.name == canvasName;
-//					}).transform;
-//
-//
-//					canvas.gameObject.SetActive (true);
-//
-////					canvas.GetComponent<Canvas> ().targetDisplay = 0;
-////
-////					canvas.GetComponent<Canvas> ().sortingOrder = 0;
-//
-//					if(cb != null){
-//						cb ();
-//					}
-//
-//					canvas.SetAsLastSibling ();
-//
-//					UIDic.Add(canvasName,canvas);
-//
-//				},isSync);
-//			}
 			
 
 			Resources.UnloadUnusedAssets ();
 			System.GC.Collect ();
 		}
+			
+
 
 		public void HideCanvas(string canvasName){
 
@@ -139,7 +136,7 @@ namespace WordJourney
 				TransformManager.DestroyTransfromWithName (poolContainerName, TransformRoot.PoolContainer);
 			}
 
-			ResourceManager.Instance.UnloadCaches (bundleName, true);
+			ResourceManager.Instance.UnloadAssetBunlde (bundleName);
 
 			UIDic.Remove (canvasName);
 		}

@@ -1,0 +1,33 @@
+ManifestFileVersion: 0
+CRC: 470970350
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 1349ee27604875c994918a51b254d889
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 0a6a2c5ce4dda74496086b2754ac45d5
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Animations/Animations/MapAnim/TreeAnim.anim
+- Assets/Animations/Animations/MapAnim/ArrivableAnim.anim
+- Assets/Animations/Animations/MapAnim/cover_foreground.anim
+- Assets/Animations/Animations/MapAnim/TreasureBoxAnim.anim
+- Assets/Animations/Animations/MapAnim/BuckAnim.anim
+- Assets/Animations/Animations/MapAnim/OtherAnim/AgentDeathAnim.anim
+- Assets/Animations/Animations/MapAnim/OtherAnim/TPAnim.anim
+- Assets/Animations/Animations/MapAnim/StoneAnim.anim
+- Assets/Animations/Animations/MapAnim/CrystalNormalAnim.anim
+- Assets/Animations/Animations/MapAnim/UnarrivableAnim.anim
+- Assets/Animations/Animations/MapAnim/cover_background.anim
+- Assets/Animations/Animations/MapAnim/PotAnim.anim
+- Assets/Animations/Animations/MapAnim/CrystalHighlightAnim.anim
+Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons

@@ -20,6 +20,23 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpMaterialView(){
 			
+			StartCoroutine ("SetUpViewAfterDataReady");
+		}
+
+
+		private IEnumerator SetUpViewAfterDataReady(){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites
+				});
+				yield return null;
+			}
+
 			List<Material> materials = GameManager.Instance.gameDataCenter.allMaterials;
 
 			for (int i = 0; i < materials.Count; i++) {
@@ -45,8 +62,9 @@ namespace WordJourney
 			//默认进入材料图鉴界面展示的是基础材料
 			materialDisplayView.SetUpMaterials(baseMaterials);
 
-//			GetComponent<Canvas> ().enabled = true;
+
 		}
+
 
 		/// <summary>
 		/// 材料类型按钮点击响应
@@ -92,7 +110,9 @@ namespace WordJourney
 
 //			GetComponent<Canvas>().enabled = false;
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+				GameDataCenter.GameDataType.Materials,
+				GameDataCenter.GameDataType.MaterialSprites});
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfMaterialDisplayCanvas", TransformRoot.PoolContainer);
 

@@ -11,30 +11,32 @@ namespace WordJourney
 
 		private static volatile Player mPlayerSingleton;
 
-		private static object objectLock = new System.Object();
+//		private static object objectLock = new System.Object();
 
 		// 玩家角色单例
 		public static Player mainPlayer{
 			get{
 				if (mPlayerSingleton == null) {
-					lock (objectLock) {
-						Player[] existPlayers = GameObject.FindObjectsOfType<Player>();
-						if (existPlayers != null) {
-							for (int i = 0; i < existPlayers.Length; i++) {
-								Destroy (existPlayers [i].gameObject);
-							}
-						}
+//					lock (objectLock) {
+//						Player[] existPlayers = GameObject.FindObjectsOfType<Player>();
+//						if (existPlayers != null) {
+//							for (int i = 0; i < existPlayers.Length; i++) {
+//								Destroy (existPlayers [i].gameObject);
+//							}
+//						}
+//
+//						ResourceLoader playerLoader = ResourceLoader.CreateNewResourceLoader ();
+//
+//						ResourceManager.Instance.LoadAssetsWithBundlePath<GameObject> (playerLoader, CommonData.mainStaticBundleName, () => {
+//							mPlayerSingleton = playerLoader.gos[0].GetComponent<Player> ();
+//							mPlayerSingleton.transform.SetParent (null);
+//							mPlayerSingleton.ResetBattleAgentProperties (true);
+//						},"Player");
 
-						ResourceLoader playerLoader = ResourceLoader.CreateNewResourceLoader ();
-
-						ResourceManager.Instance.LoadAssetsWithBundlePath<GameObject> (playerLoader, CommonData.mainStaticBundleName, () => {
-							mPlayerSingleton = playerLoader.gos[0].GetComponent<Player> ();
-							mPlayerSingleton.transform.SetParent (null);
-							mPlayerSingleton.ResetBattleAgentProperties (true);
-						},true,"Player");
+						mPlayerSingleton = TransformManager.FindTransform ("Player").GetComponent<Player>();
 
 						DontDestroyOnLoad (mPlayerSingleton);
-					}
+//					}
 				} 
 				return mPlayerSingleton;
 			}

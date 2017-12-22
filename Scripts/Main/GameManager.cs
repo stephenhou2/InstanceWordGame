@@ -13,30 +13,23 @@ namespace WordJourney
 	public class GameManager : MonoBehaviour {
 
 		private static volatile GameManager instance;  
-		private static object objectLock = new System.Object();  
 		public static  GameManager Instance {  
 			get {  
 				if (instance == null) {  
-					lock (objectLock) {  
-						GameManager[] instances = FindObjectsOfType<GameManager> ();  
-						if (instances != null) {  
-							for (var i = 0; i < instances.Length; i++) {  
-								Destroy (instances [i].gameObject);  
-							}  
-						} 
 
-						ResourceLoader gameManagerLoader = ResourceLoader.CreateNewResourceLoader ();
+					instance = TransformManager.FindTransform ("GameManager").GetComponent<GameManager>();
 
-						ResourceManager.Instance.LoadAssetsWithBundlePath (gameManagerLoader, CommonData.mainStaticBundleName, ()=>{
-							instance = gameManagerLoader.gos[0].GetComponent<GameManager>();
-							instance.transform.SetParent(null);
-						}, true,"GameManager");
-					}  
+					instance.gameDataCenter = new GameDataCenter ();
+
+					instance.UIManager = new UIManager ();
+
+					instance.persistDataManager = new PersistDataManager ();
+
 
 					DontDestroyOnLoad (instance);
 				}  
 				return instance;  
-			}  
+			}
 		}
 
 		public SoundManager soundManager;
@@ -47,18 +40,7 @@ namespace WordJourney
 
 		public PersistDataManager persistDataManager;
 
-
-
-
-		void Awake(){
-
-			gameDataCenter = new GameDataCenter ();
-
-			UIManager = new UIManager ();
-
-			persistDataManager = new PersistDataManager ();
-
-		}
+		public ResourceLoader emptyResourceLoader;
 			
 		#warning 如果决定使用scene来进行场景转换打开下面的代码
 //		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

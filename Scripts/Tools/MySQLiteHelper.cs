@@ -747,12 +747,24 @@ namespace WordJourney{
 		/// <param name="overrideIfExist">If set to <c>true</c> 如果文件存在是否覆盖目标文件 </param>
 		public static IEnumerator PersistDatabases(string fileNameModel,bool overrideIfExist){
 
+			string pre = string.Empty;
+#if UNITY_EDITOR
+			pre = "file://";
+#elif UNITY_ANDROID
+			pre = "";  
+#elif UNITY_IPHONE
+			pre = "file://";  
+#endif
+
+
 			if (Application.platform == RuntimePlatform.Android || 
 				Application.platform == RuntimePlatform.IPhonePlayer) {
 
-				string streamingAssetsDirPath = Application.streamingAssetsPath;
+				string streamingAssetsDirPath = pre + Application.streamingAssetsPath;
 
 				string persistDirPath = Application.persistentDataPath;
+
+
 
 				DirectoryInfo folder = new DirectoryInfo (streamingAssetsDirPath);
 

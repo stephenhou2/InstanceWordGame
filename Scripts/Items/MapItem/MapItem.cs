@@ -6,8 +6,9 @@ namespace WordJourney
 {
 	// 地图物品类型枚举
 	public enum MapItemType{
-		LockedTreasureBox,
-		NormalTreasureBox,
+		Buck,
+		Pot,
+		TreasureBox,
 		Tree,
 		Stone,
 		TrapOn,
@@ -53,6 +54,11 @@ namespace WordJourney
 		public void SetSortingOrder(int order){
 			mapItemRenderer.sortingOrder = order;
 		}
+
+
+//		public void SetSortingLayer(string layerName){
+//			mapItemRenderer.sortingLayerName = layerName;
+//		}
 
 		/// <summary>
 		/// 地图物品被破坏或开启

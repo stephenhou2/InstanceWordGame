@@ -77,7 +77,7 @@ namespace WordJourney
 			}
 		}
 
-		// 攻击特效动画控制器缓存池
+
 		protected Transform mExploreManager;
 		protected Transform exploreManager{
 			get{
@@ -122,6 +122,14 @@ namespace WordJourney
 			}
 
 		}
+
+		public void SetSortingOrder(int order){
+			armatureCom.sortingOrder = order;
+		}
+
+//		public void SetSortingLayerName(string layerName){
+//			armatureCom.sortingLayerName = layerName;
+//		}
 
 
 		protected void KeyFrameMessage<T>(string key,T eventObject){

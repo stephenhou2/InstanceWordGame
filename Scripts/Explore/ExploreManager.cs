@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Collections;
 
 
 
@@ -47,7 +48,7 @@ namespace WordJourney
 
 			battlePlayerCtr = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ();
 
-			battlePlayerCtr.ActiveBattlePlayer (true, false, false);
+			battlePlayerCtr.ActiveBattlePlayer (false, false, false);
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
@@ -65,24 +66,67 @@ namespace WordJourney
 		//Initializes the game for each level.
 		public void SetupExploreView(GameLevelData levelData)
 		{
+			StartCoroutine ("SetUpExploreAfterDataReady",levelData);
+
+		}
+
+		private IEnumerator SetUpExploreAfterDataReady(GameLevelData levelData){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.AnimatorControllers,
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.GameLevelDatas,
+					GameDataCenter.GameDataType.Monsters,
+					GameDataCenter.GameDataType.NPCs,
+					GameDataCenter.GameDataType.ItemModels,
+					GameDataCenter.GameDataType.ItemSprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites,
+					GameDataCenter.GameDataType.MapSprites,
+					GameDataCenter.GameDataType.Skills,
+					GameDataCenter.GameDataType.EquipmentAttachedProperties,
+					GameDataCenter.GameDataType.Skills,
+					GameDataCenter.GameDataType.SkillSprites,
+
+
+				});
+
+				yield return null;
+			}
+
 			levelData.LoadAllData ();
 
 			currentLevelIndex = levelData.gameLevelIndex;
 
-			battlePlayerCtr.SetUpExplorePlayerUI ();
-
-			//Call the SetupScene function of the BoardManager script, pass it current level number.
 			mapGenerator.SetUpMap(levelData);
 
 			ExploreUICotroller expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ();
 
 			expUICtr.SetUpExploreCanvas ();
 
-			expUICtr.GetComponent<Canvas> ().enabled = true;
+			battlePlayerCtr.SetUpExplorePlayerUI ();
+
+
+
+
+
+
+//			expUICtr.GetComponent<Canvas> ().enabled = true;
 
 		}
 
-		 
+		public void ItemsAroundAutoIntoLifeWithBasePoint(Vector3 basePostion){
+
+			mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint (basePostion);
+
+		}
+
+
+
 
 		private void Update(){
 
@@ -265,16 +309,16 @@ namespace WordJourney
 			case MapItemType.Door:
 				EnterDoor (mapItem);
 				break;
-			case MapItemType.LockedTreasureBox:
+			case MapItemType.Buck:
+			case MapItemType.Pot:
+			case MapItemType.TreasureBox:
 				EnterTreasureBox (mapItem);
 				break;
 			case MapItemType.MovableFloor:
 				EnterMovableFloor (mapItem);
 				break;
-			case MapItemType.NormalTreasureBox:
-				EnterTreasureBox (mapItem);
-				break;
 			case MapItemType.Stone:
+			case MapItemType.Tree:
 				EnterObstacle (mapItem);
 				break;
 			case MapItemType.Switch:
@@ -286,9 +330,6 @@ namespace WordJourney
 				break;
 			case MapItemType.TrapOn:
 				EnterTrap (mapItem);
-				break;
-			case MapItemType.Tree:
-				EnterObstacle (mapItem);
 				break;
 			}
 
@@ -518,9 +559,14 @@ namespace WordJourney
 
 			Destroy(this.gameObject);
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[] {
-				"AllMaterials", "AllMaterialSprites", "AllMapSprites", 
-				"AllSkills", "AllSkillSprites", "AllMonsters","AllNpcs","AllExploreAudioClips"
+			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[] {
+				GameDataCenter.GameDataType.Materials,
+				GameDataCenter.GameDataType.MaterialSprites,
+				GameDataCenter.GameDataType.MapSprites,
+				GameDataCenter.GameDataType.Skills, 
+				GameDataCenter.GameDataType.SkillSprites,
+				GameDataCenter.GameDataType.Monsters,
+				GameDataCenter.GameDataType.NPCs,
 			});
 
 			TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ().QuitExplore ();

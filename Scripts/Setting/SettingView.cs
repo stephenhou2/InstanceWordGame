@@ -55,7 +55,7 @@ namespace WordJourney{
 				break;
 			}
 
-//			GetComponent<Canvas> ().enabled = true;
+			GetComponent<Canvas> ().enabled = true;
 
 		}
 

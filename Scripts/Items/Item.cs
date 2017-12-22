@@ -67,6 +67,13 @@ namespace WordJourney{
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
 					return item.itemId == itemId;
 				});
+
+
+				if (itemModel == null) {
+					string error = string.Format ("未找到id为{0}的物品", itemId);
+					Debug.LogError (error);
+				}
+
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
 					newItem = new Equipment (itemModel, 0);

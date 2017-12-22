@@ -17,10 +17,10 @@ namespace WordJourney
 		public int[,] mapWalkableInfoArray;
 
 		// 可以用来检测的点阵
-		private List<Point> openList = new List<Point>();
+		private List<PointIn2D> openList = new List<PointIn2D>();
 
 		// 已关闭的点
-		private List<Point> closedList = new List<Point>();
+		private List<PointIn2D> closedList = new List<PointIn2D>();
 
 		// 自动寻路路径上的点集
 		private List<Vector3> pathPos = new List<Vector3>();
@@ -39,8 +39,8 @@ namespace WordJourney
 		/// <param name="mapWalkableInfoArray">Map walkable info array.</param>
 		public List<Vector3> FindPath(Vector3 startPos,Vector3 endPos,int[,] mapWalkableInfoArray){
 
-			Point startPoint = new Point(startPos);
-			Point endPoint = new Point(endPos);
+			PointIn2D startPoint = new PointIn2D(startPos);
+			PointIn2D endPoint = new PointIn2D(endPos);
 
 			// 每次自动探测路径前将待检测点集和已关闭点集和路径点集清空
 			openList.Clear ();
@@ -66,7 +66,7 @@ namespace WordJourney
 			}
 
 			// 记录起始点
-			Point currentPoint = startPoint;
+			PointIn2D currentPoint = startPoint;
 
 			// 将起始点加入待检测点集
 			openList.Add (startPoint);
@@ -81,12 +81,12 @@ namespace WordJourney
 				closedList.Add (currentPoint);
 
 				// 拿到当前点的周围点集（上下左右）
-				List<Point> surroundedPoints = currentPoint.GetSurroundedPoints ();
+				List<PointIn2D> surroundedPoints = currentPoint.GetSurroundedPoints ();
 
 				// 遍历周围点集
 				for(int i = 0; i<surroundedPoints.Count; i++) {
 					
-					Point p = surroundedPoints[i];
+					PointIn2D p = surroundedPoints[i];
 
 					if (p.x >= mapWidth || p.y >= mapHeight || p.x < 0 || p.y < 0) {
 						continue;
@@ -131,7 +131,7 @@ namespace WordJourney
 				}
 
 				// 获取待检测点集中F值做小的点
-				Point minFPoint = GetMinFPoint (openList);
+				PointIn2D minFPoint = GetMinFPoint (openList);
 //				Debug.LogFormat ("点{0}是F最小的点", minFPoint);
 
 
@@ -153,7 +153,7 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>The minimum F point.</returns>
 		/// <param name="openList">Open list.</param>
-		private Point GetMinFPoint(List<Point> openList){
+		private PointIn2D GetMinFPoint(List<PointIn2D> openList){
 
 			// 如果待检测点集中点的数量不为0，则对待检测点集中的点根据F值进行升序排列，返回F最小的点
 			if (openList.Count != 0) {
@@ -174,21 +174,21 @@ namespace WordJourney
 		/// </summary>
 		/// 地图外部或者障碍物或者不可到达点或者是已经关闭或者已经在待检测点集中返回true，其余返回false
 		/// <param name="p">P.</param>
-		private bool UnwalkableOrClosedOrExistInOpen(Point p){
+		private bool UnwalkableOrClosedOrExistInOpen(PointIn2D p){
 
 			if (mapWalkableInfoArray [p.x, p.y] == 0 || mapWalkableInfoArray [p.x, p.y] == -1) {
 				return true;
 			}
 
 
-			foreach (Point closedPoint in closedList) {
+			foreach (PointIn2D closedPoint in closedList) {
 
 				if (closedPoint.Equals (p)) {
 					return true;
 				}
 			}
 
-			foreach (Point openPoint in openList) {
+			foreach (PointIn2D openPoint in openList) {
 
 				if (openPoint.Equals (p)) {
 					return true;
@@ -201,9 +201,9 @@ namespace WordJourney
 	}
 
 	[System.Serializable]
-	public class Point{
+	public class PointIn2D{
 
-		public Point fatherPoint;
+		public PointIn2D fatherPoint;
 
 		public int x;
 
@@ -215,17 +215,17 @@ namespace WordJourney
 
 		private int G{ get; set;}
 
-		public Point(int x,int y){
+		public PointIn2D(int x,int y){
 			this.x = x;
 			this.y = y;
 		}
 
-		public Point(Vector3 positon){
+		public PointIn2D(Vector3 positon){
 			this.x = (int)positon.x;
 			this.y = (int)positon.y;
 		}
 
-		public void CaculateFGH(Point fatherPoint,Point endPoint,int GofNewPoint){
+		public void CaculateFGH(PointIn2D fatherPoint,PointIn2D endPoint,int GofNewPoint){
 
 			this.G = fatherPoint.G + GofNewPoint;
 
@@ -235,7 +235,7 @@ namespace WordJourney
 
 		}
 
-		public bool Equals(Point p){
+		public bool Equals(PointIn2D p){
 
 			if (this.x == p.x && this.y == p.y) {
 				return true;
@@ -244,22 +244,26 @@ namespace WordJourney
 
 		}
 
+		public bool Equals(Vector3 position){
+			return this.x == (int)(position.x) && this.y == (int)(position.y);
+		}
+
 		/// <summary>
 		/// 获得当前点的周围所有点（上下左右）
 		/// </summary>
 		/// <returns>The surrounded optimize point.</returns>
 		/// <param name="currentPoint">Current point.</param>
-		public List<Point> GetSurroundedPoints(){
+		public List<PointIn2D> GetSurroundedPoints(){
 
-			List<Point> surroundedPoints = new List<Point> ();
+			List<PointIn2D> surroundedPoints = new List<PointIn2D> ();
 
-			Point upPoint = new Point (x, y + 1);
+			PointIn2D upPoint = new PointIn2D (x, y + 1);
 
-			Point downPoint = new Point (x, y - 1);
+			PointIn2D downPoint = new PointIn2D (x, y - 1);
 
-			Point leftPoint = new Point (x - 1, y);
+			PointIn2D leftPoint = new PointIn2D (x - 1, y);
 
-			Point rightPoint = new Point (x + 1, y);
+			PointIn2D rightPoint = new PointIn2D (x + 1, y);
 
 
 			surroundedPoints.Add (upPoint);

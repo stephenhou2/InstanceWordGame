@@ -9,12 +9,32 @@ namespace WordJourney
 
 		public SkillsView skillsView;
 
-		private List<Skill> mSkills = new List<Skill>();
-		private List<Sprite> mSkillSprites = new List<Sprite>();
+		private List<Skill> mSkills;
+		private List<Sprite> mSkillSprites;
 
 		private Skill currentSelectSkill;
 
 		public void SetUpSkillsView(){
+
+			StartCoroutine ("SetUpViewAfterDataReady");
+
+		}
+
+		private IEnumerator SetUpViewAfterDataReady(){
+
+			bool dataReady = false;
+
+			while(!dataReady){
+
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Skills,
+					GameDataCenter.GameDataType.SkillSprites
+				});
+
+				yield return null;
+
+			}
 
 			mSkills = GameManager.Instance.gameDataCenter.allSkills;
 
@@ -27,6 +47,8 @@ namespace WordJourney
 			Player.mainPlayer.transform.Find ("BattlePlayer").gameObject.SetActive(true);
 
 		}
+
+
 
 		public void GetCurrentSelectInfo(Skill skill){
 			this.currentSelectSkill = skill;
@@ -101,11 +123,13 @@ namespace WordJourney
 			skillsView.QuitSkillsPlane ();
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 			});
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllSkills", "AllSkillSprites" });
+//			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+//				GameDataCenter.GameDataType.Skills, 
+//				GameDataCenter.GameDataType.SkillSprites
+//			});
 				
 		}
 

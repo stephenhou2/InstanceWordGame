@@ -74,9 +74,30 @@ namespace WordJourney
 
 		public void SetUpWorkBenchView(){
 
+			StartCoroutine ("SetUpViewAfterDataReady");
+		}
+
+
+		private IEnumerator SetUpViewAfterDataReady(){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites,
+					GameDataCenter.GameDataType.ItemModels,
+					GameDataCenter.GameDataType.ItemSprites,
+					GameDataCenter.GameDataType.EquipmentAttachedProperties
+				});
+				yield return null;
+			}
+
 			OnMaterialSpellButtonClick ();
 
 			SetUpItemDisplayView ();
+
 
 		}
 

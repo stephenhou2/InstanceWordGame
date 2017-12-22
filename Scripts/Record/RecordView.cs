@@ -113,6 +113,8 @@ namespace WordJourney
 
 			unlearnedCount.text = (learnInfo.totalWordCount - learnInfo.learnedWordCount).ToString ();
 
+			GetComponent<Canvas> ().enabled = true;
+
 		}
 
 		/// <summary>

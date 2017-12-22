@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 359065491
+CRC: 3970715856
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -60,25 +60,25 @@ AssetBundleManifest:
       Name: skills/icons
       Dependencies: {}
     Info_15:
-      Name: main/static
-      Dependencies: {}
-    Info_16:
       Name: ui/icons
       Dependencies: {}
-    Info_17:
+    Info_16:
       Name: workbench/canvas
       Dependencies:
         Dependency_0: ui/icons
-    Info_18:
+    Info_17:
       Name: learn/canvas
       Dependencies:
         Dependency_0: ui/icons
+    Info_18:
+      Name: animator/runtimecontrollers
+      Dependencies:
+        Dependency_0: animation/map
+        Dependency_1: animation/skill
     Info_19:
-      Name: audio/map_effect
-      Dependencies: {}
+      Name: animation/map
+      Dependencies:
+        Dependency_0: explore/mapicons
     Info_20:
-      Name: audio/skill_effect
-      Dependencies: {}
-    Info_21:
-      Name: audio/foot_step
+      Name: animation/skill
       Dependencies: {}

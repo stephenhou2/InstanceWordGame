@@ -13,6 +13,8 @@ namespace WordJourney{
 
 	public struct CommonData{
 
+
+
 		public static string originDataPath = Application.streamingAssetsPath + "/Data";
 		public static string persistDataPath = Application.persistentDataPath + "/Data";
 
@@ -69,7 +71,9 @@ namespace WordJourney{
 		public static string allSkillSpritesBundleName = "skills/icons";
 		public static string allUISpritesBundleName = "ui/icons";
 		public static string allMonstersBundleName = "explore/monsters";
-//		public static string allExploreAudioClipsBundleName = "audio/explore";
+		public static string allFootStepAudioClipBundleName = "audio/foot_step";
+		public static string allMapEffectAudoClipBundleName = "audio/map_effect";
+		public static string allSkillEffectAudioClipBundleName = "audio/skill_effect";
 		public static string allUIAudioClipsBundleName = "audio/ui";
 
 

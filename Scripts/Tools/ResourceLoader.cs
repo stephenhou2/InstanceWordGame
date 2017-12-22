@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace WordJourney
+namespace WordJourneyr
 {
+
+	public delegate void CallBack();
 
 	/// <summary>
 	/// streamingAssets内资源加载类
@@ -37,7 +39,7 @@ namespace WordJourney
 		// 从本地加载的音频
 		public List<AudioClip> audioClips = new List<AudioClip> ();
 
-	
+
 		//	private Dictionary<string,byte[]> dataCache = new Dictionary<string, byte[]> ();		
 		public static ResourceLoader CreateNewResourceLoader(){
 			return new GameObject ().AddComponent<ResourceLoader> ();	
@@ -60,7 +62,7 @@ namespace WordJourney
 			} else {
 				StartCoroutine ("LoadFromFileAsync", bundleName);
 			}
-				
+
 		}
 
 		/// <summary>
@@ -81,7 +83,7 @@ namespace WordJourney
 
 
 
-			
+
 		/// <summary>
 		/// 同步加载资源
 		/// </summary>
@@ -231,7 +233,7 @@ namespace WordJourney
 					audioClips.Add (obj as AudioClip);
 				}else {
 					GameObject go = Instantiate (obj as GameObject, Vector3.zero, Quaternion.identity);
-					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
+//					go.transform.SetParent (TransformManager.FindOrCreateTransform (CommonData.instanceContainerName));
 					go.name = obj.name;
 					gos.Add (go);
 				}

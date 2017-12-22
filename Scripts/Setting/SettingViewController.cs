@@ -16,6 +16,22 @@ namespace WordJourney
 
 		public void SetUpSettingView(){
 
+			StartCoroutine ("SetUpViewAfterDataReady");
+
+		}
+
+		private IEnumerator SetUpViewAfterDataReady(){
+			
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.GameSettings
+				});
+				yield return null;
+			}
+
 			GameSettings settings = GameManager.Instance.gameDataCenter.gameSettings;
 
 			settingView.SetUpSettingView (settings);
@@ -95,7 +111,9 @@ namespace WordJourney
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 			});
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "GameSettings" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+				GameDataCenter.GameDataType.GameSettings
+			});
 
 		}
 

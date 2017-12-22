@@ -9,8 +9,16 @@ public class AssetBundlesBuilder {
 		//打包资源的路径
 		string targetPath = Application.dataPath + "/StreamingAssets";
 
-		BuildPipeline.BuildAssetBundles (targetPath, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.iOS);
+		BuildTarget buildTarget = EditorUserBuildSettings.activeBuildTarget;
 
+		switch (buildTarget) {
+		case BuildTarget.Android:
+			BuildPipeline.BuildAssetBundles (targetPath, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.Android);
+			break;
+		case BuildTarget.iOS:
+			BuildPipeline.BuildAssetBundles (targetPath, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.iOS);
+			break;
+		}
 
 	}
 }

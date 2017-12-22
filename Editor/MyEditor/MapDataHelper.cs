@@ -23,6 +23,7 @@ namespace WordJourney
 
 			public int floorTileFirstGid;
 			public int attachedInfoFirstGid;
+			public int attachedItemFirstGid;
 
 		}
 
@@ -48,12 +49,12 @@ namespace WordJourney
 			public string source;
 		}
 
-		[System.Serializable]
-		public class FloorTilesInfo
-		{
-			public string floorImageName;
-			public int[] walkableInfoArray;
-		}
+//		[System.Serializable]
+//		public class FloorTilesInfo
+//		{
+//			public string floorImageName;
+//			public int[] walkableInfoArray;
+//		}
 
 
 
@@ -66,11 +67,14 @@ namespace WordJourney
 
 			FileInfo[] originalMapDatasFiles = directory.GetFiles ();
 
-			string floorTilesInfoPath = "/Users/houlianghong/Desktop/MyGameData/Map/FloorTilesInfo.json";
+//			string floorTilesInfoPath = "/Users/houlianghong/Desktop/MyGameData/Map/FloorTilesInfo.json";
 
-			FloorTilesInfo[] floorTilesInfoArray = DataHandler.LoadDataToModelsWithPath<FloorTilesInfo> (floorTilesInfoPath);
+//			FloorTilesInfo[] floorTilesInfoArray = DataHandler.LoadDataToModelsWithPath<FloorTilesInfo> (floorTilesInfoPath);
 
-			FloorTilesInfo tileInfo = null;
+//			FloorTilesInfo tilesInfo = null;
+
+			Layer attachedInfoLayer = null;
+			Layer attachedItemLayer = null;
 
 			for (int i = 0; i < originalMapDatasFiles.Length; i++) {
 
@@ -86,11 +90,14 @@ namespace WordJourney
 
 					OriginalTileSet ts = oriMapData.tilesets [j];
 
-					if (ts.source.Contains("Floor")) {
+					if (ts.source.Contains ("Floor")) {
 						oriMapData.floorTileFirstGid = ts.firstgid;
-					} else if (ts.source.Contains("AttachedInfo")) {
+					} else if (ts.source.Contains ("AttachedInfo")) {
 						oriMapData.attachedInfoFirstGid = ts.firstgid;
-					} else {
+					} else if (ts.source.Contains ("AttachedItem")) {
+						oriMapData.attachedItemFirstGid = ts.firstgid;
+					}
+					else {
 						Debug.LogError(string.Format("未查询到地图／附加信息的原始贴图数据"));
 					}
 
@@ -118,28 +125,21 @@ namespace WordJourney
 					case "FloorLayer":
 						firstGid = oriMapData.floorTileFirstGid;
 						floorImageName = layer.properties.floorImageName;
-						for (int m = 0; m < floorTilesInfoArray.Length; m++) {
-							if (floorTilesInfoArray [m].floorImageName == floorImageName) {
-								tileInfo = floorTilesInfoArray [m];
-							}
-						}
-						if (tileInfo == null) {
-							Debug.LogError (string.Format ("未查询到对应的地板图块信息--地图名称：{0}", fi.Name));
-						}
 
 						for (int k = 0; k < layer.data.Length; k++) {
 							row = oriMapData.height - k / oriMapData.width - 1;
 							col = k % oriMapData.width;
 							int tileIndex = layer.data [k] - firstGid;
 							if (tileIndex >= 0) {
-								bool walkable = tileInfo.walkableInfoArray [tileIndex] == 1;
+//								bool walkable = tileInfo.walkableInfoArray [tileIndex] == 1;
+								bool walkable = true;
 								Tile tile = new Tile (new Vector2 (col, row), tileIndex ,walkable);
 								tileDatas.Add (tile);
-								Debug.LogFormat ("{0}-{1}",k,tile);
+								Debug.LogFormat ("mapName:{0},layerName:{1},index:{2},tileInfo:{3}",fi.Name,"floor",k,tile);
 							}
 
 						}
-
+						newLayers[j] = new Layer (layer.name, tileDatas.ToArray()); 
 						break;
 					case "AttachedInfoLayer":
 						firstGid = oriMapData.attachedInfoFirstGid;
@@ -150,23 +150,64 @@ namespace WordJourney
 							col = k % oriMapData.width;
 							int tileIndex = layer.data [k] - firstGid;
 							if (tileIndex >= 0) {
-								Tile tile = new Tile (new Vector2 (col, row), tileIndex ,false);
+								Tile tile = new Tile (new Vector2 (col, row), tileIndex, false);
 								tileDatas.Add (tile);
-								Debug.LogFormat ("{0}-{1}",k,tile);
+								Debug.LogFormat ("mapName:{0},layerName:{1},index:{2},tileInfo:{3}",fi.Name,"attachedInfo",k,tile);
+							}
+
+						}
+						attachedInfoLayer = new Layer (layer.name, tileDatas.ToArray ()); 
+						newLayers [j] = attachedInfoLayer; 
+						break;
+					case "AttachedItemLayer":
+						firstGid = oriMapData.attachedItemFirstGid;
+
+						for (int k = 0; k < layer.data.Length; k++) {
+							row = oriMapData.height - k / oriMapData.width - 1;
+							col = k % oriMapData.width;
+							int tileIndex = layer.data [k] - firstGid;
+							if (tileIndex >= 0) {
+								Tile tile = new Tile (new Vector2 (col, row), tileIndex, false);
+								tileDatas.Add (tile);
+								Debug.LogFormat ("mapName:{0},layerName:{1},index:{2},tileInfo:{3}",fi.Name,"attachedItem",k,tile);
+							}
+
+						}
+						attachedItemLayer = new Layer (layer.name, tileDatas.ToArray ()); 
+						newLayers [j] = attachedItemLayer;
+						break;
+					default:
+						Debug.LogError(string.Format("地图{0}层名称设置错误或缺失",fi.Name));
+						break;
+					}
+				}
+
+				for (int k = 0; k < attachedInfoLayer.tileDatas.Length; k++) {
+
+					Tile attachedInfoTile = attachedInfoLayer.tileDatas [k];
+
+					if ((AttachedInfoType)(attachedInfoTile.tileIndex) == AttachedInfoType.Buck ||
+						(AttachedInfoType)(attachedInfoTile.tileIndex) == AttachedInfoType.Pot ||
+						(AttachedInfoType)(attachedInfoTile.tileIndex) == AttachedInfoType.TreasureBox) {
+
+						bool attachedInfoDataCorrect = false;
+
+						for (int m = 0; m < attachedItemLayer.tileDatas.Length; m++) {
+
+							if (attachedItemLayer.tileDatas [m].position == attachedInfoTile.position) {
+								attachedInfoDataCorrect = true;
+								break;
 							}
 
 						}
 
-						break;
+						if (!attachedInfoDataCorrect) {
+							Debug.LogError (string.Format ("地图{0}上箱子内部没有对应物品---pos:[{1},{2}]",fi.Name, attachedInfoTile.position.x, attachedInfoTile.position.y));
+						}
+
 					}
-
-
-
-
-
-					newLayers[j] = new Layer (layer.name, tileDatas.ToArray()); 
-
 				}
+
 
 				MapData newMapData = new MapData (oriMapData.height, oriMapData.width, oriMapData.tilewidth, oriMapData.tileheight, floorImageName, backgroundImageName, newLayers);
 

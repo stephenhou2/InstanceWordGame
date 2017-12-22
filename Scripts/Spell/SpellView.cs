@@ -80,8 +80,10 @@ namespace WordJourney
 				confirmButton.gameObject.SetActive (true);
 				break; 
 			}
-				
+
 			InitCharacterButtons ();
+
+			GetComponent<Canvas> ().enabled = true;
 
 		}
 

@@ -20,6 +20,22 @@ namespace WordJourney
 		/// 初始化学习记录界面
 		/// </summary>
 		public void SetUpRecordView(){
+			StartCoroutine ("SetUpViewAfterDataReady");
+		}
+
+		private IEnumerator SetUpViewAfterDataReady(){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.LearnInfo,
+				});
+
+				yield return null;
+
+			}
 
 			learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
 
@@ -101,7 +117,9 @@ namespace WordJourney
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfRecordCanvas", TransformRoot.PoolContainer);
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "LearnInfo" });
+			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+				GameDataCenter.GameDataType.LearnInfo
+			});
 
 		}
 

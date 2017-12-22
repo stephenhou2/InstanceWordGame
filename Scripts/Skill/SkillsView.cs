@@ -177,14 +177,14 @@ namespace WordJourney
 
 //			skillsViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
 
-			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-
-			Vector3 originalPosition = skillPlane.localPosition;
-
-			skillPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-//				GetComponent<Canvas>().enabled = false;
-				skillPlane.localPosition = originalPosition;
-			});
+//			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
+//
+//			Vector3 originalPosition = skillPlane.localPosition;
+//
+//			skillPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
+////				GetComponent<Canvas>().enabled = false;
+//				skillPlane.localPosition = originalPosition;
+//			});
 
 		}
 	}

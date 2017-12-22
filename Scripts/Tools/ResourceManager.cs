@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object=UnityEngine.Object;
 
-namespace WordJourney
+namespace WordJourneyr
 {
 	public class ResourceManager : SingletonMono<ResourceManager> {
 

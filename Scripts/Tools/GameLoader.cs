@@ -10,16 +10,23 @@ namespace WordJourney
 
 		private int maxCaching = 100;
 
+//		private bool finishDataLoading = false;
+
 		void Awake(){
+
+
 
 			PersistDataAlways ();
 //			StartCoroutine ("PersistDataIfFirstLoad");
-
 		}
 
 		private void InitGame(){
 
 			LoadDatas ();
+
+//			TransformManager.FindTransform ("Path").GetComponent<TextMesh> ().text = Application.streamingAssetsPath;
+
+//			StartCoroutine ("EnterGameAfterFinishingLoadData");
 
 			SetUpHomeView ();
 
@@ -45,8 +52,6 @@ namespace WordJourney
 			
 			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
 
-			GameManager.Instance.persistDataManager.SavePlayerData ();
-
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
@@ -58,19 +63,24 @@ namespace WordJourney
 		#warning 测试时每次都将文件本地化，打包时使用下面的方法，保证只有首次进入游戏会进行文件本地化
 		private void PersistDataAlways(){
 
-
-
 			Debug.Log ("文件本地化");
 
 			DataHandler.CopyDirectory (CommonData.originDataPath, CommonData.persistDataPath, true);
 
+			ResourceManager.Instance.SetUpManifest ();
+
 			InitGame ();
+//			TransformManager.FindTransform ("Path").GetComponent<TextMesh> ().text = Application.streamingAssetsPath;
 
 		}
 
-		private void CopySubFiles(){
-
-		}
+//		private IEnumerator EnterGameAfterFinishingLoadData(){
+//
+//			yield return new WaitUntil (() => finishDataLoading == true);
+//
+//			SetUpHomeView ();
+//
+//		}
 
 		private IEnumerator PersistDataIfFirstLoad(){
 
@@ -97,6 +107,8 @@ namespace WordJourney
 					yield return null;
 				}
 			}
+
+			ResourceManager.Instance.SetUpManifest ();
 	
 			Debug.Log (CommonData.persistDataPath);
 
@@ -105,49 +117,6 @@ namespace WordJourney
 		}
 
 
-//		private bool BinaryFileSave(string name,object obj)  
-//		{  
-//			Stream flstr=null;  
-//			BinaryWriter binaryWriter=null;  
-//			try  
-//			{  
-//				flstr = new FileStream(name, FileMode.Create);  
-//				binaryWriter = new BinaryWriter(flstr);  
-//				var buff = FormatterObjectBytes(obj);  
-//				binaryWriter.Write(buff);  
-//			}  
-//			catch (System.Exception er)  
-//			{  
-//				throw new System.Exception(er.Message);  
-//			}  
-//			finally  
-//			{  
-//				if (binaryWriter != null) binaryWriter.Close();  
-//				if (flstr != null) flstr.Close();  
-//			}  
-//			return true;  
-//		}  
-//
-//
-//		private byte[] FormatterObjectBytes(object obj)  
-//		{  
-//			if(obj==null)  
-//				throw new ArgumentNullException("obj");  
-//			byte[] buff;  
-//			try  
-//			{  
-//				using (var ms = new MemoryStream())  
-//				{  
-//					IFormatter iFormatter = new BinaryFormatter();  
-//					iFormatter.Serialize(ms, obj);  
-//					buff = ms.GetBuffer();  
-//				}  
-//			}  
-//			catch (Exception er)  
-//			{  
-//				throw new Exception(er.Message);  
-//			}  
-//			return buff;  
-//		}
+
 	}
 }

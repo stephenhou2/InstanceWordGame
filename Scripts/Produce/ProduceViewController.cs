@@ -27,10 +27,30 @@ namespace WordJourney
 
 		public void SetUpProduceView(ItemModel itemModel){
 
+
+
+		}
+
+		private IEnumerator SetUpViewAfterDataReady(){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites,
+					GameDataCenter.GameDataType.ItemModels,
+					GameDataCenter.GameDataType.ItemSprites,
+					GameDataCenter.GameDataType.EquipmentAttachedProperties
+				});
+				yield return null;
+			}
+
 			this.itemModel = itemModel;
 
 			for (int i = 0; i < itemModel.materials.Count; i++) {
-				
+
 				Material material = itemModel.materials [i];
 
 				materialsForProduce.Add (new Material (material, 0));
@@ -40,7 +60,6 @@ namespace WordJourney
 			CalculateTotalValenceAndUnstableness ();
 
 			produceView.SetUpProduceView (itemModel,materialsForProduce,totalValence,totalValence);
-
 		}
 
 		public void MaterialCountPlusOne(Material material){

@@ -76,6 +76,25 @@ namespace WordJourney
 		/// 初始化拼写界面（制造）
 		/// </summary>
 		public void SetUpSpellViewForCreateMaterial(Material material){
+			IEnumerator coroutine = SetUpViewAfterDataReady (material);
+			StartCoroutine (coroutine);
+		}
+
+
+		private IEnumerator SetUpViewAfterDataReady(Material material){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Materials,
+					GameDataCenter.GameDataType.MaterialSprites,
+					GameDataCenter.GameDataType.ItemModels,
+					GameDataCenter.GameDataType.ItemSprites
+				});
+				yield return null;
+			}
 
 			if (material != null) {
 				this.spell = material.itemNameInEnglish;
@@ -89,6 +108,8 @@ namespace WordJourney
 			ClearUnsufficientCharacters ();
 
 		}
+
+
 
 		public void SetUpSpellViewForCreateFuseStone(){
 
@@ -537,7 +558,10 @@ namespace WordJourney
 					GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 						TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 					});
-					GameManager.Instance.gameDataCenter.ReleaseDataWithNames (new string[]{ "AllMaterials", "AllMaterialSprites" });
+					GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+						GameDataCenter.GameDataType.Materials, 
+						GameDataCenter.GameDataType.MaterialSprites
+					});
 				} 
 //				else {
 //					Transform materialDisplayCanvas = TransformManager.FindTransform ("MaterialDisplayCanvas");

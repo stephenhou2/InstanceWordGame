@@ -14,6 +14,12 @@ namespace WordJourney
 
 	public class SoundManager : MonoBehaviour {
 
+		public List<AudioClip> footStepAudioClips = new List<AudioClip>();
+		public List<AudioClip> skillEffectAudioClips = new List<AudioClip>();
+		public List<AudioClip> mapEffectAudioClips = new List<AudioClip> ();
+		public List<AudioClip> UIAudioClips = new List<AudioClip> ();
+
+
 		public AudioSource bgmAS;
 
 		public AudioSource effectAS;
@@ -26,82 +32,6 @@ namespace WordJourney
 		public float lowPitchRange = 0.95f;				
 		public float highPitchRange = 1.05f;
 
-//		private List<AudioClip> mAllExploreAudioClips = new List<AudioClip>();
-//		public List<AudioClip> allExploreAudioClips{
-//			get{
-//				if (mAllExploreAudioClips.Count == 0) {
-//					ResourceLoader exploreAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-//					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (exploreAudioLoader, CommonData.allExploreAudioClipsBundleName, () => {
-//						CopyClips(exploreAudioLoader.audioClips,mAllExploreAudioClips,false);
-//					}, true);
-//				}
-//				return mAllExploreAudioClips;
-//			}
-//		}
-
-		private List<AudioClip> mAllFootStepAudioClips = new List<AudioClip>();
-		public List<AudioClip> allFootStepAudioClips{
-			get{
-				if (mAllFootStepAudioClips.Count == 0) {
-					ResourceLoader footStepAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (footStepAudioLoader, "audio/foot_step", () => {
-						CopyClips (footStepAudioLoader.audioClips, mAllFootStepAudioClips, false);
-					}, true);
-				}
-				return mAllFootStepAudioClips;
-			}
-		}
-
-		private List<AudioClip> mAllMapEffectAudioClips = new List<AudioClip> ();
-		public List<AudioClip> allMapEffectAudioClips{
-			get{
-				if (mAllMapEffectAudioClips.Count == 0) {
-					ResourceLoader mapEffectAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (mapEffectAudioLoader, "audio/map_effect", () => {
-						CopyClips(mapEffectAudioLoader.audioClips,mAllMapEffectAudioClips,false);
-					},true);
-				}
-				return mAllMapEffectAudioClips;
-			}
-		}
-
-		private List<AudioClip> mAllSkillEffectAudioClips = new List<AudioClip> ();
-		public List<AudioClip> allSkillEffectAudioClips{
-			get{
-				if (mAllSkillEffectAudioClips.Count == 0) {
-					ResourceLoader skillEffectAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (skillEffectAudioLoader, "audio/skill_effect", () => {
-						CopyClips (skillEffectAudioLoader.audioClips, mAllSkillEffectAudioClips, false);
-					}, true);
-				}
-				return mAllSkillEffectAudioClips;
-			}
-		}
-
-		private List<AudioClip> mAllUIAudioClips = new List<AudioClip> ();
-		public List<AudioClip> allUIClips{
-			get{
-				if (mAllUIAudioClips.Count == 0) {
-					ResourceLoader UIAudioLoader = ResourceLoader.CreateNewResourceLoader ();
-					ResourceManager.Instance.LoadAssetsWithBundlePath<AudioClip> (UIAudioLoader, CommonData.allUIAudioClipsBundleName, () => {
-						CopyClips(UIAudioLoader.audioClips,mAllUIAudioClips,true);
-					}, true);
-				}
-				return mAllUIAudioClips;
-			}
-		}
-
-		private void CopyClips(List<AudioClip> originClips,List<AudioClip> targetClips,bool dontUnload){
-
-			for(int i = 0;i<originClips.Count;i++){
-				targetClips.Add(originClips[i]);
-				if (dontUnload) {
-					originClips [i].hideFlags = HideFlags.DontUnloadUnusedAsset;
-				}
-			}
-
-		}
-
 
 		public void PlayWordPronunciation(AudioClip pronunciation){
 
@@ -113,7 +43,7 @@ namespace WordJourney
 
 		public void PlaySkillEffectClips(string audioClipName){
 
-			AudioClip skillClip = allSkillEffectAudioClips.Find (delegate(AudioClip obj) {
+			AudioClip skillClip = skillEffectAudioClips.Find (delegate(AudioClip obj) {
 				return obj.name == audioClipName;
 			});
 
@@ -132,7 +62,7 @@ namespace WordJourney
 
 		public void PlayFootStepClips(){
 
-			AudioClip footStepClip = RandomAudioClip (allFootStepAudioClips);
+			AudioClip footStepClip = RandomAudioClip (footStepAudioClips);
 
 			footSoundAS.clip = footStepClip;
 
@@ -144,7 +74,7 @@ namespace WordJourney
 
 		public void PlayMapEffectClips(string audioClipName){
 
-			AudioClip clip = allMapEffectAudioClips.Find (delegate(AudioClip obj) {
+			AudioClip clip = mapEffectAudioClips.Find (delegate(AudioClip obj) {
 				return obj.name == audioClipName;
 			});
 
