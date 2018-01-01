@@ -101,7 +101,12 @@ namespace WordJourney
 
 			wordType.text = wordTypeStr;
 
-			float percentage = learnInfo.learnedWordCount / learnInfo.totalWordCount;
+			float percentage = 0;
+
+			if (learnInfo.totalWordCount != 0) {
+				percentage = learnInfo.learnedWordCount / learnInfo.totalWordCount;
+			}
+			 
 
 			completionImage.fillAmount = percentage;
 

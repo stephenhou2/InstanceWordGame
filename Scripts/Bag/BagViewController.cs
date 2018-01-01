@@ -9,21 +9,11 @@ namespace WordJourney
 
 		public BagView bagView;
 
-
-
-
-
-		private List<Item> allItemsOfCurrentSelectType = new List<Item>();
-
-//		private List<Equipment> allEquipmentsOfSelectType = new List<Equipment>();
-
 		private ItemType currentSelectItemType;
 
-		private EquipmentType currentSelectEquipmentType;
+		public Item currentSelectItem;
 
-//		private int currentSelectEquipIndex;
-
-		private Item currentSelectItem;
+		public Transform currentSelectDragControl;
 
 		private int minResolveCount;
 		private int maxResolveCount;
@@ -36,40 +26,51 @@ namespace WordJourney
 			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 				for (int i = 0; i < 3; i++) {
 
+//					Debug.Log (GameManager.Instance.gameDataCenter.allItemModels.Count);
+
 					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
 						return obj.itemId == i;
 					});
 
-					Equipment e = new Equipment (im,5);
+					Equipment e = new Equipment (im);
 
-					Player.mainPlayer.allEquipmentsInBag.Add (e);
+					Player.mainPlayer.AddItem (e);
+				}
 
+				for (int i = 100; i < 120; i++) {
+					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+						return obj.itemId == i;
+					});
+
+					Consumables c = new Consumables (im,1);
+
+					Player.mainPlayer.AddItem (c);
 				}
 			}
 
-			for (int i = 0; i < 114; i++) {
+//			for (int i = 0; i < 114; i++) {
+//
+//				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+//					return obj.itemId == 1000 + i;
+//				});
+//
+//				Material material = new Material (m, 2);
+//
+//				Player.mainPlayer.allMaterialsInBag.Add (material);
+//
+//			}
 
-				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-					return obj.itemId == 1000 + i;
-				});
 
-				Material material = new Material (m, 2);
-
-				Player.mainPlayer.allMaterialsInBag.Add (material);
-
-			}
-
-
-			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == 513;
-			});
-
-			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == 512;
-			});
-
-			Player.mainPlayer.AddItem (new Consumables (key, 5));
-			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
+//			ItemModel key = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//				return obj.itemId == 513;
+//			});
+//
+//			ItemModel pickAxe = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//				return obj.itemId == 512;
+//			});
+//
+//			Player.mainPlayer.AddItem (new Consumables (key, 5));
+//			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
 
 			resolveCount = 1;
 
@@ -91,37 +92,19 @@ namespace WordJourney
 					GameDataCenter.GameDataType.ItemSprites,
 					GameDataCenter.GameDataType.Materials,
 					GameDataCenter.GameDataType.MaterialSprites,
-					GameDataCenter.GameDataType.EquipmentAttachedProperties
+//					GameDataCenter.GameDataType.EquipmentAttachedProperties
 				});
 				yield return null;
 			}
-
 
 			currentSelectItemType = ItemType.Equipment;
 
 			InitItemsOfCurrentSelectType<Equipment> (Player.mainPlayer.allEquipmentsInBag);
 
-			bagView.SetUpBagView (currentSelectItem,setVisible);
+			bagView.SetUpBagView (setVisible);
 
 		}
-			
 
-		// 已装备界面上按钮点击响应
-		public void OnEquipedEquipmentButtonClick(int index){
-
-			currentSelectEquipmentType = (EquipmentType)index;
-
-			Equipment equipedEquipment = Player.mainPlayer.allEquipedEquipments.Find (delegate(Equipment obj) {
-				return obj.equipmentType == currentSelectEquipmentType;
-			});
-
-			List<Equipment> allEquipmentsOfSelectType = Player.mainPlayer.allEquipmentsInBag.FindAll (delegate(Equipment obj) {
-				return obj.equipmentType == currentSelectEquipmentType;
-			});
-
-			bagView.SetUpAllEquipmentsPlaneOfEquipmentType (equipedEquipment,allEquipmentsOfSelectType);
-
-		}
 
 		public void OnItemTypeButtonClick(int index){
 
@@ -146,12 +129,12 @@ namespace WordJourney
 			case ItemType.FuseStone:
 				InitItemsOfCurrentSelectType(Player.mainPlayer.allFuseStonesInBag);
 				break;
-			case ItemType.Material:
-				InitItemsOfCurrentSelectType(Player.mainPlayer.allMaterialsInBag);
-				break;
+//			case ItemType.Material:
+//				InitItemsOfCurrentSelectType(Player.mainPlayer.allMaterialsInBag);
+//				break;
 			}
 
-			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelectType,currentSelectItem);
+//			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelectType,currentSelectItem);
 
 		}
 
@@ -163,11 +146,63 @@ namespace WordJourney
 			where T:Item
 		{
 			
-			allItemsOfCurrentSelectType.Clear ();
+//			allItemsOfCurrentSelectType.Clear ();
 
-			for (int i = 0; i < itemsInBag.Count; i++) {
-				allItemsOfCurrentSelectType.Add (itemsInBag [i]);
+//			for (int i = 0; i < itemsInBag.Count; i++) {
+//				allItemsOfCurrentSelectType.Add (itemsInBag [i]);
+//			}
+		}
+
+		public void OnEquipButtonClick(){
+
+			for (int i = 0; i < Player.mainPlayer.allEquipedEquipments.Length; i++) {
+
+				Equipment equipment = Player.mainPlayer.allEquipedEquipments [i];
+
+				if (equipment.itemId < 0) {
+					Agent.PropertyChange propertyChange = Player.mainPlayer.EquipEquipment (currentSelectItem as Equipment, i);
+					bagView.SetUpEquipedEquipmentsPlane ();
+					bagView.SetUpPlayerStatusPlane (propertyChange);
+					bagView.RemoveItemInBag(currentSelectDragControl);
+					bagView.QuitItemDetailHUD ();
+					bagView.SetUpEquipedEquipmentsPlane ();
+					return;
+				}
 			}
+			bagView.SetUpTintHUD ("装备栏已满");
+
+		}
+
+		public void OnUnloadButtonClick(){
+
+			for (int i = 0; i < Player.mainPlayer.allEquipedEquipments.Length; i++) {
+				if (currentSelectItem == Player.mainPlayer.allEquipedEquipments [i]) {
+					Agent.PropertyChange propertyChange = Player.mainPlayer.UnloadEquipment (currentSelectItem as Equipment,i);
+					bagView.SetUpEquipedEquipmentsPlane ();
+					bagView.SetUpPlayerStatusPlane (propertyChange);
+					bagView.AddBagItem (currentSelectItem);
+					bagView.QuitItemDetailHUD ();
+					return;
+				}
+			}
+
+		}
+
+		public void OnUseButtonClick(){
+
+			bool removeFromBag;
+
+			Agent.PropertyChange propertyChange = Player.mainPlayer.UseConsumables (currentSelectItem as Consumables,out removeFromBag);
+
+			if (removeFromBag) {
+				bagView.RemoveItemInBag (currentSelectDragControl);
+			}
+
+			bagView.QuitItemDetailHUD ();
+
+			bagView.SetUpPlayerStatusPlane (propertyChange);
+
+
 		}
 			
 
@@ -183,23 +218,6 @@ namespace WordJourney
 
 		}
 
-		public void OnEquipButtonClick(Equipment equipment){
-
-			if (equipment.equiped) {
-				bagView.OnQuitSpecificTypePlane ();
-				return;
-			}
-
-			if (equipment.isNewItem) {
-				equipment.isNewItem = false;
-			}
-
-			Player.mainPlayer.EquipEquipment (equipment);
-
-			bagView.OnEquipButtonOfDetailHUDClick (allItemsOfCurrentSelectType, currentSelectItem);
-
-		}
-
 		public void OnResolveButtonClick(){
 
 			switch (currentSelectItem.itemType) {
@@ -211,14 +229,14 @@ namespace WordJourney
 				minResolveCount = 1;
 				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
 				break;
-			case ItemType.Material:
-				maxResolveCount = currentSelectItem.itemCount;
-				minResolveCount = 1;
-				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
-				break;
+//			case ItemType.Material:
+//				maxResolveCount = currentSelectItem.itemCount;
+//				minResolveCount = 1;
+//				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
+//				break;
 			case ItemType.FuseStone:
 				ResolveAndGetCharacters (currentSelectItem);
-				allItemsOfCurrentSelectType.Remove (currentSelectItem);
+//				allItemsOfCurrentSelectType.Remove (currentSelectItem);
 				break;
 			}
 
@@ -229,9 +247,9 @@ namespace WordJourney
 			resolveCount = bagView.GetResolveCountBySlider();
 
 			switch (currentSelectItem.itemType) {
-			case ItemType.Material:
-				ResolveAndGetCharacters (new Material(currentSelectItem as Material,resolveCount));
-				break;
+//			case ItemType.Material:
+//				ResolveAndGetCharacters (new Material(currentSelectItem as Material,resolveCount));
+//				break;
 			case ItemType.Consumables:
 				ResolveAndGetMaterials (new Consumables(currentSelectItem as Consumables,resolveCount));
 				break;
@@ -262,7 +280,7 @@ namespace WordJourney
 			}
 
 			if (resolveCount >= currentSelectItem.itemCount) {
-				allItemsOfCurrentSelectType.Remove (currentSelectItem);
+//				allItemsOfCurrentSelectType.Remove (currentSelectItem);
 			}
 
 			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
@@ -270,11 +288,13 @@ namespace WordJourney
 			currentSelectItem = null;
 
 			switch(item.itemType){
-			case ItemType.Material:
-				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag,currentSelectItem);
-				break;
+//			case ItemType.Material:
+//				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag,currentSelectItem);
+//				break;
 			case ItemType.FuseStone:
-				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
+				
+				bagView.RemoveItemInBag (currentSelectDragControl);
+//				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
 				break;
 			}
 
@@ -290,11 +310,13 @@ namespace WordJourney
 
 			bagView.SetUpResolveGainHUD (returnedMaterials);
 
-			allItemsOfCurrentSelectType.Remove (currentSelectItem);
+//			allItemsOfCurrentSelectType.Remove (currentSelectItem);
 
 			currentSelectItem = null;
 
-			bagView.ResetBagView<Equipment> (Player.mainPlayer.allEquipmentsInBag,currentSelectItem);
+			bagView.RemoveItemInBag (currentSelectDragControl);
+
+//			bagView.ResetBagView<Equipment> (Player.mainPlayer.allEquipmentsInBag,currentSelectItem);
 
 		}
 
@@ -320,30 +342,30 @@ namespace WordJourney
 		/// 选择数量的slider拖动时响应方法
 		/// </summary>
 
-		public void OnFixButtonClick(){
-
-			Equipment equipment = currentSelectItem as Equipment;
-
-			GeneralWord word = GeneralWord.RandomGeneralWord();
-				
-			Transform spellCanvas = TransformManager.FindTransform ("SpellCanvas");
-
-			if (spellCanvas != null) {
-
-				spellCanvas.GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
-
-				return;
-			} else {// 如果当前没有拼写界面的缓存，则从本地加载拼写界面
-				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader<GameObject> (CommonData.spellCanvasBundleName);
-
-				ResourceManager.Instance.LoadAssetsUsingWWW (spellCanvasLoader, () => {
-
-					TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
-
-				});
-			}
-
-		}
+//		public void OnFixButtonClick(){
+//
+//			Equipment equipment = currentSelectItem as Equipment;
+//
+//			GeneralWord word = GeneralWord.RandomGeneralWord();
+//				
+//			Transform spellCanvas = TransformManager.FindTransform ("SpellCanvas");
+//
+//			if (spellCanvas != null) {
+//
+//				spellCanvas.GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
+//
+//				return;
+//			} else {// 如果当前没有拼写界面的缓存，则从本地加载拼写界面
+//				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader<GameObject> (CommonData.spellCanvasBundleName);
+//
+//				ResourceManager.Instance.LoadAssetsUsingWWW (spellCanvasLoader, () => {
+//
+//					TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
+//
+//				});
+//			}
+//
+//		}
 
 
 

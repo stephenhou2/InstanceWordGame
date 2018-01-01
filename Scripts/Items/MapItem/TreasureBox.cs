@@ -26,7 +26,7 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			mapItemAnimator.ResetTrigger ("Play");
+			mapItemAnimator.SetBool ("Play",false);
 		}
 
 		protected override void AnimEnd ()

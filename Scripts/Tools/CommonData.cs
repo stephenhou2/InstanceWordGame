@@ -20,7 +20,8 @@ namespace WordJourney{
 
 		public static string effectsDataFilePath = persistDataPath + "/TestEffectString.txt";
 		public static string gameLevelDataFilePath = persistDataPath + "/GameLevelDatas.json";
-		public static string itemsDataFilePath = persistDataPath + "/Items.json";
+//		public static string itemsDataFilePath = persistDataPath + "/Items.json";
+		public static string itemsDataFilePath = persistDataPath + "/NewItemDatas.json";
 		public static string materialsDataFilePath = persistDataPath + "/Materials.json";
 		public static string npcsDataFilePath = persistDataPath + "/AllNpcsData.json";
 
@@ -99,67 +100,17 @@ namespace WordJourney{
 		Plain
 	}
 
-
-	public enum EventType{
-		Monster,
-		NPC,
-		Item
-	}
-
 	public enum Towards{
 		Left,
 		Right
 	}
 
-	public enum TintTextType{
-		Crit,
-		Miss,
-		None
-	}
-
-
-
-	public enum SkillEffectTarget{
-		None,
-		Self,
-		Enemy,
-	}
-
-	public enum EffectType{
-		PhysicalHurt,
-		MagicHurt,
-		DisorderHurt,
-		Treat,
-		Buff,
-		DeBuff,
-		Control
-	}
-
-	public enum StateType{
-		Buff,
-		Debuff,
-		Control
-	}
-
-	public enum TriggerType{
-		None,
-		PhysicalHit,
-		MagicalHit,
-		DisorderHit,
-		BePhysicalHit,
-		BeMagicalHit,
-		BeDisorderHit,
-		Dodge,
-		Debuff
-
-	}
-
-	public enum StartTurn{
-		Current,
-		Next
-	}
-
-
+//	public enum TintTextType{
+//		Crit,
+//		Miss,
+//		None
+//	}
+		
 
 
 	public enum WordType{
@@ -167,13 +118,6 @@ namespace WordJourney{
 		CET6,
 		Daily,
 		Bussiness
-	}
-
-	public enum PressType
-	{
-		Click,
-		LongPress,
-		Cancel
 	}
 
 

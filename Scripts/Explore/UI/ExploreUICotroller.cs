@@ -11,7 +11,7 @@ namespace WordJourney
 
 		public Transform tintHUD;
 
-//		public Transform mask;
+		public Transform mask;
 
 		/**********  battlePlane UI *************/
 		public Transform battlePlane;
@@ -40,19 +40,15 @@ namespace WordJourney
 //		private List<Item> itemsToPickUp = new List<Item>();
 		private Item itemToPickUp;
 
+		public AttackCheckController attackCheckController;
 
 
-		public RectTransform attackZone;
 
-		public RectTransform attackCheck;
+		public Transform billboardPlane;
+		public Transform billboard;
 
-		public RectTransform validZone;
 
-		public float attackCheckMoveSpeed;
-
-		public float attackZoneMoveSpeed;
-
-		public Transform attackCheckContainer;
+		public Transform crystalQueryHUD;
 
 
 
@@ -89,103 +85,34 @@ namespace WordJourney
 				}, true,true);
 			}
 
+//			attackCheckController = GetComponent<AttackCheckController> ();
+
 			GetComponent<Canvas> ().enabled = true;
 
 		}
 
+		public void ShowMask(){
+			mask.gameObject.SetActive (true);
+		}
+
+		public void HideMask(){
+			mask.gameObject.SetActive (false);
+		}
 
 		public void ShowFightPlane(){
 			battlePlane.gameObject.SetActive (true);
-			StartAttackCheck ();
+			attackCheckController.StartRectAttackCheck ();
+//			attackCheckController.StartCircleAttackCheck();
 		}
 
 		public void HideFightPlane(){
 			battlePlane.gameObject.SetActive (false);
 		}
 
-		private float validZoneEdgeLeft{
-			get{ return validZone.rect.center.x - validZone.rect.width / 2; }
-		}
-		private float validZoneEdgeRight{
-			get{ return validZone.rect.center.x + validZone.rect.width / 2;}
-		}
 
-		public void StartAttackCheck(){
-			attackCheck.localPosition = Vector3.zero;
-			attackZone.localPosition = new Vector3 (Random.Range (validZoneEdgeLeft, validZoneEdgeRight), 0, 0);
-			StartCoroutine ("AttackCheckMove");
-			StartCoroutine ("AttackZoneMove");
-
-		}
-
-		public void ResetAttackCheckPosition(){
-			attackCheck.localPosition = Vector3.zero;
-		}
-
-		private IEnumerator AttackCheckMove(){
-
-			Vector3 attackCheckPositionFix = new Vector3 (attackCheckMoveSpeed * Time.fixedDeltaTime, 0, 0);
-
-
-			while (true) {
-
-				attackCheck.localPosition += attackCheckPositionFix;
-
-				if (attackCheck.localPosition.x > validZoneEdgeRight) {
-					attackCheck.localPosition = Vector3.zero;
-				}
-				yield return null;
-			}
-
-		}
-
-
-		private IEnumerator AttackZoneMove(){
-
-			Vector3 attackZonePositionFix = new Vector3 (attackZoneMoveSpeed * Time.fixedDeltaTime, 0, 0);
-
-			while (true) {
-				attackZone.localPosition += attackZonePositionFix;
-				if (attackZone.localPosition.x > validZoneEdgeRight) {
-					attackZone.localPosition = Vector3.zero;
-				}
-				yield return null;
-			}
-
-		}
-
-
-
-		public void AttackButtonClicked(){
-			if (CheckInAttackZone()) {
-				BattlePlayerController bpCtr = Player.mainPlayer.transform.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
-				bpCtr.UseDefaultSkill ();
-			} else {
-				attackCheck.localPosition = Vector3.zero;
-			}
-		}
-
-		private bool CheckInAttackZone(){
-
-			Vector2 checkCenter = attackCheck.localPosition;
-
-			Debug.LogFormat ("check center x:{0}", checkCenter.x);
-
-			Vector2 attackZoneCenter = attackZone.localPosition;
-
-
-			float leftEdgeX = attackZoneCenter.x - attackZone.rect.width / 2;
-
-			float rightEdgeX = attackZoneCenter.x + attackZone.rect.width / 2;
-
-			Debug.LogFormat ("attack zone left:{0}  attack zone right:{1}", leftEdgeX, rightEdgeX);
-
-			return checkCenter.x >= leftEdgeX && checkCenter.x <= rightEdgeX;
-
-		}
-
-
-
+//		public void ResetAttackCheckPosition(){
+//			attackCheckController.ResetRectAttackCheckPosition ();
+//		}
 
 
 		public void SetUpTintHUD(string tint){
@@ -214,7 +141,21 @@ namespace WordJourney
 
 		}
 
+		/// <summary>
+		/// 初始化公告牌
+		/// </summary>
+		public void SetUpBillboard(Billboard bb){
+			billboardPlane.gameObject.SetActive (true);
+			Text billboardContent = billboard.Find ("Content").GetComponent<Text> ();
+			billboardContent.text = bb.content;
+		}
 
+		/// <summary>
+		/// 退出公告牌
+		/// </summary>
+		public void QuitBillboard(){
+			billboardPlane.gameObject.SetActive (false);
+		}
 
 
 		public void SetUpRewardFormulaPlane(Formula formula){
@@ -240,19 +181,21 @@ namespace WordJourney
 
 			materialCardPool.AddChildInstancesToPool (materialCardContainer);
 
-			for (int i = 0; i < equipment.materials.Count; i++) {
+			for (int i = 0; i < equipment.itemIdsForProduce.Length; i++) {
 				
 				Transform materialCard = materialCardPool.GetInstance<Transform> (materialCardModel.gameObject, materialCardContainer);
 
-				Material material = equipment.materials [i];
+				int itemId = equipment.itemIdsForProduce [i];
+
+				Item item = Item.NewItemWith (itemId, 1);
 
 				Image materialIcon = materialCard.Find ("MaterialIcon").GetComponent<Image> ();
 				Text materialName = materialCard.Find ("MaterialName").GetComponent<Text> ();
 
-				materialName.text = material.itemName;
+				materialName.text = item.itemName;
 
 				Sprite materialSprite = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
-					return obj.name == material.spriteName;
+					return obj.name == item.spriteName;
 				});
 
 				materialIcon.sprite = materialSprite;
@@ -279,21 +222,28 @@ namespace WordJourney
 
 		}
 
+		public void SetUpCrystaleQueryHUD(){
+			crystalQueryHUD.gameObject.SetActive (true);
+		}
+
+		public void QuitCrystal(){
+			crystalQueryHUD.gameObject.SetActive (false);
+		}
+
+		public void EnterCrystal(){
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView(false);
+			}, false, true);
+		}
 
 		public void SetUpWorkBenchPlane(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
-				TransformManager.FindTransform ("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView ();
-			}, false, true);
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
+//				TransformManager.FindTransform ("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView ();
+//			}, false, true);
 
 		}
 
-		public void SetUpLearnPlane(){
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
-				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView(false);
-
-			}, false, true);
-		}
 
 
 //		public void HideFightPlane(){
@@ -304,8 +254,7 @@ namespace WordJourney
 		public void QuitFight(){
 			GetComponent<BattlePlayerUIController> ().QuitFight ();
 			GetComponent<BattleMonsterUIController>().QuitFight ();
-			StopCoroutine ("AttackCheckMove");
-			StopCoroutine ("AttackZoneMove");
+			attackCheckController.QuitAttackCheck ();
 			HideFightPlane ();
 		}
 

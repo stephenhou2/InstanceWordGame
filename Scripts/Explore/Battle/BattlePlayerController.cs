@@ -22,10 +22,17 @@ namespace WordJourney
 
 		// 事件回调
 		public ExploreEventHandler enterMonster;
-		public ExploreEventHandler enterItem;
 		public ExploreEventHandler enterNpc;
 		public ExploreEventHandler enterWorkBench;
 		public ExploreEventHandler enterCrystal;
+		public ExploreEventHandler enterTreasureBox;
+		public ExploreEventHandler enterObstacle;
+		public ExploreEventHandler enterTrapSwitch;
+		public ExploreEventHandler enterDoor;
+		public ExploreEventHandler enterBillboard;
+		public ExploreEventHandler enterHole;
+		public ExploreEventHandler enterMovableBox;
+		public ExploreEventHandler enterTransport;
 
 		// 移动速度
 		public float moveDuration;			
@@ -172,7 +179,7 @@ namespace WordJourney
 
 			Transform background = Camera.main.transform.Find ("Background");
 
-			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.2f, moveVector.y * 0.2f, 0);
+			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.3f, moveVector.y * 0.2f, 0);
 
 //			Debug.LogFormat ("背景层移动目标位置[{0},{1}]", backgroundImageTargetPos.x, backgroundImageTargetPos.y);
 				
@@ -245,7 +252,7 @@ namespace WordJourney
 
 				bool resetWalkAnim = false;
 
-				if (nextPos.x == transform.position.x) {
+				if (Mathf.RoundToInt(nextPos.x) == Mathf.RoundToInt(transform.position.x)) {
 
 					if (nextPos.y < transform.position.y) {
 						if (modelActive != playerForward) {
@@ -261,7 +268,7 @@ namespace WordJourney
 
 				}
 					
-				if(nextPos.y == transform.position.y){
+				if(Mathf.RoundToInt(nextPos.y) == Mathf.RoundToInt(transform.position.y)){
 					if (nextPos.x > transform.position.x) {
 						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (1, 1, 1))) {
 							resetWalkAnim = true;
@@ -278,7 +285,7 @@ namespace WordJourney
 					ActiveBattlePlayer (false, false, true);
 				}
 
-				if (armatureCom.animation.lastAnimationName == "wait"){
+				if (isIdle){
 					resetWalkAnim = true;
 				}
 
@@ -300,15 +307,11 @@ namespace WordJourney
 
 				if (r2d.transform != null) {
 
-					moveTweener.Kill (false);
-
-					singleMoveEndPos = transform.position;
-
-					inSingleMoving = false;
-
 					switch (r2d.transform.tag) {
 
 					case "monster":
+
+						StopWalkBeforeEvent ();
 
 						if (modelActive != playerSide) {
 							ActiveBattlePlayer (false, false, true);
@@ -320,18 +323,9 @@ namespace WordJourney
 
 						return;
 
-					case "item":
-						
-
-						PlayRoleAnim ("wait", 0, null);
-
-						enterItem (r2d.transform);
-
-						boxCollider.enabled = true;
-
-						return;
-
 					case "npc":
+
+						StopWalkBeforeEvent ();
 
 						PlayRoleAnim ("wait", 0, null);
 
@@ -343,6 +337,8 @@ namespace WordJourney
 
 					case "workbench":
 
+						StopWalkBeforeEvent ();
+
 						PlayRoleAnim ("wait", 0, null);
 
 						enterWorkBench (r2d.transform);
@@ -351,6 +347,8 @@ namespace WordJourney
 
 						return;
 					case "crystal":
+
+						StopWalkBeforeEvent ();
 						
 						PlayRoleAnim ("wait", 0, null);
 
@@ -359,6 +357,85 @@ namespace WordJourney
 						boxCollider.enabled = true;
 
 						return;
+					case "billboard":
+
+						StopWalkBeforeEvent ();
+
+						PlayRoleAnim ("wait", 0, null);
+
+						enterBillboard (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+					case "movablefloor":
+						break;
+					case "firetrap":
+						break;
+					case "hole":
+						StopWalkBeforeEvent ();
+
+						PlayRoleAnim ("wait", 0, null);
+
+						enterHole (r2d.transform);
+						return;
+					case "movablebox":
+						StopWalkBeforeEvent ();
+						PlayRoleAnim ("wait", 0, null);
+						enterMovableBox (r2d.transform);
+						return;
+					case "obstacle":
+
+						StopWalkBeforeEvent ();
+
+						PlayRoleAnim ("wait", 0, null);
+
+						enterObstacle (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+					case "treasurebox":
+
+						StopWalkBeforeEvent ();
+
+						PlayRoleAnim ("wait", 0, null);
+
+						enterTreasureBox (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+					
+					case "switch":
+
+						StopWalkBeforeEvent ();
+
+						PlayRoleAnim ("wait", 0, null);
+
+						enterTrapSwitch (r2d.transform);
+
+						boxCollider.enabled = true;
+
+						return;
+					case "trap":
+						break;
+					case "transport":
+						StopWalkBeforeEvent ();
+						PlayRoleAnim ("wait", 0, null);
+
+						boxCollider.enabled = true;
+						return;
+					case "door":
+						StopWalkBeforeEvent ();
+						PlayRoleAnim ("wait", 0, null);
+						enterDoor (r2d.transform);
+						return;
+					case "launcher":
+						StopWalkBeforeEvent ();
+						PlayRoleAnim ("wait", 0, null);
+						boxCollider.enabled = true;
+						return;
 					}
 
 				}
@@ -366,8 +443,6 @@ namespace WordJourney
 				boxCollider.enabled = true;
 
 			}
-
-
 			// 路径中没有节点
 			// 按照行动路径已经将所有的节点走完
 			if (pathPosList.Count == 0) {
@@ -409,35 +484,46 @@ namespace WordJourney
 			}
 
 		}
-			
-		/// <summary>
-		/// 伤害文本动画
-		/// </summary>
-		/// <param name="hurtStr">Hurt string.</param>
-		/// <param name="tintTextType">伤害类型 [TintTextType.Crit:暴击伤害 ,TintTextType.Miss: 伤害闪避]</param>
-		public override void PlayHurtTextAnim (string hurtStr, TintTextType tintTextType)
-		{
-			// 伤害文字的动画方向根据玩家和怪物的位置信息进行调整
-			if (this.transform.position.x <= bmCtr.transform.position.x) {
-				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left, tintTextType);
-			} else {
-				bpUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right, tintTextType);
-			}
 
+		private void StopWalkBeforeEvent(){
+
+			moveTweener.Kill (false);
+
+			singleMoveEndPos = transform.position;
+
+			inSingleMoving = false;
 
 		}
 
-		/// <summary>
-		/// 血量提升文本动画
-		/// </summary>
-		/// <param name="gainStr">Gain string.</param>
-		public override void PlayGainTextAnim (string gainStr)
-		{
-			// 伤害文字的动画方向根据玩家和怪物的位置信息进行调整
-			if (this.transform.position.x <= bmCtr.transform.position.x) {
-				bpUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Left);
-			} else {
-				bpUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Right);
+		public void StopMove(){
+			StopCoroutine ("MoveWithNewPath");
+//			endPos = new Vector3 (Mathf.RoundToInt(transform.position.x),
+//				Mathf.RoundToInt(transform.position.y),
+//				Mathf.RoundToInt(transform.position.z));
+			moveTweener.Kill (false);
+			inSingleMoving = false;
+			PlayRoleAnim ("wait", 0, null);
+		}
+
+//		private void FinishCurrentStepAndWait(){
+//			StartCoroutine ("WaitCurrentStepFinishAndPlayWaitAnim");
+//		}
+//
+//		private IEnumerator WaitCurrentStepFinishAndPlayWaitAnim(){
+//			yield return new WaitUntil (() => inSingleMoving);
+//			StopWalkBeforeEvent ();
+//			PlayRoleAnim ("wait", 0, null);
+//		}
+
+		public void TowardsLeft(){
+			if (modelActive == playerSide) {
+				playerSide.transform.localScale = new Vector3 (-1, 1, 1);
+			}
+		}
+
+		public void TowardsRight(){
+			if (modelActive == playerSide) {
+				playerSide.transform.localScale = Vector3.one;
 			}
 		}
 			
@@ -451,9 +537,28 @@ namespace WordJourney
 
 			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
 
-			bpUICtr.SetUpExplorePlayerView (agent as Player, PlayerSelectSkill);
+			#warning 这里技能选择回调暂时传了null
+			bpUICtr.SetUpExplorePlayerView (agent as Player, null);
 
 		}
+
+		public override void InitFightTextDirectionTowards (Vector3 position)
+		{
+			bpUICtr.fightTextManager.SetUpFightTextManager (transform.position, position);
+		}
+
+		public override void AddFightTextToQueue (string text, SpecialAttackResult specialAttackType)
+		{
+			if (bpUICtr != null) {
+				FightText ft = new FightText (text, specialAttackType);
+				bpUICtr.fightTextManager.AddFightText (ft);
+			}
+		}
+
+//		public override void ShowFightTextInOrder ()
+//		{
+//			bpUICtr.fightTextManager.ShowFightTextInOrder ();
+//		}
 
 
 		/// <summary>
@@ -468,7 +573,7 @@ namespace WordJourney
 			this.playerLoseCallBack = playerLoseCallBack;
 
 			// 初始化玩家战斗UI（技能界面）
-			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
+//			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
 
 			if (autoFight) {
 				// 默认玩家在战斗中将先出招，首次攻击不用等待
@@ -486,7 +591,11 @@ namespace WordJourney
 		/// 角色默认战斗逻辑
 		/// </summary>
 		public override void Fight(){
-			attackCoroutine = InvokeAttack (defaultSkill);
+			if (!autoFight) {
+				PlayRoleAnim ("wait", 0, null);
+			} else {
+				attackCoroutine = InvokeAttack (defaultSkill);
+			}
 		}
 
 		public void UseDefaultSkill(){
@@ -507,48 +616,51 @@ namespace WordJourney
 			string skillRoleAnimName = string.Empty;
 			string skillIntervalRoleAnimName = string.Empty;
 
-			if (skill.selfAnimName == "AttackOnce") {
+			skillRoleAnimName = "attackSword";
+			skillIntervalRoleAnimName = "intervalSword";
 
-				Equipment weapon = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
-					return obj.equipmentType == EquipmentType.Weapon;
-				});
-
-				if (weapon == null) {
-					skillRoleAnimName = "attackDefault";
-					skillIntervalRoleAnimName = "intervalDefault";
-				} else {
-					switch (weapon.detailType) {
-					case "剑":
-						skillRoleAnimName = "attackSword";
-						skillIntervalRoleAnimName = "intervalSword";
-						break;
-					case "刀":
-						skillRoleAnimName = "attackBlade";
-						skillIntervalRoleAnimName = "intervalBlade";
-						break;
-					case "斧子":
-						skillRoleAnimName = "attackAxe";
-						skillIntervalRoleAnimName = "intervalAxe";
-						break;
-					case "锤":
-						skillRoleAnimName = "attackHammer";
-						skillIntervalRoleAnimName = "intervalHammer";
-						break;
-					case "法杖":
-						skillRoleAnimName = "attackStaff";
-						skillIntervalRoleAnimName = "intervalStaff";
-						break;
-					case "匕首":
-						skillRoleAnimName = "attackDragger";
-						skillIntervalRoleAnimName = "intervalDragger";
-						break;
-					}
-				}
-
-			} else {
-				skillRoleAnimName = skill.selfAnimName;
-				skillIntervalRoleAnimName = skill.selfIntervalAnimName;
-			}
+//			if (skill.selfAnimName == "AttackOnce") {
+//
+//				Equipment weapon = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
+//					return obj.equipmentType == EquipmentType.Weapon;
+//				});
+//
+//				if (weapon == null) {
+//					skillRoleAnimName = "attackDefault";
+//					skillIntervalRoleAnimName = "intervalDefault";
+//				} else {
+//					switch (weapon.detailType) {
+//					case "剑":
+//						skillRoleAnimName = "attackSword";
+//						skillIntervalRoleAnimName = "intervalSword";
+//						break;
+//					case "刀":
+//						skillRoleAnimName = "attackBlade";
+//						skillIntervalRoleAnimName = "intervalBlade";
+//						break;
+//					case "斧子":
+//						skillRoleAnimName = "attackAxe";
+//						skillIntervalRoleAnimName = "intervalAxe";
+//						break;
+//					case "锤":
+//						skillRoleAnimName = "attackHammer";
+//						skillIntervalRoleAnimName = "intervalHammer";
+//						break;
+//					case "法杖":
+//						skillRoleAnimName = "attackStaff";
+//						skillIntervalRoleAnimName = "intervalStaff";
+//						break;
+//					case "匕首":
+//						skillRoleAnimName = "attackDragger";
+//						skillIntervalRoleAnimName = "intervalDragger";
+//						break;
+//					}
+//				}
+//
+//			} else {
+//				skillRoleAnimName = skill.selfAnimName;
+//				skillIntervalRoleAnimName = skill.selfIntervalAnimName;
+//			}
 
 
 
@@ -565,35 +677,33 @@ namespace WordJourney
 		/// 玩家选择技能后的响应方法
 		/// </summary>
 		/// <param name="btnIndex">Button index.</param>
-		public void PlayerSelectSkill(int[] btnIndexArray){
-
-			int btnIndex = btnIndexArray [0];
-
-			// 获得选择的技能
-			Skill skill = (agent as Player).equipedActiveSkills [btnIndex];
-
-			// 停止自动攻击的协程
-			if (attackCoroutine != null) {
-				StopCoroutine (attackCoroutine);
-			}
-
-			UseSkill (skill);
-		}
+//		public void PlayerSelectSkill(int[] btnIndexArray){
+//
+//			int btnIndex = btnIndexArray [0];
+//
+//			// 获得选择的技能
+//			Skill skill = (agent as Player).validSkills [btnIndex];
+//
+//			// 停止自动攻击的协程
+//			if (attackCoroutine != null) {
+//				StopCoroutine (attackCoroutine);
+//			}
+//
+//			UseSkill (skill);
+//		}
 
 
 
 		protected override void AgentExcuteHitEffect ()
 		{
-
-
 			// 播放技能对应的玩家技能特效动画
-			if (currentSkill.selfEffectName != string.Empty) {
-				SetEffectAnim (currentSkill.selfEffectName);
+			if (currentSkill.selfEffectAnimName != string.Empty) {
+				SetEffectAnim (currentSkill.selfEffectAnimName);
 			}
 
 			// 播放技能对应的怪物技能特效动画
-			if (currentSkill.enemyEffectName != string.Empty) {
-				bmCtr.SetEffectAnim (currentSkill.enemyEffectName);
+			if (currentSkill.enemyEffectAnimName != string.Empty) {
+				bmCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
 			}
 
 			// 播放技能对应的音效
@@ -614,40 +724,39 @@ namespace WordJourney
 					attackCoroutine = InvokeAttack (defaultSkill);
 					StartCoroutine (attackCoroutine);
 				} else {
-					TransformManager.FindTransform("ExploreCanvas").GetComponent<ExploreUICotroller> ().ResetAttackCheckPosition ();
+//					TransformManager.FindTransform("ExploreCanvas").GetComponent<ExploreUICotroller> ().ResetAttackCheckPosition ();
 				}
 
 			} 
 
 			// 更新玩家状态栏
-			this.UpdateStatusPlane();
-
-			// 更新怪物状态栏
-			bmCtr.UpdateStatusPlane();
-
+//			this.UpdateStatusPlane();
+//
+//			// 更新怪物状态栏
+//			bmCtr.UpdateStatusPlane();
 
 			// 如果该次攻击是物理攻击，对应减少当前武器的耐久度
-			switch (currentSkill.skillType) {
-			case SkillType.Physical:
-
-				Equipment equipment = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
-					return obj.equipmentType == EquipmentType.Weapon;
-				});
-
-				if (equipment == null) {
-					break;
-				}
-
-				bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.PhysicalAttack);
-
-				if (completeDamaged) {
-					string tint = string.Format("{0}完全损坏",equipment.itemName);
-					bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
-				}
-				break;
-			default:
-				break;
-			}
+//			switch (currentSkill.hurtType) {
+//			case HurtType.Physical:
+//
+//				Equipment equipment = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
+//					return obj.equipmentType == EquipmentType.Weapon;
+//				});
+//
+//				if (equipment == null) {
+//					break;
+//				}
+//
+//				bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.PhysicalAttack);
+//
+//				if (completeDamaged) {
+//					string tint = string.Format("{0}完全损坏",equipment.itemName);
+//					bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
+//				}
+//				break;
+//			default:
+//				break;
+//			}
 
 		}
 
@@ -675,101 +784,92 @@ namespace WordJourney
 		/// <summary>
 		/// 更新玩家状态栏
 		/// </summary>
-		public void UpdateStatusPlane(){
-			bpUICtr.UpdatePlayerStatusPlane ();
-		}
-
-		public void LoseLifeInTrap(int lose){
-
-			agent.health -= lose;
-
-			string hurtString = string.Format ("<color=red>-{0}</color>", lose);
-
-			Towards towards = Towards.Right;
-
-			if (modelActive == playerSide && modelActive.transform.localScale == new Vector3 (1, 1, 1)) {
-				towards = Towards.Left;
+		public override void UpdateStatusPlane(){
+			if (bpUICtr != null) {
+				bpUICtr.UpdatePlayerStatusPlane ();
 			}
-
-			bpUICtr.PlayHurtTextAnim (hurtString, transform.position, towards, TintTextType.None);
-
-			bpUICtr.UpdatePlayerStatusPlane ();
+			Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
+//			if (bagCanvas != null) {
+//				bagCanvas.GetComponent<BagView>().SetUpPlayerStatusPlane(
+//			}
 		}
 
 
 		public void UseItem(Consumables consumables){
 
-			Player player = agent as Player;
+			return;
 
-			switch (consumables.consumablesType) {
-			case ConsumablesType.MedicineAndScroll:
-				if (consumables.effectDuration == 0) {
-					player.health += (int)(consumables.healthGain * agent.maxHealth);
-					player.mana += (int)(consumables.manaGain * agent.maxMana);
-				} else {
-					ConsumablesEffectState consumablesEffectState = player.allConsumablesEffectStates.Find (delegate(ConsumablesEffectState obj) {
-						return obj.consumables.itemId == consumables.itemId;
-					});
-					if (consumablesEffectState == null) {
-						consumablesEffectState = new ConsumablesEffectState (consumables);
-						player.allConsumablesEffectStates.Add (consumablesEffectState);
-						StartCoroutine ("ConsumablesEffectOn", consumablesEffectState);
-					}
-				}
-				break;
-			}
+//			Player player = agent as Player;
 
-			consumables.itemCount--;
-
-			if (consumables.itemCount <= 0) {
-				player.allConsumablesInBag.Remove (consumables);
-			}
-
-			bpUICtr.UpdateItemButtonsAndStatusPlane ();
+//			switch (consumables.consumablesType) {
+//			case ConsumablesType.MedicineAndScroll:
+//				if (consumables.effectDuration == 0) {
+//					player.health += (int)(consumables.healthGain * agent.maxHealth);
+//					player.mana += (int)(consumables.manaGain * agent.maxMana);
+//				} else {
+//					ConsumablesEffectState consumablesEffectState = player.allConsumablesEffectStates.Find (delegate(ConsumablesEffectState obj) {
+//						return obj.consumables.itemId == consumables.itemId;
+//					});
+//					if (consumablesEffectState == null) {
+//						consumablesEffectState = new ConsumablesEffectState (consumables);
+//						player.allConsumablesEffectStates.Add (consumablesEffectState);
+//						StartCoroutine ("ConsumablesEffectOn", consumablesEffectState);
+//					}
+//				}
+//				break;
+//			}
+//
+//			consumables.itemCount--;
+//
+//			if (consumables.itemCount <= 0) {
+//				player.allConsumablesInBag.Remove (consumables);
+//			}
+//
+//			bpUICtr.UpdateItemButtonsAndStatusPlane ();
 
 		}
 
-		private IEnumerator ConsumablesEffectOn(ConsumablesEffectState consumablesEffectState){
-
-			Player player = agent as Player;
-
-			Consumables consumables = consumablesEffectState.consumables;
-
-			int healthGain = (int)(consumables.healthGain * player.maxHealth / consumables.effectDuration);
-			int manaGain = (int)(consumables.manaGain * player.maxMana / consumables.effectDuration);
-
-			player.attack = (int)(player.attack * (1 + consumables.attackGain));
-			player.attackSpeed = (int)(player.attackSpeed * (1 + consumables.attackSpeedGain));
-			player.armor = (int)(player.armor * (1 + consumables.armorGain));
-			player.manaResist = (int)(player.manaResist * (1 + consumables.manaResistGain));
-			player.dodge = (int)(player.dodge * (1 + consumables.dodgeGain));
-			player.crit = (int)(player.crit * (1 + consumables.critGain));
-
-			player.physicalHurtScaler = 1 + consumables.physicalHurtScaler;
-			player.magicalHurtScaler = 1 + consumables.magicHurtScaler;
-
-			bpUICtr.UpdatePlayerStatusPlane ();
-
-			while (consumablesEffectState.effectTime < consumables.effectDuration) {
-				yield return new WaitForSeconds (1.0f);
-				consumablesEffectState.effectTime++;
-				player.health += healthGain;
-				player.mana += manaGain;
-//				if (player.health >= player.maxHealth) {
-//					player.health = player.maxHealth;
-//				}
-//				if (player.mana >= player.maxMana) {
-//					player.mana = player.maxMana;
-//				}
-
-				bpUICtr.UpdatePlayerStatusPlane ();
-			}
-
-			player.ResetBattleAgentProperties (false);
-			player.physicalHurtScaler -= consumables.physicalHurtScaler;
-			player.magicalHurtScaler -= consumables.magicHurtScaler;
-
-		}
+//		private IEnumerator ConsumablesEffectOn(ConsumablesEffectState consumablesEffectState){
+//
+//			Player player = agent as Player;
+//
+//			Consumables consumables = consumablesEffectState.consumables;
+//
+//			int healthGain = (int)(consumables.healthGain * player.maxHealth / consumables.effectDuration);
+//			int manaGain = (int)(consumables.manaGain * player.maxMana / consumables.effectDuration);
+//
+//			player.attack = (int)(player.attack * (1 + consumables.attackGain));
+//			player.attackSpeed = (int)(player.attackSpeed * (1 + consumables.attackSpeedGain));
+//			player.armor = (int)(player.armor * (1 + consumables.armorGain));
+//			player.manaResist = (int)(player.manaResist * (1 + consumables.manaResistGain));
+//			player.dodge = (int)(player.dodge * (1 + consumables.dodgeGain));
+//			player.crit = (int)(player.crit * (1 + consumables.critGain));
+//
+//			player.physicalHurtScaler = 1 + consumables.physicalHurtScaler;
+//			player.magicalHurtScaler = 1 + consumables.magicHurtScaler;
+//
+//			bpUICtr.UpdatePlayerStatusPlane ();
+//
+//			while (consumablesEffectState.effectTime < consumables.effectDuration) {
+//				yield return new WaitForSeconds (1.0f);
+//				consumablesEffectState.effectTime++;
+//				player.health += healthGain;
+//				player.mana += manaGain;
+////				if (player.health >= player.maxHealth) {
+////					player.health = player.maxHealth;
+////				}
+////				if (player.mana >= player.maxMana) {
+////					player.mana = player.maxMana;
+////				}
+//
+//				bpUICtr.UpdatePlayerStatusPlane ();
+//			}
+//
+//			player.ResetBattleAgentProperties (false);
+//			player.physicalHurtScaler -= consumables.physicalHurtScaler;
+//			player.magicalHurtScaler -= consumables.magicHurtScaler;
+//
+//		}
 
 		/// <summary>
 		/// 清理引用
@@ -777,12 +877,20 @@ namespace WordJourney
 		public void ClearReference(){
 
 
-			enterNpc = null;
-			enterItem = null;
 			enterMonster = null;
+			enterNpc = null;
+			enterWorkBench = null;
+			enterCrystal = null;
+			enterTreasureBox = null;
+			enterObstacle = null;
+			enterTrapSwitch = null;
+			enterDoor = null;
+			enterBillboard = null;
+			enterHole = null;
+			enterMovableBox = null;
+			enterTransport = null;
 
-			attackTriggerCallBacks.Clear ();
-			beAttackedTriggerCallBacks.Clear ();
+			ClearAllEffectStatesAndSkillCallBacks ();
 
 //			trapTriggered = null;
 			bmCtr = null;
@@ -808,6 +916,8 @@ namespace WordJourney
 		/// 玩家死亡
 		/// </summary>
 		override public void AgentDie(){
+
+
 
 			StopAllCoroutines ();
 

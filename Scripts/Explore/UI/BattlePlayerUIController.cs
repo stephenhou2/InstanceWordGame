@@ -18,8 +18,8 @@ namespace WordJourney
 
 		public Text coinCount;
 
-		public Transform skillsContainer;
-		private Transform skillButtonModel;
+//		public Transform skillsContainer;
+//		private Transform skillButtonModel;
 	
 		/**********  ConsumablesPlane UI *************/
 		public Transform allConsumablesPlane;
@@ -38,13 +38,13 @@ namespace WordJourney
 		private InstancePool toolChoiceButtonPool;
 		private Transform toolChoiceButtonModel;
 			
-		private Sequence mSequence;
+//		private Sequence mSequence;
 
-		private List<Button> skillButtons = new List<Button>();
+//		private List<Button> skillButtons = new List<Button>();
 
-		private InstancePool skillButtonPool;
+//		private InstancePool skillButtonPool;
 
-		private CallBack<int> skillSelectCallBack;
+//		private CallBack<int> skillSelectCallBack;
 
 
 
@@ -57,23 +57,23 @@ namespace WordJourney
 		public void SetUpExplorePlayerView(Player player,CallBack<int> skillSelectCallBack){
 
 			this.player = player;
-			this.skillSelectCallBack = skillSelectCallBack;
+//			this.skillSelectCallBack = skillSelectCallBack;
 
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
 
-			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
+//			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
 			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
 			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
 
 
-			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
+//			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 			consumablesButtonModel = TransformManager.FindTransform ("ConsumablesButtonModel");
 			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
 
 			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
-			skillButtonModel.SetParent (modelContainerOfExploreScene);
+//			skillButtonModel.SetParent (modelContainerOfExploreScene);
 			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
@@ -88,11 +88,11 @@ namespace WordJourney
 		private void SetUpPlayerStatusPlane(){
 
 			healthBar.maxValue = player.maxHealth;
-			manaBar.maxValue = player.maxMana;
+//			manaBar.maxValue = player.maxMana;
 			coinCount.text = player.totalCoins.ToString ();
 
 			healthText.text = string.Format ("{0}/{1}", player.health, player.maxHealth);
-			manaText.text = string.Format ("{0}/{1}", player.mana, player.maxMana);
+//			manaText.text = string.Format ("{0}/{1}", player.mana, player.maxMana);
 
 			healthBar.value = player.health;
 			manaBar.value = player.mana;
@@ -104,7 +104,7 @@ namespace WordJourney
 		/// </summary>
 		public void UpdatePlayerStatusPlane(){
 			UpdateHealthBarAnim(player);
-			UpdateManaBarAnim (player);
+//			UpdateManaBarAnim (player);
 			coinCount.text = player.totalCoins.ToString ();
 		}
 			
@@ -113,97 +113,97 @@ namespace WordJourney
 		/// 初始化人物技能栏
 		/// </summary>
 		/// <param name="player">Player.</param>
-		public void SetUpPlayerSkillPlane(Player player){
-
-			skillButtons.Clear ();
-
-			for (int i = 0; i < player.equipedActiveSkills.Count; i++) {
-
-				ActiveSkill skill = player.equipedActiveSkills [i];
-
-				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel.gameObject, skillsContainer);
-
-				Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
-				Text skillName = skillButton.transform.Find ("SkillName").GetComponent<Text> ();
-				Text manaConsume = skillButton.transform.Find ("ManaConsume").GetComponent<Text> ();
-
-
-				Sprite sprite = GameManager.Instance.gameDataCenter.allSkillSprites.Find(delegate (Sprite s){
-					return s.name == skill.skillIconName;
-				});
-
-				if (sprite != null) {
-					skillIcon.sprite = sprite;
-					skillIcon.enabled = true;
-				}
-
-				skillName.text = skill.skillName;
-				manaConsume.text = (skill as ActiveSkill).manaConsume.ToString();
-
-				UpdateSkillButtonsStatus ();
-
-				int index = i;
-
-				skillButton.onClick.RemoveAllListeners ();
-				skillButton.onClick.AddListener (delegate() {
-					skillSelectCallBack(new int[]{index});
-					SkillButtonCoolen(skill);
-				});
-
-				skillButtons.Add (skillButton);
-
-			}
-
-			skillsContainer.gameObject.SetActive (true);
-
-		}
+//		public void SetUpPlayerSkillPlane(Player player){
+//
+//			skillButtons.Clear ();
+//
+//			for (int i = 0; i < player.equipedActiveSkills.Count; i++) {
+//
+//				ActiveSkill skill = player.equipedActiveSkills [i];
+//
+//				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel.gameObject, skillsContainer);
+//
+//				Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
+//				Text skillName = skillButton.transform.Find ("SkillName").GetComponent<Text> ();
+//				Text manaConsume = skillButton.transform.Find ("ManaConsume").GetComponent<Text> ();
+//
+//
+//				Sprite sprite = GameManager.Instance.gameDataCenter.allSkillSprites.Find(delegate (Sprite s){
+//					return s.name == skill.skillIconName;
+//				});
+//
+//				if (sprite != null) {
+//					skillIcon.sprite = sprite;
+//					skillIcon.enabled = true;
+//				}
+//
+//				skillName.text = skill.skillName;
+//				manaConsume.text = (skill as ActiveSkill).manaConsume.ToString();
+//
+//				UpdateSkillButtonsStatus ();
+//
+//				int index = i;
+//
+//				skillButton.onClick.RemoveAllListeners ();
+//				skillButton.onClick.AddListener (delegate() {
+//					skillSelectCallBack(new int[]{index});
+//					SkillButtonCoolen(skill);
+//				});
+//
+//				skillButtons.Add (skillButton);
+//
+//			}
+//
+//			skillsContainer.gameObject.SetActive (true);
+//
+//		}
 
 		/// <summary>
 		/// 技能按钮的冷却(所有技能共同进入冷却)
 		/// </summary>
-		private void SkillButtonCoolen(Skill skill){
-
-			for (int i = 0; i < skillButtons.Count; i++) {
-				
-				Button skillButton = skillButtons [i];
-
-				skillButton.interactable = false;
-
-				Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
-
-				coolenMask.enabled = true;
-
-				coolenMask.fillAmount = 1;
-
-				coolenMask.DOFillAmount (0, player.skillCoolenInterval).OnComplete (() => {
-					coolenMask.enabled = false;
-					UpdateSkillButtonsStatus ();
-				});
-			}
-				
-		}
+//		private void SkillButtonCoolen(Skill skill){
+//
+//			for (int i = 0; i < skillButtons.Count; i++) {
+//				
+//				Button skillButton = skillButtons [i];
+//
+//				skillButton.interactable = false;
+//
+//				Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
+//
+//				coolenMask.enabled = true;
+//
+//				coolenMask.fillAmount = 1;
+//
+//				coolenMask.DOFillAmount (0, player.skillCoolenInterval).OnComplete (() => {
+//					coolenMask.enabled = false;
+//					UpdateSkillButtonsStatus ();
+//				});
+//			}
+//				
+//		}
 
 		/// <summary>
 		/// 更新技能按钮是否可交互，根据玩家魔法值更新技能所需魔法的显示颜色
 		/// </summary>
-		private void UpdateSkillButtonsStatus(){
-			
-			for (int i = 0; i < skillButtons.Count; i++) {
-				
-				Button skillButton = skillButtons [i];
-				ActiveSkill skill = player.equipedActiveSkills [i];
-				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
-
-				skillButton.interactable = player.mana >= skill.manaConsume;
-
-				if (!skillButton.interactable) {
-					manaConsume.color = Color.red;
-				} else {
-					manaConsume.color = Color.green;
-				}
-
-			}
-		}
+//		private void UpdateSkillButtonsStatus(){
+//			
+//			for (int i = 0; i < skillButtons.Count; i++) {
+//				
+//				Button skillButton = skillButtons [i];
+//				ActiveSkill skill = player.equipedActiveSkills [i];
+//				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
+//
+//				skillButton.interactable = player.mana >= skill.manaConsume;
+//
+//				if (!skillButton.interactable) {
+//					manaConsume.color = Color.red;
+//				} else {
+//					manaConsume.color = Color.green;
+//				}
+//
+//			}
+//		}
 
 		/// <summary>
 		/// 更新底部物品栏状态
@@ -388,18 +388,18 @@ namespace WordJourney
 		/// 更新人物魔法槽
 		/// </summary>
 		/// <param name="ba">Ba.</param>
-		private void UpdateManaBarAnim(Agent ba){
-			
-			manaBar.maxValue = ba.maxMana;
-			manaText.text = ba.mana + "/" + ba.maxMana;
-
-			if (firstSetManaBar) {
-				manaBar.value = ba.mana;
-			} else {
-				manaBar.DOValue (ba.mana, 0.2f);
-			}
-
-		}
+//		private void UpdateManaBarAnim(Agent ba){
+//			
+////			manaBar.maxValue = ba.maxMana;
+////			manaText.text = ba.mana + "/" + ba.maxMana;
+//
+//			if (firstSetManaBar) {
+//				manaBar.value = ba.mana;
+//			} else {
+//				manaBar.DOValue (ba.mana, 0.2f);
+//			}
+//
+//		}
 			
 
 		/// <summary>
@@ -519,9 +519,9 @@ namespace WordJourney
 		/// </summary>
 		public override void QuitFight(){
 
-			skillButtonPool.AddChildInstancesToPool (skillsContainer);
+//			skillButtonPool.AddChildInstancesToPool (skillsContainer);
 
-			skillsContainer.gameObject.SetActive (false);
+//			skillsContainer.gameObject.SetActive (false);
 		}
 	}
 }

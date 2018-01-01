@@ -26,11 +26,9 @@ namespace WordJourney
 
 		public static T LoadDataToSingleModelWithPath<T>(string fileName){
 
-
-
 			string jsonStr = LoadDataString (fileName);
 
-			T instance = default (T);
+			T instance = default(T);
 
 			if (jsonStr == string.Empty) {
 				return instance;
@@ -91,6 +89,38 @@ namespace WordJourney
 			}
 
 		}
+
+		public static void SaveInstanceListToFile<T>(List<T> instances,string filePath){
+
+			try{
+
+				MyArrayJsonUtilityHelper<T> arrayJsonUtilityHelper = new MyArrayJsonUtilityHelper<T>();
+
+				arrayJsonUtilityHelper.Items = instances;
+
+				string stringData = JsonUtility.ToJson(arrayJsonUtilityHelper);
+
+				StreamWriter sw = new StreamWriter(filePath,false);
+
+				sw.Write(stringData);
+
+				sw.Dispose();
+
+			}catch(System.Exception e){
+
+				Debug.Log (e);
+
+			}
+
+
+		}
+
+		private class MyArrayJsonUtilityHelper<T>{
+
+			public List<T> Items;
+
+		}
+
 
 		public static void  CopyDirectory(string sourcePath,string destPath,bool deleteOriDirectoryIfExist){
 

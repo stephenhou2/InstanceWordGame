@@ -51,10 +51,18 @@ namespace WordJourney
 			battlePlayerCtr.ActiveBattlePlayer (false, false, false);
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
-			battlePlayerCtr.enterItem = new ExploreEventHandler (EnterItem);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
 			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
 			battlePlayerCtr.enterCrystal = new ExploreEventHandler (EnterCrystal);
+
+			battlePlayerCtr.enterTreasureBox = new ExploreEventHandler (EnterTreasureBox);
+			battlePlayerCtr.enterObstacle = new ExploreEventHandler (EnterObstacle);
+			battlePlayerCtr.enterTrapSwitch = new ExploreEventHandler (EnterSwitch);
+			battlePlayerCtr.enterBillboard = new ExploreEventHandler (EnterBillboard);
+			battlePlayerCtr.enterHole = new ExploreEventHandler (EnterHole);
+			battlePlayerCtr.enterMovableBox = new ExploreEventHandler (EnterMovableBox);
+			battlePlayerCtr.enterTransport = new ExploreEventHandler (EnterTransport);
+			battlePlayerCtr.enterDoor = new ExploreEventHandler (EnterDoor);
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
@@ -77,7 +85,7 @@ namespace WordJourney
 			while (!dataReady) {
 
 				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.AnimatorControllers,
+//					GameDataCenter.GameDataType.AnimatorControllers,
 					GameDataCenter.GameDataType.UISprites,
 					GameDataCenter.GameDataType.GameLevelDatas,
 					GameDataCenter.GameDataType.Monsters,
@@ -88,7 +96,7 @@ namespace WordJourney
 					GameDataCenter.GameDataType.MaterialSprites,
 					GameDataCenter.GameDataType.MapSprites,
 					GameDataCenter.GameDataType.Skills,
-					GameDataCenter.GameDataType.EquipmentAttachedProperties,
+//					GameDataCenter.GameDataType.EquipmentAttachedProperties,
 					GameDataCenter.GameDataType.Skills,
 					GameDataCenter.GameDataType.SkillSprites,
 
@@ -97,6 +105,8 @@ namespace WordJourney
 
 				yield return null;
 			}
+
+			GameManager.Instance.soundManager.PlayExploreBackgroundMusic ();
 
 			levelData.LoadAllData ();
 
@@ -110,18 +120,13 @@ namespace WordJourney
 
 			battlePlayerCtr.SetUpExplorePlayerUI ();
 
-
-
-
-
-
 //			expUICtr.GetComponent<Canvas> ().enabled = true;
 
 		}
 
-		public void ItemsAroundAutoIntoLifeWithBasePoint(Vector3 basePostion){
+		public void ItemsAroundAutoIntoLifeWithBasePoint(Vector3 basePostion,CallBack cb = null){
 
-			mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint (basePostion);
+			mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint (basePostion,cb);
 
 		}
 
@@ -215,6 +220,18 @@ namespace WordJourney
 
 		}
 
+//		public List<Vector3> FindPath(Vector3 startPos,Vector3 endPos){
+//			navHelper.FindPath(startPos,endPos,
+//		}
+
+		public void DisableInteractivity(){
+			expUICtr.ShowMask ();
+		}
+
+		public void EnableInteractivity(){
+			expUICtr.HideMask ();
+		}
+
 		public void ObtainReward(Item reward){
 
 			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
@@ -238,21 +255,26 @@ namespace WordJourney
 
 			AdjustAgentsPosotion (battlePlayerCtr.transform,battleMonsterCtr.transform);
 
+			battlePlayerCtr.enemy = battleMonsterCtr;
+
+			battleMonsterCtr.enemy = battlePlayerCtr;
+
+			battlePlayerCtr.InitFightTextDirectionTowards (battleMonsterCtr.transform.position);
+			battleMonsterCtr.InitFightTextDirectionTowards (battlePlayerCtr.transform.position);
+
+			battlePlayerCtr.SetUpPropertyCalculator ();
+			battleMonsterCtr.SetUpPropertyCalculator ();
+
 			// 初始化人物被动技能
-			for (int i = 0; i < (battlePlayerCtr.agent as Player).allLearnedSkills.Count; i++) {
-				Skill skill = (battlePlayerCtr.agent as Player).allLearnedSkills [i];
-				if (skill.skillType == SkillType.TriggeredPassive) {
-					skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
-				}
+			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedTriggeredSkills.Count; i++) {
+				Skill skill = (battlePlayerCtr.agent as Player).attachedTriggeredSkills [i];
+				skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
 			}
 
 			// 初始化怪物被动技能
-			for (int i = 0; i < (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills.Length; i++) {
-				Skill skill = (battleMonsterCtr.agent as Monster).allEquipedPassiveSkills [i];
-				if (skill.skillType == SkillType.TriggeredPassive) {
-					skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
-				}
-
+			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedTriggeredSkills.Count; i++) {
+				Skill skill = (battleMonsterCtr.agent as Monster).attachedTriggeredSkills [i];
+				skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 			}
 
 			// 执行玩家角色战斗前技能回调
@@ -293,57 +315,11 @@ namespace WordJourney
 
 		}
 
-	
 
 
-		public void EnterItem(Transform mapItemTrans){
-			
-			Debug.Log ("碰到了item");
+		private void EnterObstacle(Transform obstacleTrans){
 
-//			expUICtr.ShowMask ();
-
-			MapItem mapItem = mapItemTrans.GetComponent<MapItem> ();
-
-			switch (mapItem.mapItemType) {
-
-			case MapItemType.Door:
-				EnterDoor (mapItem);
-				break;
-			case MapItemType.Buck:
-			case MapItemType.Pot:
-			case MapItemType.TreasureBox:
-				EnterTreasureBox (mapItem);
-				break;
-			case MapItemType.MovableFloor:
-				EnterMovableFloor (mapItem);
-				break;
-			case MapItemType.Stone:
-			case MapItemType.Tree:
-				EnterObstacle (mapItem);
-				break;
-			case MapItemType.Switch:
-				EnterSwitch (mapItem);
-				break;
-			case MapItemType.Transport:
-				break;
-			case MapItemType.TrapOff:
-				break;
-			case MapItemType.TrapOn:
-				EnterTrap (mapItem);
-				break;
-			}
-
-		}
-
-
-
-		private void EnterMovableFloor(MapItem mapItem){
-
-		}
-
-		private void EnterObstacle(MapItem mapItem){
-
-			Obstacle obstacle = mapItem as Obstacle;
+			Obstacle obstacle = obstacleTrans.GetComponent<Obstacle>();
 
 			Consumables tool = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
 				return obj.itemId == obstacle.destroyToolId;
@@ -355,34 +331,25 @@ namespace WordJourney
 				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具");
 			}
 
-
-
 		}
 
-		private void EnterTrap(MapItem mapItem){
-
-			Trap trap = mapItem as Trap;
 
 
+		private void EnterSwitch(Transform switchTrans){
 
-		}
+			TrapSwitch trapSwitch = switchTrans.GetComponent<TrapSwitch>();
 
-		private void EnterSwitch(MapItem mapItem){
-
-			TrapSwitch trapSwitch = mapItem as TrapSwitch;
-
-			GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.audioClipName);
+			GameManager.Instance.soundManager.PlayMapEffectClips (trapSwitch.audioClipName);
 
 			trapSwitch.ChangeSwitchStatus ();
 
 			mapGenerator.ChangeAllTrapStatusInMap ();
 
-
 		}
 
-		private void EnterTreasureBox(MapItem mapItem){
+		private void EnterTreasureBox(Transform treasureBoxTrans){
 
-			TreasureBox tb = mapItem as TreasureBox;
+			TreasureBox tb = treasureBoxTrans.GetComponent<TreasureBox>();
 
 			// 如果mapitem已打开，则直接返回
 			if (tb.unlockItemId != -1 && !tb.locked) {
@@ -392,7 +359,7 @@ namespace WordJourney
 			// 如果该宝箱不需要使用钥匙开启
 			if (tb.unlockItemId == -1) {
 
-				GameManager.Instance.soundManager.PlayMapEffectClips (mapItem.audioClipName);
+				GameManager.Instance.soundManager.PlayMapEffectClips (tb.audioClipName);
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockOrDestroyMapItem (()=>{
@@ -425,9 +392,8 @@ namespace WordJourney
 
 		}
 
-		private void EnterDoor(MapItem mapItem){
+		private void EnterDoor(Transform doorTrans){
 			Debug.Log ("door");
-			battlePlayerCtr.PlayRoleAnim ("wait", 0, null);
 		}
 
 		public void EnterNPC(Transform mapNpcTrans){
@@ -450,16 +416,62 @@ namespace WordJourney
 		public void EnterCrystal(Transform crystal){
 			Debug.Log ("进入水晶");
 			currentEnteredTransform = crystal;
-			expUICtr.SetUpLearnPlane ();
+			expUICtr.SetUpCrystaleQueryHUD();
 		}
-			
+
+		public void EnterBillboard(Transform billboard){
+
+			Debug.Log ("进入公告牌");
+
+			Billboard bb = billboard.GetComponent<Billboard> ();
+
+			expUICtr.SetUpBillboard (bb);
+
+		}
+
+		public void EnterHole(Transform hole){
+			Debug.Log ("进入坑洞");
+
+			hole.GetComponent<Hole> ().EnterHole (mapGenerator,battlePlayerCtr);
+
+
+		}
+
+		public void EnterMovableBox(Transform movableBox){
+
+			Debug.Log ("推箱子");
+
+			movableBox.GetComponent<MovableBox> ().OnAgentPushBox (battlePlayerCtr,mapGenerator);
+
+		}
+
+		public void EnterTransport(Transform transportTrans){
+
+			Debug.Log ("进入传送阵");
+
+
+		}
+
+
+
+		#warning 退出学习貌似不应该放在这里，后面在看一看
 		public void FinishLearning(){
 			GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
-			currentEnteredTransform.GetComponent<Animator> ().SetTrigger ("Highlight");
+			currentEnteredTransform.GetComponent<Animator> ().SetTrigger ("ChangeStatus");
 		}
 
 
 		public void BattlePlayerWin(Transform[] monsterTransArray){
+
+			battlePlayerCtr.enemy = null;
+
+			battleMonsterCtr.enemy = null;
+
+			battlePlayerCtr.RemoveTriggeredSkillEffectFromAgent ();
+			battleMonsterCtr.RemoveTriggeredSkillEffectFromAgent ();
+
+			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
+			battleMonsterCtr.agent.ResetBattleAgentProperties (true);
 
 			FightEndCallBacks ();
 
@@ -495,9 +507,14 @@ namespace WordJourney
 			battlePlayerCtr.ContinueMove ();
 
 
+
 		}
 
 		private void BattlePlayerLose(){
+
+			battlePlayerCtr.enemy = null;
+
+			battleMonsterCtr.enemy = null;
 
 			FightEndCallBacks ();
 

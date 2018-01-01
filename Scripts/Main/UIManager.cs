@@ -21,37 +21,37 @@ namespace WordJourney
 
 				ResourceLoader loader = ResourceLoader.CreateNewResourceLoader<GameObject> (bundleName);
 
-//				if (isSync) {
-//					ResourceManager.Instance.LoadAssetsFromFileSync (loader, () => {
-//						if (!othersVisible) {
-//							while (dicEnumerator.MoveNext ()) {
-//								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
-//								canvas.enabled = false;
-//							}
-//						}
-//
-//						Canvas c = null;
-//
-//						foreach (Object asset in loader.assets) {
-//							GameObject obj = loader.InstantiateAsset (asset);
-//							if (obj.name == canvasName) {
-//								c = obj.GetComponent<Canvas> ();
-//								if (cb == null) {
-//									c.enabled = true;
-//								}
-//							}
-//						}
-//
-//						if (cb != null) {
-//							cb ();
-//						}
-//
-//						c.transform.SetAsLastSibling ();
-//
-//						UIDic.Add (canvasName, c.transform);
-//
-//					});
-//				} else {
+				if (isSync) {
+					ResourceManager.Instance.LoadAssetsFromFileSync (loader, () => {
+						if (!othersVisible) {
+							while (dicEnumerator.MoveNext ()) {
+								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
+								canvas.enabled = false;
+							}
+						}
+
+						Canvas c = null;
+
+						foreach (Object asset in loader.assets) {
+							GameObject obj = loader.InstantiateAsset (asset);
+							if (obj.name == canvasName) {
+								c = obj.GetComponent<Canvas> ();
+								if (cb == null) {
+									c.enabled = true;
+								}
+							}
+						}
+
+						if (cb != null) {
+							cb ();
+						}
+
+						c.transform.SetAsLastSibling ();
+
+						UIDic.Add (canvasName, c.transform);
+
+					});
+				} else {
 
 					ResourceManager.Instance.LoadAssetsUsingWWW (loader, () => {
 
@@ -83,7 +83,7 @@ namespace WordJourney
 						UIDic.Add (canvasName, c.transform);
 
 					});
-//				}
+				}
 
 			} else {
 				
@@ -173,24 +173,24 @@ namespace WordJourney
 				case "BagCanvas":
 					UIDic [key].GetComponent<BagViewController> ().DestroyInstances ();
 					break;
-				case "WorkbenchCanvas":
-					UIDic [key].GetComponent<WorkBenchViewController> ().DestroyInstances ();
-					break;
+//				case "WorkbenchCanvas":
+//					UIDic [key].GetComponent<WorkBenchViewController> ().DestroyInstances ();
+//					break;
 				case "MaterialDisplayCanvas":
 					UIDic [key].GetComponent<MaterialDisplayViewController> ().DestroyInstances ();
 					break;
-				case "ProduceCanvas":
-					UIDic [key].GetComponent<ProduceViewController> ().DestroyInstances ();
-					break;
+//				case "ProduceCanvas":
+//					UIDic [key].GetComponent<ProduceViewController> ().DestroyInstances ();
+//					break;
 				case "RecordCanvas":
 					UIDic [key].GetComponent<RecordViewController> ().DestroyInstances ();
 					break;
 				case "SettingCanvas":
 					UIDic [key].GetComponent<SettingViewController> ().DestroyInstances ();
 					break;
-				case "SkillsCanvas":
-					UIDic [key].GetComponent<SkillsViewController> ().DestroyInstances ();
-					break;
+//				case "SkillsCanvas":
+//					UIDic [key].GetComponent<SkillsViewController> ().DestroyInstances ();
+//					break;
 				case "SpellCanvas":
 					UIDic [key].GetComponent<SpellViewController> ().DestroyInstances ();
 					break;

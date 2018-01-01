@@ -15,7 +15,7 @@ namespace WordJourney
 			GameLevelDatas,
 			Materials,
 			MaterialSprites,
-			EquipmentAttachedProperties,
+//			EquipmentAttachedProperties,
 			ItemModels,
 			ItemSprites,
 			MapSprites,
@@ -24,7 +24,7 @@ namespace WordJourney
 			UISprites,
 			Monsters,
 			NPCs,
-			AnimatorControllers
+//			AnimatorControllers
 //			FootStepAudio,
 //			MapEffectsAudio,
 //			SkillEffectsAudio,
@@ -36,7 +36,7 @@ namespace WordJourney
 		private List<GameLevelData> mGameLevelDatas = new List<GameLevelData>();
 		private List<Material> mAllMaterials = new List<Material> ();
 		private List<Sprite> mAllMaterialSprites = new List<Sprite> ();
-		private List<EquipmentAttachedProperty> mAllEquipmentAttachedProperties = new List<EquipmentAttachedProperty> ();
+//		private List<EquipmentAttachedProperty> mAllEquipmentAttachedProperties = new List<EquipmentAttachedProperty> ();
 		private List<ItemModel> mAllItemModels = new List<ItemModel> ();
 		private List<Sprite> mAllItemSprites = new List<Sprite>();
 		private List<Sprite> mAllMapSprites = new List<Sprite> ();
@@ -114,9 +114,9 @@ namespace WordJourney
 			case GameDataType.MaterialSprites:
 				LoadMaterialSprites ();
 				break;
-			case GameDataType.EquipmentAttachedProperties:
-				LoadEquipmentAttachedProperties ();
-				break;
+//			case GameDataType.EquipmentAttachedProperties:
+//				LoadEquipmentAttachedProperties ();
+//				break;
 			case GameDataType.ItemModels:
 				LoadItemModels ();
 				break;
@@ -141,9 +141,9 @@ namespace WordJourney
 			case GameDataType.NPCs:
 				LoadNPCs ();
 				break;
-			case GameDataType.AnimatorControllers:
-				LoadAllAnimatorControllers ();
-				break;
+//			case GameDataType.AnimatorControllers:
+//				LoadAllAnimatorControllers ();
+//				break;
 //			case GameDataType.UIAudio:
 //				LoadUIAudioClips ();
 //				break;
@@ -294,28 +294,28 @@ namespace WordJourney
 		}
 
 
-		public List<EquipmentAttachedProperty> allEquipmentAttachedProperties{
-			get{
-				if (mAllEquipmentAttachedProperties.Count == 0) {
-					LoadEquipmentAttachedProperties ();
-				}
-				return mAllEquipmentAttachedProperties;
-			}
-		}
+//		public List<EquipmentAttachedProperty> allEquipmentAttachedProperties{
+//			get{
+//				if (mAllEquipmentAttachedProperties.Count == 0) {
+//					LoadEquipmentAttachedProperties ();
+//				}
+//				return mAllEquipmentAttachedProperties;
+//			}
+//		}
 
-		private void LoadEquipmentAttachedProperties(){
-			if(inLoadingDataTypes.Contains(GameDataType.EquipmentAttachedProperties)){
-				return;
-			}
-			inLoadingDataTypes.Add (GameDataType.EquipmentAttachedProperties);
-			EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelsWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
-
-			for (int i = 0; i < attachedPropertiesArray.Length; i++) {
-				mAllEquipmentAttachedProperties.Add (attachedPropertiesArray [i]);
-			}
-			dataReadyDic [GameDataType.EquipmentAttachedProperties] = true;
-			inLoadingDataTypes.Remove (GameDataType.EquipmentAttachedProperties);
-		}
+//		private void LoadEquipmentAttachedProperties(){
+//			if(inLoadingDataTypes.Contains(GameDataType.EquipmentAttachedProperties)){
+//				return;
+//			}
+//			inLoadingDataTypes.Add (GameDataType.EquipmentAttachedProperties);
+////			EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelsWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
+//
+////			for (int i = 0; i < attachedPropertiesArray.Length; i++) {
+////				mAllEquipmentAttachedProperties.Add (attachedPropertiesArray [i]);
+////			}
+//			dataReadyDic [GameDataType.EquipmentAttachedProperties] = true;
+//			inLoadingDataTypes.Remove (GameDataType.EquipmentAttachedProperties);
+//		}
 
 
 		public List<ItemModel> allItemModels{
@@ -588,39 +588,27 @@ namespace WordJourney
 			inLoadingDataTypes.Remove (GameDataType.NPCs);
 		}
 
-		private List<RuntimeAnimatorController> m_AllAnimatorControllers = new List<RuntimeAnimatorController>();
-		public List<RuntimeAnimatorController> allAnimatorControllers{
-			get{
-				if (m_AllAnimatorControllers.Count == 0) {
-					LoadAllAnimatorControllers ();
-				}
-				return m_AllAnimatorControllers;
-			}
-		}
+//		private List<RuntimeAnimatorController> m_AllAnimatorControllers = new List<RuntimeAnimatorController>();
+//		public List<RuntimeAnimatorController> allAnimatorControllers{
+//			get{
+//				if (m_AllAnimatorControllers.Count == 0) {
+//					LoadAllAnimatorControllers ();
+//				}
+//				return m_AllAnimatorControllers;
+//			}
+//		}
 
-		private void LoadAllAnimatorControllers(){
-			if(inLoadingDataTypes.Contains(GameDataType.AnimatorControllers)){
-				return;
-			}
-			inLoadingDataTypes.Add (GameDataType.AnimatorControllers);
-
-			ResourceLoader animatorControllerLoader = ResourceLoader.CreateNewResourceLoader<RuntimeAnimatorController> ("animator/runtimecontrollers");
-
-
-			#warning 现在只有animator controller使用assetbundle同步加载，后面再研究一下，animator controller到底怎么加载
-			ResourceManager.Instance.LoadAssetsFromFileSync (animatorControllerLoader, () => {
-				for(int i = 0;i<animatorControllerLoader.assets.Length;i++){
-
-					RuntimeAnimatorController animController = (RuntimeAnimatorController)animatorControllerLoader.assets[i];
-
-					m_AllAnimatorControllers.Add(animController);
-				};
-				dataReadyDic [GameDataType.AnimatorControllers] = true;
-				inLoadingDataTypes.Remove(GameDataType.AnimatorControllers);
-			});
-
-//			ResourceManager.Instance.LoadAssetsUsingWWW (animatorControllerLoader, () => {
+//		private void LoadAllAnimatorControllers(){
+//			if(inLoadingDataTypes.Contains(GameDataType.AnimatorControllers)){
+//				return;
+//			}
+//			inLoadingDataTypes.Add (GameDataType.AnimatorControllers);
 //
+//			ResourceLoader animatorControllerLoader = ResourceLoader.CreateNewResourceLoader<RuntimeAnimatorController> ("animator/runtimecontrollers");
+//
+//
+//			#warning 现在只有animator controller使用assetbundle同步加载，后面再研究一下，animator controller到底怎么加载
+//			ResourceManager.Instance.LoadAssetsFromFileSync (animatorControllerLoader, () => {
 //				for(int i = 0;i<animatorControllerLoader.assets.Length;i++){
 //
 //					RuntimeAnimatorController animController = (RuntimeAnimatorController)animatorControllerLoader.assets[i];
@@ -630,7 +618,19 @@ namespace WordJourney
 //				dataReadyDic [GameDataType.AnimatorControllers] = true;
 //				inLoadingDataTypes.Remove(GameDataType.AnimatorControllers);
 //			});
-		}
+//
+////			ResourceManager.Instance.LoadAssetsUsingWWW (animatorControllerLoader, () => {
+////
+////				for(int i = 0;i<animatorControllerLoader.assets.Length;i++){
+////
+////					RuntimeAnimatorController animController = (RuntimeAnimatorController)animatorControllerLoader.assets[i];
+////
+////					m_AllAnimatorControllers.Add(animController);
+////				};
+////				dataReadyDic [GameDataType.AnimatorControllers] = true;
+////				inLoadingDataTypes.Remove(GameDataType.AnimatorControllers);
+////			});
+//		}
 
 //		public List<AudioClip> allFootStepAudioClips{
 //			get{
@@ -817,10 +817,10 @@ namespace WordJourney
 				dataReadyDic [GameDataType.ItemSprites] = false;
 				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allItemSpritesBundleName);
 				break;
-			case GameDataType.EquipmentAttachedProperties:
-				mAllEquipmentAttachedProperties.Clear ();
-				dataReadyDic [GameDataType.EquipmentAttachedProperties] = false;
-				break;
+//			case GameDataType.EquipmentAttachedProperties:
+//				mAllEquipmentAttachedProperties.Clear ();
+//				dataReadyDic [GameDataType.EquipmentAttachedProperties] = false;
+//				break;
 			case GameDataType.MapSprites:
 				mAllMapSprites.Clear ();
 				dataReadyDic [GameDataType.MapSprites] = false;
@@ -846,11 +846,11 @@ namespace WordJourney
 				mAllNpcs.Clear ();
 				dataReadyDic [GameDataType.NPCs] = false;
 				break;
-			case GameDataType.AnimatorControllers:
-				allAnimatorControllers.Clear ();
-				dataReadyDic [GameDataType.AnimatorControllers] = false;
-				ResourceManager.Instance.UnloadAssetBunlde ("animator/runtimecontrollers");
-				break;
+//			case GameDataType.AnimatorControllers:
+//				allAnimatorControllers.Clear ();
+//				dataReadyDic [GameDataType.AnimatorControllers] = false;
+//				ResourceManager.Instance.UnloadAssetBunlde ("animator/runtimecontrollers");
+//				break;
 //			case GameDataType.UIAudio:
 //				mAllUIAudioClips.Clear ();
 //				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allUIAudioClipsBundleName);

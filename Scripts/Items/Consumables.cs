@@ -31,19 +31,27 @@ namespace WordJourney
 	[System.Serializable]
 	public class Consumables : Item {
 
-		public float attackGain;//攻击力增益
-		public float attackSpeedGain;//攻速增益
-		public float critGain;//暴击增益
-		public float armorGain;//护甲增益
-		public float manaResistGain;//魔抗增益
-		public float dodgeGain;//闪避增益
-		public float healthGain;//生命增益
-		public float manaGain;//魔法增益
-		public float physicalHurtScaler;
-		public float magicHurtScaler;
-		public int effectDuration;
+//		public float healthGain;//生命增益
+//		public float manaGain;//魔法增益
+//		public float attackGain;//攻击力增益
+//		public float attackSpeedGain;//攻速增益
+//		public float hitGain;//命中增益
+//		public float critGain;//暴击增益
+//		public float armorGain;//护甲增益
+//		public float manaResistGain;//魔抗增益
+//		public float dodgeGain;//闪避增益
 
-		public ConsumablesType consumablesType;
+//		public float physicalHurtScalerGain;
+//		public float magicHurtScalerGain;
+//		public float critHurtScalerGain;
+
+
+//		public bool isOnceEffect;
+
+		public SkillInfo[] attachedSkillInfos;
+
+		public int[] itemIdsForProduce;
+
 
 		/// <summary>
 		/// 构造函数
@@ -51,20 +59,19 @@ namespace WordJourney
 		/// <param name="itemModel">Item model.</param>
 		public Consumables(ItemModel itemModel,int itemCount){
 
-			this.itemType = ItemType.Consumables;
-			this.consumablesType = itemModel.consumbalesType;
-			this.itemCount = itemCount;
-
-			this.physicalHurtScaler = itemModel.physicalHurtScaler;
-			this.magicHurtScaler = itemModel.magicHurtScaler;
-			this.effectDuration = itemModel.effectDuration;
-
 			// 初始化物品基础属性
 			InitBaseProperties (itemModel);
 
-			// 初始化消耗品属性
-			healthGain = itemModel.healthGain;
-			manaGain = itemModel.manaGain;
+			this.itemType = ItemType.Consumables;
+			this.itemCount = itemCount;
+
+//			this.physicalHurtScalerGain = itemModel.physicalHurtScalerGain;
+//			this.magicHurtScalerGain = itemModel.magicalHurtScalerGain;
+//			this.critHurtScalerGain = itemModel.critHurtScalerGain;
+
+			this.attachedSkillInfos = itemModel.attachedSkillInfos;
+
+			this.itemIdsForProduce = itemModel.itemIdsForProduce;
 
 		}
 
@@ -80,13 +87,17 @@ namespace WordJourney
 			this.itemType = cons.itemType;
 
 			// 初始化消耗品属性
-			this.healthGain = cons.healthGain;
-			this.manaGain = cons.manaGain;
+//			this.healthGain = cons.healthGain;
+//			this.manaGain = cons.manaGain;
 
 			this.itemCount = count;
 
 
 		}
+
+
+
+
 
 		/// <summary>
 		/// 获取物品属性字符串
@@ -98,14 +109,14 @@ namespace WordJourney
 
 			List<string> propertiesList = new List<string> ();
 
-			if (healthGain > 0) {
-				string str = string.Format ("体力+{0}",healthGain);
-				propertiesList.Add (str);
-			}
-			if (manaGain > 0) {
-				string str = string.Format ("魔法+{0}",manaGain);
-				propertiesList.Add (str);
-			}
+//			if (healthGain > 0) {
+//				string str = string.Format ("体力+{0}",healthGain);
+//				propertiesList.Add (str);
+//			}
+//			if (manaGain > 0) {
+//				string str = string.Format ("魔法+{0}",manaGain);
+//				propertiesList.Add (str);
+//			}
 
 			if (propertiesList.Count > 0) {
 				itemProperties.Append (propertiesList [0]);

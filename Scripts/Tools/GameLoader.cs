@@ -52,6 +52,8 @@ namespace WordJourney
 			
 			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
 
+
+
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
@@ -64,6 +66,12 @@ namespace WordJourney
 		private void PersistDataAlways(){
 
 			Debug.Log ("文件本地化");
+
+//			string playerDataPath = CommonData.originDataPath + "/PlayerData.json";
+//			Player.mainPlayer.allEquipedEquipments = new Equipment[6]{ null, null, null, null, null, null };
+//			PlayerData data = new PlayerData (Player.mainPlayer);
+//
+//			DataHandler.SaveInstanceDataToFile<PlayerData> (data, playerDataPath);
 
 			DataHandler.CopyDirectory (CommonData.originDataPath, CommonData.persistDataPath, true);
 

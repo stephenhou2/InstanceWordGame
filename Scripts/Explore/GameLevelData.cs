@@ -76,11 +76,11 @@ namespace WordJourney
 				//如果是材料（1000<=材料id<2000)
 				if (itemId >= 1000 && itemId < 2000) {
 
-					Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-						return obj.itemId == itemId;
-					});
-
-					item = new Material (material, 1);
+//					Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
+//						return obj.itemId == itemId;
+//					});
+//
+//					item = new Material (material, 1);
 
 				} else {
 
@@ -90,7 +90,7 @@ namespace WordJourney
 
 					switch (itemModel.itemType) {
 					case ItemType.Equipment:
-						item = new Equipment (itemModel, 0);
+						item = new Equipment (itemModel);
 						break;
 					case ItemType.Consumables:
 						item = new Consumables (itemModel, 1);

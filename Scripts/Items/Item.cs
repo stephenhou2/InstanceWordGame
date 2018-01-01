@@ -12,7 +12,6 @@ namespace WordJourney{
 		Consumables,
 		Task,
 		FuseStone,
-		Material,
 		Formula,
 		CharacterFragment
 	}
@@ -27,25 +26,10 @@ namespace WordJourney{
 		public int itemId;
 		public ItemType itemType;
 
-//		public int levelRequired;
-
 		public int itemCount;
 
 		public bool isNewItem = true;
 
-
-
-
-//		public int attackGain;//攻击力增益
-//		public int attackSpeedGain;//攻速增益
-//		public int critGain;//暴击增益
-//		public int armorGain;//护甲增益
-//		public int manaResistGain;//魔抗增益
-//		public int dodgeGain;//闪避增益
-//
-//
-//		public int healthGain;//血量增益
-//		public int manaGain;//魔法增益
 
 		/// <summary>
 		/// 空构造函数
@@ -59,7 +43,7 @@ namespace WordJourney{
 		/// 通过物品id和数量初始化物品
 		/// </summary>
 		public static Item NewItemWith(int itemId,int itemCount){
-			
+
 			ItemModel itemModel = null;
 			Item newItem = null;
 
@@ -76,33 +60,23 @@ namespace WordJourney{
 
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
-					newItem = new Equipment (itemModel, 0);
+					newItem = new Equipment (itemModel);
 					break;
 				case ItemType.Consumables:
 					newItem = new Consumables (itemModel, 1);
 					break;
 				}
-			}else if (itemId < 2000) {
-				Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-					return obj.itemId == itemId;
-				});
-
-				newItem = new Material (material, itemCount);
 			} else if (itemId < 3000) {
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
 					return item.itemId == itemId - 2000;
 				});
 				newItem = new Formula (FormulaType.Equipment, itemId - 2000);
-			} else if (itemId < 3100) {
-				newItem = new Formula (FormulaType.Skill, itemId - 3000);
-			}
+			} 
 
 			return newItem;
 
-	
+
 		}
-
-
 
 
 		/// <summary>
@@ -135,7 +109,7 @@ namespace WordJourney{
 
 				if (itemModel.itemType == ItemType.Equipment) {
 					#warning 这里耐久度都设为0
-					Equipment equipment = new Equipment (itemModel,0);
+					Equipment equipment = new Equipment (itemModel);
 					allEquipment.Add (equipment);
 				}
 					
@@ -180,36 +154,44 @@ namespace WordJourney{
 	/// </summary>
 	[System.Serializable]
 	public class ItemModel{
-
+		
+		public int itemId;
 		public string itemName;
 		public string itemNameInEnglish;
 		public string itemDescription;
 		public string spriteName;
 		public ItemType itemType;
-		public int itemId;
 
-		public float attackGain;//攻击力增益
-		public float attackSpeedGain;//攻速增益
-		public float critGain;//暴击增益
-		public float armorGain;//护甲增益
-		public float manaResistGain;//魔抗增益
-		public float dodgeGain;//闪避增益
 		public float healthGain;//血量增益
 		public float manaGain;//魔法增益
-		public float physicalHurtScaler;//物理攻击增益
-		public float magicHurtScaler;//魔法攻击增益
-		public int effectDuration;//效果持续时间
+		public float attackGain;//攻击力增益
+		public float hitGain;//命中增益
+		public float armorGain;//护甲增益
+		public float magicResistGain;//魔抗增益
+		public float dodgeGain;//闪避增益
+		public float critGain;//暴击增益
+		public float wholePropertyGain;//全属性增益
 
-		public int maxAttachedPropertyCount;//附加属性最大数量
-		public int attachedPropertyId;//一定有的附加属性id
-		public EquipmentType equipmentType;//装备类型
-		public ConsumablesType consumbalesType;//消耗品类型
-		public string detailType;//详细装备类型
+		public float physicalHurtScalerGain;//物理伤害增益
+		public float magicalHurtScalerGain;//魔法伤害增益
+		public float critHurtScalerGain;//暴击倍率增益
 
-		public List<Material> materials = new List<Material> ();
-		public List<Material> failMaterials = new List<Material>();
 
-		public bool formulaUnlocked;
+		public SkillInfo[] attachedSkillInfos;
+
+		public int[] itemIdsForProduce;
+
+
+		public override string ToString ()
+		{
+			return string.Format ("[ItemModel]:\n itemId:{0},itemName:{1},itemNameInEnglish:{2},itemSpriteName:{3}" +
+				"itemDescription:{4},healthGain:{5},manaGain:{6},attackGain:{7},hitGain:{8},armorGain:{9},magicResistGain:{10}" +
+				"dodgeGain:{11},critGain:{12},wholePropertyGain:{13},physicalHurtScalerGain:{14},magicalHurtScalerGain:{15},critHurtScalerGain:{16}," +
+				"attachedSkillInfosCount:{17},itemForProduceCount:{18}",
+				itemId,itemName,itemNameInEnglish,spriteName,itemDescription,healthGain,manaGain,attackGain,hitGain,armorGain,magicResistGain,
+				dodgeGain,critGain,wholePropertyGain,physicalHurtScalerGain,magicalHurtScalerGain,critHurtScalerGain,attachedSkillInfos.Length,itemIdsForProduce.Length);
+		}
+
 	}
 
 

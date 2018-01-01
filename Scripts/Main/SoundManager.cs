@@ -19,6 +19,8 @@ namespace WordJourney
 		public List<AudioClip> mapEffectAudioClips = new List<AudioClip> ();
 		public List<AudioClip> UIAudioClips = new List<AudioClip> ();
 
+		public AudioClip exploreBackground;
+
 
 		public AudioSource bgmAS;
 
@@ -32,6 +34,11 @@ namespace WordJourney
 		public float lowPitchRange = 0.95f;				
 		public float highPitchRange = 1.05f;
 
+
+		public void PlayExploreBackgroundMusic(){
+			bgmAS.clip = exploreBackground;
+			bgmAS.Play ();
+		}
 
 		public void PlayWordPronunciation(AudioClip pronunciation){
 

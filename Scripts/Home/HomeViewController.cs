@@ -21,12 +21,24 @@ namespace WordJourney
 
 			while (!dataReady) {
 				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites
+					GameDataCenter.GameDataType.UISprites,
+					GameDataCenter.GameDataType.Skills
 				});
 				yield return null;
 			}
 
+//			Player.mainPlayer.allEquipedEquipments [0] = null;
+
 			homeView.SetUpHomeView ();
+
+			Debug.Log (Player.mainPlayer.allEquipedEquipments [0]);
+
+//			for (int i = 0; i < GameManager.Instance.gameDataCenter.allItemModels.Count; i++) {
+//				ItemModel im = GameManager.Instance.gameDataCenter.allItemModels [i];
+//				for (int j = 0; j < im.attachedSkillInfos.Length; j++) {
+//					SkillGenerator.Instance.GeneratorSkill(null,im.attachedSkillInfos[j]);
+//				}
+//			}
 
 		}
 
@@ -135,19 +147,19 @@ namespace WordJourney
 
 		public void OnProduceButtonClick(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
-				TransformManager.FindTransform("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
-				homeView.OnQuitHomeView();
-			},false,true);
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
+//				TransformManager.FindTransform("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
+//				homeView.OnQuitHomeView();
+//			},false,true);
 		}
 
 
 		public void OnSkillButtonClick(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.skillCanvasBundleName, "SkillsCanvas", () => {
-				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
-				homeView.OnQuitHomeView();
-			},false,true);
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.skillCanvasBundleName, "SkillsCanvas", () => {
+//				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
+//				homeView.OnQuitHomeView();
+//			},false,true);
 		}
 
 		public void OnBagButtonClick(){
@@ -169,17 +181,18 @@ namespace WordJourney
 		public void OnMaterialProduceButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(null);
+				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels[0];
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(swordModel);
 				homeView.OnQuitHomeView();
 			},false,true);
 		}
 
 		public void OnFuseStoneButtonClick(){
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
-				homeView.OnQuitHomeView();
-			},false,true);
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
+//				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
+//				homeView.OnQuitHomeView();
+//			},false,true);
 		}
 
 

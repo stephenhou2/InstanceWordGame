@@ -48,55 +48,55 @@ namespace WordJourney
 		/// 按照给定材料种类设置图鉴界面
 		/// </summary>
 		/// <param name="mt">Mt.</param>
-		public void SetUpMaterials(List<Material> materialsOfTargetType){
-
-			// 将容器中的所有材料模型放入缓存池
-			materialBtnPool.AddChildInstancesToPool (materialsContainer);
-
-			materialsScrollView.GetComponent<ScrollRect> ().velocity = Vector2.zero;
-
-			materialsContainer.localPosition = Vector3.zero;
-
-			// 更新图鉴界面
-			for (int i = 0; i < materialsOfTargetType.Count; i++) {
-				
-				Material m = materialsOfTargetType [i];
-
-				Sprite s = materialSprites.Find (delegate(Sprite obj) {
-					return obj.name == m.spriteName;
-				});
-
-				Transform materialBtn = materialBtnPool.GetInstance<Transform> (materialBtnModel.gameObject, materialsContainer);
-
-				Image materialIcon = materialBtn.Find ("MaterialIcon").GetComponent<Image>();
-				Text materialName = materialBtn.Find ("MaterialName").GetComponent<Text>();
-				Text materialValence = materialBtn.Find ("MaterialValence").GetComponent<Text>();
-				Text materialProperty = materialBtn.Find ("MaterialProperty").GetComponent<Text>();
-
-
-				if (s != null) {
-					materialIcon.sprite = s;
-				}
-
-				materialName.text = m.itemName;
-
-				materialValence.text = m.valence.ToString ();
-
-				materialProperty.text = m.itemDescription;
-
-				materialBtn.GetComponent<Button> ().onClick.RemoveAllListeners ();
-
-				materialBtn.GetComponent<Button> ().onClick.AddListener (delegate {
-
-					GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.spellCanvasBundleName,"SpellCanvas",()=>{
-
-						TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(m);
-
-					});
-				});
-
-			}
-		}
+//		public void SetUpMaterials(List<Material> materialsOfTargetType){
+//
+//			// 将容器中的所有材料模型放入缓存池
+//			materialBtnPool.AddChildInstancesToPool (materialsContainer);
+//
+//			materialsScrollView.GetComponent<ScrollRect> ().velocity = Vector2.zero;
+//
+//			materialsContainer.localPosition = Vector3.zero;
+//
+//			// 更新图鉴界面
+//			for (int i = 0; i < materialsOfTargetType.Count; i++) {
+//				
+//				Material m = materialsOfTargetType [i];
+//
+//				Sprite s = materialSprites.Find (delegate(Sprite obj) {
+//					return obj.name == m.spriteName;
+//				});
+//
+//				Transform materialBtn = materialBtnPool.GetInstance<Transform> (materialBtnModel.gameObject, materialsContainer);
+//
+//				Image materialIcon = materialBtn.Find ("MaterialIcon").GetComponent<Image>();
+//				Text materialName = materialBtn.Find ("MaterialName").GetComponent<Text>();
+//				Text materialValence = materialBtn.Find ("MaterialValence").GetComponent<Text>();
+//				Text materialProperty = materialBtn.Find ("MaterialProperty").GetComponent<Text>();
+//
+//
+//				if (s != null) {
+//					materialIcon.sprite = s;
+//				}
+//
+//				materialName.text = m.itemName;
+//
+//				materialValence.text = m.valence.ToString ();
+//
+//				materialProperty.text = m.itemDescription;
+//
+//				materialBtn.GetComponent<Button> ().onClick.RemoveAllListeners ();
+//
+//				materialBtn.GetComponent<Button> ().onClick.AddListener (delegate {
+//
+//					GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.spellCanvasBundleName,"SpellCanvas",()=>{
+//
+//						TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateMaterial(m);
+//
+//					});
+//				});
+//
+//			}
+//		}
 
 
 

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2608448475
+CRC: 3194298433
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 75b2349e4a165506ca0be26a91046eee
+    Hash: 4f82ee76e9c20add610549cc7afbb6ee
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1f9e8160f7ca8448081b95178b5b34d7
+    Hash: c1d7405e228f0e594a81ce18721969ae
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -23,10 +23,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 61
   Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
 - Class: 95
   Script: {instanceID: 0}
-- Class: 114
-  Script: {fileID: 11500000, guid: 93867370040834c5a9ab121c965e87df, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: dc8e6d811ca0e4ee69a80a880dbe7231, type: 3}
 - Class: 114
@@ -58,11 +60,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 36de56933c4d74d809e32dcf1f2f3ccb, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: c3974e4509471446c8d846ed5ff1ba58, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c41f46163935a475fb2d1576c6f14549, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 467e8d7647f0f421486ea8f3fd286e90, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: fff182172d726402b9e9eacdb89c9724, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 4a52e0c70b02d4955bbdf99550da80a3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f14678788a04c45148c61171ad3e644d, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 5db94a988516743a5a9abf0f59eb69a8, type: 3}
 - Class: 114
@@ -70,7 +78,15 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: d7fe65e983a3b4f6a99c5f3105a1adfd, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: d72e621a41a854b6ca91c88464606f51, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d70fa59a3b53447b1826f6da600ef658, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7425146c97aab43abb0481ef5cd6f194, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 64e7409c51d33492b9ca86398aac6455, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8ce3d50d62ec24894ab858fe40658c49, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: a7d59e4dfb9c9404b9471de0c983feac, type: 3}
 - Class: 114
@@ -78,7 +94,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 1301a6ee09f0a4aeabf17f4a095d7f53, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 870971bff6cd141aebad0be19d7cf532, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: cee4e3dfeadd74f98a0554c2aaa516cb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5ce39cdf0e9894890bbf003ab0053199, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -86,6 +106,8 @@ ClassTypes:
 - Class: 212
   Script: {instanceID: 0}
 - Class: 213
+  Script: {instanceID: 0}
+- Class: 221
   Script: {instanceID: 0}
 - Class: 222
   Script: {instanceID: 0}
@@ -99,13 +121,12 @@ Assets:
 - Assets/Prefabs/Explore/GoodsModel.prefab
 - Assets/Prefabs/Explore/ChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/SkillButtonModel.prefab
-- Assets/Prefabs/Explore/ExploreManager.prefab
 - Assets/Prefabs/Explore/MaterialCardModel.prefab
-- Assets/Prefabs/Explore/ToolChoiceButtonModel.prefab
-- Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
+- Assets/Prefabs/Explore/ToolChoiceButtonModel.prefab
+- Assets/Prefabs/Explore/ExploreManager.prefab
 Dependencies:
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

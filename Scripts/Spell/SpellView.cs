@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.UI;
-using System.Text;
-
-
 
 namespace WordJourney
 {
+
+	using DG.Tweening;
+	using UnityEngine.UI;
+	using System.Text;
+
 	public class SpellView: MonoBehaviour {
 
 		public Transform spellViewContainer;
@@ -21,65 +21,70 @@ namespace WordJourney
 
 		public Button[] characterButtons;
 
-		public Button onceButton;
+//		public Button onceButton;
 
-		public Button multiTimesButton;
+//		public Button multiTimesButton;
 
 		public Button confirmButton;
 
 		public Text charactersEntered;
 
 
-		public GameObject createCountHUD;
+//		public GameObject createCountHUD;
 
-		public Button minusBtn;
+//		public Button minusBtn;
 
-		public Button plusBtn;
+//		public Button plusBtn;
 
-		public Text createCount;
+//		public Text createCount;
 
-		public Slider countSlider;
+//		public Slider countSlider;
 
 
-		public Transform createdMaterialHUD;
+		public Transform createdItemHUD;
 
 //		public Transform materialDetailsContainer;
 
-		public Image materialIcon;
-		public Text materialName;
-		public Text materialCount;
-		public Text materialProperty;
-		public Text materialValence;
+		public Image itemIcon;
+		public Text itemName;
+//		public Text materialCount;
+		public Text itemProperty;
+//		public Text materialValence;
 
 
-		public void SetUpSpellViewWith(string wordInChinese,SpellPurpose spellPurpose){
+		public void SetUpSpellViewWith(ItemModel itemModel){
 
-			if (wordInChinese != null) {
-				spellRequestText.text = string.Format ("拼写 <color=orange>{0}</color>", wordInChinese);
-
-			} else {
-				spellRequestText.text = "拼写任意单词";
+			if (itemModel.itemName == null) {
+				string error = string.Format ("{0}对应的物品没有拼写，理论上应该无法进入拼写界面，请检查数据是否正确");
+				Debug.LogError (error);
+				return;
 			}
 
-			switch (spellPurpose) {
-			case SpellPurpose.CreateMaterial:
-				onceButton.gameObject.SetActive (true);
-				multiTimesButton.gameObject.SetActive (true);
-				confirmButton.gameObject.SetActive (false);
-				break;
-			case SpellPurpose.CreateFuseStone:
-				onceButton.gameObject.SetActive (false);
-				multiTimesButton.gameObject.SetActive (false);
-				confirmButton.GetComponentInChildren<Text> ().text = "生成";
-				confirmButton.gameObject.SetActive (true);
-				break;
-			case SpellPurpose.Fix:
-				onceButton.gameObject.SetActive (false);
-				multiTimesButton.gameObject.SetActive (false);
-				confirmButton.GetComponentInChildren<Text> ().text = "修复";
-				confirmButton.gameObject.SetActive (true);
-				break; 
-			}
+			spellRequestText.text = string.Format ("请拼写 <size=60><color=orange>{0}</color></size>", itemModel.itemName);
+
+
+//			onceButton.gameObject.SetActive (true);
+			confirmButton.GetComponentInChildren<Text> ().text = "制作";
+
+//			switch (spellPurpose) {
+//			case SpellPurpose.CreateMaterial:
+//				onceButton.gameObject.SetActive (true);
+//				multiTimesButton.gameObject.SetActive (true);
+//				confirmButton.gameObject.SetActive (false);
+//				break;
+//			case SpellPurpose.CreateFuseStone:
+//				onceButton.gameObject.SetActive (false);
+//				multiTimesButton.gameObject.SetActive (false);
+//				confirmButton.GetComponentInChildren<Text> ().text = "制作";
+//				confirmButton.gameObject.SetActive (true);
+//				break;
+//			case SpellPurpose.Fix:
+//				onceButton.gameObject.SetActive (false);
+//				multiTimesButton.gameObject.SetActive (false);
+//				confirmButton.GetComponentInChildren<Text> ().text = "修复";
+//				confirmButton.gameObject.SetActive (true);
+//				break; 
+//			}
 
 			InitCharacterButtons ();
 
@@ -153,81 +158,79 @@ namespace WordJourney
 			}
 		}
 
-		public void SetUpCreateCountHUD(int minValue,int maxValue){
+//		public void SetUpCreateCountHUD(int minValue,int maxValue){
+//
+//			createCountHUD.SetActive (true);
+//
+//			if (minusBtn.GetComponent<Image> ().sprite == null 
+//				|| plusBtn.GetComponent<Image>().sprite == null) 
+//			{
+//				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
+//					return obj.name == "arrowIcon";
+//				});
+//
+//				minusBtn.GetComponent<Image> ().sprite = arrowSprite;
+//				plusBtn.GetComponent<Image> ().sprite = arrowSprite;
+//			}
+//
+//			countSlider.minValue = minValue;
+//			countSlider.maxValue = maxValue;
+//
+//			countSlider.value = minValue;
+//
+//			createCount.text = "制作1个";
+//
+//
+//
+//		}
 
-			createCountHUD.SetActive (true);
+//		public void UpdateCreateCountHUD(int count,SpellPurpose spellPurpose){
+//
+//			countSlider.value = count;
+//
+//			createCount.text = "制作" + count.ToString() + "个";
+//
+//		}
 
-			if (minusBtn.GetComponent<Image> ().sprite == null 
-				|| plusBtn.GetComponent<Image>().sprite == null) 
-			{
-				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
-					return obj.name == "arrowIcon";
-				});
+		public void SetUpCreateItemDetailHUD(Item item){
 
-				minusBtn.GetComponent<Image> ().sprite = arrowSprite;
-				plusBtn.GetComponent<Image> ().sprite = arrowSprite;
-			}
+//			QuitSpellCountHUD ();
 
-			countSlider.minValue = minValue;
-			countSlider.maxValue = maxValue;
-
-			countSlider.value = minValue;
-
-			createCount.text = "制作1个";
-
-
-
-		}
-
-		public void UpdateCreateCountHUD(int count,SpellPurpose spellPurpose){
-
-			countSlider.value = count;
-
-			createCount.text = "制作" + count.ToString() + "个";
-
-		}
-
-		public void SetUpCreateMaterialDetailHUD(Item item){
-
-			QuitSpellCountHUD ();
-
-			materialName.text = item.itemName;
-			materialProperty.text = item.itemDescription;
+			itemName.text = item.itemName;
+			itemProperty.text = item.itemDescription;
 
 			switch (item.itemType) {
 
-			case ItemType.Material:
+			case ItemType.Equipment:
+			case ItemType.Consumables:
 
-				materialCount.text = string.Format ("数量:{0}", item.itemCount);
+//				materialCount.text = string.Format ("数量:{0}", item.itemCount);
 
-				materialValence.text = (item as Material).valence.ToString ();
+//				materialValence.text = (item as Material).valence.ToString ();
 
-				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+				Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 
-				if (s != null) {
-					materialIcon.sprite = s;
-				}
+				itemIcon.sprite = itemSprite;
+				itemIcon.enabled = itemSprite != null;
 				break;
 			case ItemType.FuseStone:
-				materialCount.text = string.Empty;
-				materialValence.text = string.Empty;
+//				materialCount.text = string.Empty;
+//				materialValence.text = string.Empty;
 
-				s = GameManager.Instance.gameDataCenter.allItemSprites.Find(delegate(Sprite obj){
+				itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
 				});
 
-				if (s != null) {
-					materialIcon.sprite = s;
-				}
+				itemIcon.sprite = itemSprite;
+				itemIcon.enabled = itemSprite != null;
 				break;
 			default:
 				break;
 			}
 
-
-			createdMaterialHUD.gameObject.SetActive (true);
+			createdItemHUD.gameObject.SetActive (true);
 
 			ClearEnteredCharactersPlane ();
 
@@ -290,17 +293,17 @@ namespace WordJourney
 //
 //		}
 
-		public void QuitSpellCountHUD(){
-
-			createCountHUD.SetActive (false);
-
-		}
+//		public void QuitSpellCountHUD(){
+//
+//			createCountHUD.SetActive (false);
+//
+//		}
 
 
 
 		public void OnQuitCreateDetailHUD(){
 
-			createdMaterialHUD.gameObject.SetActive (false);
+			createdItemHUD.gameObject.SetActive (false);
 
 		}
 

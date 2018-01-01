@@ -11,13 +11,20 @@ namespace WordJourney
 		TreasureBox,
 		Tree,
 		Stone,
-		TrapOn,
-		TrapOff,
+		NormalTrapOn,
+		NormalTrapOff,
 		Switch,
 		Door,
 		MovableFloor,
 		Transport,
-
+		Billboard,
+		FireTrap,
+		Hole,
+		MovableBox,
+		LauncherTowardsUp,
+		LauncherTowardsDown,
+		LauncherTowardsLeft,
+		LauncherTowardsRight
 	}
 
 	public abstract class MapItem : MonoBehaviour {
@@ -45,7 +52,7 @@ namespace WordJourney
 
 			bc2d = GetComponent<BoxCollider2D> ();
 
-
+//			InitMapItem ();
 
 		}
 
@@ -69,7 +76,7 @@ namespace WordJourney
 			animEndCallBack = cb;
 
 			// 播放对应动画
-			mapItemAnimator.SetBool ("Play", true);
+			mapItemAnimator.SetTrigger ("Play");
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}

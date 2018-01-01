@@ -77,7 +77,14 @@ namespace WordJourney{
 		TrapOn,
 		MovableFloor,
 		Boss,
-		Monster
+		Monster,
+		FireTrap,
+		Hole,
+		MovableBox,
+		LauncherUp,
+		LauncherDown,
+		LauncherLeft,
+		LauncherRight
 	}
 
 	public enum AttachedItemType{

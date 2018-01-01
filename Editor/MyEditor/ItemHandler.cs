@@ -27,13 +27,13 @@ namespace WordJourney
 
 				MyItem item = allItems [i];
 
-				if (item.itemType == ItemType.Consumables) {
-					continue;
-				}
-
-				if (item.equipmentType == EquipmentType.Boss) {
-					continue;
-				}
+//				if (item.itemType == ItemType.Consumables) {
+//					continue;
+//				}
+//
+//				if (item.equipmentType == EquipmentType.Boss) {
+//					continue;
+//				}
 
 				valences.Clear ();
 
@@ -102,37 +102,37 @@ namespace WordJourney
 
 				MyItem item = new MyItem (itemStrings[i]);
 
-				if (item.itemType == ItemType.Equipment && item.equipmentType != EquipmentType.Boss) {
-
-					string[] materialStrings = item.materialString.Split (new char[]{ '+' });
-
-					for (int j = 0; j < materialStrings.Length; j++) {
-
-						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-							return obj.itemName == materialStrings [j];
-						});
-
-						if (m == null) {
-							Debug.Log (string.Format ("null:{0}-{1}", item.itemName, materialStrings [j]));
-						}
-
-						item.materials.Add (m);
-					}
-
-					string[] failMaterialStrings = item.failMaterialString.Split (new char[]{ '+' });
-
-					for (int k = 0; k < failMaterialStrings.Length; k++) {
-						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
-							return obj.itemName == failMaterialStrings [k];
-						});
-						if (m == null) {
-							Debug.Log (string.Format ("fail-null:{0}-{1}", item.itemName, failMaterialStrings [k]));
-						}
-						item.failMaterials.Add (m);
-					}
-				}
-
-				allItems.Add (item);
+//				if (item.itemType == ItemType.Equipment && item.equipmentType != EquipmentType.Boss) {
+//
+//					string[] materialStrings = item.materialString.Split (new char[]{ '+' });
+//
+//					for (int j = 0; j < materialStrings.Length; j++) {
+//
+//						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
+//							return obj.itemName == materialStrings [j];
+//						});
+//
+//						if (m == null) {
+//							Debug.Log (string.Format ("null:{0}-{1}", item.itemName, materialStrings [j]));
+//						}
+//
+//						item.materials.Add (m);
+//					}
+//
+//					string[] failMaterialStrings = item.failMaterialString.Split (new char[]{ '+' });
+//
+//					for (int k = 0; k < failMaterialStrings.Length; k++) {
+//						MyMaterial m = allMaterials.Find (delegate(MyMaterial obj) {
+//							return obj.itemName == failMaterialStrings [k];
+//						});
+//						if (m == null) {
+//							Debug.Log (string.Format ("fail-null:{0}-{1}", item.itemName, failMaterialStrings [k]));
+//						}
+//						item.failMaterials.Add (m);
+//					}
+//				}
+//
+//				allItems.Add (item);
 
 //				Debug.Log (item);
 
@@ -180,13 +180,13 @@ namespace WordJourney
 //		public int maxAttachedPropertyCount;
 		public string attachedPropertyString;
 		public int attachedPropertyId;
-		public EquipmentType equipmentType;
-		public ConsumablesType consumablesType;
+//		public EquipmentType equipmentType;
+//		public ConsumablesType consumablesType;
 		public string detailType;
 		public bool formulaUnlocked;
 		public string spriteName;
 		public int itemId;
-		public ItemType itemType;
+//		public ItemType itemType;
 
 		public List<MyMaterial> materials = new List<MyMaterial> ();
 
@@ -220,9 +220,9 @@ namespace WordJourney
 //			maxAttachedPropertyCount = Convert.ToInt16(itemStrings[16]);
 			attachedPropertyString = itemStrings[16];
 			attachedPropertyId = Convert.ToInt16(itemStrings[17]);
-			itemType = (ItemType)(Convert.ToInt16(itemStrings[18]));
-			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[19]));
-			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [20]));
+//			itemType = (ItemType)(Convert.ToInt16(itemStrings[18]));
+//			equipmentType = (EquipmentType)(Convert.ToInt16(itemStrings[19]));
+//			consumablesType = (ConsumablesType)(Convert.ToInt16 (itemStrings [20]));
 			detailType = itemStrings [21];
 			formulaUnlocked = Convert.ToInt16 (itemStrings [22]) == 1;
 			spriteName = itemStrings [23];
@@ -272,11 +272,11 @@ namespace WordJourney
 		public string itemDescription;
 		public string spriteName;
 		public string itemNameInEnglish;
-		public ItemType itemType;
+//		public ItemType itemType;
 
 //		public int id;
 //		public string materialName;
-		public MaterialType materialType;
+//		public MaterialType materialType;
 		public int valence;
 //		public string propertyString;
 		public int attackGain;
@@ -297,7 +297,7 @@ namespace WordJourney
 
 			itemId = Convert.ToInt16(materialStrings[0]);
 			itemName = materialStrings[1];
-			materialType = (MaterialType)(Convert.ToInt16(materialStrings[2]));
+//			materialType = (MaterialType)(Convert.ToInt16(materialStrings[2]));
 			valence = Convert.ToInt16(materialStrings[3]);
 			itemDescription = materialStrings[4];
 			attackGain = Convert.ToInt16(materialStrings[5]);
@@ -311,7 +311,7 @@ namespace WordJourney
 			itemNameInEnglish = materialStrings[13];
 			spriteName = materialStrings [14];
 			unstableness = Math.Abs (valence);
-			itemType = ItemType.Material;
+//			itemType = ItemType.Material;
 
 			if (itemDescription == "-1") {
 				itemDescription = string.Empty;
@@ -322,11 +322,11 @@ namespace WordJourney
 		}
 
 
-		public override string ToString ()
-		{
-			return string.Format ("[Material]\nid:{0},name:{1},materialType:{2},valence:{3},propertyString:{4},spell:{5}",
-				itemId,itemName,materialType,valence,itemDescription,itemNameInEnglish);
-		}
+//		public override string ToString ()
+//		{
+//			return string.Format ("[Material]\nid:{0},name:{1},propertyString:{4},spell:{5}",
+//				itemId,itemName,materialType,valence,itemDescription,itemNameInEnglish);
+//		}
 
 	}
 

@@ -51,15 +51,15 @@ namespace WordJourney
 			float[] itemProperties = null;
 			float[] itemPropertiesDif = null;
 
-			if (equipedEquipment == null) {
-				equipedEquipment = new Equipment ();
-			}
+//			if (equipedEquipment == null) {
+//				equipedEquipment = new Equipment ();
+//			}
 
 			itemProperties = new float[] {
 				equipmentInBag.attackGain,
-				equipmentInBag.attackSpeedGain,
+//				equipmentInBag.attackSpeedGain,
 				equipmentInBag.armorGain,
-				equipmentInBag.manaResistGain,
+				equipmentInBag.magicResistGain,
 				equipmentInBag.critGain,
 				equipmentInBag.dodgeGain,
 				equipmentInBag.healthGain,
@@ -68,9 +68,9 @@ namespace WordJourney
 
 			itemPropertiesDif = new float[] {
 				equipmentInBag.attackGain - equipedEquipment.attackGain,
-				equipmentInBag.attackSpeedGain - equipedEquipment.attackSpeedGain,
+//				equipmentInBag.attackSpeedGain - equipedEquipment.attackSpeedGain,
 				equipmentInBag.armorGain - equipedEquipment.armorGain,
-				equipmentInBag.manaResistGain - equipedEquipment.manaResistGain,
+				equipmentInBag.magicResistGain - equipedEquipment.magicResistGain,
 				equipmentInBag.critGain - equipedEquipment.critGain,
 				equipmentInBag.dodgeGain - equipedEquipment.dodgeGain,
 				equipmentInBag.healthGain - equipedEquipment.healthGain,
@@ -115,9 +115,9 @@ namespace WordJourney
 			equipButton.onClick.RemoveAllListeners ();
 
 
-			equipButton.onClick.AddListener (delegate() {
-				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().OnEquipButtonClick (equipmentInBag);	
-			});
+//			equipButton.onClick.AddListener (delegate() {
+//				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().OnEquipButtonClick (equipmentInBag);	
+//			});
 
 			propertiesPlane.gameObject.SetActive (true);
 		}

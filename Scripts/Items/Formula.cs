@@ -86,7 +86,7 @@ namespace WordJourney
 			});
 
 			// 如果背包中没有这种配方，则解锁该配方，并把配方放进背包中
-			itemModel.formulaUnlocked = true;
+//			itemModel.formulaUnlocked = true;
 
 			return itemModel;
 		}
@@ -117,7 +117,7 @@ namespace WordJourney
 			}
 
 			// 如果背包中没有这种技能卷轴，则解锁该技能卷轴，并把配方放进背包中
-			skill.unlocked = true;
+//			skill.unlocked = true;
 
 			Player.mainPlayer.allFormulasInBag.Add (this);
 		}

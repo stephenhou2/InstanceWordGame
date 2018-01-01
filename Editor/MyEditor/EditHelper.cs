@@ -26,6 +26,25 @@ namespace WordJourney
 			gldh.SaveGameDatas ();
 		}
 
+		[MenuItem("EditHelper/GeneratePlayerJson")]
+		public static void GeneratePlayerJsonData(){
+
+			Player p = TransformManager.FindTransform ("Player").GetComponent<Player> ();
+
+			p.allEquipedEquipments = new Equipment[6];
+
+			p.physicalHurtScaler = 1.0f;
+			p.magicalHurtScaler = 1.0f;
+			p.critHurtScaler = 1.5f;
+
+			PlayerData pd = new PlayerData (p);
+
+			string originalPlayerDataPath = Path.Combine (CommonData.originDataPath, "OriginalPlayerData.json");
+
+			DataHandler.SaveInstanceDataToFile<PlayerData> (pd, originalPlayerDataPath);
+
+
+		}
 
 
 		[MenuItem("EditHelper/ItemHelper")]
@@ -39,7 +58,9 @@ namespace WordJourney
 
 		// 将物品csv数据转化为json文件并存储直接使用这个方法
 		private static void ConvertItemToJson(){
-			
+
+				
+
 			ItemModel[] allItem = ItemsToJson ();
 
 			AllItemsJson aij = new AllItemsJson ();
@@ -73,14 +94,14 @@ namespace WordJourney
 				itemModel.itemType = (ItemType)System.Convert.ToInt16(itemStr[4]);
 				itemModel.itemNameInEnglish = itemStr[5];
 				itemModel.attackGain = System.Convert.ToInt16(itemStr[6]);
-				itemModel.attackSpeedGain = System.Convert.ToInt16(itemStr[7]);
+//				itemModel.attackSpeedGain = System.Convert.ToInt16(itemStr[7]);
 				itemModel.armorGain = System.Convert.ToInt16(itemStr[8]);
-				itemModel.manaResistGain = System.Convert.ToInt16(itemStr[9]);
+				itemModel.magicResistGain = System.Convert.ToInt16(itemStr[9]);
 				itemModel.critGain = System.Convert.ToInt16(itemStr[10]);
 				itemModel.dodgeGain = System.Convert.ToInt16(itemStr[11]);
 				itemModel.healthGain = System.Convert.ToInt16(itemStr[12]);
 				itemModel.manaGain = System.Convert.ToInt16 (itemStr [13]);
-				itemModel.equipmentType = (EquipmentType)System.Convert.ToInt16 (itemStr [14]);
+//				itemModel.equipmentType = (EquipmentType)System.Convert.ToInt16 (itemStr [14]);
 
 				allItem.Add (itemModel);
 

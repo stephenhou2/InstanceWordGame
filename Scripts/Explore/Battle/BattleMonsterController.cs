@@ -7,8 +7,6 @@ namespace WordJourney
 
 	public class BattleMonsterController : BattleAgentController {
 
-
-
 		// 怪物UI控制器
 		private BattleMonsterUIController bmUICtr;
 
@@ -17,6 +15,8 @@ namespace WordJourney
 
 		// 玩家战斗胜利回调
 		private CallBack<Transform> playerWinCallBack;
+
+		public Skill defaultSkill;
 
 
 		protected override void Awake(){
@@ -79,8 +79,8 @@ namespace WordJourney
 		/// 角色战斗逻辑
 		/// </summary>
 		public override void Fight(){
-			currentSkill = (agent as Monster).InteligentSelectSkill ();
-			UseSkill (currentSkill);
+//			currentSkill = (agent as Monster).attac ();
+			UseSkill (defaultSkill);
 		}
 			
 		/// <summary>
@@ -95,10 +95,12 @@ namespace WordJourney
 			currentSkill = skill;
 
 			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim (skill.selfAnimName, 1, () => {
+			this.PlayRoleAnim ("attack", 1, () => {
 				// 播放等待动画
 				this.PlayRoleAnim("interval",0,null);
 			});
+
+//			bpCtr.PlayRoleAnim(skill.enemyRoleAnimName,
 
 		}
 
@@ -107,13 +109,13 @@ namespace WordJourney
 		{
 
 			// 播放技能对应的玩家技能特效动画
-			if (currentSkill.selfEffectName != string.Empty) {
-				SetEffectAnim (currentSkill.selfEffectName);
+			if (currentSkill.selfEffectAnimName != string.Empty) {
+				SetEffectAnim (currentSkill.selfEffectAnimName);
 			}
 
 			// 播放技能对应的怪物技能特效动画
-			if (currentSkill.enemyEffectName != string.Empty) {
-				bpCtr.SetEffectAnim (currentSkill.enemyEffectName);
+			if (currentSkill.enemyEffectAnimName != string.Empty) {
+				bpCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
 			}
 
 			GameManager.Instance.soundManager.PlaySkillEffectClips (currentSkill.sfxName);
@@ -127,100 +129,87 @@ namespace WordJourney
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if(!FightEnd()){
-				currentSkill = (agent as Monster).InteligentSelectSkill ();
-				attackCoroutine = InvokeAttack (currentSkill);
+//				currentSkill = (agent as Monster).InteligentSelectSkill ();
+				attackCoroutine = InvokeAttack (defaultSkill);
 				StartCoroutine (attackCoroutine);
 			}
 
-			this.UpdateStatusPlane();
+//			this.UpdateStatusPlane();
+//
+//			bpCtr.UpdateStatusPlane();
 
-			bpCtr.UpdateStatusPlane();
+//			Player player = Player.mainPlayer;
 
-
-
-			Player player = Player.mainPlayer;
-
-			switch (currentSkill.skillType) {
-			case SkillType.Physical:
-
-				// 玩家受到物理攻击，已装备的护具中随机一个护具的耐久度降低
-				List<Equipment> allEquipedProtector = player.allEquipedEquipments.FindAll (delegate (Equipment obj) {
-					int equipmentTypeToInt = (int)obj.equipmentType;
-					return equipmentTypeToInt >= 1 && equipmentTypeToInt <= 5;
-				});
-
-				if (allEquipedProtector.Count == 0) {
-					break;
-				}
-
-				int randomIndex = Random.Range (0, allEquipedProtector.Count);
-
-				Equipment damagedEquipment = allEquipedProtector [randomIndex];
-
-				bool completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BePhysicalAttacked);
-
-				if (completeDamaged) {
-					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
-					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-
-				}
-
-				break;
-			case SkillType.Magical:
-
-				List<Equipment> allEquipedOrnaments = player.allEquipedEquipments.FindAll (delegate(Equipment obj) {
-					int equipmentTypeToInt = (int)obj.equipmentType;
-					return equipmentTypeToInt >= 5 && equipmentTypeToInt <= 6;
-				});
-
-				if (allEquipedOrnaments.Count == 0) {
-					break;
-				}
-
-				randomIndex = Random.Range (0, allEquipedOrnaments.Count);
-
-				damagedEquipment = allEquipedOrnaments [randomIndex];
-
-				completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BeMagicAttacked);
-
-				if (completeDamaged) {
-					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
-					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
-				}
-				break;
-			default:
-				break;
-			}
+//			switch (currentSkill.hurtType) {
+//			case HurtType.Physical:
+//
+//				// 玩家受到物理攻击，已装备的护具中随机一个护具的耐久度降低
+//				List<Equipment> allEquipedProtector = player.allEquipedEquipments.FindAll (delegate (Equipment obj) {
+//					int equipmentTypeToInt = (int)obj.equipmentType;
+//					return equipmentTypeToInt >= 1 && equipmentTypeToInt <= 5;
+//				});
+//
+//				if (allEquipedProtector.Count == 0) {
+//					break;
+//				}
+//
+//				int randomIndex = Random.Range (0, allEquipedProtector.Count);
+//
+//				Equipment damagedEquipment = allEquipedProtector [randomIndex];
+//
+//				bool completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BePhysicalAttacked);
+//
+//				if (completeDamaged) {
+//					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
+//					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
+//
+//				}
+//
+//				break;
+//			case HurtType.Magical:
+//
+//				List<Equipment> allEquipedOrnaments = player.allEquipedEquipments.FindAll (delegate(Equipment obj) {
+//					int equipmentTypeToInt = (int)obj.equipmentType;
+//					return equipmentTypeToInt >= 5 && equipmentTypeToInt <= 6;
+//				});
+//
+//				if (allEquipedOrnaments.Count == 0) {
+//					break;
+//				}
+//
+//				randomIndex = Random.Range (0, allEquipedOrnaments.Count);
+//
+//				damagedEquipment = allEquipedOrnaments [randomIndex];
+//
+//				completeDamaged = damagedEquipment.EquipmentDamaged (EquipmentDamageSource.BeMagicAttacked);
+//
+//				if (completeDamaged) {
+//					string tint = string.Format("{0}完全损坏",damagedEquipment.itemName);
+//					bmUICtr.GetComponent<ExploreUICotroller> ().SetUpTintHUD (tint);
+//				}
+//				break;
+//			default:
+//				break;
+//			}
 		}
 
-
-		/// <summary>
-		/// 伤害文本动画
-		/// </summary>
-		/// <param name="hurtStr">Hurt string.</param>
-		/// <param name="tintTextType">伤害类型 [TintTextType.Crit:暴击伤害 ,TintTextType.Miss: 伤害闪避]</param>
-		public override void PlayHurtTextAnim (string hurtStr,TintTextType tintTextType)
+		public override void InitFightTextDirectionTowards (Vector3 position)
 		{
-			if (this.transform.position.x < bpCtr.transform.position.x) {
-				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Left, tintTextType);
-			} else {
-				bmUICtr.PlayHurtTextAnim (hurtStr, this.transform.position, Towards.Right, tintTextType);
-			}
-
+			bmUICtr.fightTextManager.SetUpFightTextManager (transform.position, position);
 		}
 
-		/// <summary>
-		/// 血量提升文本动画
-		/// </summary>
-		/// <param name="gainStr">Gain string.</param>
-		public override void PlayGainTextAnim (string gainStr)
+		public override void AddFightTextToQueue (string text, SpecialAttackResult specialAttackType)
 		{
-			if (this.transform.position.x < bpCtr.transform.position.x) {
-				bmUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Left);
-			} else {
-				bmUICtr.PlayGainTextAnim (gainStr, this.transform.position, Towards.Right);
-			}
+			FightText ft = new FightText (text, specialAttackType);
+
+			bmUICtr.fightTextManager.AddFightText (ft);
 		}
+
+//		public override void ShowFightTextInOrder ()
+//		{
+//			bmUICtr.fightTextManager.ShowFightTextInOrder ();
+//		}
+
 
 		/// <summary>
 		/// 判断战斗是否结束
@@ -238,7 +227,7 @@ namespace WordJourney
 
 		}
 
-		public void UpdateStatusPlane(){
+		public override void UpdateStatusPlane(){
 			bmUICtr.UpdateMonsterStatusPlane ();
 		}
 

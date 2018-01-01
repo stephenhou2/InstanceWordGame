@@ -6,14 +6,6 @@ using UnityEngine;
 namespace WordJourney
 {
 
-	public enum SkillType{
-		None,
-		Physical,
-		Magical,
-		TalentPassive,
-		TriggeredPassive
-	}
-
 	public abstract class Skill:MonoBehaviour {
 
 		public string skillName;// 技能名称
@@ -22,39 +14,26 @@ namespace WordJourney
 
 		public int skillId;
 
-		public SkillType skillType;
-
 		public string skillIconName;
 
 		public string skillDescription;
 
 
-		public static float dodgeSeed = 0.0035f; //计算闪避时的种子数
-
-		public static float critSeed = 0.0035f; //计算暴击时的种子数
-
-		public static float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
-
-		public static float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
 
 
-		public int skillLevel;
-
-		public bool isAvalible = true;
 
 		public bool canOverlay;// 技能效果是否可以叠加
 
 
-		public string selfAnimName;
-		public string selfIntervalAnimName;
-		public string enemyAnimName;
+//		public string selfRoleAnimName;
+//		public string enemyRoleAnimName;
 
-		public string selfEffectName;
-		public string enemyEffectName;
+		public string selfEffectAnimName;
+		public string enemyEffectAnimName;
 
 //		public string audioClipName;
 
-		public bool unlocked;
+//		public bool unlocked;
 
 		/// <summary>
 		/// 技能作用效果
@@ -63,10 +42,17 @@ namespace WordJourney
 		/// <param name="enemy">Enemy.</param>
 		/// <param name="skillLevel">Skill level.</param>
 		public virtual void AffectAgents (BattleAgentController self, BattleAgentController enemy){
-			ExcuteSkillLogic (self, enemy);
+			ExcuteNoneTriggeredSkillLogic (self, enemy);
 		}
 
-		protected abstract void ExcuteSkillLogic (BattleAgentController self, BattleAgentController enemy);
+		/// <summary>
+		/// 非触发型技能（如普通攻击）的逻辑 和 触发型技能的非触发逻辑（如添加触发回调前先记录一些角色数据） 写在这个方法里
+		/// </summary>
+		/// <param name="self">Self.</param>
+		/// <param name="enemy">Enemy.</param>
+		protected virtual void ExcuteNoneTriggeredSkillLogic (BattleAgentController self, BattleAgentController enemy){
+
+		}
 
 
 		// 判断概率性技能是否生效
@@ -75,19 +61,6 @@ namespace WordJourney
 			return randomNum <= chance;
 		}
 
-		public static Skill LoadSkillFromWithSkillInfo(SkillInfo skillInfo){
-
-			List<Skill> allSkills = GameManager.Instance.gameDataCenter.allSkills;
-
-			Skill skill = allSkills.Find (delegate(Skill obj) {
-				return obj.skillId == skillInfo.skillId;
-			});
-
-			skill.skillLevel = skillInfo.skillLevel;
-
-			return skill;
-
-		}
 
 		public override string ToString ()
 		{
@@ -96,19 +69,85 @@ namespace WordJourney
 
 	}
 
+
+	public enum MySkillType{
+		None,
+		MaxHealth,
+		Health,
+		Mana,
+		Attack,
+		AttackSpeed,
+		Armor,
+		MagicResist,
+		Dodge,
+		Crit,
+		Hit,
+		PhysicalHurtScaler,
+		MagicalHurtScaler,
+		CritHurtScaler,
+		WholeProperty,
+		HealthAbsorb,
+		AttachMagicalHurt,
+		Fizzy,
+		ReflectHurt
+	}
+
+
+	public enum HurtType{
+		None,
+		Physical,
+		Magical,
+	}
+
+	public enum TriggeredCondition{
+		None,
+		BeforeFight,
+		Attack,
+		Hit,
+		BeAttacked,
+		BeHit
+	}
+
+	public enum SkillEffectTarget
+	{
+		Self,
+		Enemy
+	}
+
+
+
 	[System.Serializable]
 	public class SkillInfo{
 
-		public int skillId;
+		public MySkillType skillType;//技能类型
 
-		public int skillLevel;
+		public HurtType hurtType;
 
-		public SkillInfo(Skill skill){
-			this.skillId = skill.skillId;
-			this.skillLevel = skill.skillLevel;
-		}
+		public SkillEffectTarget triggerSource;//触发源
+
+		public TriggeredCondition triggeredCondition;//触发时机
+
+		public SkillEffectTarget triggerTarget;//触发效果作用对象
+
+		public string selfEffectAnimName;//己方技能特效名称
+		public string enemyEffectAnimName;//敌方技能特效名称
+
+		public string statusName;//状态名称
+
+		public float triggeredProbability;//触发概率
+
+		public bool canOverlay;//是否可以叠加
+
+		public float skillSourceValue;//技能数据输入源
+
+		public bool excuteOnce;//是否是单次型技能
+
+		public float duration;//状态持续事件
 
 	}
+
+
+
 }
 	
 

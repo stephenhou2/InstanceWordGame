@@ -1,84 +1,69 @@
 ManifestFileVersion: 0
-CRC: 3970715856
+CRC: 106079082
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: skills/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_1:
-      Name: bag/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_2:
-      Name: spell/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_3:
-      Name: home/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_4:
-      Name: setting/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_5:
-      Name: record/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_6:
-      Name: explore/scene
-      Dependencies:
-        Dependency_0: item/icons
-        Dependency_1: material/icons
-        Dependency_2: explore/mapicons
-        Dependency_3: ui/icons
-    Info_7:
-      Name: item/icons
-      Dependencies: {}
-    Info_8:
-      Name: material/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_9:
-      Name: material/icons
-      Dependencies: {}
-    Info_10:
-      Name: produce/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_11:
-      Name: explore/mapicons
-      Dependencies: {}
-    Info_12:
-      Name: explore/monsters
-      Dependencies: {}
-    Info_13:
-      Name: skills/skills
-      Dependencies: {}
-    Info_14:
-      Name: skills/icons
-      Dependencies: {}
-    Info_15:
       Name: ui/icons
       Dependencies: {}
-    Info_16:
+    Info_1:
+      Name: item/icons
+      Dependencies: {}
+    Info_2:
+      Name: material/icons
+      Dependencies: {}
+    Info_3:
+      Name: skills/icons
+      Dependencies: {}
+    Info_4:
+      Name: explore/mapicons
+      Dependencies: {}
+    Info_5:
+      Name: explore/monsters
+      Dependencies: {}
+    Info_6:
+      Name: skills/skills
+      Dependencies: {}
+    Info_7:
       Name: workbench/canvas
       Dependencies:
         Dependency_0: ui/icons
-    Info_17:
+    Info_8:
+      Name: produce/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_9:
+      Name: explore/scene
+      Dependencies:
+        Dependency_0: ui/icons
+        Dependency_1: item/icons
+        Dependency_2: material/icons
+        Dependency_3: explore/mapicons
+    Info_10:
       Name: learn/canvas
       Dependencies:
         Dependency_0: ui/icons
-    Info_18:
-      Name: animator/runtimecontrollers
+    Info_11:
+      Name: home/canvas
       Dependencies:
-        Dependency_0: animation/map
-        Dependency_1: animation/skill
-    Info_19:
-      Name: animation/map
+        Dependency_0: ui/icons
+    Info_12:
+      Name: material/canvas
       Dependencies:
-        Dependency_0: explore/mapicons
-    Info_20:
-      Name: animation/skill
-      Dependencies: {}
+        Dependency_0: ui/icons
+    Info_13:
+      Name: record/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_14:
+      Name: bag/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+        Dependency_1: skills/icons
+    Info_15:
+      Name: spell/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_16:
+      Name: setting/canvas
+      Dependencies:
+        Dependency_0: ui/icons

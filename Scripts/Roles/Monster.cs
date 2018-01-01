@@ -19,9 +19,9 @@ namespace WordJourney
 
 		public int rewardExperience;//奖励的经验值
 
-		public SkillWithProbability[] allEquipedActiveSkills;
+//		public SkillWithProbability[] allEquipedActiveSkills;
 
-		public Skill[] allEquipedPassiveSkills;
+//		public Skill[] allEquipedPassiveSkills;
 
 
 		private BattleMonsterController mBaMonsterController;
@@ -38,6 +38,22 @@ namespace WordJourney
 
 		}
 
+//		public void MonsterToOriginal(){
+//			this.maxHealth = originalMaxHealth;
+//			this.health = this.maxHealth;
+//			this.mana = originalMana;
+//			this.attack = originalAttack;
+//			this.attackSpeed = originalAttackSpeed;
+//			this.hit = originalHit;
+//			this.armor = originalArmor;
+//			this.magicResist = originalMagicResist;
+//			this.dodge = originalDodge;
+//			this.crit = originalCrit;
+//			this.physicalHurtScaler = originalPhysicalHurtScaler;
+//			this.magicalHurtScaler = originalMagicalHurtScaler;
+//			this.critHurtScaler = originalCritHurtScaler;
+//		}
+
 //		override void Awake(){
 //			base.Awake ();
 //			for (int i = 0; i < allEquipedSkills.Length; i++) {
@@ -49,36 +65,36 @@ namespace WordJourney
 //		}
 
 
-		public Skill InteligentSelectSkill(){
-
-			int randomNum = Random.Range (0, 100);
-
-			#if UNITY_STANDALONE || UNITY_EDITOR
-			float totalProbability = 0f;
-			for(int i = 0;i<allEquipedActiveSkills.Length;i++){
-				totalProbability += allEquipedActiveSkills[i].probability;
-			}
-
-			if(totalProbability != 1f){
-				Debug.LogError("total probability = " + totalProbability.ToString());
-			}
-			#endif
-
-			Skill inteligentSelectedSkill = null;
-
-			int chip = 0;
-
-			for (int i = 0; i < allEquipedActiveSkills.Length; i++) {
-				chip += (int)(allEquipedActiveSkills [i].probability * 100);
-				if (randomNum < chip) {
-					inteligentSelectedSkill = allEquipedActiveSkills [i].skill;
-					break;
-				}
-			}
-
-			return inteligentSelectedSkill;
-
-		}
+//		public Skill InteligentSelectSkill(){
+//
+//			int randomNum = Random.Range (0, 100);
+//
+//			#if UNITY_STANDALONE || UNITY_EDITOR
+//			float totalProbability = 0f;
+//			for(int i = 0;i<allEquipedActiveSkills.Length;i++){
+//				totalProbability += allEquipedActiveSkills[i].probability;
+//			}
+//
+//			if(totalProbability != 1f){
+//				Debug.LogError("total probability = " + totalProbability.ToString());
+//			}
+//			#endif
+//
+//			Skill inteligentSelectedSkill = null;
+//
+//			int chip = 0;
+//
+//			for (int i = 0; i < allEquipedActiveSkills.Length; i++) {
+//				chip += (int)(allEquipedActiveSkills [i].probability * 100);
+//				if (randomNum < chip) {
+//					inteligentSelectedSkill = allEquipedActiveSkills [i].skill;
+//					break;
+//				}
+//			}
+//
+//			return inteligentSelectedSkill;
+//
+//		}
 
 
 

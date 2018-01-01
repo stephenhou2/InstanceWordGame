@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace WordJourney
 {
+	using System.IO;
+
 	public class PersistDataManager{
 
 		/// <summary>
@@ -52,7 +54,17 @@ namespace WordJourney
 		/// </summary>
 		public PlayerData LoadPlayerData(){
 			
-			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
+			string playerDataPath = Path.Combine (CommonData.persistDataPath, "PlayerData.json");
+
+			if (!File.Exists (playerDataPath)) {
+				playerDataPath = Path.Combine (CommonData.persistDataPath, "OriginalPlayerData.json");
+			}
+
+			if (!File.Exists (playerDataPath)) {
+				string error = "未找到玩家信息数据";
+				Debug.LogError (error);
+				return null;
+			}
 
 			return DataHandler.LoadDataToSingleModelWithPath<PlayerData> (playerDataPath);
 

@@ -74,7 +74,9 @@ namespace WordJourney
 
 		public MyGameLevelData(string dataString){
 
-			string[] dataStrings = dataString.Split (new char[]{ ','},System.StringSplitOptions.RemoveEmptyEntries);
+			dataString = dataString.Replace ("\r", "");
+
+			string[] dataStrings = dataString.Split (new char[]{ ','},System.StringSplitOptions.None);
 
 			gameLevelIndex = Convert.ToInt16 (dataStrings [0]);
 			chapterName = dataStrings [1];
@@ -100,7 +102,9 @@ namespace WordJourney
 		}
 
 		private int[] InitIntArrayWithString(string dataString){
-			
+			if (dataString == "") {
+				return null;
+			}
 			string[] idStrings = dataString.Split (new char[]{ '_' }, System.StringSplitOptions.RemoveEmptyEntries);
 			int[] idArray = new int[idStrings.Length];
 			for (int i = 0; i < idStrings.Length; i++) {

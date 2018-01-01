@@ -10,12 +10,28 @@ namespace WordJourney
 
 	public delegate void SkillCallBack(BattleAgentController selfBaCtr,BattleAgentController enemyBaCtr);
 
+	public class TriggeredSkillExcutor{
+		public SkillEffectTarget effectTarget;
+		public SkillCallBack triggeredCallback;
+
+		public TriggeredSkillExcutor(SkillEffectTarget target,SkillCallBack callBack){
+			this.effectTarget = target;
+			this.triggeredCallback = callBack;
+		}
+	}
+
 	public abstract class BattleAgentController : MonoBehaviour {
 
 		// 控制的角色
 		[HideInInspector]public Agent agent;
 
+		public AgentPropertyCalculator propertyCalculator;
 
+		private ExploreUICotroller expUICtr;
+
+		public BattleAgentController enemy;
+
+		public bool isIdle;
 
 		// 角色攻击触发的技能
 //		public List<Skill> attackTriggerSkill = new List<Skill> ();
@@ -30,22 +46,28 @@ namespace WordJourney
 //		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
 
 		// 进入战斗前触发事件回调队列
-		public List<SkillCallBack> beforeFightTriggerCallBacks = new List<SkillCallBack>();
+		public List<TriggeredSkillExcutor> beforeFightTriggerExcutors = new List<TriggeredSkillExcutor>();
 
 		// 角色攻击触发事件回调队列
-		public List<SkillCallBack> attackTriggerCallBacks = new List<SkillCallBack>();
+		public List<TriggeredSkillExcutor> attackTriggerExcutors = new List<TriggeredSkillExcutor>();
+
+		// 角色攻击命中触发的时间回调队列
+		public List<TriggeredSkillExcutor> hitTriggerExcutors = new List<TriggeredSkillExcutor>();
 
 		// 角色完成一次攻击触发事件回调队列
-		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
+//		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
 
 		// 角色被攻击触发事件回调队列
-		public List<SkillCallBack> beAttackedTriggerCallBacks = new List<SkillCallBack>();
+		public List<TriggeredSkillExcutor> beAttackedTriggerExcutors = new List<TriggeredSkillExcutor>();
+
+		// 角色被攻击命中触发的事件回调队列
+		public List<TriggeredSkillExcutor> beHitTriggerExcutors = new List<TriggeredSkillExcutor>();
 
 		// 战斗结束触发事件回调队列
-		public List<SkillCallBack> fightEndTriggerCallBacks = new List<SkillCallBack>();
+		public List<TriggeredSkillExcutor> fightEndTriggerExcutors = new List<TriggeredSkillExcutor>();
 
 		// 角色身上的所有状态
-		public List<SkillState> states = new List<SkillState>();
+//		public List<SkillState> states = new List<SkillState>();
 
 //		// 角色身上的所有状态名称
 //		public List<string> states = new List<string>();
@@ -56,7 +78,7 @@ namespace WordJourney
 		public LayerMask collosionLayer;
 
 		// 碰撞检测包围盒
-		protected BoxCollider2D boxCollider;
+		public BoxCollider2D boxCollider;
 	
 		// 激活的龙骨状态模型
 		protected GameObject modelActive;
@@ -121,16 +143,40 @@ namespace WordJourney
 				playerArmature.AddEventListener(DragonBones.EventObject.FRAME_EVENT, keyFrameListener);
 			}
 
+			isIdle = true;
+
+			propertyCalculator = new AgentPropertyCalculator ();
+			SetUpPropertyCalculator ();
+
 		}
 
 		public void SetSortingOrder(int order){
 			armatureCom.sortingOrder = order;
 		}
 
-//		public void SetSortingLayerName(string layerName){
-//			armatureCom.sortingLayerName = layerName;
-//		}
+		public abstract void InitFightTextDirectionTowards (Vector3 position);
 
+//		public abstract void ShowFightTextInOrder ();
+
+		public void SetUpPropertyCalculator(){
+			propertyCalculator.enemy = enemy;
+			propertyCalculator.maxHealth = agent.maxHealth;
+			propertyCalculator.health = agent.health;
+			propertyCalculator.mana = agent.mana;
+			propertyCalculator.attack = agent.attack;
+			propertyCalculator.attackSpeed = agent.attackSpeed;
+			propertyCalculator.hit = agent.hit;
+			propertyCalculator.armor = agent.armor;
+			propertyCalculator.magicResist = agent.magicResist;
+			propertyCalculator.dodge = agent.dodge;
+			propertyCalculator.crit = agent.crit;
+			propertyCalculator.physicalHurtScaler = agent.physicalHurtScaler;
+			propertyCalculator.magicalHurtScaler = agent.magicalHurtScaler;
+			propertyCalculator.self = this;
+			propertyCalculator.critHurtScaler = agent.critHurtScaler;
+			propertyCalculator.dodgeFixScaler = agent.dodgeFixScaler;
+			propertyCalculator.critFixScaler = agent.critFixScaler;
+		}
 
 		protected void KeyFrameMessage<T>(string key,T eventObject){
 
@@ -138,7 +184,7 @@ namespace WordJourney
 
 			if (frameObject.name == "hit") {
 				AgentExcuteHitEffect ();
-//				Debug.LogFormat ("hit---{0}", agent.name);
+				Debug.LogFormat ("hit---{0}", agent.name);
 			} else {
 				Debug.LogError ("事件帧消息名称必须是hit");
 			}
@@ -224,6 +270,10 @@ namespace WordJourney
 		/// <param name="cb">动画完成回调.</param>
 		public void PlayRoleAnim (string animName, int playTimes, CallBack cb)
 		{
+
+			isIdle = animName == "wait";
+		
+
 			// 播放新的角色动画
 			armatureCom.animation.Play (animName,playTimes);
 
@@ -363,97 +413,15 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 回收技能特效组件
-		/// </summary>
-//		protected void CollectSkillEffectsToPool(){
-//
-//			string[] keys = new string[skillEffectDic.Keys.Count];
-//
-//			int i = 0;
-//
-//			IDictionaryEnumerator enumerator = skillEffectDic.GetEnumerator ();
-//
-//			while (enumerator.MoveNext ()) {
-//
-//				keys [i] = enumerator.Key as string;
-//
-//				i++;
-//
-//			}
-//
-//			for (int j = 0; j < keys.Length; j++) {
-//
-//				string key = keys [j];
-//
-//				Transform effectTrans = skillEffectDic[key].skillEffectTrans;
-//
-//				effectTrans.GetComponent<Animator> ().SetTrigger ("Empty");
-//
-//				exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (effectTrans);
-//
-//				skillEffectDic.Remove (key);
-//
-//			}
-//
-//		}
+
 
 		/// <summary>
 		/// 伤害文本动画
 		/// </summary>
 		/// <param name="hurtStr">Hurt string.</param>
 		/// <param name="tintTextType">伤害类型 [TintTextType.Crit:暴击伤害 ,TintTextType.Miss: 伤害闪避]</param>
-		public abstract void PlayHurtTextAnim (string hurtStr, TintTextType tintTextType);
+		public abstract void AddFightTextToQueue (string hurtStr, SpecialAttackResult specialAttackType);
 
-		private struct TintTextAnimInfo
-		{
-			public string tintTextStr;
-			public TintTextType tintTextType;
-			public float delay;
-
-			public TintTextAnimInfo(string tintTextStr,TintTextType tintTextType,float delay){
-				this.tintTextStr = tintTextStr;
-				this.tintTextType = tintTextType;
-				this.delay = delay;
-			}
-		}
-
-		/// <summary>
-		/// 延迟一段事件后播放文本动画
-		/// </summary>
-		/// <param name="hurtStr">Hurt string.</param>
-		/// <param name="tintTextType">Tint text type.</param>
-		/// <param name="delay">Delay.</param>
-		public void PlayHurtTextAnim(string hurtStr,TintTextType tintTextType,float delay){
-			TintTextAnimInfo info = new TintTextAnimInfo(hurtStr, tintTextType, delay);
-			StartCoroutine ("LatelyPlayHurtTextAnim", info);
-		}
-
-		private IEnumerator LatelyPlayHurtTextAnim(TintTextAnimInfo info){
-
-			yield return new WaitForSeconds (info.delay);
-
-			PlayHurtTextAnim (info.tintTextStr, info.tintTextType);
-
-		}
-
-		/// <summary>
-		/// 血量提升文本动画
-		/// </summary>
-		/// <param name="gainStr">Gain string.</param>
-		public abstract void PlayGainTextAnim(string gainStr);
-
-		public void PlayGainTextAnim(string gainStr,float delay){
-			TintTextAnimInfo info = new TintTextAnimInfo(gainStr, TintTextType.None, delay);
-			StartCoroutine ("LatelyPlayGainTextAnim", info);
-		}
-
-		private IEnumerator LatelyPlayGainTextAnim(TintTextAnimInfo info){
-			
-			yield return new WaitForSeconds (info.delay);
-
-			PlayGainTextAnim (info.tintTextStr);
-		}
 
 		/// <summary>
 		/// 使用技能
@@ -466,86 +434,120 @@ namespace WordJourney
 		/// </summary>
 		public abstract void Fight ();
 
+//		public void 
+
+		public void UpdateFightStatus (){
+			agent.ResetPropertiesWithPropertyCalculator (propertyCalculator);
+			if (enemy != null) {
+				if (enemy.propertyCalculator.physicalHurtToEnemy > 0) {
+					string physicalHurt = string.Format ("<color=red>{0}</color>", enemy.propertyCalculator.physicalHurtToEnemy.ToString ());
+					AddFightTextToQueue (physicalHurt, enemy.propertyCalculator.specialAttackResult);
+				}
+				if (enemy.propertyCalculator.magicalHurtToEnemy > 0) {
+					string magicalHurt = string.Format ("<color=blue>{0}</color>", enemy.propertyCalculator.magicalHurtToEnemy.ToString ());
+					AddFightTextToQueue (magicalHurt, SpecialAttackResult.None);
+				}
+				if (propertyCalculator.healthAbsorb > 0) {
+					string healthGain = string.Format ("<color=green>{0}</color>", propertyCalculator.healthAbsorb.ToString ());
+					AddFightTextToQueue (healthGain, SpecialAttackResult.Gain);
+				}
+			}
+
+		}
+
 		public abstract void AgentDie ();
 
+		public abstract void UpdateStatusPlane ();
 
 		public void ExcuteBeforeFightSkillCallBacks(BattleAgentController enemy){
-			for (int i = 0; i < beforeFightTriggerCallBacks.Count; i++) {
-				SkillCallBack cb = beforeFightTriggerCallBacks [i];
+			for (int i = 0; i < beforeFightTriggerExcutors.Count; i++) {
+				SkillCallBack cb = beforeFightTriggerExcutors [i].triggeredCallback;
 				cb (this, enemy);
 			}
 		}
 
 		public void ExcuteAttackSkillCallBacks(BattleAgentController enemy){
-			for (int i = 0; i < attackTriggerCallBacks.Count; i++) {
-				SkillCallBack cb = attackTriggerCallBacks [i];
+			for (int i = 0; i < attackTriggerExcutors.Count; i++) {
+				SkillCallBack cb = attackTriggerExcutors [i].triggeredCallback;
+				cb (this, enemy);
+			}
+		}
+
+		public void ExcuteHitSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < beHitTriggerExcutors.Count; i++) {
+				SkillCallBack cb = beHitTriggerExcutors [i].triggeredCallback;
 				cb (this, enemy);
 			}
 		}
 
 		public void ExcuteBeAttackedSkillCallBacks(BattleAgentController enemy){
-			for (int i = 0; i < beAttackedTriggerCallBacks.Count; i++) {
-				SkillCallBack cb = beAttackedTriggerCallBacks [i];
+			for (int i = 0; i < beAttackedTriggerExcutors.Count; i++) {
+				SkillCallBack cb = beAttackedTriggerExcutors [i].triggeredCallback;
 				cb (this, enemy);
 			}
 		}
 
-		public void ExcuteAttackFinishSkillCallBacks(BattleAgentController enemy){
-			for (int i = 0; i < attackFinishTriggerCallBacks.Count; i++) {
-				SkillCallBack cb = attackFinishTriggerCallBacks [i];
+		public void ExcuteBeHitSkillCallBacks(BattleAgentController enemy){
+			for (int i = 0; i < beHitTriggerExcutors.Count; i++) {
+				SkillCallBack cb = beHitTriggerExcutors [i].triggeredCallback;
 				cb (this, enemy);
 			}
 		}
+
+//		public void ExcuteAttackFinishSkillCallBacks(BattleAgentController enemy){
+//			for (int i = 0; i < attackTriggerExcutors.Count; i++) {
+//				SkillCallBack cb = attackFinishTriggerCallBacks [i];
+//				cb (this, enemy);
+//			}
+//		}
 
 		public void ExcuteFightEndCallBacks(BattleAgentController enemy){
-			for (int i = 0; i < fightEndTriggerCallBacks.Count; i++) {
-				SkillCallBack cb = fightEndTriggerCallBacks [i];
+			for (int i = 0; i < fightEndTriggerExcutors.Count; i++) {
+				SkillCallBack cb = fightEndTriggerExcutors [i].triggeredCallback;
 				cb (this, enemy);
 			}
 		}
 
-		/// <summary>
-		/// 添加技能状态到角色身上
-		/// </summary>
-		/// <param name="state">State.</param>
-		public void AddState(SkillState state){
-			states.Add (state);
+		public void RemoveTriggeredSkillEffectFromAgent(){
+			agent.AddPropertyChangeFromOther (
+				-propertyCalculator.maxHealthChangeFromTriggeredSkill,
+				-propertyCalculator.hitChangeFromTriggeredSkill,
+				-propertyCalculator.attackChangeFromTriggeredSkill,
+				-propertyCalculator.attackSpeedChangeFromTriggeredSkill,
+				-propertyCalculator.manaChangeFromTriggeredSkill,
+				-propertyCalculator.armorChangeFromTriggeredSkill,
+				-propertyCalculator.magicResistChangeFromTriggeredSkill,
+				-propertyCalculator.dodgeChangeFromTriggeredSkill,
+				-propertyCalculator.critChangeFromTriggeredSkill,
+				-propertyCalculator.maxHealthChangeScalerFromTriggeredSkill,
+				-propertyCalculator.hitChangeScalerFromTriggeredSkill,
+				-propertyCalculator.attackChangeScalerFromTriggeredSkill,
+				-propertyCalculator.attackSpeedChangeScalerFromTriggeredSkill,
+				-propertyCalculator.manaChangeScalerFromTriggeredSkill,
+				-propertyCalculator.armorChangeScalerFromTriggeredSkill,
+				-propertyCalculator.magicResistChangeScalerFromTriggeredSkill,
+				-propertyCalculator.dodgeChangeScalerFromTriggeredSkill,
+				-propertyCalculator.critChangeScalerFromTriggeredSkill,
+				-propertyCalculator.physicalHurtScalerChangeFromTriggeredSkill,
+				-propertyCalculator.magicalHurtScalerChangeFromTriggeredSkill,
+				-propertyCalculator.critChangeScalerFromTriggeredSkill);
 
 		}
 
-
-		/// <summary>
-		/// 删除角色身上的技能状态
-		/// </summary>
-		/// <param name="state">State.</param>
-		public void RemoveState(SkillState state){
-			states.Remove (state);
-
-		}
-
-		public bool CheckStateExist(string stateName){
-			bool result = false;
-			for (int i = 0; i < states.Count; i++) {
-				if (states [i].stateName == stateName) {
-					result = true;
-					break;
-				}
-			}
-			return result;
-		}
 
 		/// <summary>
 		/// 清除角色身上所有的非持续性效果状态
 		/// </summary>
 		public void ClearAllEffectStatesAndSkillCallBacks(){
 
-			beforeFightTriggerCallBacks.Clear ();
-			attackTriggerCallBacks.Clear ();
-			attackFinishTriggerCallBacks.Clear ();
-			beAttackedTriggerCallBacks.Clear ();
-			fightEndTriggerCallBacks.Clear ();
+			beforeFightTriggerExcutors.Clear ();
+			attackTriggerExcutors.Clear ();
+			hitTriggerExcutors.Clear ();
+			beAttackedTriggerExcutors.Clear ();
+			beHitTriggerExcutors.Clear ();
+			fightEndTriggerExcutors.Clear ();
 
-			states.Clear ();
+			propertyCalculator.ClearAllSkills<TriggeredSkill> ();
 		}
 
 		/// <summary>
