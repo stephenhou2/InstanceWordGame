@@ -21,8 +21,6 @@ namespace WordJourney
 
 		protected delegate void UserOperationCallBack(PointerEventData eventData);
 
-
-
 		protected float minPressTimeToDrag = 0.2f;//点击阈值（超出算长按）
 
 		protected IEnumerator checkOperationTypeCoroutine;
@@ -83,7 +81,7 @@ namespace WordJourney
 		/// <param name="longPressCallBack">长按事件回调.</param>
 		private IEnumerator CheckUserOperationType(PointerEventData data,UserOperationCallBack longPressCallBack){
 
-			float pressTime = 0f;
+			float pressTime = Time.realtimeSinceStartup;
 
 			mOperationType = UserOperationType.ShortClick;
 
@@ -95,7 +93,7 @@ namespace WordJourney
 
 			bool pointerInsideDetectSource = true;
 
-			while (pressTime < minPressTimeToDrag) {
+			while (Time.realtimeSinceStartup - pressTime < minPressTimeToDrag) {
 
 				RectTransformUtility.ScreenPointToWorldPointInRectangle (transform as RectTransform, Input.mousePosition, data.pressEventCamera ,out pointerWorldPos);
 
@@ -105,8 +103,6 @@ namespace WordJourney
 					mOperationType = UserOperationType.Cancel;
 					break;
 				}
-
-				pressTime += Time.deltaTime;
 
 				yield return null;
 			}

@@ -13,12 +13,12 @@ namespace WordJourney
 		//血量值
 		public Text healthText;
 
-		public Text attackText;
-		public Text attackSpeedText;
-		public Text armorText;
-		public Text manaResistText;
-		public Text critText;
-		public Text dodgeText;
+//		public Text attackText;
+//		public Text attackSpeedText;
+//		public Text armorText;
+//		public Text manaResistText;
+//		public Text critText;
+//		public Text dodgeText;
 
 		//战斗中文本模型
 		public Transform fightTextModel;

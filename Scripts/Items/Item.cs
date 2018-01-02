@@ -138,7 +138,7 @@ namespace WordJourney{
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public abstract string GetItemBasePropertiesString ();
+//		public abstract string GetItemBasePropertiesString ();
 
 
 		public override string ToString ()

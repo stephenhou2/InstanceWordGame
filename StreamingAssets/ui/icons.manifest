@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2173453421
+CRC: 3828858149
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 741589ca8a71671ff282026e49765f14
+    Hash: 2f10fd0d100009883bce0f612cba3611
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -124,7 +124,6 @@ Assets:
 - Assets/Textures/Frame/skillPointFrame.png
 - Assets/Textures/six.png
 - Assets/Textures/Icon/skillIcon.png
-- Assets/Textures/processBar&Switch/energyFill.png
 - Assets/Textures/processBar&Switch/wordProcessBar.png
 - Assets/Textures/Button/exploreButton.png
 - Assets/Textures/Icon/watchIcon.png

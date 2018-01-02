@@ -52,12 +52,12 @@ namespace WordJourney
 
 				affectedAgent.SetEffectAnim (enemyEffectAnimName, true);
 
-				hardBeatCoroutine = StartCoroutine ("HardBeat",affectedAgent);
+				hardBeatCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
 			}
 
 		}
 			
-		private IEnumerator HardBeat(BattleAgentController affectedAgent){
+		private IEnumerator FizzyForDuration(BattleAgentController affectedAgent){
 			yield return new WaitForSeconds (duration);
 			affectedAgent.SetEffectAnim (enemyEffectAnimName, false);
 			affectedAgent.Fight ();

@@ -294,6 +294,7 @@ namespace WordJourney
 			public int dodgeChangeFromOther;
 			public int critChangeFromOther;
 
+		
 
 			public PropertyChange(int maxHealthChangeFromEq,int hitChangeFromEq,int attackChangeFromEq,
 				int manaChangeFromEq,int attackSpeedChangeFromEq,int armorChangeFromEq,

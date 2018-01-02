@@ -25,12 +25,12 @@ namespace WordJourney
 			healthBar.maxValue = monster.maxHealth;
 			healthBar.value = monster.maxHealth;
 			healthText.text = string.Format ("{0}/{1}", monster.health, monster.maxHealth);
-			attackText.text = string.Format ("攻击:{0}", monster.attack);
-			attackSpeedText.text = string.Format ("攻速:{0}", monster.attackSpeed);;
-			armorText.text = string.Format ("护甲:{0}", monster.armor);
-			manaResistText.text = string.Format ("抗性:{0}", monster.magicResist);
-			critText.text = string.Format ("暴击:{0}", monster.crit);
-			dodgeText.text = string.Format ("闪避:{0}", monster.dodge);
+//			attackText.text = string.Format ("攻击:{0}", monster.attack);
+//			attackSpeedText.text = string.Format ("攻速:{0}", monster.attackSpeed);;
+//			armorText.text = string.Format ("护甲:{0}", monster.armor);
+//			manaResistText.text = string.Format ("抗性:{0}", monster.magicResist);
+//			critText.text = string.Format ("暴击:{0}", monster.crit);
+//			dodgeText.text = string.Format ("闪避:{0}", monster.dodge);
 
 			monsterStatusPlane.gameObject.SetActive (true);
 

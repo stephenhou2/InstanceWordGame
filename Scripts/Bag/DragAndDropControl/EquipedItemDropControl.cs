@@ -133,7 +133,7 @@ namespace WordJourney
 
 				int equipmentIndexInPanel = GetEquipmentIndexInPanel (equipmentPrepareToUnload);
 
-				Agent.PropertyChange propertyChangeFromUnload = new Agent.PropertyChange ();
+				Agent.PropertyChange propertyChangeFromUnload = new Agent.PropertyChange();
 
 				if (equipmentPrepareToUnload.itemId >= 0) {
 					// 该装备移入背包中

@@ -83,6 +83,7 @@ namespace WordJourney
 					Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
 					bagCanvas.GetComponent<BagViewController> ().SetUpBagView (false);
 				}, true,true);
+					
 			}
 
 //			attackCheckController = GetComponent<AttackCheckController> ();
@@ -113,6 +114,7 @@ namespace WordJourney
 //		public void ResetAttackCheckPosition(){
 //			attackCheckController.ResetRectAttackCheckPosition ();
 //		}
+
 
 
 		public void SetUpTintHUD(string tint){

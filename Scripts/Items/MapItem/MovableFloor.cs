@@ -117,8 +117,8 @@ namespace WordJourney
 			float myMoveSpeedY = (endPos.y-startPos.y)/moveDuration;
 
 
-
 			float timer = 0;
+			bool endPosInit = false;
 
 
 			while (timer < moveDuration) {
@@ -131,6 +131,12 @@ namespace WordJourney
 				 
 				bp.transform.position += moveVector;
 
+				// 走到一半时终点位置开始初始化（地板和物品，怪物出现）
+				if (timer / moveDuration > 0.5 && !endPosInit) {
+					exploreManager.GetComponent<ExploreManager> ().ItemsAroundAutoIntoLifeWithBasePoint (endPos);
+					endPosInit = false;
+				}
+
 				yield return null;
 
 			}
@@ -141,11 +147,9 @@ namespace WordJourney
 
 			bp.SetSortingOrder (-(int)endPos.y);
 
-//			bc2d.enabled = true;
 			bp.boxCollider.enabled = true;
 			StartCoroutine ("LatelyEnableBoxCollider",bp);
 
-			exploreManager.GetComponent<ExploreManager> ().ItemsAroundAutoIntoLifeWithBasePoint (endPos);
 
 			// 如果要自动走到一个可行走点，则开启下面的代码
 //			Vector3 walkablePositionAround = exploreManager.GetComponent<MapGenerator>().GetAWalkablePositionAround (endPos);

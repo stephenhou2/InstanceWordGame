@@ -101,7 +101,7 @@ namespace WordJourney
 			Debug.Log (instantChange);
 
 			if (change == 0) {
-				return new Agent.PropertyChange ();
+				return new Agent.PropertyChange();
 			}
 
 			AgentPropertyChange (propertyType, change, fromTriggeredSkill);

@@ -6,27 +6,8 @@ using System.Text;
 
 namespace WordJourney
 {
-	/// <summary>
-	/// 消耗品类型
-	/// </summary>
-	public enum ConsumablesType{
-		MedicineAndScroll,
-		Pickaxe,
-		Key,
-		TP
-	}
 
-	public class ConsumablesEffectState{
 
-		public Consumables consumables;
-		public int effectTime;
-
-		public ConsumablesEffectState(Consumables consumables){
-			this.consumables = consumables;
-			this.effectTime = 0;
-		}
-
-	}
 
 	[System.Serializable]
 	public class Consumables : Item {
@@ -52,6 +33,7 @@ namespace WordJourney
 
 		public int[] itemIdsForProduce;
 
+//		public string target;
 
 		/// <summary>
 		/// 构造函数
@@ -73,11 +55,12 @@ namespace WordJourney
 
 			this.itemIdsForProduce = itemModel.itemIdsForProduce;
 
+
 		}
 
 		public Consumables (Consumables cons,int count){
 			
-			this.itemType = ItemType.Consumables;
+
 
 			// 初始化物品基础属性
 			this.itemId = cons.itemId;
@@ -85,53 +68,20 @@ namespace WordJourney
 			this.itemDescription = cons.itemDescription;
 			this.spriteName = cons.spriteName;
 			this.itemType = cons.itemType;
+			this.itemNameInEnglish = cons.itemNameInEnglish;
 
-			// 初始化消耗品属性
-//			this.healthGain = cons.healthGain;
-//			this.manaGain = cons.manaGain;
-
+			this.itemType = ItemType.Consumables;
 			this.itemCount = count;
 
+			this.attachedSkillInfos = cons.attachedSkillInfos;
+			this.itemIdsForProduce = cons.itemIdsForProduce;
+
+
+
 
 		}
 
 
-
-
-
-		/// <summary>
-		/// 获取物品属性字符串
-		/// </summary>
-		/// <returns>The item properties string.</returns>
-		public override string GetItemBasePropertiesString(){
-
-			StringBuilder itemProperties = new StringBuilder ();
-
-			List<string> propertiesList = new List<string> ();
-
-//			if (healthGain > 0) {
-//				string str = string.Format ("体力+{0}",healthGain);
-//				propertiesList.Add (str);
-//			}
-//			if (manaGain > 0) {
-//				string str = string.Format ("魔法+{0}",manaGain);
-//				propertiesList.Add (str);
-//			}
-
-			if (propertiesList.Count > 0) {
-				itemProperties.Append (propertiesList [0]);
-
-				for (int i = 1; i < propertiesList.Count; i++) {
-
-					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
-
-				}
-
-			}
-
-			return itemProperties.ToString ();
-
-		}
 
 
 		/// <summary>
@@ -140,7 +90,7 @@ namespace WordJourney
 		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
-			return "类型: 消耗品";
+			return "消耗品";
 		}
 
 

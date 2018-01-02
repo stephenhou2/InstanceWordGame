@@ -274,15 +274,23 @@ namespace WordJourney
 
 //			CollectSkillEffectsToPool();
 
-			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
+			PlayRoleAnim ("die", 1, null);
 
-			Invoke ("MoveAgentToDieZone", 0.2f);
+//			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
+
+			Invoke ("MoveAgentToDieZone", 0.5f);
 
 		}
 
+		public override void TowardsLeft ()
+		{
+			modelActive.transform.localScale = new Vector3 (-1, 1, 1);
+		}
 
-
-
+		public override void TowardsRight ()
+		{
+			modelActive.transform.localScale = Vector3.one;
+		}
 
 	}
 }

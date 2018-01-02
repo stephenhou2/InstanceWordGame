@@ -6,6 +6,9 @@ namespace WordJourney
 {
 	public class TreasureBox: MapItem {
 
+		// 地图物品状态变化之后是否可以行走
+		public bool walkableAfterChangeStatus;
+
 		// 开启所需物品的名称
 		public int unlockItemId;
 
@@ -29,11 +32,56 @@ namespace WordJourney
 			mapItemAnimator.SetBool ("Play",false);
 		}
 
-		protected override void AnimEnd ()
-		{
-			locked = false;
-			base.AnimEnd ();
+
+		/// <summary>
+		/// 地图物品被破坏或开启
+		/// </summary>
+		/// <param name="cb">Cb.</param>
+		public void UnlockTreasureBox(CallBack cb){
+
+			animEndCallBack = cb;
+
+			// 播放对应动画
+			mapItemAnimator.SetTrigger ("Play");
+
+			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}
+
+		/// <summary>
+		/// 动画结束后重置地图物品
+		/// </summary>
+		/// <returns>The map item on animation finished.</returns>
+		protected IEnumerator ResetMapItemOnAnimFinished(){
+
+			yield return null;
+
+			AnimatorStateInfo stateInfo = mapItemAnimator.GetCurrentAnimatorStateInfo (0);
+
+			while (stateInfo.normalizedTime < 1) {
+
+				yield return null;
+
+				stateInfo = mapItemAnimator.GetCurrentAnimatorStateInfo (0);
+
+			}
+
+			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
+			if (walkableAfterChangeStatus) {
+				GetComponent<BoxCollider2D> ().enabled = false;
+			}
+
+			AnimEnd ();
+
+		}
+
+		protected void AnimEnd (){
+			locked = false;
+			if (animEndCallBack != null) {
+				animEndCallBack ();
+			}
+		}
+
+
 
 	}
 }

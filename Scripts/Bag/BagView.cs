@@ -142,7 +142,7 @@ namespace WordJourney
 //					changeTintFromOtherTweens [i].Kill(false);
 //				}
 //			}
-
+		
 
 			ShowEquipmentChangeTint (playerMaxHealth, propertyChange.maxHealthChangeFromEq,0);
 			ShowEquipmentChangeTint (playerHit, propertyChange.hitChangeFromEq,1);
@@ -186,8 +186,6 @@ namespace WordJourney
 
 			if (changeTintFromOtherSequences [indexInPanel] == null) {
 
-
-
 				Sequence propertyValueBlink = DOTween.Sequence ();
 				propertyValueBlink
 					.Append (propertyValue.DOFade (0.3f, 3))
@@ -196,6 +194,8 @@ namespace WordJourney
 				propertyValueBlink.SetLoops (-1);
 
 				changeTintFromOtherSequences [indexInPanel] = propertyValueBlink;
+
+				propertyValueBlink.SetUpdate (true);
 
 				return;
 			}
@@ -239,6 +239,7 @@ namespace WordJourney
 					.AppendCallback(()=>{
 						changeTint.enabled = false;
 					});
+				changeTintSequence.SetUpdate (true);
 				changeTintFromEqSequences[indexInPanel] = changeTintSequence;
 				return;
 			}
@@ -425,7 +426,7 @@ namespace WordJourney
 
 				break;
 			case ItemType.Consumables:
-				itemProperties.text = item.GetItemBasePropertiesString ();
+				itemProperties.text = item.itemDescription;
 				itemName.text = item.itemName;
 				itemDamagePercentage.text = string.Empty;
 
@@ -438,13 +439,13 @@ namespace WordJourney
 
 				break;
 			case ItemType.FuseStone:
-				itemProperties.text = item.GetItemBasePropertiesString ();
+				itemProperties.text = item.itemDescription;
 				itemName.text = item.itemName;
 				itemDamagePercentage.text = string.Empty;
 				choiceHUDWithOneBtn.gameObject.SetActive (true);
 				break;
 			case ItemType.Task:
-				itemProperties.text = item.GetItemBasePropertiesString ();
+				itemProperties.text = item.itemDescription;
 				itemName.text = item.itemName;
 				itemDamagePercentage.text = string.Empty;
 				break;
@@ -726,7 +727,7 @@ namespace WordJourney
 		}
 
 		// 关闭背包界面
-		public void OnQuitBagPlane(CallBack cb){
+		public void QuitBagPlane(){
 
 			for (int i = 0; i < changeTintFromEqSequences.Length; i++) {
 				changeTintFromEqSequences [i].Kill (false);
@@ -735,23 +736,7 @@ namespace WordJourney
 				changeTintFromOtherSequences [i] = null;
 			}
 
-		
-			
-//			bagViewContainer.GetComponent<Image> ().color = new Color (0, 0, 0, 0);
-
-//			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-//
-//			Vector3 originalPosition = bagPlane.transform.localPosition;
-
-//			bagPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete (() => {
-				GetComponent<Canvas>().enabled = false;
-				if(cb != null){
-					cb();
-
-				}
-//			});
-
+			GetComponent<Canvas> ().enabled = false;
 		}
-
-		}
+	}
 }

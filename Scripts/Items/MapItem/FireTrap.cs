@@ -16,14 +16,29 @@ namespace WordJourney
 
 		private IEnumerator lifeLoseCoroutine;
 
+		private MapGenerator mMapGenerator;
+		private MapGenerator mapGenerator{
+			get{
+				if (mMapGenerator == null) {
+					mMapGenerator = TransformManager.FindTransform ("ExploreManager").GetComponent<MapGenerator> ();
+				}
+				return mMapGenerator;
+			}
+		}
+
 		public override void SetTrapOn ()
 		{
 			mapItemAnimator.ResetTrigger ("ChangeStatus");
+			bc2d.enabled = true;
+			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 10;
 		}
 
 		public override void SetTrapOff ()
 		{
 			mapItemAnimator.SetTrigger ("ChangeStatus");
+			bc2d.enabled = false;
+			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 1;
+			mapGenerator.AddMapItemInPool (this.transform);
 		}
 
 		public override void OnTriggerEnter2D (Collider2D col)

@@ -16,10 +16,6 @@ namespace WordJourney
 
 		}
 
-		public override string GetItemBasePropertiesString ()
-		{
-			return string.Empty;
-		}
 
 		public override string GetItemTypeString ()
 		{

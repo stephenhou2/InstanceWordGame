@@ -40,6 +40,7 @@ namespace WordJourney
 
 		public Transform crystalModel;
 
+		public Transform consumablesValidPosTintModel;
 
 
 		// 地图上所有地图物品列表
@@ -60,6 +61,7 @@ namespace WordJourney
 		public Transform rewardsContainer;
 		public Transform crystalsContainer;
 		public Transform otherAnimContainer;
+		public Transform consumablesValidPosTintContainer;
 
 		// 所有的缓存池
 		private InstancePool floorPool;
@@ -70,6 +72,7 @@ namespace WordJourney
 		private InstancePool rewardItemPool;
 		private InstancePool crystalPool;
 		private InstancePool otherAnimPool;
+		private InstancePool consumablesValidPosTintPool;
 
 		public Transform destinationAnimation;
 
@@ -149,7 +152,7 @@ namespace WordJourney
 		private List<Hole> allHolesInMap = new List<Hole> ();
 		private List<Vector3> allMovableFloorsPositions = new List<Vector3> (); 
 
-		private List<Vector3> totalValablePosGridList = new List<Vector3> ();
+		private List<Vector3> totalValidPosGridList = new List<Vector3> ();
 		private List<Vector3> playerOriginalPosList = new List<Vector3> ();
 //		private List<Vector3> treasureBox_npc_produceBuildingPosGridList;
 //		private List<Vector3> learnCrystalPosGridList;
@@ -160,6 +163,11 @@ namespace WordJourney
 		private List<Transform> allUnusedMonsters = new List<Transform> ();
 		private List<Transform> allUnusedOtherItems = new List<Transform> ();
 		private List<Transform> allUnusedFloors = new List<Transform> ();
+
+		private List<Transform> allAliveOtherItems = new List<Transform> ();
+		private List<Transform> allAliveMonsters = new List<Transform> ();
+
+		private Consumables currentUsingConsumables;
 
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (GameLevelData levelData)
@@ -177,9 +185,10 @@ namespace WordJourney
 				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
 				crystalPool = InstancePool.GetOrCreateInstancePool ("CrystalPool", poolContainerOfExploreScene.name);
 				otherAnimPool = InstancePool.GetOrCreateInstancePool ("OtherAnimPool", poolContainerOfExploreScene.name);
+				consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
 			}
 
-			MapInstancesToPool ();
+			AllMapInstancesToPool ();
 
 			this.levelData = levelData;
 
@@ -257,13 +266,15 @@ namespace WordJourney
 
 			allTrapsInMap.Clear ();
 
-			totalValablePosGridList.Clear ();
+			totalValidPosGridList.Clear ();
 
 			playerOriginalPosList.Clear ();
 
 			allUnusedFloors.Clear ();
 			allUnusedMonsters.Clear ();
 			allUnusedOtherItems.Clear ();
+			allAliveOtherItems.Clear ();
+			allAliveMonsters.Clear ();
 		}
 
 		/// <summary>
@@ -306,7 +317,7 @@ namespace WordJourney
 				Tile floorTile = floorLayer.tileDatas [j];
 
 				if (floorTile.walkable) {
-					totalValablePosGridList.Add (floorTile.position);
+					totalValidPosGridList.Add (floorTile.position);
 				}
 
 			}
@@ -578,6 +589,8 @@ namespace WordJourney
 				launcher.SetRange (columns, rows);
 				break;
 			}
+
+			mapItem.mapItemType = mapItemType;
 
 			mapItem.SetSortingOrder (-(int)position.y);
 
@@ -927,6 +940,7 @@ namespace WordJourney
 				if(PositionSame(unusedMonster.position,position)){
 					unusedMonster.position = new Vector3(position.x,position.y,0);
 					allUnusedMonsters.RemoveAt (i);
+					allAliveMonsters.Add (unusedMonster);
 					break;
 				}
 			}
@@ -936,6 +950,7 @@ namespace WordJourney
 				if(PositionSame(unusedOther.position,position)){
 					unusedOther.position = new Vector3(position.x,position.y,0);
 					allUnusedOtherItems.RemoveAt (i);
+					allAliveOtherItems.Add (unusedOther);
 					break;
 				}
 			}
@@ -1165,6 +1180,7 @@ namespace WordJourney
 				if(PositionSame(position,monster.position)){
 					validUnusedTiles.Add(new UnusedTile(monster,UnusedTileType.Other));
 					allUnusedMonsters.Remove (monster);
+					allAliveMonsters.Add (monster);
 					break;
 				}
 			}
@@ -1174,6 +1190,7 @@ namespace WordJourney
 				if (PositionSame(position,mapItem.position)) {
 					validUnusedTiles.Add(new UnusedTile(mapItem,UnusedTileType.Other));
 					allUnusedOtherItems.Remove (mapItem);
+					allAliveOtherItems.Add (mapItem);
 					break;
 				}
 			}
@@ -1252,6 +1269,188 @@ namespace WordJourney
 
 
 		}
+
+
+		public void ShowConsumablesValidPointsTint(Consumables consumables){
+
+			Vector3 basePosition = GetBattlePlayer ().transform.position;
+		
+			Vector3 upPoint = new Vector3 (basePosition.x, basePosition.y + 1);
+			Vector3 downPoint = new Vector3 (basePosition.x, basePosition.y - 1);
+			Vector3 leftPoint = new Vector3 (basePosition.x - 1, basePosition.y);
+			Vector3 rightPoint = new Vector3 (basePosition.x + 1, basePosition.y); 
+
+			GenerateConsumablesPosTintAt (upPoint,consumables);
+			GenerateConsumablesPosTintAt (downPoint,consumables);
+			GenerateConsumablesPosTintAt (leftPoint,consumables);
+			GenerateConsumablesPosTintAt (rightPoint,consumables);
+
+		}
+
+
+		private void GenerateConsumablesPosTintAt(Vector3 pos,Consumables consumables){
+
+			currentUsingConsumables = consumables;
+
+			MapItem mapItem = GetAliveOtherItem (pos).GetComponent<MapItem> ();
+
+			bool targetMatch = false;
+
+			switch (consumables.itemName) { 
+			case "地板":
+				if(pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows){
+					return;
+				}
+				targetMatch = mapWalkableInfoArray [(int)pos.x, (int)pos.y] == -1;
+				break;
+			case "锄头":
+				targetMatch = mapItem != null && mapItem.mapItemType == MapItemType.Stone;
+				break;
+			case "锯子":
+				targetMatch = mapItem != null && mapItem.mapItemType == MapItemType.Tree;
+				break;
+			case "镰刀":
+				targetMatch = mapItem != null && mapItem.mapItemType == MapItemType.Plant;
+				break;
+			case "钥匙":
+				if (mapItem == null || !(mapItem is TreasureBox)) {
+					targetMatch = false;
+				}else {
+					targetMatch = (mapItem as TreasureBox).locked;
+				} 
+				break;
+			case "火把":
+				if (mapWalkableInfoArray [(int)pos.x, (int)pos.y] == 1) {
+					targetMatch = true;
+				} else if (mapWalkableInfoArray [(int)pos.x, (int)pos.y] == -1) {
+					targetMatch = false;
+				} else if (GetAliveMonster(pos) != null) {
+					targetMatch = true;
+				}
+				break;
+			case "水":
+				targetMatch = mapItem != null && mapItem.mapItemType == MapItemType.FireTrap;
+				break;
+			}
+
+			Transform consumablesValidPosTint = consumablesValidPosTintPool.GetInstance<Transform> (consumablesValidPosTintModel.gameObject, consumablesValidPosTintContainer);
+
+			consumablesValidPosTint.position = pos;
+
+			SpriteRenderer sr = consumablesValidPosTint.GetComponent<SpriteRenderer> ();
+
+			if (!targetMatch) {
+				sr.color = new Color (1, 0, 0, 0.5f);
+			} else {
+				sr.color = new Color (0, 1, 0, 0.5f);
+			}
+			consumablesValidPosTint.gameObject.SetActive (true);
+		}
+
+		private Transform GetAliveMonster(Vector3 pos){
+
+			Transform aliveMonster = null;
+
+			for (int i = 0; i < allAliveMonsters.Count; i++) {
+				aliveMonster = allAliveMonsters [i];
+				if(PositionSame(aliveMonster.position,pos)){
+					break;
+				}
+			}
+
+			return aliveMonster;
+		}
+
+		private Transform GetAliveOtherItem(Vector3 pos){
+
+			Transform aliveOtherItem = null;
+
+			for (int i = 0; i < allAliveOtherItems.Count; i++) {
+				aliveOtherItem = allAliveOtherItems [i];
+				if(PositionSame(aliveOtherItem.position,pos)){
+					break;
+				}
+			}
+
+			return aliveOtherItem;
+
+		}
+
+		public void ClickConsumablesPosAt(Vector3 pos){
+
+			AddConsumablesValidPosTintsToPool ();
+
+			int posX = (int)pos.x;
+			int posY = (int)pos.y;
+
+			MapItem mapItem = GetAliveOtherItem (pos).GetComponent<MapItem>();
+
+			switch (currentUsingConsumables.itemName) { 
+			case "地板":
+				if (mapWalkableInfoArray [posX, posY] == -1) {
+					Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
+					floor.position = new Vector3 (posX, posY, 0);
+					floor.GetComponent<SpriteRenderer> ().sortingOrder = -posY;
+					originalMapWalkableInfoArray [posX, posY] = 1;
+					mapWalkableInfoArray [posX, posY] = 1;
+					ItemsAroundAutoIntoLifeWithBasePoint (pos, null);
+				}
+				break;
+			case "锄头":
+				if (mapItem != null && mapItem.mapItemType == MapItemType.Stone) {
+					(mapItem as Obstacle).DestroyObstacle (null);
+				}
+				break;
+			case "锯子":
+				if (mapItem != null && mapItem.mapItemType == MapItemType.Tree) {
+					(mapItem as Obstacle).DestroyObstacle (null);
+				}
+				break;
+			case "镰刀":
+				if (mapItem != null && mapItem.mapItemType == MapItemType.Plant) {
+					
+				}
+				break;
+			case "钥匙":
+				if (mapItem != null && mapItem.mapItemType == MapItemType.TreasureBox) {
+					TreasureBox tb = mapItem as TreasureBox;
+					if (tb.locked) {
+						tb.UnlockTreasureBox (delegate{
+							SetUpRewardInMap(tb.rewardItem,pos);
+						});
+					}
+				}
+				break;
+			case "火把":
+				if (mapWalkableInfoArray [(int)pos.x, (int)pos.y] == 1) {
+					Transform fireTrap = mapItemPool.GetInstanceWithName<Transform> (fireTrapModel.name, fireTrapModel.gameObject, mapItemsContainer);
+					mapWalkableInfoArray [posX, posY] = 10;
+					fireTrap.GetComponent<FireTrap> ().SetTrapOn ();
+				} else if (GetAliveMonster(pos) != null) {
+
+				}
+				break;
+			case "水":
+				if (mapItem != null && mapItem.mapItemType == MapItemType.FireTrap) {
+					(mapItem as FireTrap).SetTrapOff ();
+				}
+				break;
+			}
+
+
+
+		}
+
+		private void AddConsumablesValidPosTintsToPool(){
+
+			for (int i = 0; i < consumablesValidPosTintContainer.childCount; i++) {
+				Transform consumablesValidPosTint = consumablesValidPosTintContainer.GetChild (i);
+				consumablesValidPosTint.gameObject.SetActive (false);
+				consumablesValidPosTintPool.AddInstanceToPool (consumablesValidPosTint.gameObject);
+				i--;
+			}
+
+		}
 			
 
 		private class RewardInMap
@@ -1275,20 +1474,10 @@ namespace WordJourney
 
 			SpriteRenderer sr = rewardTrans.GetComponent<SpriteRenderer> ();
 
-			Sprite s = null;
-
-//			if (reward.itemType == ItemType.Material) {
-//				s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
-//					return obj.name == reward.spriteName;
-//				});
-//			} else {
-				s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == reward.spriteName;
-				});
-//			}
-
-			sr.sprite = s;
-
+			sr.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == reward.spriteName;
+			});
+				
 			rewardTrans.position = new Vector3 (rewardPosition.x, rewardPosition.y + 1, rewardPosition.z);
 
 			sr.sortingOrder = -(int)rewardPosition.y;
@@ -1357,6 +1546,10 @@ namespace WordJourney
 
 		}
 
+		public void AddMapItemInPool(Transform mapItem){
+			mapItemPool.AddInstanceToPool (mapItem.gameObject);
+		}
+
 
 		public void DestroyInstancePools(){
 
@@ -1372,14 +1565,14 @@ namespace WordJourney
 			Destroy (skillEffectPool.gameObject);
 			Destroy (rewardItemPool);
 			Destroy (otherAnimPool.gameObject);
-
+			Destroy (consumablesValidPosTintPool.gameObject);
 		}
 
 
 		/// <summary>
 		/// 将场景中的地板，npc，地图物品，怪物加入缓存池中
 		/// </summary>
-		private void MapInstancesToPool(){
+		private void AllMapInstancesToPool(){
 			floorPool.AddChildInstancesToPool (floorsContainer);
 			npcPool.AddChildInstancesToPool (npcsContainer);
 			mapItemPool.AddChildInstancesToPool (mapItemsContainer);
@@ -1388,6 +1581,7 @@ namespace WordJourney
 			skillEffectPool.AddChildInstancesToPool (skillEffectsContainer);
 			rewardItemPool.AddChildInstancesToPool (rewardsContainer);
 			otherAnimPool.AddChildInstancesToPool (otherAnimContainer);
+			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
 		}
 
 		/// <summary>
@@ -1399,10 +1593,6 @@ namespace WordJourney
 			mapItemPool.ClearInstancePool ();
 			monsterPool.ClearInstancePool ();
 			crystalPool.ClearInstancePool ();
-			skillEffectPool.ClearInstancePool ();
-			rewardItemPool.ClearInstancePool ();
-			otherAnimPool.ClearInstancePool ();
-
 		}
 
 

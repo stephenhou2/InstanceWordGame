@@ -255,6 +255,8 @@ namespace WordJourney
 		/// </summary>
 		public void OnBagButtonClick(){
 
+			Time.timeScale = 0;
+
 			// 初始化背包界面并显示
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
@@ -452,11 +454,11 @@ namespace WordJourney
 			GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.audioClipName);
 
 			// 播放地图物品对应的动画
-			mapItem.UnlockOrDestroyMapItem (()=>{
-
-				if (mapItem.walkableAfterChangeStatus) {
-					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
-				}
+//			mapItem.UnlockOrDestroyMapItem (()=>{
+//
+//				if (mapItem.walkableAfterChangeStatus) {
+//					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
+//				}
 
 //				switch (mapItem.mapItemType) {
 //				// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
@@ -494,7 +496,7 @@ namespace WordJourney
 //					break;
 //				}
 
-			});
+//			});
 
 		}
 

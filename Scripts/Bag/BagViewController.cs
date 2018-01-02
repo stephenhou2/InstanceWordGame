@@ -19,6 +19,26 @@ namespace WordJourney
 		private int maxResolveCount;
 		private int resolveCount;
 
+		private ExploreManager mExploreManager;
+		private ExploreManager exploreManager{
+			get{
+				if (mExploreManager == null) {
+					mExploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager>();
+				}
+				return mExploreManager;
+			}
+		}
+
+//		private Transform mExploreCanvas;
+//		private Transform exploreCanvas{
+//			get{
+//				if (mExploreCanvas == null) {
+//					mExploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
+//				}
+//				return mExploreCanvas;
+//			}
+//		}
+
 
 		void Awake(){
 
@@ -77,7 +97,6 @@ namespace WordJourney
 		}
 
 		public void SetUpBagView(bool setVisible){
-
 			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
 		}
 
@@ -190,18 +209,58 @@ namespace WordJourney
 
 		public void OnUseButtonClick(){
 
-			bool removeFromBag;
+			bool removeFromBag = false;
+			bool consumblesUsedInExploreScene = false;
 
-			Agent.PropertyChange propertyChange = Player.mainPlayer.UseConsumables (currentSelectItem as Consumables,out removeFromBag);
+			Consumables consumables = currentSelectItem as Consumables;
 
-			if (removeFromBag) {
-				bagView.RemoveItemInBag (currentSelectDragControl);
+			Agent.PropertyChange propertyChange = new Agent.PropertyChange();
+
+			switch (consumables.itemName) {
+			case "药剂":
+			case "草药":
+			case "蓝莓":
+			case "菠菜":
+			case "香蕉":
+			case "菠萝":
+			case "南瓜":
+			case "葡萄":
+			case "柠檬":
+				propertyChange = Player.mainPlayer.UseMedicines (consumables, out removeFromBag);
+				consumblesUsedInExploreScene = false;
+				bagView.SetUpPlayerStatusPlane (propertyChange);
+				if (removeFromBag) {
+					bagView.RemoveItemInBag (currentSelectDragControl);
+				}
+				break;  
+			case "锄头":
+			case "锤子":
+			case "镰刀":
+			case "钥匙":
+				consumblesUsedInExploreScene = true;
+					break;
+			case "火把":
+				consumblesUsedInExploreScene = true;
+					break;
+			case "水":
+				consumblesUsedInExploreScene = true;
+					break;
+			case "地板":
+				consumblesUsedInExploreScene = true;
+					break;
+			case "卷轴":
+				consumblesUsedInExploreScene = false;
+				break;
 			}
+
 
 			bagView.QuitItemDetailHUD ();
 
-			bagView.SetUpPlayerStatusPlane (propertyChange);
-
+			if (consumblesUsedInExploreScene) {
+				OnQuitBagPlaneButtonClick ();
+				exploreManager.clickForConsumablesPos = true;
+				exploreManager.ShowConsumablesValidPointTintAround (consumables);
+			}
 
 		}
 			
@@ -395,22 +454,23 @@ namespace WordJourney
 		// 退出背包界面
 		public void OnQuitBagPlaneButtonClick(){
 
-			bagView.OnQuitBagPlane (() => {
+			bagView.QuitBagPlane ();
 
-				GameObject exploreCanvas = GameObject.Find ("ExploreCanvas");
+			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
-				if (exploreCanvas == null) {
+			if (exploreCanvas == null) {
 
-						GameManager.Instance.UIManager.SetUpCanvasWith(CommonData.homeCanvasBundleName,"HomeCanvas",()=>{
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 
-						GameObject.Find ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+					TransformManager.FindTransform ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-//						GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
+//					GameManager.Instance.gameDataCenter.ReleaseDataWithNames(new string[]{"AllItemSprites","AllMaterialSprites","AllMaterials","AllItemModels"});
 
-//						TransformManager.DestroyTransfromWithName ("PoolContainerOfBagCanvas", TransformRoot.PoolContainer);
-					});
-				}
-			});
+//					TransformManager.DestroyTransfromWithName ("PoolContainerOfBagCanvas", TransformRoot.PoolContainer);
+				});
+			}
+
+			Time.timeScale = 1;
 
 		}
 

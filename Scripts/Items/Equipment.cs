@@ -192,31 +192,6 @@ namespace WordJourney
 		/// <returns>The item type string.</returns>
 		public override string GetItemTypeString ()
 		{
-//			string typeString = string.Empty;
-//			switch (equipmentType) 
-//			{
-//			case EquipmentType.Weapon:
-//				typeString = "类型: 武器";
-//				break;
-//			case EquipmentType.Cloth:
-//				typeString = "类型: 衣服";
-//				break;
-//			case EquipmentType.Pants:
-//				typeString = "类型: 裤子";
-//				break;
-//			case EquipmentType.Helmet:
-//				typeString = "类型: 盔帽";
-//				break;
-//			case EquipmentType.Shoes:
-//				typeString = "类型: 鞋子";
-//				break;
-//			case EquipmentType.Jewelry:
-//				typeString = "类型: 挂饰";
-//				break;
-//			case EquipmentType.Ring:
-//				typeString = "类型: 指环";
-//				break;
-//			}
 			return "装备";
 		}
 			
@@ -227,73 +202,73 @@ namespace WordJourney
 		/// <param name="property">Property.</param>
 		/// <param name="gain">Gain.</param>
 		/// <param name="propertiesList">Properties list.</param>
-		private string GenerateSinglePropertyString(string property,double gain,List<string> propertiesList){
-
-			string propertyStr = string.Empty;
-
-			if (gain >= 1) {
-				propertyStr = string.Format ("{0} + {1}",property,gain);
-			}else{
-				propertyStr = string.Format ("{0} + {1}%",property,(int)gain*100);
-			}
-
-			if (propertiesList != null) {
-				propertiesList.Add (propertyStr);
-			}
-
-			return propertyStr;
-		}
+//		private string GenerateSinglePropertyString(string property,double gain,List<string> propertiesList){
+//
+//			string propertyStr = string.Empty;
+//
+//			if (gain >= 1) {
+//				propertyStr = string.Format ("{0} + {1}",property,gain);
+//			}else{
+//				propertyStr = string.Format ("{0} + {1}%",property,(int)gain*100);
+//			}
+//
+//			if (propertiesList != null) {
+//				propertiesList.Add (propertyStr);
+//			}
+//
+//			return propertyStr;
+//		}
 
 		/// <summary>
 		/// 获取物品属性字符串
 		/// </summary>
 		/// <returns>The item properties string.</returns>
-		public override string GetItemBasePropertiesString(){
-
-			StringBuilder itemProperties = new StringBuilder ();
-
-			List<string> propertiesList = new List<string> ();
-
-			if (attackGain > 0) {
-				GenerateSinglePropertyString ("攻击", attackGain, propertiesList);
-			}
-			if (hitGain > 0) {
-				GenerateSinglePropertyString ("命中", hitGain, propertiesList);
-			}
-			if (armorGain > 0) {
-				GenerateSinglePropertyString ("护甲", armorGain, propertiesList);
-			}
-			if (magicResistGain > 0) {
-				GenerateSinglePropertyString ("抗性", magicResistGain, propertiesList);
-			}
-			if (dodgeGain > 0) {
-				GenerateSinglePropertyString ("闪避", dodgeGain, propertiesList);
-			}
-			if (critGain > 0) {
-				GenerateSinglePropertyString ("暴击", critGain, propertiesList);
-			}
-			if (healthGain > 0) {
-				GenerateSinglePropertyString ("生命", healthGain, propertiesList);
-			}
-			if (manaGain > 0) {
-				GenerateSinglePropertyString ("魔法", manaGain, propertiesList);
-			}
-
-
-			if (propertiesList.Count > 0) {
-				itemProperties.Append (propertiesList [0]);
-
-				for (int i = 1; i < propertiesList.Count; i++) {
-
-					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
-
-				}
-
-			}
-
-			return itemProperties.ToString ();
-
-		}
+//		public override string GetItemBasePropertiesString(){
+//
+//			StringBuilder itemProperties = new StringBuilder ();
+//
+//			List<string> propertiesList = new List<string> ();
+//
+//			if (attackGain > 0) {
+//				GenerateSinglePropertyString ("攻击", attackGain, propertiesList);
+//			}
+//			if (hitGain > 0) {
+//				GenerateSinglePropertyString ("命中", hitGain, propertiesList);
+//			}
+//			if (armorGain > 0) {
+//				GenerateSinglePropertyString ("护甲", armorGain, propertiesList);
+//			}
+//			if (magicResistGain > 0) {
+//				GenerateSinglePropertyString ("抗性", magicResistGain, propertiesList);
+//			}
+//			if (dodgeGain > 0) {
+//				GenerateSinglePropertyString ("闪避", dodgeGain, propertiesList);
+//			}
+//			if (critGain > 0) {
+//				GenerateSinglePropertyString ("暴击", critGain, propertiesList);
+//			}
+//			if (healthGain > 0) {
+//				GenerateSinglePropertyString ("生命", healthGain, propertiesList);
+//			}
+//			if (manaGain > 0) {
+//				GenerateSinglePropertyString ("魔法", manaGain, propertiesList);
+//			}
+//
+//
+//			if (propertiesList.Count > 0) {
+//				itemProperties.Append (propertiesList [0]);
+//
+//				for (int i = 1; i < propertiesList.Count; i++) {
+//
+//					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
+//
+//				}
+//
+//			}
+//
+//			return itemProperties.ToString ();
+//
+//		}
 			
 
 
@@ -306,40 +281,40 @@ namespace WordJourney
 		/// <param name="compareValue">新装备属性值</param>
 		/// <param name="comparedValue">原装备属性值</param>
 		/// <param name="compareList">存储比较字符串的列表</param>
-		private string CompareItemsProperty(string property, float compareValue,float comparedValue,List<string> compareList){
-
-			// 获得单个属性描述
-			string propertyString = GenerateSinglePropertyString (property, compareValue, null);
-
-			// 该项属性数值对比 
-			float compare = compareValue - comparedValue;
-
-			// 比较后根据属性增减 决定连接符号用"-"还是"+"
-			string linkSymbol = compare < 0 ? "-" : "+";
-
-			// 比较后根据属性增加决定字体颜色
-			string colorText = compare < 0 ? "red" : "green";
-
-			// 比较后的描述字符串
-			string compareString = string.Empty;
-
-			if (compare >= 1) {
-				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,compare);
-			} else if (compare > 0 && compare < 1) {
-				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(compare * 100));
-			} else if (compare < 0 && compare > -1) {
-				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(-compare * 100));
-			} else if (compare <= -1) {
-				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,-compare);
-			}
-
-			if (compareList != null) {
-				compareList.Add (compareString);
-			}
-
-			return compareString;
-
-		}
+//		private string CompareItemsProperty(string property, float compareValue,float comparedValue,List<string> compareList){
+//
+//			// 获得单个属性描述
+//			string propertyString = GenerateSinglePropertyString (property, compareValue, null);
+//
+//			// 该项属性数值对比 
+//			float compare = compareValue - comparedValue;
+//
+//			// 比较后根据属性增减 决定连接符号用"-"还是"+"
+//			string linkSymbol = compare < 0 ? "-" : "+";
+//
+//			// 比较后根据属性增加决定字体颜色
+//			string colorText = compare < 0 ? "red" : "green";
+//
+//			// 比较后的描述字符串
+//			string compareString = string.Empty;
+//
+//			if (compare >= 1) {
+//				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,compare);
+//			} else if (compare > 0 && compare < 1) {
+//				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(compare * 100));
+//			} else if (compare < 0 && compare > -1) {
+//				compareString = string.Format ("{0}(<color={1}>{2}{3}%</color>)",propertyString, colorText,linkSymbol,(int)(-compare * 100));
+//			} else if (compare <= -1) {
+//				compareString = string.Format ("{0}(<color={1}>{2}{3}</color>)",propertyString, colorText,linkSymbol,-compare);
+//			}
+//
+//			if (compareList != null) {
+//				compareList.Add (compareString);
+//			}
+//
+//			return compareString;
+//
+//		}
 			
 
 		/// <summary>
@@ -347,52 +322,52 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>The compare properties string with item.</returns>
 		/// <param name="compareEquipment">Compare equipment.</param>
-		public string GetComparePropertiesStringWithItem(Equipment compareEquipment){
-
-			StringBuilder itemProperties = new StringBuilder ();
-
-			List<string> comparesList = new List<string> ();
-
-			if (attackGain > 0) {
-				CompareItemsProperty ("攻击", attackGain, compareEquipment.attackGain, comparesList);
-			}
+//		public string GetComparePropertiesStringWithItem(Equipment compareEquipment){
+//
+//			StringBuilder itemProperties = new StringBuilder ();
+//
+//			List<string> comparesList = new List<string> ();
+//
+//			if (attackGain > 0) {
+//				CompareItemsProperty ("攻击", attackGain, compareEquipment.attackGain, comparesList);
+//			}
 //			if (attackSpeedGain > 0) {
 //				CompareItemsProperty ("攻速", attackSpeedGain, compareEquipment.attackSpeedGain, comparesList);
 //			}
-			if (critGain > 0) {
-				CompareItemsProperty ("暴击", critGain, compareEquipment.critGain, comparesList);
-			}
-			if (armorGain > 0) {
-				CompareItemsProperty ("护甲", armorGain, compareEquipment.armorGain, comparesList);
-			}
-			if (magicResistGain > 0) {
-				CompareItemsProperty ("抗性", magicResistGain, compareEquipment.magicResistGain, comparesList);
-			}
-			if (dodgeGain > 0) {
-				CompareItemsProperty ("闪避", dodgeGain, compareEquipment.dodgeGain, comparesList);
-			} 
-			if (healthGain > 0) {
-				CompareItemsProperty ("生命", healthGain, compareEquipment.healthGain, comparesList);
-			}
-			if (manaGain > 0) {
-				CompareItemsProperty ("魔法", manaGain, compareEquipment.manaGain, comparesList);
-			}
-
-			if (comparesList.Count > 0) {
-
-				itemProperties.Append (comparesList [0]);
-
-				for (int i = 1; i < comparesList.Count; i++) {
-
-					itemProperties.AppendFormat ("\n{0}", comparesList [i]);
-
-				}
-
-			}
-
-			return itemProperties.ToString ();
-
-		}
+//			if (critGain > 0) {
+//				CompareItemsProperty ("暴击", critGain, compareEquipment.critGain, comparesList);
+//			}
+//			if (armorGain > 0) {
+//				CompareItemsProperty ("护甲", armorGain, compareEquipment.armorGain, comparesList);
+//			}
+//			if (magicResistGain > 0) {
+//				CompareItemsProperty ("抗性", magicResistGain, compareEquipment.magicResistGain, comparesList);
+//			}
+//			if (dodgeGain > 0) {
+//				CompareItemsProperty ("闪避", dodgeGain, compareEquipment.dodgeGain, comparesList);
+//			} 
+//			if (healthGain > 0) {
+//				CompareItemsProperty ("生命", healthGain, compareEquipment.healthGain, comparesList);
+//			}
+//			if (manaGain > 0) {
+//				CompareItemsProperty ("魔法", manaGain, compareEquipment.manaGain, comparesList);
+//			}
+//
+//			if (comparesList.Count > 0) {
+//
+//				itemProperties.Append (comparesList [0]);
+//
+//				for (int i = 1; i < comparesList.Count; i++) {
+//
+//					itemProperties.AppendFormat ("\n{0}", comparesList [i]);
+//
+//				}
+//
+//			}
+//
+//			return itemProperties.ToString ();
+//
+//		}
 
 		/// <summary>
 		/// Fixs the equipment.

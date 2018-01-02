@@ -35,6 +35,8 @@ namespace WordJourney
 
 		private Transform currentEnteredTransform;
 
+		[HideInInspector]public bool clickForConsumablesPos;
+
 		void Awake()
 		{
 
@@ -167,6 +169,20 @@ namespace WordJourney
 				return;
 			}
 
+			int targetX = 0;
+			int targetY = 0;
+			Vector3 targetPos = Vector3.zero;
+
+			if (clickForConsumablesPos) {
+				targetX = (int)(clickPos.x + 0.5f);
+				targetY = (int)(clickPos.y + 0.5f);
+				// 以地图左下角为坐标原点时的点击位置
+				targetPos = new Vector3(targetX, targetY, 0);
+				mapGenerator.ClickConsumablesPosAt (targetPos);
+				clickForConsumablesPos = false;
+				return;
+			}
+
 
 			// 点击位置在地图有效区之外，直接返回
 			if(clickPos.x + 0.5f >= mapGenerator.columns 
@@ -179,12 +195,12 @@ namespace WordJourney
 
 
 			// 由于地图贴图 tile时是以中心点为参考，宽高为1，所以如果以实际拼出的地图左下角为坐标原点，则点击位置需要进行如下坐标转换
-			int targetX = (int)(clickPos.x + 0.5f);
+			targetX = (int)(clickPos.x + 0.5f);
 
-			int targetY = (int)(clickPos.y + 0.5f);
+			targetY = (int)(clickPos.y + 0.5f);
 
 			// 以地图左下角为坐标原点时的点击位置
-			Vector3 targetPos = new Vector3(targetX, targetY, 0);
+			targetPos = new Vector3(targetX, targetY, 0);
 
 
 //			Vector3 rayEndPos = targetPos + new Vector3(0,0,15);
@@ -245,15 +261,23 @@ namespace WordJourney
 		/// <param name="monsterTrans">Monster trans.</param>
 		public void EnterMonster(Transform monsterTrans){
 
-			CallBack<Transform> playerWinCallBack = BattlePlayerWin;
-
-			CallBack playerLoseCallBack = BattlePlayerLose;
-
 			battleMonsterCtr = monsterTrans.GetComponent<BattleMonsterController> ();
 
 			battleMonsterCtr.InitMonster (monsterTrans);
 
-			AdjustAgentsPosotion (battlePlayerCtr.transform,battleMonsterCtr.transform);
+			SetUpForFight ();
+
+		}
+
+		/// <summary>
+		/// 调整人物角色和怪物角色的位置到战斗位置
+		/// </summary>
+		/// <param name="playerTrans">Player trans.</param>
+		/// <param name="monsterTrans">Monster trans.</param>
+		private void SetUpForFight(){
+
+			battlePlayerCtr.boxCollider.enabled = false;
+			battleMonsterCtr.boxCollider.enabled = false;
 
 			battlePlayerCtr.enemy = battleMonsterCtr;
 
@@ -277,42 +301,83 @@ namespace WordJourney
 				skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 			}
 
+			StartCoroutine ("AdjustCameraAndStartFight");
+
+		}
+
+		private IEnumerator AdjustCameraAndStartFight(){
+
+			Vector3 playerOriPos = battlePlayerCtr.transform.position;
+			Vector3 monsterOriPos = battleMonsterCtr.transform.position;
+
+			if (Mathf.RoundToInt(playerOriPos.y) == Mathf.RoundToInt(monsterOriPos.y)) {
+
+				battlePlayerCtr.transform.position = new Vector3 (0.2f * (monsterOriPos.x - playerOriPos.x ) + playerOriPos.x,
+					playerOriPos.y,0);
+
+			} else if(Mathf.RoundToInt(playerOriPos.x) == Mathf.RoundToInt(monsterOriPos.x)){
+
+				float newPlayerPosX = playerOriPos.x;
+				float newPlayerPosY = playerOriPos.y;
+
+				float newMonsterPosX = monsterOriPos.x;
+				float newMonsterPosY = monsterOriPos.y;
+
+				if (playerOriPos.y > monsterOriPos.y) {
+					newPlayerPosX = playerOriPos.x - 0.2f;
+					newPlayerPosY = playerOriPos.y - 1f;
+					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY, 0);
+					newMonsterPosX = monsterOriPos.x + 0.2f;
+					newMonsterPosY = monsterOriPos.y - 0.3f;
+					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
+					battlePlayerCtr.TowardsRight ();
+					battleMonsterCtr.TowardsLeft ();
+				} else {
+					newPlayerPosX = playerOriPos.x + 0.2f;
+					newPlayerPosY = playerOriPos.y + 1f;
+					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY,0);
+					newMonsterPosX = monsterOriPos.x - 0.2f;
+					newMonsterPosY = monsterOriPos.y + 0.3f;
+					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
+					battlePlayerCtr.TowardsLeft ();
+					battleMonsterCtr.TowardsRight ();
+				}
+			}
+
+
+			DisableInteractivity ();
+
+			Camera c = Camera.main;
+
+			float cameraSizeFixSpeed = 2f;
+
+			float fixDuration = 0.5f;
+
+			float timer = 0;
+
+			while (timer < fixDuration) {
+
+				c.orthographicSize -= cameraSizeFixSpeed * Time.deltaTime;
+
+//				c.transform.localPosition -= new Vector3 (0, cameraFixSpeedY * Time.deltaTime, 0);
+
+				timer += Time.deltaTime;
+
+				yield return null;
+
+			}
+
 			// 执行玩家角色战斗前技能回调
 			battlePlayerCtr.ExcuteBeforeFightSkillCallBacks(battleMonsterCtr);
 
 			// 执行怪物角色战斗前技能回调
 			battleMonsterCtr.ExcuteBeforeFightSkillCallBacks(battlePlayerCtr);
 
-			battleMonsterCtr.StartFight (battlePlayerCtr,playerWinCallBack);
-			battlePlayerCtr.StartFight (battleMonsterCtr,playerLoseCallBack);
+			battleMonsterCtr.StartFight (battlePlayerCtr,BattlePlayerWin);
+			battlePlayerCtr.StartFight (battleMonsterCtr,BattlePlayerLose);
 
 			expUICtr.ShowFightPlane ();
-
-		}
-
-		/// <summary>
-		/// 调整人物角色和怪物角色的位置到战斗位置
-		/// </summary>
-		/// <param name="playerTrans">Player trans.</param>
-		/// <param name="monsterTrans">Monster trans.</param>
-		private void AdjustAgentsPosotion(Transform playerTrans,Transform monsterTrans){
-
-			Vector3 playerOriPos = playerTrans.position;
-			Vector3 monsterOriPos = monsterTrans.position;
-
-			if ((int)playerTrans.position.y == (int)monsterTrans.position.y) {
-
-				playerTrans.position = new Vector3 (0.2f * (monsterTrans.position.x - playerTrans.position.x ) + playerTrans.position.x,
-					playerTrans.position.y,0);
-
-			} else {
-				float newPosX = playerTrans.position.x - 0.2f;
-				float newPosY = playerTrans.position.y + 0.5f * (monsterTrans.position.y-  playerTrans.position.y);
-
-				playerTrans.position = new Vector3 (newPosX, newPosY,0);
-
-			}
-
+			EnableInteractivity ();
 		}
 
 
@@ -322,7 +387,7 @@ namespace WordJourney
 			Obstacle obstacle = obstacleTrans.GetComponent<Obstacle>();
 
 			Consumables tool = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemId == obstacle.destroyToolId;
+				return obj.itemName == obstacle.destroyToolName;
 			});
 
 			if (tool != null) {
@@ -362,7 +427,7 @@ namespace WordJourney
 				GameManager.Instance.soundManager.PlayMapEffectClips (tb.audioClipName);
 
 				// 如果该地图物品不需要使用特殊物品开启
-				tb.UnlockOrDestroyMapItem (()=>{
+				tb.UnlockTreasureBox (()=>{
 
 					if (tb.walkableAfterChangeStatus) {
 						mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
@@ -452,6 +517,11 @@ namespace WordJourney
 
 		}
 
+		public void ShowConsumablesValidPointTintAround(Consumables consumables){
+
+			mapGenerator.ShowConsumablesValidPointsTint (consumables);
+
+		}
 
 
 		#warning 退出学习貌似不应该放在这里，后面在看一看
@@ -484,8 +554,8 @@ namespace WordJourney
 			Vector3 monsterPos = trans.position;
 
 			// 0.1为位置偏差修正【如果怪物在（10，10）点，可能实际的位置数据为（10.023456，9.023455），故加上0.1作为偏差修正】
-			int X = (int)(monsterPos.x + 0.1f);
-			int Y = (int)(monsterPos.y + 0.1f);
+			int X = Mathf.RoundToInt(monsterPos.x);
+			int Y = Mathf.RoundToInt(monsterPos.y);
 
 			mapGenerator.mapWalkableInfoArray [X, Y] = 1;
 
@@ -503,10 +573,7 @@ namespace WordJourney
 
 			mapGenerator.SetUpRewardInMap (characterFragment, monsterPos);
 
-			#warning 消灭怪物后需要走到怪物原位置的话开启下面这段代卖
-			battlePlayerCtr.ContinueMove ();
-
-
+			ResetCamareAndContinueMove ();
 
 		}
 
@@ -539,6 +606,42 @@ namespace WordJourney
 			// 清理所有状态和技能回调
 			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
 			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
+
+		}
+
+
+		private void ResetCamareAndContinueMove(){
+
+			StartCoroutine ("ResetCamera");
+
+			battlePlayerCtr.ContinueMove ();
+
+		}
+
+
+		private IEnumerator ResetCamera(){
+
+			DisableInteractivity ();
+
+			Camera c = Camera.main;
+
+			float cameraSizeFixSpeed = 2f;
+
+			float fixDuration = 0.5f;
+
+			float timer = 0;
+
+			while (timer < fixDuration) {
+
+				c.orthographicSize += cameraSizeFixSpeed * Time.deltaTime;
+
+				timer += Time.deltaTime;
+
+				yield return null;
+
+			}
+
+			EnableInteractivity ();
 
 		}
 

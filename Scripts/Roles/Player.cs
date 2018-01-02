@@ -78,9 +78,6 @@ namespace WordJourney
 
 		public int currentLevelIndex;
 
-		public List<ConsumablesEffectState> allConsumablesEffectStates = new List<ConsumablesEffectState> ();
-
-
 		public void SetUpPlayerWithPlayerData(PlayerData playerData){
 
 			if (playerData == null) {
@@ -237,7 +234,7 @@ namespace WordJourney
 		}
 
 
-		public Agent.PropertyChange UseConsumables(Consumables consumables,out bool removeFromBag){
+		public Agent.PropertyChange UseMedicines(Consumables consumables,out bool removeFromBag){
 
 			removeFromBag = false;
 
@@ -258,28 +255,6 @@ namespace WordJourney
 
 
 
-		/// <summary>
-		/// 根据玩家身上有的消耗品对应的状态重置玩家属性(仅在玩家更换装备后使用该方法）
-		/// </summary>
-		private void ResetPropertiesByConsumablesEffectState(){
-
-			for (int i = 0; i < allConsumablesEffectStates.Count; i++) {
-
-				Consumables consumables = allConsumablesEffectStates [i].consumables;
-
-//				attack = (int)(attack * (1 + consumables.attackGain));
-//				attackSpeed = (int)(attackSpeed * (1 + consumables.attackSpeedGain));
-//				armor = (int)(armor * (1 + consumables.armorGain));
-//				magicResist = (int)(magicResist * (1 + consumables.manaResistGain));
-//				dodge = (int)(dodge * (1 + consumables.dodgeGain));
-//				crit = (int)(crit * (1 + consumables.critGain));
-//
-//				physicalHurtScaler = 1 + consumables.physicalHurtScaler;
-//				magicalHurtScaler = 1 + consumables.magicHurtScaler;
-
-			}
-
-		}
 			
 		public void LevelUpIfExperienceEnough(){
 

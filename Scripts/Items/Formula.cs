@@ -121,12 +121,7 @@ namespace WordJourney
 
 			Player.mainPlayer.allFormulasInBag.Add (this);
 		}
-
-
-		public override string GetItemBasePropertiesString ()
-		{
-			return itemDescription;
-		}
+			
 
 		public override string GetItemTypeString ()
 		{

@@ -98,63 +98,7 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 获取物品属性字符串
-		/// </summary>
-		/// <returns>The item properties string.</returns>
-		public override string GetItemBasePropertiesString(){
 
-//			StringBuilder itemProperties = new StringBuilder ();
-//
-//			List<string> propertiesList = new List<string> ();
-//
-//			if (attackGain > 0) {
-//				string str = string.Format ("攻击: {0}", attackGain);
-//				propertiesList.Add (str);
-//			}
-//			if (attackSpeedGain > 0) {
-//				string str = string.Format ("攻速: {0}", attackSpeedGain);
-//				propertiesList.Add (str);
-//			}
-//			if (critGain > 0) {
-//				string str = string.Format ("暴击: {0}", critGain);
-//				propertiesList.Add (str);
-//			}
-//			if (armorGain > 0) {
-//				string str = string.Format ("护甲: {0}", armorGain);
-//				propertiesList.Add (str);
-//			}
-//			if (manaResistGain > 0) {
-//				string str = string.Format ("抗性: {0}", manaResistGain);
-//				propertiesList.Add (str);
-//			}
-//			if (dodgeGain > 0) {
-//				string str = string.Format ("闪避: {0}", dodgeGain);
-//				propertiesList.Add (str);
-//			} 
-//			if (healthGain > 0) {
-//				string str = string.Format ("体力+{0}",healthGain);
-//				propertiesList.Add (str);
-//			}
-//			if (manaGain > 0) {
-//				string str = string.Format ("魔法+{0}",manaGain);
-//				propertiesList.Add (str);
-//			}
-
-//			if (propertiesList.Count > 0) {
-//				itemProperties.Append (propertiesList [0]);
-//
-//				for (int i = 1; i < propertiesList.Count; i++) {
-//
-//					itemProperties.AppendFormat ("\n{0}", propertiesList [i]);
-//
-//				}
-//
-//			}
-
-			return itemDescription;
-
-		}
 
 		/// <summary>
 		/// 铭文随机获得值为1～9的两个属性

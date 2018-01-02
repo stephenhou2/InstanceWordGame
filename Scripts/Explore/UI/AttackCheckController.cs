@@ -190,17 +190,15 @@ namespace WordJourney
 
 			Vector2 checkCenter = rectAttackCheck.localPosition;
 
-			Debug.LogFormat ("check center x:{0}", checkCenter.x);
+//			Debug.LogFormat ("check center x:{0}", checkCenter.x);
 
-			Vector2 attackZoneCenter = rectAttackZone.localPosition;
+			float attackZoneLeftEdge = rectAttackZone.localPosition.x;
 
-			float leftEdgeX = attackZoneCenter.x - rectAttackZone.rect.width / 2;
+			float attackZoneRightEdgeX = attackZoneLeftEdge + rectAttackZone.rect.width;
 
-			float rightEdgeX = attackZoneCenter.x + rectAttackZone.rect.width / 2;
+//			Debug.LogFormat ("attack zone left:{0}  attack zone right:{1}", attackZoneLeftEdge, attackZoneRightEdgeX);
 
-			Debug.LogFormat ("attack zone left:{0}  attack zone right:{1}", leftEdgeX, rightEdgeX);
-
-			return checkCenter.x >= leftEdgeX && checkCenter.x <= rightEdgeX;
+			return checkCenter.x >= attackZoneLeftEdge && checkCenter.x <= attackZoneRightEdgeX;
 
 		}
 

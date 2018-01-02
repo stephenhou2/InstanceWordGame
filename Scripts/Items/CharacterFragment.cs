@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	// 字母碎片的id=3102
+	// 字母碎片的id=200
 	public class CharacterFragment : Item {
 
 		public char character;
 
 		public CharacterFragment(char character,int count = 1){
-			this.itemId = 3102;
+			this.itemId = 200;
 			this.character = character;
 			itemName = string.Format ("字母碎片-{0}", character.ToString());
 			itemNameInEnglish = character.ToString();
@@ -19,10 +19,6 @@ namespace WordJourney
 		}
 
 
-		public override string GetItemBasePropertiesString ()
-		{
-			return itemName;
-		}
 
 		public override string GetItemTypeString ()
 		{

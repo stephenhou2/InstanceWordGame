@@ -194,6 +194,9 @@ namespace WordJourney
 		protected abstract void AgentExcuteHitEffect ();
 
 
+		public abstract void TowardsLeft();
+		public abstract void TowardsRight();
+
 		/// <summary>
 		/// 角色攻击间隔计时器
 		/// </summary>
@@ -215,6 +218,7 @@ namespace WordJourney
 		}
 
 		public void PlayShakeAnim(){
+			PlayRoleAnim ("hit", 1, null);
 			StartCoroutine ("PlayAgentShake");
 		}
 
@@ -272,7 +276,26 @@ namespace WordJourney
 		{
 
 			isIdle = animName == "wait";
+
 		
+			if (armatureCom.animation.lastAnimationName == "attack" && animName == "hit") {
+				// 播放新的角色动画
+				armatureCom.animation.Play (animName, playTimes);
+					
+				// 如果还有等待上个角色动作结束的协程存在，则结束该协程
+				if (waitRoleAnimEndCoroutine != null) {
+					StopCoroutine (waitRoleAnimEndCoroutine);
+				}
+
+				waitRoleAnimEndCoroutine = ExcuteCallBackAtEndOfRoleAnim (delegate {
+					armatureCom.animation.Play ("attack", 1);
+				});
+
+				StartCoroutine (waitRoleAnimEndCoroutine);
+
+				return;
+
+			} 
 
 			// 播放新的角色动画
 			armatureCom.animation.Play (animName,playTimes);

@@ -47,9 +47,9 @@ namespace WordJourney
 				mapGenerator.DirectlyShowUnusedTilesAtPosition(otherHolePosition);
 			}
 
-			bp.transform.DOMove(otherHolePosition,1).OnComplete(delegate{
+			mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint(otherHolePosition);
 
-				mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint(otherHolePosition);
+			bp.transform.DOMove(otherHolePosition,1).OnComplete(delegate{
 
 				IEnumerator WalkOutOfHoleCoroutine = WalkOutOfHole(mapGenerator,walkablePositionAround,bp,randomOtherHole);
 

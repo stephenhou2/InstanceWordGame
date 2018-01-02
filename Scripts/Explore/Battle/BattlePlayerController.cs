@@ -310,63 +310,32 @@ namespace WordJourney
 					switch (r2d.transform.tag) {
 
 					case "monster":
-
 						StopWalkBeforeEvent ();
-
 						if (modelActive != playerSide) {
 							ActiveBattlePlayer (false, false, true);
 						}
-
 						r2d.transform.localScale = new Vector3 (-modelActive.transform.localScale.x, 1, 1);
-
 						enterMonster (r2d.transform);
-
 						return;
-
 					case "npc":
-
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
-
 						enterNpc (r2d.transform);
-
 						boxCollider.enabled = true;
-
 						return;
-
 					case "workbench":
-
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
-
 						enterWorkBench (r2d.transform);
-
 						boxCollider.enabled = true;
-
 						return;
 					case "crystal":
-
 						StopWalkBeforeEvent ();
-						
-						PlayRoleAnim ("wait", 0, null);
-
 						enterCrystal (r2d.transform);
-
 						boxCollider.enabled = true;
-
 						return;
 					case "billboard":
-
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
-
 						enterBillboard (r2d.transform);
-
 						boxCollider.enabled = true;
-
 						return;
 					case "movablefloor":
 						break;
@@ -374,21 +343,15 @@ namespace WordJourney
 						break;
 					case "hole":
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
-
 						enterHole (r2d.transform);
 						return;
 					case "movablebox":
 						StopWalkBeforeEvent ();
-						PlayRoleAnim ("wait", 0, null);
 						enterMovableBox (r2d.transform);
 						return;
 					case "obstacle":
 
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
 
 						enterObstacle (r2d.transform);
 
@@ -398,8 +361,6 @@ namespace WordJourney
 					case "treasurebox":
 
 						StopWalkBeforeEvent ();
-
-						PlayRoleAnim ("wait", 0, null);
 
 						enterTreasureBox (r2d.transform);
 
@@ -411,8 +372,6 @@ namespace WordJourney
 
 						StopWalkBeforeEvent ();
 
-						PlayRoleAnim ("wait", 0, null);
-
 						enterTrapSwitch (r2d.transform);
 
 						boxCollider.enabled = true;
@@ -422,18 +381,15 @@ namespace WordJourney
 						break;
 					case "transport":
 						StopWalkBeforeEvent ();
-						PlayRoleAnim ("wait", 0, null);
 
 						boxCollider.enabled = true;
 						return;
 					case "door":
 						StopWalkBeforeEvent ();
-						PlayRoleAnim ("wait", 0, null);
 						enterDoor (r2d.transform);
 						return;
 					case "launcher":
 						StopWalkBeforeEvent ();
-						PlayRoleAnim ("wait", 0, null);
 						boxCollider.enabled = true;
 						return;
 					}
@@ -489,6 +445,8 @@ namespace WordJourney
 
 			moveTweener.Kill (false);
 
+			PlayRoleAnim ("wait", 0, null);
+
 			singleMoveEndPos = transform.position;
 
 			inSingleMoving = false;
@@ -515,16 +473,16 @@ namespace WordJourney
 //			PlayRoleAnim ("wait", 0, null);
 //		}
 
-		public void TowardsLeft(){
-			if (modelActive == playerSide) {
-				playerSide.transform.localScale = new Vector3 (-1, 1, 1);
-			}
+		public override void TowardsLeft(){
+			ActiveBattlePlayer (false, false, true);
+			PlayRoleAnim ("wait", 0, null);
+			playerSide.transform.localScale = new Vector3 (-1, 1, 1);
 		}
 
-		public void TowardsRight(){
-			if (modelActive == playerSide) {
-				playerSide.transform.localScale = Vector3.one;
-			}
+		public override void TowardsRight(){
+			ActiveBattlePlayer (false, false, true);
+			PlayRoleAnim ("wait", 0, null);
+			playerSide.transform.localScale = Vector3.one;
 		}
 			
 
