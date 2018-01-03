@@ -577,7 +577,7 @@ namespace WordJourney
 				manaChangeFromEq, attackSpeedChangeFromEq, armorChangeFromEq, magicResistChangeFromEq,
 				dodgeChangeFromEq, critChangeFromEq,
 				finalMaxHealthChangeFromOther,finalHitChangeFromOther,finalAttackChangeFromOther,
-				finalAttackSpeedChangeFromOther,finalManaChangeFromOther,finalArmorChangeFromOther,
+				finalManaChangeFromOther,finalManaChangeFromOther,finalArmorChangeFromOther,
 				finalMagicResistChangeFromOther,finalDodgeChangeFromOther,finalCritChangeFromOther);
 
 

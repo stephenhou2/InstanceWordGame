@@ -33,6 +33,7 @@ namespace WordJourney
 		public ExploreEventHandler enterHole;
 		public ExploreEventHandler enterMovableBox;
 		public ExploreEventHandler enterTransport;
+		public ExploreEventHandler enterPlant;
 
 		// 移动速度
 		public float moveDuration;			
@@ -44,13 +45,13 @@ namespace WordJourney
 		private bool inSingleMoving;
 
 		// 移动路径点集
-		private List<Vector3> pathPosList;
+		private List<Vector3> pathPosList = new List<Vector3>();
 
 		// 正在前往的节点位置
 		public Vector3 singleMoveEndPos;
 
 		// 移动的终点位置
-		private Vector3 endPos;
+		public Vector3 moveDestination;
 
 		// 玩家UI控制器
 		private BattlePlayerUIController bpUICtr;
@@ -61,7 +62,9 @@ namespace WordJourney
 		// 玩家战斗失败回调
 		private CallBack playerLoseCallBack;
 
-//		public Trap trapTriggered;
+		private NavigationHelper navHelper;
+
+		public bool isInFight;
 
 
 		protected override void Awake(){
@@ -70,6 +73,8 @@ namespace WordJourney
 
 			agent = GetComponentInParent<Player> ();
 
+			navHelper = GetComponent<NavigationHelper> ();
+
 			base.Awake ();
 
 		}
@@ -77,28 +82,22 @@ namespace WordJourney
 
 
 		/// <summary>
-		/// 按照指定路径 pathPosList 移动到终点 endPos
+		/// 按照指定路径 pathPosList 移动到终点 moveDestination
 		/// </summary>
 		/// <param name="pathPosList">Path position list.</param>
-		/// <param name="endPos">End position.</param>
-		public void MoveToEndByPath(List<Vector3> pathPosList,Vector3 endPos){
-
-
+		/// <param name="moveDestination">End position.</param>
+		public bool MoveToPosition(Vector3 moveDestination,int[,] mapWalkableInfoArray){
+			// 计算自动寻路路径
+			pathPosList = navHelper.FindPath(singleMoveEndPos,moveDestination,mapWalkableInfoArray);
 
 			StopCoroutine ("MoveWithNewPath");
 
-			this.pathPosList = pathPosList;
-
-//			for (int i = 0; i < pathPosList.Count; i++) {
-//				Debug.LogFormat ("[{0},{1}]", pathPosList [i].x,pathPosList[i].y);
-//			}
-
-			this.endPos = endPos;
+			this.moveDestination = moveDestination;
 
 			if (pathPosList.Count == 0) {
 
 				// 移动路径中没有点时，说明没有有效移动路径，此时终点设置为当前单步移动的终点
-				this.endPos = singleMoveEndPos;
+				this.moveDestination = singleMoveEndPos;
 
 				moveTweener.OnComplete (() => {
 					inSingleMoving = false;
@@ -107,10 +106,12 @@ namespace WordJourney
 					
 				Debug.Log ("无有效路径");
 
-				return;
+				return false;
 			}
 
 			StartCoroutine ("MoveWithNewPath");
+
+			return pathPosList.Count > 0;
 
 		}
 
@@ -196,8 +197,8 @@ namespace WordJourney
 		/// <returns><c>true</c>, if end point was arrived, <c>false</c> otherwise.</returns>
 		private bool ArriveEndPoint(){
 
-			if(Mathf.Abs(transform.position.x - endPos.x) <= 0.05f &&
-				Mathf.Abs(transform.position.y - endPos.y) <= 0.05f){
+			if(Mathf.Abs(transform.position.x - moveDestination.x) <= 0.05f &&
+				Mathf.Abs(transform.position.y - moveDestination.y) <= 0.05f){
 				return true;
 			}
 
@@ -300,9 +301,11 @@ namespace WordJourney
 			if (pathPosList.Count == 1) {
 
 				// 禁用自身包围盒（否则射线检测时监测到的是自己的包围盒）
-				boxCollider.enabled = false;
+//				boxCollider.enabled = false;
 
-				RaycastHit2D r2d = Physics2D.Linecast (transform.position, pathPosList [0], collosionLayer);
+				Vector3 rayStartPos = (transform.position + pathPosList [0]) / 2;
+
+				RaycastHit2D r2d = Physics2D.Linecast (rayStartPos, pathPosList [0], collosionLayer);
 
 
 				if (r2d.transform != null) {
@@ -320,22 +323,22 @@ namespace WordJourney
 					case "npc":
 						StopWalkBeforeEvent ();
 						enterNpc (r2d.transform);
-						boxCollider.enabled = true;
+//						boxCollider.enabled = true;
 						return;
 					case "workbench":
 						StopWalkBeforeEvent ();
 						enterWorkBench (r2d.transform);
-						boxCollider.enabled = true;
+//						boxCollider.enabled = true;
 						return;
 					case "crystal":
 						StopWalkBeforeEvent ();
 						enterCrystal (r2d.transform);
-						boxCollider.enabled = true;
+//						boxCollider.enabled = true;
 						return;
 					case "billboard":
 						StopWalkBeforeEvent ();
 						enterBillboard (r2d.transform);
-						boxCollider.enabled = true;
+//						boxCollider.enabled = true;
 						return;
 					case "movablefloor":
 						break;
@@ -355,7 +358,7 @@ namespace WordJourney
 
 						enterObstacle (r2d.transform);
 
-						boxCollider.enabled = true;
+//						boxCollider.enabled = true;
 
 						return;
 					case "treasurebox":
@@ -364,25 +367,20 @@ namespace WordJourney
 
 						enterTreasureBox (r2d.transform);
 
-						boxCollider.enabled = true;
-
 						return;
 					
-					case "switch":
+					case "normalswitch":
 
 						StopWalkBeforeEvent ();
 
 						enterTrapSwitch (r2d.transform);
 
-						boxCollider.enabled = true;
-
 						return;
-					case "trap":
+					case "normaltrap":
 						break;
 					case "transport":
 						StopWalkBeforeEvent ();
-
-						boxCollider.enabled = true;
+						TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().EnterNextLevel ();
 						return;
 					case "door":
 						StopWalkBeforeEvent ();
@@ -390,14 +388,16 @@ namespace WordJourney
 						return;
 					case "launcher":
 						StopWalkBeforeEvent ();
-						boxCollider.enabled = true;
 						return;
+					case "plant":
+						StopWalkBeforeEvent ();
+						enterPlant (r2d.transform);
+						return;
+					case "pressswitch":
+						break;
 					}
 
 				}
-
-				boxCollider.enabled = true;
-
 			}
 			// 路径中没有节点
 			// 按照行动路径已经将所有的节点走完
@@ -409,7 +409,7 @@ namespace WordJourney
 					PlayRoleAnim ("wait", 0, null);
 					Debug.Log ("到达终点");
 				} else {
-					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,endPos,singleMoveEndPos));
+					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,moveDestination,singleMoveEndPos));
 					throw new System.Exception ("路径走完但是未到终点");
 				}
 				return;
@@ -420,26 +420,29 @@ namespace WordJourney
 
 				GameManager.Instance.soundManager.PlayFootStepClips ();
 
-//				GameManager.Instance.soundManager.PlayClips (
-//					GameManager.Instance.gameDataCenter.allExploreAudioClips,
-//					SoundDetailTypeName.Steps, 
-//					null);
-
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
 
 				// 向下一节点移动
 				MoveToPosition (nextPos);
 
-
 				// 标记单步移动中
 				inSingleMoving = true;
 
-				return;
-
+			} else {
+				moveTweener.Kill (true);
+				PlayRoleAnim ("wait", 0, null);
 			}
 
 		}
+
+
+
+		public void StopMoveAtEndOfCurrentStep(){
+			this.moveDestination = pathPosList [0];
+			pathPosList = new List<Vector3>{ moveDestination };
+		}
+
 
 		private void StopWalkBeforeEvent(){
 
@@ -455,7 +458,7 @@ namespace WordJourney
 
 		public void StopMove(){
 			StopCoroutine ("MoveWithNewPath");
-//			endPos = new Vector3 (Mathf.RoundToInt(transform.position.x),
+//			moveDestination = new Vector3 (Mathf.RoundToInt(transform.position.x),
 //				Mathf.RoundToInt(transform.position.y),
 //				Mathf.RoundToInt(transform.position.z));
 			moveTweener.Kill (false);
@@ -728,8 +731,10 @@ namespace WordJourney
 			if (bmCtr.agent.health <= 0) {
 				bmCtr.AgentDie ();
 				agent.ResetBattleAgentProperties ();
+				isInFight = false;
 				return true;
 			} else if (agent.health <= 0) {
+				isInFight = false;
 				return true;
 			}else {
 				return false;
@@ -847,6 +852,7 @@ namespace WordJourney
 			enterHole = null;
 			enterMovableBox = null;
 			enterTransport = null;
+			enterPlant = null;
 
 			ClearAllEffectStatesAndSkillCallBacks ();
 
@@ -874,8 +880,6 @@ namespace WordJourney
 		/// 玩家死亡
 		/// </summary>
 		override public void AgentDie(){
-
-
 
 			StopAllCoroutines ();
 

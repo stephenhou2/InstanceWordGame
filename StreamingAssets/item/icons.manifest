@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1640541752
+CRC: 1920876405
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8b09b8815641430d55100e5e863c7dc6
+    Hash: 80cde4e48ea80dad8d813d246c28ccbd
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -38,6 +38,7 @@ Assets:
 - Assets/Textures/ItemIcons/22_battle_axe.png
 - Assets/Textures/ItemIcons/18_ghost_blade.PNG
 - Assets/Textures/ItemIcons/28_doom_axe.png
+- Assets/Textures/MaterialIcons/10_banshenjungu.png
 - Assets/Textures/ItemIcons/01_bamboo_necklace.png
 - Assets/Textures/ItemIcons/06_knight_ring.png
 - Assets/Textures/ItemIcons/10_demon_necklace.png
@@ -66,6 +67,7 @@ Assets:
 - Assets/Textures/ItemIcons/08_battle_armor.png
 - Assets/Textures/ItemIcons/18_canglangpifeng.png
 - Assets/Textures/ItemIcons/02_stone_necklace.png
+- Assets/Textures/MapIcons/press_switch_on.png
 - Assets/Textures/ItemIcons/07_speedPaper.png
 - Assets/Textures/ItemIcons/10_miracle_belt.png
 - Assets/Textures/ItemIcons/10_alloy_armor.png
@@ -126,6 +128,7 @@ Assets:
 - Assets/Textures/ItemIcons/34_shootingstar_harmer.png
 - Assets/Textures/ItemIcons/02_broad_sword.png
 - Assets/Textures/ItemIcons/21_hand_axe.png
+- Assets/Textures/MapIcons/press_switch_off.png
 - Assets/Textures/ItemIcons/08_oracle_helmet.png
 - Assets/Textures/ItemIcons/15_gild_armor.png
 - Assets/Textures/ItemIcons/08_armorPaper.png
@@ -154,6 +157,7 @@ Assets:
 - Assets/Textures/ItemIcons/10_cikeyanqiu.png
 - Assets/Textures/ItemIcons/09_zheduanjianren.png
 - Assets/Textures/ItemIcons/10_ancient_helmet.png
+- Assets/Textures/MapAnimIcons/Switch/normal_switch_on.png
 - Assets/Textures/ItemIcons/11_horse_blade.png
 - Assets/Textures/ItemIcons/14_conqueror_blade.PNG
 - Assets/Textures/ItemIcons/19_mofabiji.png
@@ -163,6 +167,7 @@ Assets:
 - Assets/Textures/ItemIcons/24_cystal_axe.png
 - Assets/Textures/ItemIcons/39_hell_roar_harmer.png
 - Assets/Textures/ItemIcons/32_nail_harmer.png
+- Assets/Textures/MapAnimIcons/Switch/normal_switch_off.png
 - Assets/Textures/ItemIcons/09_demon_sword.png
 - Assets/Textures/ItemIcons/04_bone_ring.png
 - Assets/Textures/ItemIcons/04_rune_shoe.png

@@ -38,6 +38,20 @@ namespace WordJourney{
 		
 		}
 
+		public static Item NewItemWith(Item item,int itemCount){
+			ItemModel itemModel = null;
+			Item newItem = null;
+			switch (item.itemType) {
+			case ItemType.Equipment:
+				newItem = new Equipment (item as Equipment);
+				break;
+			case ItemType.Consumables:
+				newItem = new Consumables (item as Consumables, itemCount);
+				break;
+
+			}
+			return newItem;
+		}
 
 		/// <summary>
 		/// 通过物品id和数量初始化物品
@@ -51,8 +65,7 @@ namespace WordJourney{
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
 					return item.itemId == itemId;
 				});
-
-
+					
 				if (itemModel == null) {
 					string error = string.Format ("未找到id为{0}的物品", itemId);
 					Debug.LogError (error);
@@ -74,7 +87,6 @@ namespace WordJourney{
 			} 
 
 			return newItem;
-
 
 		}
 

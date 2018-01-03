@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: f225dee54c7b34b39b228d92cd3ecfdf
-timeCreated: 1497883279
+guid: 4f85ab9b6e797411987acce5c64d738e
+timeCreated: 1497883277
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -88,5 +88,5 @@ TextureImporter:
     outline: []
   spritePackingTag: 
   userData: 
-  assetBundleName: explore/mapicons
+  assetBundleName: item/icons
   assetBundleVariant: 

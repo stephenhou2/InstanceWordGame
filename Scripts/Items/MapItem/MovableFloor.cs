@@ -31,36 +31,39 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-//			inMove = false;
 			bc2d.enabled = true;
 			triggered = false;
-//			moveDuration = (targetPos - originPos).magnitude / moveSpeed;
 		}
 
 		public void OnTriggerEnter2D(Collider2D other){
 
-			triggered = !triggered;
+			BattlePlayerController battlePlayer = other.GetComponent<BattlePlayerController> ();
 
-			if (triggered) {
-
-				exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
-
-				MoveToNearestPosition (other.transform);
+			if (battlePlayer == null) {
+				return;
+			}
+			if(!MyTool.ApproximatelySamePosition2D (battlePlayer.moveDestination, this.transform.position)) {
+				return;
 			}
 
+
+			exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
+
+			MoveToNearestPosition (other.transform);
+
 		}
-			
 
 		public void MoveToNearestPosition(Transform other){
 
 			BattlePlayerController bp = other.GetComponent<BattlePlayerController> ();
 
+			bp.StopMoveAtEndOfCurrentStep ();
+
 			if (bp == null) {
 				exploreManager.GetComponent<ExploreManager> ().EnableInteractivity ();
 				return;
 			}
-
-			bp.boxCollider.enabled = false;
+				
 			bc2d.enabled = false;
 
 			MapGenerator mapGenerator = exploreManager.GetComponent<MapGenerator> ();
@@ -147,7 +150,6 @@ namespace WordJourney
 
 			bp.SetSortingOrder (-(int)endPos.y);
 
-			bp.boxCollider.enabled = true;
 			StartCoroutine ("LatelyEnableBoxCollider",bp);
 
 

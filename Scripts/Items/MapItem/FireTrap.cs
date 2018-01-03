@@ -28,7 +28,7 @@ namespace WordJourney
 
 		public override void SetTrapOn ()
 		{
-			mapItemAnimator.ResetTrigger ("ChangeStatus");
+//			mapItemAnimator.ResetTrigger ("ChangeStatus");
 			bc2d.enabled = true;
 			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 10;
 		}

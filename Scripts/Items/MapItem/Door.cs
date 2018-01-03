@@ -10,36 +10,25 @@ namespace WordJourney
 		public Sprite doorCloseSprite;
 		public Sprite doorOpenSprite;
 
-		public string question;
-		public string answer;
+		public bool isDoorOpen;
 
-		private bool myDoorOpen;
-		public bool doorOpen{
-			get{
-				return myDoorOpen;
-			}
-			set{
-				myDoorOpen = value;
+		public void OpenTheDoor(){
+			mapItemRenderer.sprite = doorOpenSprite;
+			isDoorOpen = true;
+		}
 
-				if (myDoorOpen) {
-					mapItemRenderer.sprite = doorOpenSprite;
-				} else {
-					mapItemRenderer.sprite = doorCloseSprite;
-				}
-			}
+		public void CloseTheDoor(){
+			mapItemRenderer.sprite = doorCloseSprite;
+			isDoorOpen = false;
 		}
 
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			myDoorOpen = false;
+			isDoorOpen = false;
 			mapItemRenderer.sprite = doorCloseSprite;
 		}
-
-		public void OpenTheDoor(){
-			doorOpen = true;
-			mapItemRenderer.sprite = doorOpenSprite;
-		}
+			
 
 	}
 }

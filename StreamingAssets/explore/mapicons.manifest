@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3801767822
+CRC: 1098709171
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7461a8c4aaee2854d3cccb2d276e8d42
+    Hash: 42d8711c0d710c1d1c3da0ab110704f2
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -16,13 +16,11 @@ ClassTypes:
 Assets:
 - Assets/Textures/Explore/background_forrest.png
 - "Assets/Textures/MapAnimIcons/CG\u8292\u679C\u52A8\u753B\u7D20\u6750\u5E97 (208).png"
-- Assets/Textures/MapIcons/npc_monster.png
 - Assets/Textures/MapIcons/tileDesert.png
 - Assets/Textures/MapIcons/floor_grass.png
 - Assets/Textures/MapIcons/npc_older.png
 - Assets/Textures/MapAnimIcons/Door/doorClose.png
 - Assets/Textures/MapAnimIcons/Door/doorOpen.png
 - Assets/Textures/MapIcons/plistHero.png
-- Assets/Textures/MapIcons/npc_gMonster.png
 - Assets/Textures/MapIcons/floor_rock.png
 Dependencies: []

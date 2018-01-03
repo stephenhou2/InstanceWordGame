@@ -27,9 +27,6 @@ namespace WordJourney
 		// 玩家控制器
 		private BattlePlayerController battlePlayerCtr;
 
-		private NavigationHelper navHelper;
-
-		private List<Vector3> pathPosList;
 
 		private ExploreUICotroller expUICtr;
 
@@ -42,7 +39,7 @@ namespace WordJourney
 
 			mapGenerator = GetComponent<MapGenerator>();
 
-			navHelper = GetComponent<NavigationHelper> ();
+
 
 			Transform battlePlayer = Player.mainPlayer.transform.Find ("BattlePlayer");
 
@@ -65,6 +62,7 @@ namespace WordJourney
 			battlePlayerCtr.enterMovableBox = new ExploreEventHandler (EnterMovableBox);
 			battlePlayerCtr.enterTransport = new ExploreEventHandler (EnterTransport);
 			battlePlayerCtr.enterDoor = new ExploreEventHandler (EnterDoor);
+			battlePlayerCtr.enterPlant = new ExploreEventHandler (EnterPlant);
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
@@ -203,36 +201,18 @@ namespace WordJourney
 			targetPos = new Vector3(targetX, targetY, 0);
 
 
-//			Vector3 rayEndPos = targetPos + new Vector3(0,0,15);
-
-			// 检测点击到的碰撞体
-//			RaycastHit2D r2d = Physics2D.Linecast(targetPos,rayEndPos,battlePlayer.blockingLayer);
-
-
-//			if(r2d.transform != null){
-
 			// 如果点在镂空区域，则直接返回
 			if (mapGenerator.mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] == -1) {
 				return;
 			}
 
-
-			if(battlePlayerCtr != null){
-
-				// 计算自动寻路路径
-				pathPosList = navHelper.FindPath(battlePlayerCtr.singleMoveEndPos,targetPos,mapGenerator.mapWalkableInfoArray);
-
-				}
-//			}else{
-//				// 点击位置没有有效碰撞体（不在地图有效范围内），则清空寻路路径
-//				pathPosList.Clear();
-//			}
+			// 游戏角色按照自动寻路路径移动到点击位置
+			bool arrivable = battlePlayerCtr.MoveToPosition (targetPos,mapGenerator.mapWalkableInfoArray);
 
 			// 地图上点击位置生成提示动画
-			mapGenerator.PlayDestinationAnim(targetPos,pathPosList.Count > 0);
+			mapGenerator.PlayDestinationAnim(targetPos,arrivable);
 
-			// 游戏角色按照自动寻路路径移动到点击位置
-			battlePlayerCtr.MoveToEndByPath (pathPosList, targetPos);
+
 
 		}
 
@@ -260,6 +240,8 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="monsterTrans">Monster trans.</param>
 		public void EnterMonster(Transform monsterTrans){
+
+			battlePlayerCtr.isInFight = true;
 
 			battleMonsterCtr = monsterTrans.GetComponent<BattleMonsterController> ();
 
@@ -461,7 +443,7 @@ namespace WordJourney
 			Debug.Log ("door");
 		}
 
-		public void EnterNPC(Transform mapNpcTrans){
+		private void EnterNPC(Transform mapNpcTrans){
 
 			Debug.Log ("碰到了npc");
 
@@ -469,7 +451,7 @@ namespace WordJourney
 
 		}
 
-		public void EnterWorkBench(Transform workBench){
+		private void EnterWorkBench(Transform workBench){
 
 			Debug.Log ("进入工作台");
 
@@ -478,13 +460,13 @@ namespace WordJourney
 
 		}
 
-		public void EnterCrystal(Transform crystal){
+		private void EnterCrystal(Transform crystal){
 			Debug.Log ("进入水晶");
 			currentEnteredTransform = crystal;
 			expUICtr.SetUpCrystaleQueryHUD();
 		}
 
-		public void EnterBillboard(Transform billboard){
+		private void EnterBillboard(Transform billboard){
 
 			Debug.Log ("进入公告牌");
 
@@ -494,7 +476,7 @@ namespace WordJourney
 
 		}
 
-		public void EnterHole(Transform hole){
+		private void EnterHole(Transform hole){
 			Debug.Log ("进入坑洞");
 
 			hole.GetComponent<Hole> ().EnterHole (mapGenerator,battlePlayerCtr);
@@ -502,7 +484,7 @@ namespace WordJourney
 
 		}
 
-		public void EnterMovableBox(Transform movableBox){
+		private void EnterMovableBox(Transform movableBox){
 
 			Debug.Log ("推箱子");
 
@@ -510,11 +492,15 @@ namespace WordJourney
 
 		}
 
-		public void EnterTransport(Transform transportTrans){
+		private void EnterTransport(Transform transportTrans){
 
 			Debug.Log ("进入传送阵");
 
 
+		}
+
+		private void EnterPlant(Transform plantTransform){
+			Debug.Log ("碰到了植物");
 		}
 
 		public void ShowConsumablesValidPointTintAround(Consumables consumables){

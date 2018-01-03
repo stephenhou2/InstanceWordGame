@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3828858149
+CRC: 4170205006
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2f10fd0d100009883bce0f612cba3611
+    Hash: 17eae482823891ca5c26ce306620667a
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -75,7 +75,6 @@ Assets:
 - Assets/Textures/Explore/cardButton.png
 - Assets/Textures/Explore/cutPic/skillPointFrame.png
 - Assets/Textures/Explore/bagIcon.png
-- Assets/Textures/Background/votex.png
 - Assets/Textures/Frame/wordChipsFrame.png
 - Assets/Textures/Button/actionButton.png
 - Assets/Textures/Explore/battleIcon.png

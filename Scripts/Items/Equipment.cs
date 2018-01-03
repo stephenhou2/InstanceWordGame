@@ -53,6 +53,34 @@ namespace WordJourney
 			itemId = -1;
 		}
 			
+		public Equipment(Equipment equipment){
+			this.itemType = ItemType.Equipment;
+			this.itemCount = 1;
+
+			// 初始化物品基本属性
+			itemId = equipment.itemId;
+			itemName = equipment.itemName;
+			itemDescription = equipment.itemDescription;
+			spriteName = equipment.spriteName;
+			itemType = equipment.itemType;
+			itemNameInEnglish = equipment.itemNameInEnglish;
+
+			// 初始化装备属性
+			this.attackGain = equipment.attackGain;
+			this.critGain = equipment.critGain;
+			this.armorGain = equipment.armorGain;
+			this.magicResistGain = equipment.magicResistGain;
+			this.dodgeGain = equipment.dodgeGain;
+			this.healthGain = equipment.healthGain;
+			this.manaGain = equipment.manaGain;
+
+			this.attachedSkillInfos = equipment.attachedSkillInfos;
+			this.itemIdsForProduce = equipment.itemIdsForProduce;
+
+			#warning 这里耐久度现都设为100;
+			this.maxDurability = 100;
+			this.durability = 100;
+		}
 
 		/// <summary>
 		/// 构造函数

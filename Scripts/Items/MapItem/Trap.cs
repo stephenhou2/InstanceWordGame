@@ -7,8 +7,6 @@ namespace WordJourney
 {
 	public abstract class Trap : MapItem {
 
-		protected bool triggered;
-
 		// 陷阱已经关闭
 		public bool trapOn;
 
@@ -18,7 +16,6 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			triggered = false;
 		}
 
 		public void ChangeTrapStatus(){

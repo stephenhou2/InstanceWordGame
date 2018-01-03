@@ -209,7 +209,7 @@ namespace WordJourney
 
 		public void OnUseButtonClick(){
 
-			bool removeFromBag = false;
+//			bool removeFromBag = false;
 			bool consumblesUsedInExploreScene = false;
 
 			Consumables consumables = currentSelectItem as Consumables;
@@ -226,34 +226,25 @@ namespace WordJourney
 			case "南瓜":
 			case "葡萄":
 			case "柠檬":
-				propertyChange = Player.mainPlayer.UseMedicines (consumables, out removeFromBag);
+				propertyChange = Player.mainPlayer.UseMedicines (consumables);
 				consumblesUsedInExploreScene = false;
 				bagView.SetUpPlayerStatusPlane (propertyChange);
-				if (removeFromBag) {
-					bagView.RemoveItemInBag (currentSelectDragControl);
-				}
 				break;  
-			case "锄头":
-			case "锤子":
-			case "镰刀":
-			case "钥匙":
-				consumblesUsedInExploreScene = true;
-					break;
-			case "火把":
-				consumblesUsedInExploreScene = true;
-					break;
-			case "水":
-				consumblesUsedInExploreScene = true;
-					break;
-			case "地板":
-				consumblesUsedInExploreScene = true;
-					break;
 			case "卷轴":
 				consumblesUsedInExploreScene = false;
 				break;
+			case "锄头":
+			case "锯子":
+			case "镰刀":
+			case "钥匙":
+			case "树苗":
+			case "火把":
+			case "水":
+			case "地板":
+				consumblesUsedInExploreScene = true;
+				break;
 			}
-
-
+				
 			bagView.QuitItemDetailHUD ();
 
 			if (consumblesUsedInExploreScene) {
@@ -263,20 +254,7 @@ namespace WordJourney
 			}
 
 		}
-			
-
-		public void OnSelectItemInBag(Item item){
-
-			if (currentSelectItem == item) {
-				return;
-			}
-
-			item.isNewItem = false;
-
-			currentSelectItem = item;
-
-		}
-
+	
 		public void OnResolveButtonClick(){
 
 			switch (currentSelectItem.itemType) {
@@ -352,11 +330,15 @@ namespace WordJourney
 //				break;
 			case ItemType.FuseStone:
 				
-				bagView.RemoveItemInBag (currentSelectDragControl);
+				RemoveCurrentSelectItem ();
 //				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
 				break;
 			}
 
+		}
+
+		public void RemoveCurrentSelectItem(){
+			bagView.RemoveItemInBag (currentSelectDragControl);
 		}
 
 		/// <summary>

@@ -44,7 +44,7 @@ namespace WordJourney
 
 
 			if(randomOtherHole.transform.position.z != 0){
-				mapGenerator.DirectlyShowUnusedTilesAtPosition(otherHolePosition);
+				mapGenerator.DirectlyShowSleepingTilesAtPosition(otherHolePosition);
 			}
 
 			mapGenerator.ItemsAroundAutoIntoLifeWithBasePoint(otherHolePosition);
@@ -73,13 +73,11 @@ namespace WordJourney
 
 			Debug.LogFormat ("around items come to life,time:{0}", Time.realtimeSinceStartup);
 
-			bp.MoveToEndByPath(new List<Vector3>{walkablePositionAround},walkablePositionAround);
+			bp.MoveToPosition(walkablePositionAround,mapGenerator.mapWalkableInfoArray);
 
 			yield return new WaitUntil (() => bp.isIdle);
 
 			Debug.LogFormat ("player move End:{0}", Time.realtimeSinceStartup);
-
-			bp.boxCollider.enabled = true;
 
 			targetHole.bc2d.enabled = true;
 

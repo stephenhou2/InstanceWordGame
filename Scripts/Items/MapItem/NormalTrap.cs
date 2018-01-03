@@ -29,9 +29,8 @@ namespace WordJourney
 
 		public override void OnTriggerEnter2D (Collider2D col)
 		{
-			triggered = !triggered;
 
-			if (!trapOn || !triggered) {
+			if (!trapOn) {
 				return;
 			}
 

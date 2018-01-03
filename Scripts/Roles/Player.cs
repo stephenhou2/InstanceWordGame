@@ -234,9 +234,7 @@ namespace WordJourney
 		}
 
 
-		public Agent.PropertyChange UseMedicines(Consumables consumables,out bool removeFromBag){
-
-			removeFromBag = false;
+		public Agent.PropertyChange UseMedicines(Consumables consumables){
 
 			if (consumables.attachedSkillInfos.Length > 0) {
 				for (int i = 0; i < consumables.attachedSkillInfos.Length; i++) {
@@ -244,7 +242,7 @@ namespace WordJourney
 					ConsumablesSkill cs = SkillGenerator.Instance.GenerateConsumablesSkill (consumables, si, consumablesSkillsContainer);
 					cs.AffectAgents (battleAgentCtr, null);
 				}
-				removeFromBag = true;
+				RemoveItem (consumables);
 			}
 
 			Debug.LogFormat ("{0}使用了{1}", agentName, consumables.itemName);
@@ -349,6 +347,7 @@ namespace WordJourney
 			switch(item.itemType){
 			case ItemType.Equipment:
 				allEquipmentsInBag.Add (item as Equipment);
+				allItemsInBag.Add (item);
 				break;
 			// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
@@ -360,17 +359,17 @@ namespace WordJourney
 				} else {
 					consumablesInBag = new Consumables (item as Consumables, item.itemCount);
 					allConsumablesInBag.Add (item as Consumables);
+					allItemsInBag.Add (item);
 				}
 				break;
 			case ItemType.FuseStone:
 				allFuseStonesInBag.Add (item as FuseStone);
+				allItemsInBag.Add (item);
 				break;
 			case ItemType.Task:
 				allTaskItemsInBag.Add (item as TaskItem);
+				allItemsInBag.Add (item);
 				break;
-//			case ItemType.Material:
-//				AddMaterial (item as Material);
-//				break;
 			case ItemType.Formula:
 
 				Formula formula = item as Formula;
@@ -394,17 +393,16 @@ namespace WordJourney
 				charactersCount [characterIndex]++;
 				break;
 			}
-
-			allItemsInBag.Add (item);
 				
 		}
 
-		public bool RemoveItem(Item item){
-			bool removeFromBag = false;
+		public void RemoveItem(Item item){
+//			bool removeFromBag = false;
 			switch(item.itemType){
 			case ItemType.Equipment:
 				Equipment equipment = item as Equipment;
 				allEquipmentsInBag.Remove (equipment);
+				allItemsInBag.Remove (equipment);
 				if (equipment.equiped) {
 					for (int i = 0; i < allEquipedEquipments.Length; i++) {
 						if (allEquipedEquipments [i] == equipment) {
@@ -412,7 +410,8 @@ namespace WordJourney
 						}
 					}
 				}
-				removeFromBag = true;
+//				removeFromBag = true;
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
 				break;
 				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
@@ -422,16 +421,22 @@ namespace WordJourney
 				consumablesInBag.itemCount -= item.itemCount;
 				if (consumablesInBag.itemCount <= 0) {
 					allConsumablesInBag.Remove (consumablesInBag);
-					removeFromBag = true;
+					allItemsInBag.Remove (consumablesInBag);
+//					removeFromBag = true;
+					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
 				}
 				break;
 			case ItemType.FuseStone:
 				allFuseStonesInBag.Remove (item as FuseStone);
-				removeFromBag = true;
+				allItemsInBag.Remove (item);
+//				removeFromBag = true;
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
 				break;
 			case ItemType.Task:
 				allTaskItemsInBag.Remove (item as TaskItem);
-				removeFromBag = true;
+				allItemsInBag.Remove (item);
+//				removeFromBag = true;
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
 				break;
 //			case ItemType.Material:
 //				RemoveMaterial (item as Material);
@@ -444,7 +449,7 @@ namespace WordJourney
 				}
 				break;
 			}
-			return removeFromBag;
+//			return removeFromBag;
 		}
 
 		/// <summary>

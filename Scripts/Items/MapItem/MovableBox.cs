@@ -15,7 +15,11 @@ namespace WordJourney
 			bc2d.enabled = true;
 		}
 
+		private MapGenerator mapGenerator;
+
 		public void OnAgentPushBox(BattlePlayerController bp,MapGenerator mapGenerator){
+
+			this.mapGenerator = mapGenerator;
 
 			ExploreManager em = mapGenerator.GetComponent<ExploreManager> ();
 			em.DisableInteractivity ();
@@ -29,32 +33,32 @@ namespace WordJourney
 			int boxPosY = Mathf.RoundToInt (this.transform.position.y);
 
 
-			if (playerPosX < boxPosX && CanMove(mapWalkableInfo, boxPosX + 1, boxPosY)) {
+			if (playerPosX < boxPosX && CanMoveTo(boxPosX + 1, boxPosY)) {
 				this.transform.DOMove (new Vector3 (boxPosX + 1, boxPosY),1.0f).OnComplete (delegate {
-					mapWalkableInfo[boxPosX,boxPosY] = 0;
-					mapWalkableInfo[boxPosX + 1,boxPosY] = 1;
+					mapWalkableInfo[boxPosX,boxPosY] = 1;
+					mapWalkableInfo[boxPosX + 1,boxPosY] = 0;
 					em.EnableInteractivity();
 				});
 
-			} else if (playerPosX > boxPosX && CanMove(mapWalkableInfo, boxPosX - 1, boxPosY)) {
+			} else if (playerPosX > boxPosX && CanMoveTo(boxPosX - 1, boxPosY)) {
 				this.transform.DOMove (new Vector3 (boxPosX - 1, boxPosY),1.0f).OnComplete (delegate {
-					mapWalkableInfo[boxPosX,boxPosY] = 0;
-					mapWalkableInfo[boxPosX - 1,boxPosY] = 1;
+					mapWalkableInfo[boxPosX,boxPosY] = 1;
+					mapWalkableInfo[boxPosX - 1,boxPosY] = 0;
 					em.EnableInteractivity();
 				});
 
-			} else if (playerPosY < boxPosY && CanMove(mapWalkableInfo, boxPosX, boxPosY + 1)) {
+			} else if (playerPosY < boxPosY && CanMoveTo(boxPosX, boxPosY + 1)) {
 				this.transform.DOMove (new Vector3 (boxPosX, boxPosY + 1),1.0f).OnComplete (delegate {
-					mapWalkableInfo[boxPosX,boxPosY] = 0;
-					mapWalkableInfo[boxPosX,boxPosY + 1] = 1;
+					mapWalkableInfo[boxPosX,boxPosY] = 1;
+					mapWalkableInfo[boxPosX,boxPosY + 1] = 0;
 					em.EnableInteractivity();
 				});
 
-			} else if (playerPosY > boxPosY && CanMove(mapWalkableInfo, boxPosX, boxPosY - 1)) {
+			} else if (playerPosY > boxPosY && CanMoveTo(boxPosX, boxPosY - 1)) {
 
 				this.transform.DOMove (new Vector3 (boxPosX, boxPosY - 1),1.0f).OnComplete (delegate {
-					mapWalkableInfo[boxPosX,boxPosY] = 0;
-					mapWalkableInfo[boxPosX,boxPosY - 1] = 1;
+					mapWalkableInfo[boxPosX,boxPosY] = 1;
+					mapWalkableInfo[boxPosX,boxPosY - 1] = 0;
 					em.EnableInteractivity();
 				});
 			}
@@ -63,8 +67,21 @@ namespace WordJourney
 
 		}
 
-		private bool CanMove(int[,] walkableInfo,int posX,int posY){
-			return walkableInfo [posX, posY] == 1;
+		private bool CanMoveTo(int posX,int posY){
+
+			if (mapGenerator.mapWalkableInfoArray [posX, posY] == 1) {
+				return true;
+			}
+
+			Transform mapItem = mapGenerator.GetAliveOtherItemAt (new Vector3 (posX, posY, 0));
+
+
+			if (mapItem != null && mapItem.GetComponent<PressSwitch> () != null) {
+				return true;
+			}
+
+			return false;
+
 		}
 
 	}

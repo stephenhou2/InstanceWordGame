@@ -87,7 +87,9 @@ namespace WordJourney
 			// 背包中单类物品最大预加载数量
 			maxPreloadCountOfItem = 24;
 
-			SetUpPlayerStatusPlane (new Agent.PropertyChange());
+			Agent.PropertyChange propertyChange = player.ResetBattleAgentProperties (false);
+
+			SetUpPlayerStatusPlane (propertyChange);
 
 			SetUpEquipedEquipmentsPlane ();
 

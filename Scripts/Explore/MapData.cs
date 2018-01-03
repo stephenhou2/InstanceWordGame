@@ -84,7 +84,9 @@ namespace WordJourney{
 		LauncherUp,
 		LauncherDown,
 		LauncherLeft,
-		LauncherRight
+		LauncherRight,
+		Plant,
+		PressSwitch
 	}
 
 	public enum AttachedItemType{

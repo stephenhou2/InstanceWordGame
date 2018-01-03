@@ -10,10 +10,29 @@ namespace WordJourney
 		// 开关控制的陷阱
 //		public Trap trap;
 
-		// 开关控制杆在左边的图片
-		public Sprite switchLeftSprite;
-		// 开关控制杆在右边的图片
-		public Sprite switchRightSprite;
+		private Sprite m_SwitchOffSprite;
+		private Sprite switchOffSprite{
+			get{
+				if (m_SwitchOffSprite == null) {
+					m_SwitchOffSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+						return obj.name == "normal_switch_off";
+					});
+				}
+				return m_SwitchOffSprite;
+			}
+		}
+
+		private Sprite m_SwitchOnSprite;
+		private Sprite switchOnSprite{
+			get{
+				if (m_SwitchOnSprite == null) {
+					m_SwitchOnSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+						return obj.name == "normal_switch_on";
+					});
+				}
+				return m_SwitchOnSprite;
+			}
+		}
 
 		private int switchStatusChangeCount;
 
@@ -23,7 +42,7 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			mapItemRenderer.sprite = switchLeftSprite;
+			mapItemRenderer.sprite = switchOffSprite;
 		}
 
 		/// <summary>
@@ -34,9 +53,9 @@ namespace WordJourney
 			switchStatusChangeCount++;
 
 			if (switchStatusChangeCount % 2 == 0) {
-				mapItemRenderer.sprite = switchLeftSprite;
+				mapItemRenderer.sprite = switchOffSprite;
 			} else {
-				mapItemRenderer.sprite = switchRightSprite;
+				mapItemRenderer.sprite = switchOnSprite;
 			}
 				
 		}

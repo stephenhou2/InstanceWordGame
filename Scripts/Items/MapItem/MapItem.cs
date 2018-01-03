@@ -25,7 +25,8 @@ namespace WordJourney
 		LauncherTowardsDown,
 		LauncherTowardsLeft,
 		LauncherTowardsRight,
-		Plant
+		Plant,
+		PressSwitch
 	}
 
 	public abstract class MapItem : MonoBehaviour {
