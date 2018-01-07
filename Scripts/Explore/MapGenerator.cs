@@ -43,15 +43,6 @@ namespace WordJourney
 		public Transform consumablesValidPosTintModel;
 
 
-		// 地图上所有地图物品列表
-//		private List<MapItem> mapItems = new List<MapItem> ();
-
-		// 地图上所有npc列表
-//		private List<MapNPC> mapNpcs = new List<MapNPC>();
-
-		// 地图上所有怪物列表
-//		private List<Monster>monsters = new List<Monster>();
-
 		// 所有地图元素在场景中的父容器
 		public Transform floorsContainer;
 		public Transform mapItemsContainer;
@@ -159,11 +150,6 @@ namespace WordJourney
 
 		private List<Vector3> totalValidPosGridList = new List<Vector3> ();
 		private List<Vector3> playerOriginalPosList = new List<Vector3> ();
-//		private List<Vector3> treasureBox_npc_produceBuildingPosGridList;
-//		private List<Vector3> learnCrystalPosGridList;
-//		private List<Vector3> movableFloorPosGridList;
-//		private Vector3 bossPos;
-//		private List<Vector3> undestroyableObstacleGridList;
 
 		private List<Transform> allSleepingMonsters = new List<Transform> ();
 		private List<Transform> allSleepingOtherItems = new List<Transform> ();
@@ -393,7 +379,7 @@ namespace WordJourney
 					playerOriginalPosList.Add (pos);
 					break;
 				case AttachedInfoType.Crystal:
-					SetUpLearnCrystal (pos);
+					GenerateMapItem (MapItemType.Crystal, pos, null);
 					break;
 				case AttachedInfoType.Trader:
 					NPC trader = GameManager.Instance.gameDataCenter.allNpcs.Find (delegate(NPC obj) {
@@ -615,15 +601,19 @@ namespace WordJourney
 				mapItem = mapItemPool.GetInstanceWithName<PressSwitch> (pressSwitchModel.name, pressSwitchModel.gameObject, mapItemsContainer);
 				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 10;
 				break;
+			case MapItemType.Crystal:
+				mapItem = mapItemPool.GetInstanceWithName<Crystal> (crystalModel.name, crystalModel.gameObject, mapItemsContainer);
+				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
+				break;
 			}
 
 			mapItem.mapItemType = mapItemType;
 
-			mapItem.SetSortingOrder (-(int)position.y);
-
 			mapItem.transform.position = new Vector3 (position.x, position.y, -100f);
 
-			mapItem.InitMapItem ();
+			mapItem.gameObject.SetActive (false);
+
+//			mapItem.SetSortingOrder (-(int)position.y);
 
 			allSleepingOtherItems.Add (mapItem.transform);
 
@@ -784,23 +774,6 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 初始化单词记忆水晶
-		/// </summary>
-		/// <param name="position">Position.</param>
-		private void SetUpLearnCrystal(Vector2 position){
-
-			Transform learnCrystal = crystalPool.GetInstance<Transform> (crystalModel.gameObject, crystalsContainer);
-
-			learnCrystal.position = new Vector3 (position.x, position.y, -100f);
-
-			learnCrystal.GetComponent<SpriteRenderer> ().sortingOrder = -(int)(position.y);
-
-			originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 0;
-
-			allSleepingOtherItems.Add (learnCrystal);
-
-		}
 
 
 		/// <summary>
@@ -870,25 +843,21 @@ namespace WordJourney
 			// 使用上面拿到的怪物模型初始化一个新的怪物
 			Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
+//			monster.gameObject.SetActive (false);
+
 			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 
 			monster.position = position;
 
-			monster.gameObject.SetActive (true);
-
 			BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
-
-			bmCtr.PlayRoleAnim ("wait", 0, null);
-
-//			bmCtr.SetSortingLayerName ("Hide");
-
-			bmCtr.transform.position = new Vector3 (position.x, position.y, -100f);
 
 			bmCtr.SetSortingOrder (-(int)position.y);
 
-			allSleepingMonsters.Add (monster);
+			bmCtr.PlayRoleAnim ("wait", 0, null);
 
-//			monsters.Add (monster.GetComponent<Monster> ());
+			bmCtr.transform.position = new Vector3 (position.x, position.y, -100f);
+
+			allSleepingMonsters.Add (monster);
 
 		}
 
@@ -970,6 +939,8 @@ namespace WordJourney
 					sleepingMonster.position = new Vector3(position.x,position.y,0);
 					allSleepingMonsters.RemoveAt (i);
 					allAliveMonsters.Add (sleepingMonster);
+//					sleepingMonster.gameObject.SetActive (true);
+//					sleepingMonster.GetComponent<BattleMonsterController> ().SetAlive ();
 					break;
 				}
 			}
@@ -980,6 +951,8 @@ namespace WordJourney
 					sleepingOther.position = new Vector3(position.x,position.y,0);
 					allSleepingOtherItems.RemoveAt (i);
 					allAliveOtherItems.Add (sleepingOther);
+					sleepingOther.gameObject.SetActive (true);
+					sleepingOther.GetComponent<MapItem> ().InitMapItem ();
 					break;
 				}
 			}
@@ -1018,8 +991,6 @@ namespace WordJourney
 			}
 
 			bool continueInitAroundItems = validSleepingTiles.Count == 1 && validSleepingTiles [0].type == SleepingTileType.Floor;
-				
-
 
 			Transform floor = null;
 			Transform other = null;
@@ -1057,11 +1028,11 @@ namespace WordJourney
 				
 		}
 
-		public float floorComeIntoLifeInterval = 1f;
+		public float floorComeIntoLifeInterval;
 
-		public float floorOriginalScale = 0.2f;
-		public float floorOriginalPositionOffsetX = 3f;
-		public float floorOriginalPositionOffsetY = 3f;
+		public float floorOriginalScale;
+		public float floorOriginalPositionOffsetX;
+		public float floorOriginalPositionOffsetY;
 
 		private float scalerIncreaseBase{
 			get{ return (1 - floorOriginalScale) / floorComeIntoLifeInterval; }
@@ -1120,34 +1091,23 @@ namespace WordJourney
 			}
 		}
 
-		public float otherComeIntoLifeInterval = 0.3f;
+		public float otherComeIntoLifeInterval;
 
-		public float otherOriginalPositionOffsetY = 1f;
+		public float otherOriginalPositionOffsetY;
 
 		public float otherPositonYFixBase{
 			get{return -otherOriginalPositionOffsetY / otherComeIntoLifeInterval;}
 		}
 
 		private IEnumerator OtherComeIntoLife(Transform other){
-
-			BoxCollider2D bc = other.GetComponent<BoxCollider2D> ();
-
-			if (bc != null) {
-				bc.enabled = false;
-			}
-
-			Rigidbody2D rb = other.GetComponent<Rigidbody2D> ();
-			if (rb != null) {
-				rb.Sleep ();
-			}
+			
+			other.gameObject.SetActive (true);
 
 			Vector3 otherTargetPosition = new Vector3 (other.position.x, other.position.y, 0);
 
 			other.position = new Vector3 (otherTargetPosition.x, otherTargetPosition.y + otherOriginalPositionOffsetY, 0);
 
 			float timer = 0;
-
-
 
 			while (timer < otherComeIntoLifeInterval) {
 
@@ -1162,21 +1122,17 @@ namespace WordJourney
 
 			other.position = otherTargetPosition;
 
-			if (bc != null) {
-				bc.enabled = true;
-			}
-			if (rb != null) {
-				rb.WakeUp ();
-			}
-
 			int posX = (int)other.position.x;
 			int posY = (int)other.position.y;
 
 			mapWalkableInfoArray [posX,posY] = originalMapWalkableInfoArray[posX,posY];
 	
 
-			if (rb.GetComponent<Launcher> () != null) {
-				rb.GetComponent<Launcher> ().SetUpLauncher ();
+//			if (other.GetComponent<BattleMonsterController> () != null) {
+//				other.GetComponent<BattleMonsterController> ().SetAlive ();
+//			} 
+			if (other.GetComponent<MapItem> () != null) {
+				other.GetComponent<MapItem> ().InitMapItem ();
 			}
 
 		}
@@ -1505,7 +1461,7 @@ namespace WordJourney
 				if (CheckTargetMatchSickle(pos)) {
 					Plant plant = GetAliveOtherItemAt (pos).GetComponent<Plant> ();
 					SetUpRewardInMap (plant.attachedItem, pos);
-					plant.AddPlantToPool ();
+					plant.AddToPool (mapItemPool);
 					mapWalkableInfoArray [posX, posY] = 1;
 					removeConsumablesFromBag = true;
 				}

@@ -180,22 +180,27 @@ namespace WordJourney
 		private void ShowConsumablesEffectTint(Transform propertyTrans,int change,int indexInPanel){
 
 			Text propertyValue = propertyTrans.Find ("PropertyValue").GetComponent<Text> ();
-			propertyValue.color = Color.white;
 
 			if (change == 0) {
+				propertyValue.color = Color.white;
+				changeTintFromOtherSequences [indexInPanel].Complete ();
 				return;
 			}
+
+			propertyValue.color = change > 0 ? Color.green : Color.red;
 
 			if (changeTintFromOtherSequences [indexInPanel] == null) {
 
 				Sequence propertyValueBlink = DOTween.Sequence ();
 				propertyValueBlink
-					.Append (propertyValue.DOFade (0.3f, 3))
-					.Append (propertyValue.DOFade (1.0f, 3));
+					.Append (propertyValue.DOFade (0.3f, 2))
+					.Append (propertyValue.DOFade (1.0f, 2));
 
 				propertyValueBlink.SetLoops (-1);
 
 				changeTintFromOtherSequences [indexInPanel] = propertyValueBlink;
+
+				propertyValueBlink.SetAutoKill (false);
 
 				propertyValueBlink.SetUpdate (true);
 
@@ -243,6 +248,7 @@ namespace WordJourney
 					});
 				changeTintSequence.SetUpdate (true);
 				changeTintFromEqSequences[indexInPanel] = changeTintSequence;
+				changeTintSequence.SetAutoKill (false);
 				return;
 			}
 
@@ -283,10 +289,7 @@ namespace WordJourney
 		public void SetUpTintHUD(string tint){
 			Debug.Log (tint);
 		}
-
-
-
-
+			
 		/// <summary>
 		/// 初始化背包物品界面
 		/// </summary>
@@ -591,12 +594,18 @@ namespace WordJourney
 		}
 
 
-		public void RemoveItemInBag(Transform itemInBag){
-			bagItemsPool.AddInstanceToPool (itemInBag.gameObject);
-//			if (updateBagView) {
-//				SetUpPlayerStatusPlane ();
-//				SetUpEquipedEquipmentsPlane ();
-//			}
+	
+
+		public void RemoveItemInBag(Item item){
+
+			for (int i = 0; i < bagItemsContainer.childCount; i++) {
+				Transform bagItem = bagItemsContainer.GetChild (i);
+				if (bagItem.GetComponent<ItemDragControl> ().item.itemId == item.itemId) {
+					bagItemsPool.AddInstanceToPool (bagItem.gameObject);
+					return;
+				}
+			}
+
 		}
 
 		public void SetUpResolveGainHUD(List<Item> resolveGains){

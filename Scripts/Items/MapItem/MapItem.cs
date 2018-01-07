@@ -26,7 +26,8 @@ namespace WordJourney
 		LauncherTowardsLeft,
 		LauncherTowardsRight,
 		Plant,
-		PressSwitch
+		PressSwitch,
+		Crystal
 	}
 
 	public abstract class MapItem : MonoBehaviour {
@@ -56,16 +57,11 @@ namespace WordJourney
 		}
 
 		public abstract void InitMapItem ();
+		public abstract void AddToPool (InstancePool pool);
 
 		public void SetSortingOrder(int order){
 			mapItemRenderer.sortingOrder = order;
 		}
-
-
-//		public void SetSortingLayer(string layerName){
-//			mapItemRenderer.sortingLayerName = layerName;
-//		}
-
 
 	}
 

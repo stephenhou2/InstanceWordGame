@@ -8,16 +8,7 @@ namespace WordJourney
 
 	public class MovableFloor : MapItem {
 
-//		public Vector2 originPos;
-//		public Vector2 targetPos;
-
-//		private bool inMove;
-
 		public float moveSpeedX;
-
-		private bool triggered;
-
-//		private float moveDuration;
 
 		private Transform mExploreManager;
 		private Transform exploreManager{
@@ -31,8 +22,16 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-			bc2d.enabled = true;
-			triggered = false;
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+			SetSortingOrder (1);
+		}
+
+		public override void AddToPool (InstancePool pool)
+		{
+			gameObject.SetActive (false);
+//			bc2d.enabled = false;
+			pool.AddInstanceToPool (this.gameObject);
 		}
 
 		public void OnTriggerEnter2D(Collider2D other){
@@ -46,9 +45,6 @@ namespace WordJourney
 				return;
 			}
 
-
-			exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
-
 			MoveToNearestPosition (other.transform);
 
 		}
@@ -57,23 +53,23 @@ namespace WordJourney
 
 			BattlePlayerController bp = other.GetComponent<BattlePlayerController> ();
 
-			bp.StopMoveAtEndOfCurrentStep ();
+//			bp.StopMoveAtEndOfCurrentStep ();
 
 			if (bp == null) {
-				exploreManager.GetComponent<ExploreManager> ().EnableInteractivity ();
 				return;
 			}
-				
-			bc2d.enabled = false;
 
 			MapGenerator mapGenerator = exploreManager.GetComponent<MapGenerator> ();
 
 			Vector3 nearestMovableFloorPos = mapGenerator.FindNearestMovableFloor (this.transform.position);
 
 			if (nearestMovableFloorPos == transform.position) {
-				exploreManager.GetComponent<ExploreManager> ().EnableInteractivity ();
 				return;
 			}
+
+			bp.singleMoveEndPos = nearestMovableFloorPos;
+			bp.TempStoreDestinationAndDontMove ();
+
 
 			IEnumerator floorMoveAnim = SmoothMoveToPos (this.transform.position,nearestMovableFloorPos, bp);
 
@@ -97,7 +93,6 @@ namespace WordJourney
 
 			realMapWalkableInfo [(int)startPos.x, (int)startPos.y] = -1;
 
-
 			bp.ActiveBattlePlayer (false, false, true);
 
 			bp.PlayRoleAnim ("wait", 0, null);
@@ -112,8 +107,7 @@ namespace WordJourney
 				myMoveSpeedX = -moveSpeedX;
 				bp.TowardsLeft ();
 			}
-//			float myMoveSpeedX = (endPos.x > startPos.x ? 1 : -1) * moveSpeedX;
-			// 总移动时长
+
 			float moveDuration = Mathf.Abs ((endPos.x - startPos.x) / moveSpeedX);
 
 			// y轴方向的移动速度
@@ -137,7 +131,7 @@ namespace WordJourney
 				// 走到一半时终点位置开始初始化（地板和物品，怪物出现）
 				if (timer / moveDuration > 0.5 && !endPosInit) {
 					exploreManager.GetComponent<ExploreManager> ().ItemsAroundAutoIntoLifeWithBasePoint (endPos);
-					endPosInit = false;
+					endPosInit = true;
 				}
 
 				yield return null;
@@ -146,11 +140,8 @@ namespace WordJourney
 
 			transform.position = endPos;
 			bp.transform.position = endPos;
-			bp.singleMoveEndPos = endPos;
 
 			bp.SetSortingOrder (-(int)endPos.y);
-
-			StartCoroutine ("LatelyEnableBoxCollider",bp);
 
 
 			// 如果要自动走到一个可行走点，则开启下面的代码
@@ -159,19 +150,15 @@ namespace WordJourney
 //			yield return new WaitUntil (()=>realMapWalkableInfo [(int)walkablePositionAround.x, (int)walkablePositionAround.y] == 1);
 //
 			realMapWalkableInfo [(int)endPos.x, (int)endPos.y] = 10;
-//
-//			bp.MoveToEndByPath(new List<Vector3>{walkablePositionAround},walkablePositionAround);
 
-			exploreManager.GetComponent<ExploreManager> ().EnableInteractivity ();
-		}
+			bp.MoveToStoredDestination ();
 
-		private IEnumerator LatelyEnableBoxCollider(BattlePlayerController bp){
-			yield return new WaitUntil (()=>!bp.isIdle);
-			bc2d.enabled = true;
 		}
 
 
+		public void AddIntoPool(){
 
+		}
 
 
 

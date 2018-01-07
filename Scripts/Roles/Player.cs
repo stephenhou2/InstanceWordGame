@@ -130,7 +130,7 @@ namespace WordJourney
 			this.maxUnlockLevelIndex = playerData.maxUnlockLevelIndex;
 			this.currentLevelIndex = playerData.currentLevelIndex;
 
-			this.attachedTriggeredSkills.Clear ();
+			this.attachedEquipmentSkills.Clear ();
 			this.attachedConsumablesSkills.Clear ();
 
 			ResetBattleAgentProperties (false);
@@ -143,11 +143,11 @@ namespace WordJourney
 
 					for (int j = 0; j < equipment.attachedSkillInfos.Length; j++) {
 						
-						Skill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [j], triggeredSkillsContainer);
+						TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [j], triggeredSkillsContainer);
 
 						equipment.attachedSkills.Add (attachedSkill);
 
-						attachedTriggeredSkills.Add (attachedSkill);
+						attachedEquipmentSkills.Add (attachedSkill);
 					}
 				}
 
@@ -185,8 +185,8 @@ namespace WordJourney
 			allEquipmentsInBag.Add (equipment);
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
-				Skill attachedSkill = equipment.attachedSkills [i];
-				attachedTriggeredSkills.Remove (attachedSkill);
+				TriggeredSkill attachedSkill = equipment.attachedSkills [i];
+				attachedEquipmentSkills.Remove (attachedSkill);
 				equipment.attachedSkills.RemoveAt (i);
 				Destroy (attachedSkill.gameObject);
 			}
@@ -220,9 +220,9 @@ namespace WordJourney
 			//			equipmentDragControl.item = equipment;
 
 			for (int i = 0; i < equipment.attachedSkillInfos.Length; i++) {
-				Skill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i],triggeredSkillsContainer);
+				TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i],triggeredSkillsContainer);
 				equipment.attachedSkills.Add (attachedSkill);
-				attachedTriggeredSkills.Add (attachedSkill);
+				attachedEquipmentSkills.Add (attachedSkill);
 				attachedSkill.transform.SetParent (triggeredSkillsContainer);
 			}
 
@@ -410,8 +410,7 @@ namespace WordJourney
 						}
 					}
 				}
-//				removeFromBag = true;
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
 				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
@@ -422,25 +421,19 @@ namespace WordJourney
 				if (consumablesInBag.itemCount <= 0) {
 					allConsumablesInBag.Remove (consumablesInBag);
 					allItemsInBag.Remove (consumablesInBag);
-//					removeFromBag = true;
-					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
+					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				}
 				break;
 			case ItemType.FuseStone:
 				allFuseStonesInBag.Remove (item as FuseStone);
 				allItemsInBag.Remove (item);
-//				removeFromBag = true;
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
 			case ItemType.Task:
 				allTaskItemsInBag.Remove (item as TaskItem);
 				allItemsInBag.Remove (item);
-//				removeFromBag = true;
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveCurrentSelectItem ();
+				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
-//			case ItemType.Material:
-//				RemoveMaterial (item as Material);
-//				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
 				int characterIndex = (int)(characterFragment.character) - CommonData.aInASCII;

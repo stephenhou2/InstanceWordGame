@@ -17,6 +17,7 @@ namespace WordJourney
 			public SkillEffectTarget triggerTarget;
 		}
 
+		public bool canOverlay;// 技能效果是否可以叠加
 
 		public TriggerInfo beforeFightTriggerInfo; 	// 进入战斗触发信息
 		public TriggerInfo attackTriggerInfo;		// 攻击动作触发信息

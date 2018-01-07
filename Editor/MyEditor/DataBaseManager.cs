@@ -105,7 +105,7 @@ namespace WordJourney{
 
 		private static void LoadCET4WordsData(){
 
-			string wordsPath = "/Users/houlianghong/Desktop/WordsCET4.csv";
+			string wordsPath = "/Users/houlianghong/Desktop/应用数据文件（原始）/单词/WordsCET4.csv";
 
 			string wordsString = DataHandler.LoadDataString (wordsPath);
 
@@ -158,7 +158,7 @@ namespace WordJourney{
 
 			string tableName = "AllWordsTable";
 
-			int wordsCount = sql.GetItemCountOfTable (tableName);
+			int wordsCount = sql.GetItemCountOfTable (tableName,null,true);
 
 			for (int i = 0; i < 37336; i++) {
 

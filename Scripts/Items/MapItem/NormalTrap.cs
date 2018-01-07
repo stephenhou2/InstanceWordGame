@@ -14,23 +14,40 @@ namespace WordJourney
 		// 陷阱关闭状态的图片
 		public Sprite trapOffSprite;
 
+
+		public override void InitMapItem ()
+		{
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+			SetSortingOrder (-(int)transform.position.y);
+		}
+
+		public override void AddToPool (InstancePool pool)
+		{
+			gameObject.SetActive (false);
+//			bc2d.enabled = false;
+			pool.AddInstanceToPool (this.gameObject);
+		}
+
+
+
 		public override void SetTrapOn ()
 		{
 			mapItemRenderer.sprite = trapOnSprite;
-			trapOn = true;
+			isTrapOn = true;
 		}
 
 		public override void SetTrapOff ()
 		{
 			mapItemRenderer.sprite = trapOffSprite;
-			trapOn = false;
+			isTrapOn = false;
 		}
 
 
 		public override void OnTriggerEnter2D (Collider2D col)
 		{
 
-			if (!trapOn) {
+			if (!isTrapOn) {
 				return;
 			}
 

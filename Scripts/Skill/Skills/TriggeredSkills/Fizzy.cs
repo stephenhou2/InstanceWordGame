@@ -11,7 +11,7 @@ namespace WordJourney
 //
 //		public float probability;
 
-		private Coroutine hardBeatCoroutine;
+		private Coroutine fizzyCoroutine;
 	
 
 		protected override void BeforeFightTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
@@ -42,35 +42,40 @@ namespace WordJourney
 		protected override void ExcuteTriggeredSkillLogic(TriggerInfo triggerInfo, BattleAgentController self,BattleAgentController enemy){
 
 			if (isEffective (triggeredProbability)) {
-				if (hardBeatCoroutine != null) {
-					StopCoroutine (hardBeatCoroutine);
-				}
+
+				List<TriggeredSkill> fizzySkills = enemy.propertyCalculator.GetTriggeredSkillsWithSameStatus (statusName);
 
 				BattleAgentController affectedAgent = GetAffectedBattleAgent (triggerInfo, self, enemy);
 
+				if (fizzySkills.Count > 0) {
+					for (int i = 0; i < fizzySkills.Count; i++) {
+						fizzySkills [i].CancelSkillEffect ();
+					}
+				} else {
+					affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
+				}
+
 				affectedAgent.PlayRoleAnim ("stun", 0, null);
 
-				affectedAgent.SetEffectAnim (enemyEffectAnimName, true);
-
-				hardBeatCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
+				fizzyCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
 			}
 
 		}
 			
 		private IEnumerator FizzyForDuration(BattleAgentController affectedAgent){
 			yield return new WaitForSeconds (duration);
-			affectedAgent.SetEffectAnim (enemyEffectAnimName, false);
+			affectedAgent.propertyCalculator.RemoveTriggeredSkill<TriggeredSkill> (this);
 			affectedAgent.Fight ();
 		}
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			StopCoroutine (hardBeatCoroutine);
+			StopCoroutine (fizzyCoroutine);
 		}
 
 		public override void CancelSkillEffect ()
 		{
-			StopCoroutine (hardBeatCoroutine);
+			StopCoroutine (fizzyCoroutine);
 		}
 
 	}

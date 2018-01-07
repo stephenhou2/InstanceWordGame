@@ -39,14 +39,46 @@ namespace WordJourney
 
 		private Transform currentSelectChoice;
 
-		public Transform energySliderContainer;
-		// 单词能量条
-		public Image energyFill;
+		public Transform learnProgressContainer;
 
-		public Text characterFragment;
+		public Image learnProgressBar;
+
+		public Text learnProgress;
+
 
 		private Tweener characterFragmentAnim;
 
+		public Transform quitQueryHUD;
+
+		public Transform learningResultHUD;
+
+		public Text crystalHarvestCount;
+
+		public Transform crystalContainer;
+
+		private InstancePool crystalPool;
+
+		public Transform crystalModel;
+
+		public Text cystalHarvestInFinishHUD;
+		public Text correctPercentageInFinishHUD;
+
+		private int totalTurnCount;
+
+		private bool isShowRightAnswerFinished;
+
+		public void InitLearnView(int totalWordsCount){
+			
+			crystalHarvestCount.text = "0";
+
+			UpdateLearningProgress (0, totalWordsCount,false);
+
+			totalTurnCount = 0;
+
+			isShowRightAnswerFinished = true;
+
+			crystalPool = InstancePool.GetOrCreateInstancePool ("CrystalPool", CommonData.poolContainerName);
+		}
 
 		public void SetUpLearnViewWithWord(LearnWord word){
 
@@ -60,10 +92,15 @@ namespace WordJourney
 
 			ShowContainers (true, false, false,false);
 
-
-
 		}
 
+		private void DisableInteractivity(){
+			mask.gameObject.SetActive (true);
+		}
+
+		private void EnableInteractivity(){
+			mask.gameObject.SetActive (false);
+		}
 
 
 		public void SetUpLearningProgress(){
@@ -73,7 +110,7 @@ namespace WordJourney
 
 			ShowContainers (false, false, false,false);
 
-			mask.gameObject.SetActive (true);
+			DisableInteractivity ();
 
 			StartCoroutine ("ExplainationShowAndHideAnim");
 
@@ -90,7 +127,7 @@ namespace WordJourney
 				explainationText.color = new Color(1,1,1,1);
 			});
 
-			mask.gameObject.SetActive (false);
+			EnableInteractivity ();
 		}
 
 		public void ShowExplaination(){
@@ -141,6 +178,8 @@ namespace WordJourney
 
 		public void SetUpLearnViewWithFinalExam(Examination exam,Examination.ExaminationType examType){
 
+			totalTurnCount++;
+
 			switch (examType) {
 
 			case Examination.ExaminationType.EngToChn:
@@ -156,6 +195,7 @@ namespace WordJourney
 					Transform choice = choices [i];
 
 					Button choiceButton = choice.Find("ChoiceButton").GetComponent<Button>();
+					choiceButton.GetComponentInChildren<Text> ().color = Color.white;
 					Transform accordAnswer = choice.Find ("AccordAnswer");
 
 					LearnWord answer = exam.answers [i];
@@ -219,34 +259,107 @@ namespace WordJourney
 			graspConditionButtonsContainer.gameObject.SetActive (graspCondition);
 			wordsLearnOperationButtonsContainer.gameObject.SetActive (wordsLearnOperation);
 			choicesContainer.gameObject.SetActive (answers);
-			energySliderContainer.gameObject.SetActive (energySlider);
+			learnProgressContainer.gameObject.SetActive (energySlider);
 
 		}
 
 		public void ShowAccordAnswerOfCurrentSelectedChoice(){
-			currentSelectChoice.Find("AccordAnswer").DOLocalMoveY (55, 1.0f);
+			DisableInteractivity ();
+			currentSelectChoice.Find ("AccordAnswer").DOLocalMoveY (55, 1.0f).OnComplete (delegate {
+				EnableInteractivity();
+			});
 		}
 
-		public void ResetEnergySlider(char character){
+		public void ShowRightAnswerAndEnterNextExam(int correctAnswerIndex, Examination nextExam){
 
-			characterFragment.text = character.ToString ();
+			DisableInteractivity ();
 
-		}
+			isShowRightAnswerFinished = false;
 
-		public void UpdateWordEnergySlider(int currentEnergyCount,int energyFullCount){
-			float fillAmount = (float)currentEnergyCount / energyFullCount;;
-			energyFill.fillAmount = fillAmount;
-			if (fillAmount == 1f) {
-				StartCoroutine ("ResetWordEnergySliderAfterDelay", 0.5f);
+			Transform correctAnswer = choices [correctAnswerIndex];
+
+			correctAnswer.Find ("ChoiceButton").GetComponentInChildren<Text> ().color = Color.green;
+
+			currentSelectChoice.Find ("ChoiceButton").GetComponentInChildren<Text> ().color = Color.red;
+
+			if (nextExam == null) {
+				StartCoroutine ("StopForAWhile");
+				return;
 			}
+			StartCoroutine("StopForAWhileAndEnterNextExam",nextExam);
 		}
 
-		private IEnumerator ResetWordEnergySliderAfterDelay(float delay){
+		private IEnumerator StopForAWhile(){
+			yield return new WaitForSeconds (2f);
+			isShowRightAnswerFinished = true;
+			EnableInteractivity ();
+		}
 
-			yield return new WaitForSeconds (delay);
+		private IEnumerator StopForAWhileAndEnterNextExam(Examination nextExam){
+			yield return new WaitForSeconds (2f);
+			SetUpLearnViewWithFinalExam (nextExam, nextExam.GetCurrentExamType ());
+			isShowRightAnswerFinished = true;
+			EnableInteractivity ();
+		}
+			
 
-			energyFill.fillAmount = 0;
+		public void UpdateLearningProgress(int learnedCount, int totalCount,bool isAnim){
+			float fillAmount = (float)learnedCount / totalCount;
+			if (isAnim) {
+				learnProgressBar.DOFillAmount (fillAmount, 0.5f);
+			} else {
+				learnProgressBar.fillAmount = fillAmount;
+			}
+			learnProgress.text = string.Format ("{0}/{1}", learnedCount.ToString(), totalCount.ToString ());
+		}
 
+		public void ShowFinishLearningHUD(int harvestCount,int correctWordCount){
+			IEnumerator waitShowRightAnswerFinishRoroutine = WaitShowRightAnswerFinish (harvestCount, correctWordCount);
+			StartCoroutine (waitShowRightAnswerFinishRoroutine);
+		}
+
+		private IEnumerator WaitShowRightAnswerFinish(int harvestCount,int correctWordCount){
+
+			yield return new WaitUntil (() => isShowRightAnswerFinished);
+
+			learningResultHUD.gameObject.SetActive (true);
+			cystalHarvestInFinishHUD.text = harvestCount.ToString ();
+			correctPercentageInFinishHUD.text = string.Format ("{0}%", (int)(correctWordCount * 100 / totalTurnCount ));
+
+
+		}
+				
+
+		public void ShowQuitQueryHUD(){
+			quitQueryHUD.gameObject.SetActive (true);
+		}
+
+		public void HideQuitQueryHUD(){
+			quitQueryHUD.gameObject.SetActive (false);
+		}
+
+		private void HideFinishLearningQuitHUD(){
+			learningResultHUD.gameObject.SetActive (false);
+		}
+
+		public void UpdateCrystalHarvest(int totalCount){
+
+			Transform crystal = crystalPool.GetInstance<Transform> (crystalModel.gameObject, crystalContainer);
+
+			crystal.localPosition = new Vector3(0,500,0);
+			crystal.GetComponent<Image> ().enabled = true;
+
+			crystal.DOLocalMove (new Vector3 (-90, 600, 0), 0.5f).OnComplete (delegate {
+				crystal.GetComponent<Image> ().enabled = false;
+				crystalPool.AddInstanceToPool(crystal.gameObject);
+				crystalHarvestCount.text = totalCount.ToString ();
+			});
+		}
+
+		public void QuitLearnView(){
+			
+			HideQuitQueryHUD ();
+			HideFinishLearningQuitHUD ();
 		}
 
 	}

@@ -13,8 +13,6 @@ namespace WordJourney
 		// 单词学习信息
 		private LearningInfo learnInfo;
 
-		// 当前选择的选项卡序号
-		private int currentSelectTitleIndex = -1;
 
 		/// <summary>
 		/// 初始化学习记录界面
@@ -39,70 +37,24 @@ namespace WordJourney
 
 			learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
 
-			recordView.SetUpRecordView ();
+			recordView.SetUpRecordView (learnInfo);
 
-			OnTitleButtonClick (0);
-
-			GetComponent<Canvas>().enabled = true; 
-		}
-
-		/// <summary>
-		/// 选择选项卡按钮后的响应方法
-		/// </summary>
-		/// <param name="index">选项卡序号.</param>
-		public void OnTitleButtonClick(int index){
-
-			if (currentSelectTitleIndex == index) {
-				return;
-			}
-
-			currentSelectTitleIndex = index;
-
-			recordView.OnSelectTitleButton (index);
-
-			switch (index) {
-			case 0:
-				OnGeneralInfoButtonClick (); // 选择了学习记录选项卡
-				break;
-			case 1:
-				OnLearnedButtonClick (); // 选择了已学习选项卡
-				break;
-			case 2:
-				OnUnlearnedButtonClick (); // 选择了未学习选项卡
-				break;
-			}
 
 		}
-
-		/// <summary>
-		/// 选择学习记录选项卡的响应方法
-		/// </summary>
-		private void OnGeneralInfoButtonClick(){
-
-			recordView.OnGeneralInfoButtonClick (learnInfo);
-		}
-
-
-		/// <summary>
-		/// 选择以学习选项卡的响应方法
-		/// </summary>
-		private void OnLearnedButtonClick(){
-
-			recordView.OnQuitWordsRecordPlane ();
-
-			recordView.OnLearnedButtonClick (learnInfo);
-		}
-
-		/// <summary>
-		///  选择未学习选项卡的响应方法
-		/// </summary>
-		private void OnUnlearnedButtonClick(){
-
-			recordView.OnQuitWordsRecordPlane ();
 			
-			recordView.OnUnlearnedButtonClick (learnInfo);
+
+		public void OnLearnedWordButtonClick(){
+			recordView.SetUpAllLearnedWords ();
 		}
 
+
+		public void OnWrongWordsButtonClick(){
+			recordView.SetUpAllUngraspedWords ();
+		}
+
+		public void OnQuitWordsPlaneButtonClick(){
+			recordView.QuitWordsPlane ();
+		}
 
 		/// <summary>
 		/// 退出学习记录界面

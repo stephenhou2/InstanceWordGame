@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3633873983
+CRC: 1980280848
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b44c09d9a558f1fa2b0d92d39e54dbac
+    Hash: a37f8f1db7b812e774a9aa1e003c1d64
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8d13a8a1131e33b7a57cfa28d879c97d
+    Hash: 1d521d0b31b0acc1becb524c7c2c6ce1
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -94,6 +94,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 1301a6ee09f0a4aeabf17f4a095d7f53, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 768f73fe88a5b4704ad82336ce970a73, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 37672a7f2038242f59e844a75250ddc7, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 870971bff6cd141aebad0be19d7cf532, type: 3}
@@ -122,6 +124,8 @@ Assets:
 - Assets/Prefabs/Explore/RewardButtonModel.prefab
 - Assets/Prefabs/Explore/GoodsModel.prefab
 - Assets/Prefabs/Explore/ChoiceButtonModel.prefab
+- Assets/Prefabs/Explore/StatusTintModel.prefab
+- Assets/Prefabs/Explore/TintTextModel.prefab
 - Assets/Prefabs/Explore/SkillButtonModel.prefab
 - Assets/Prefabs/Explore/MaterialCardModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab

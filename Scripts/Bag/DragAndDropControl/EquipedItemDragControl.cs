@@ -36,7 +36,7 @@ namespace WordJourney
 			}
 			bagView.SetUpItemDetailHUD (item, itemImage.sprite);
 			bagView.GetComponent<BagViewController> ().currentSelectItem = item;
-			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
+//			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
 		}
 
 		protected override void OnUserLongPress (PointerEventData eventData)

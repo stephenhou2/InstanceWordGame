@@ -9,6 +9,12 @@ namespace WordJourney{
 	[System.Serializable]
 	public class GameSettings {
 
+		public enum LearnMode
+		{
+			Test,
+			Learn
+		}
+
 		public bool isPronunciationEnable = true;
 
 		public bool autoPronounce = true;
@@ -18,6 +24,8 @@ namespace WordJourney{
 		public int systemVolume = 50;
 
 		public WordType wordType = WordType.CET4;
+
+		public LearnMode learnMode;
 
 
 		public override string ToString ()

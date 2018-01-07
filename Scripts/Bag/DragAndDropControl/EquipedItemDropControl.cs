@@ -162,7 +162,9 @@ namespace WordJourney
 
 				Player.mainPlayer.ResetBattleAgentProperties (false);
 
-				bagView.RemoveItemInBag (GetDraggedObject(eventData).transform);
+				Item origItem = GetDraggedObject (eventData).GetComponent<ItemDragControl> ().item;
+
+				bagView.RemoveItemInBag (origItem);
 
 				SetDropResult (eventData, true);
 

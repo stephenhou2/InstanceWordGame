@@ -229,8 +229,10 @@ namespace WordJourney
 
 
 
-		public List<Skill> attachedTriggeredSkills = new List<Skill>();
-		public List<Skill> attachedConsumablesSkills = new List<Skill> ();
+		public List<TriggeredSkill> attachedEquipmentSkills = new List<TriggeredSkill>();
+		public List<ConsumablesSkill> attachedConsumablesSkills = new List<ConsumablesSkill> ();
+
+		public List<string> allStatus = new List<string> ();
 
 		[SerializeField]private int[] mCharactersCount;
 		public int[] charactersCount{
@@ -355,7 +357,6 @@ namespace WordJourney
 
 
 		public void ResetPropertiesWithPropertyCalculator(AgentPropertyCalculator cal){
-//			maxHealthGainScalerFromOther = 
 			maxHealth = cal.maxHealth;
 			health = cal.health;
 			mana = cal.mana;
@@ -369,6 +370,22 @@ namespace WordJourney
 			physicalHurtScaler = cal.physicalHurtScaler;
 			magicalHurtScaler = cal.magicalHurtScaler;
 			critHurtScaler = cal.critHurtScaler;
+
+//			allStatus.Clear ();
+//
+//			for (int i = 0; i < cal.triggeredSkills.Count; i++) {
+//				string status = cal.triggeredSkills [i].statusName;
+//				if (!allStatus.Contains (status)) {
+//					allStatus.Add (status);
+//				}
+//			}
+//
+//			for (int i = 0; i < cal.consumablesSkills.Count; i++) {
+//				string status = cal.consumablesSkills [i].statusName;
+//				if (!allStatus.Contains (status)) {
+//					allStatus.Add (status);
+//				}
+//			}
 
 		}
 
@@ -530,7 +547,6 @@ namespace WordJourney
 			dodgeWithEquipment = (int)(dodgeWithEquipment * (1 + dodgeGainScalerFromEq));
 			critWithEquipment = (int)(critWithEquipment * (1 + critGainScalerFromEq));
 
-
 			// 根据其他状态加成重新计算人物最终属性
 			maxHealth = (int)((maxHealthWithEquipment + maxHealthChangeFromOther) * (1 + maxHealthChangeScalerFromOther));
 			health = (int)((healthWithEquipment + healthChangeFromOther) * (1 + healthChangeScalerFromOther));
@@ -542,8 +558,6 @@ namespace WordJourney
 			magicResist = (int)((magicResistWithEquipment + magicResistChangeFromOther) * (1 + magicResistChangeScalerFromOther));
 			dodge = (int)((dodgeWithEquipment + dodgeChangeFromOther) * (1 + dodgeChangeScalerFromOther));
 			crit = (int)((critWithEquipment + critChangeFromOther) * (1 + critChangeScalerFromOther));
-
-
 
 			if (toOriginalState) {
 				health = maxHealth;
@@ -561,15 +575,15 @@ namespace WordJourney
 			int critChangeFromEq = critWithEquipment - mCritWithEq;
 
 			// 计算人物其他属性
-			int finalMaxHealthChangeFromOther = maxHealth - originalMaxHealth - maxHealthChangeFromEq;
-			int finalHitChangeFromOther = hit - originalHit - hitChangeFromEq;
-			int finalAttackChangeFromOther = attack - originalAttack - attackChangeFromEq;
-			int finalAttackSpeedChangeFromOther = attackSpeed - originalAttackSpeed - attackSpeedChangeFromEq;
-			int finalManaChangeFromOther = mana - originalMana - manaChangeFromEq;
-			int finalArmorChangeFromOther = armor - originalArmor - armorChangeFromEq;
-			int finalMagicResistChangeFromOther = magicResist - originalMagicResist - magicResistChangeFromEq;
-			int finalDodgeChangeFromOther = dodge - originalDodge - dodgeChangeFromEq;
-			int finalCritChangeFromOther = crit - originalCrit - critChangeFromEq;
+			int finalMaxHealthChangeFromOther = maxHealth - maxHealthWithEquipment;
+			int finalHitChangeFromOther = hit - hitWithEquipment;
+			int finalAttackChangeFromOther = attack - attackWithEquipment;
+			int finalAttackSpeedChangeFromOther = mAttackSpeed- attackSpeedWithEquipment;
+			int finalManaChangeFromOther = mana  - manaWithEquipment;
+			int finalArmorChangeFromOther = armor  - armorWithEquipment;
+			int finalMagicResistChangeFromOther = magicResist  - magicResistWithEquipment;
+			int finalDodgeChangeFromOther = dodge  - dodgeWithEquipment;
+			int finalCritChangeFromOther = crit  - critWithEquipment;
 
 
 

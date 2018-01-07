@@ -33,8 +33,21 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-			bc2d.enabled = true;
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+//			mapItemAnimator.enabled = true;
+			SetUpLauncher ();
+			SetSortingOrder (-(int)transform.position.y);
 			bulletPool = InstancePool.GetOrCreateInstancePool ("BulletPool", CommonData.poolContainerName);
+
+		}
+
+		public override void AddToPool (InstancePool pool)
+		{
+//			bc2d.enabled = false;
+//			mapItemAnimator.enabled = false;
+			gameObject.SetActive(false);
+			pool.AddInstanceToPool (this.gameObject);
 		}
 
 		public void SetRange(float width,float height){
@@ -45,7 +58,7 @@ namespace WordJourney
 			this.towards = towards;
 		}
 
-		public void SetUpLauncher(){
+		private void SetUpLauncher(){
 			switch(towards){	
 			case MyTowards.Up:
 				mapItemAnimator.SetTrigger ("Back");

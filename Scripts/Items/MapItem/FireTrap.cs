@@ -26,17 +26,36 @@ namespace WordJourney
 			}
 		}
 
+		public override void InitMapItem ()
+		{
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+//			mapItemAnimator.enabled = true;
+			SetTrapOn ();
+			SetSortingOrder (-(int)transform.position.y);
+		}
+
+
+		public override void AddToPool(InstancePool pool){
+			gameObject.SetActive (false);
+//			bc2d.enabled = false;
+//			mapItemAnimator.enabled = false;
+			pool.AddInstanceToPool (this.gameObject);
+		}
+
 		public override void SetTrapOn ()
 		{
-//			mapItemAnimator.ResetTrigger ("ChangeStatus");
+			mapItemAnimator.SetBool ("Play",false);
 			bc2d.enabled = true;
+			isTrapOn = true;
 			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 10;
 		}
 
 		public override void SetTrapOff ()
 		{
-			mapItemAnimator.SetTrigger ("ChangeStatus");
+			mapItemAnimator.SetBool ("Play",true);
 			bc2d.enabled = false;
+			isTrapOn = false;
 			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 1;
 			mapGenerator.AddMapItemInPool (this.transform);
 		}
@@ -45,7 +64,7 @@ namespace WordJourney
 		{
 //			triggered = !triggered;
 
-			if (!trapOn) {
+			if (!isTrapOn) {
 				return;
 			}
 

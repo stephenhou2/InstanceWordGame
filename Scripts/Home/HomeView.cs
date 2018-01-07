@@ -1,30 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
+
+
 
 
 namespace WordJourney
 {
+
+	using UnityEngine.UI;
+
 	public class HomeView : MonoBehaviour {
 
+//		public Text playerLevelText;
 
-		public Text playerLevelText;
-
-		public Slider playerHealthBar;
-
-//		public Transform votexImage;
-
-//		private Tweener votexRotate;
+//		public Slider playerHealthBar;
 
 		public Image maskImage;
 
 		public Transform chapterSelectPlane;
+		public Transform chapterSelectHUD;
 		public Transform chaptersContainer;
 
 		private Transform chapterButtonModel;
 		private InstancePool chapterButtonPool;
+
+		public float chapterSelectPlaneZoomInDuration = 0.2f;
 
 		public void SetUpHomeView(){
 
@@ -44,8 +45,6 @@ namespace WordJourney
 			GetComponent<Canvas> ().enabled = true;
 
 			SetUpTopBar ();
-
-//			VotexRotate ();
 
 		}
 		public void ShowMaskImage (){
@@ -68,11 +67,11 @@ namespace WordJourney
 
 			Player player = Player.mainPlayer;
 
-			playerLevelText.text = player.agentLevel.ToString();
-
-			playerHealthBar.maxValue = player.maxHealth;
-			playerHealthBar.value = player.health;
-			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
+//			playerLevelText.text = player.agentLevel.ToString();
+//
+//			playerHealthBar.maxValue = player.maxHealth;
+//			playerHealthBar.value = player.health;
+//			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
 
 		}
 
@@ -86,6 +85,10 @@ namespace WordJourney
 
 				Button chapterButton = chapterButtonPool.GetInstance<Button> (chapterButtonModel.gameObject, chaptersContainer);
 
+				Image lockImage = chapterButton.transform.Find ("LockImage").GetComponent<Image> ();
+
+//				lockImage.enabled = 
+
 				chapterButton.GetComponentInChildren<Text> ().text = GameManager.Instance.gameDataCenter.gameLevelDatas [5 * i].chapterName;
 
 				chapterButton.onClick.RemoveAllListeners ();
@@ -96,8 +99,41 @@ namespace WordJourney
 
 			}
 
+			chapterSelectHUD.localScale = new Vector3 (0.1f, 0.1f, 1);
+
 			chapterSelectPlane.gameObject.SetActive (true);
 
+			IEnumerator chapterSelectZoomInCoroutine = ChapterSelectHUDZoomIn ();
+
+			StartCoroutine (chapterSelectZoomInCoroutine);
+
+		}
+
+		private IEnumerator ChapterSelectHUDZoomIn(){
+			
+
+			float chapterSelectHUDScale = chapterSelectHUD.localScale.x;
+
+			float chapterSelectHUDZoomSpeed = (1 - chapterSelectHUDScale) / chapterSelectPlaneZoomInDuration;
+
+			Debug.Log (Time.time);
+
+			while (chapterSelectHUDScale < 1) {
+				float zoomInDelta = chapterSelectHUDZoomSpeed * Time.deltaTime;
+				chapterSelectHUD.localScale += new Vector3 (zoomInDelta, zoomInDelta, 0);
+				chapterSelectHUDScale += zoomInDelta;
+				yield return null;
+			}
+
+			Debug.Log (Time.time);
+
+			chapterSelectHUD.localScale = Vector3.one;
+
+		}
+
+		public void QuitChapterSelectPlane(){
+			chapterButtonPool.AddChildInstancesToPool (chaptersContainer);
+			chapterSelectPlane.gameObject.SetActive (false);
 		}
 
 		public void OnQuitHomeView(){
@@ -105,14 +141,6 @@ namespace WordJourney
 			chapterButtonPool.AddChildInstancesToPool (chaptersContainer);
 
 			chapterSelectPlane.gameObject.SetActive (false);
-
-//			gameObject.SetActive(false);
-
-//			GetComponent<Canvas> ().targetDisplay = 1;
-
-//			votexImage.localRotation = Quaternion.identity;
-//
-//			votexRotate.Kill (false);
 
 			HideMaskImage ();
 

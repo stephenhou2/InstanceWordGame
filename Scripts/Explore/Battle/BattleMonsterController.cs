@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace WordJourney
 {
-
+	
+		
 	public class BattleMonsterController : BattleAgentController {
 
 		// 怪物UI控制器
@@ -16,7 +17,7 @@ namespace WordJourney
 		// 玩家战斗胜利回调
 		private CallBack<Transform> playerWinCallBack;
 
-		public Skill defaultSkill;
+
 
 
 		protected override void Awake(){
@@ -29,10 +30,10 @@ namespace WordJourney
 
 		}
 
-		public void SetAlive(){
-			armatureCom.enabled = true;
-			boxCollider.enabled = true;
-		}
+//		public void SetAlive(){
+//			PlayRoleAnim ("wait", 0, null);
+//			SetSortingOrder (-(int)transform.position.y);
+//		}
 
 		/// <summary>
 		/// 初始化碰到的怪物
@@ -79,60 +80,53 @@ namespace WordJourney
 		/// 角色战斗逻辑
 		/// </summary>
 		public override void Fight(){
-//			currentSkill = (agent as Monster).attac ();
-			UseSkill (defaultSkill);
+			currentSkill = InteligentAttackSkill ();
+			UseSkill (currentSkill);
 		}
+
+
 			
 		/// <summary>
 		/// 使用技能
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		protected override void UseSkill (Skill skill)
+		protected override void UseSkill (ActiveSkill skill)
 		{
-			// 停止播放当前的等待动画
-			this.armatureCom.animation.Stop ();
 
-			currentSkill = skill;
-
-			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim ("attack", 1, () => {
+			// 播放技能对应的角色动画，角色动画结束后播放攻击间隔动画
+			this.PlayRoleAnim (skill.selfRoleAnimName, 1, () => {
 				// 播放等待动画
 				this.PlayRoleAnim("interval",0,null);
 			});
 
-//			bpCtr.PlayRoleAnim(skill.enemyRoleAnimName,
-
 		}
+			
 
 
 		protected override void AgentExcuteHitEffect ()
 		{
-
-			// 播放技能对应的玩家技能特效动画
+			// 播放技能对应的怪物技能特效动画
 			if (currentSkill.selfEffectAnimName != string.Empty) {
 				SetEffectAnim (currentSkill.selfEffectAnimName);
 			}
 
-			// 播放技能对应的怪物技能特效动画
+			// 播放技能对应的玩家技能特效动画
 			if (currentSkill.enemyEffectAnimName != string.Empty) {
 				bpCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
 			}
 
 			GameManager.Instance.soundManager.PlaySkillEffectClips (currentSkill.sfxName);
 
-//			GameManager.Instance.soundManager.PlayClips (
-//				GameManager.Instance.gameDataCenter.allExploreAudioClips,
-//				SoundDetailTypeName.Skill, 
-//				currentSkill.sfxName);
-
 			currentSkill.AffectAgents(this,bpCtr);
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if(!FightEnd()){
-//				currentSkill = (agent as Monster).InteligentSelectSkill ();
-				attackCoroutine = InvokeAttack (defaultSkill);
+				currentSkill = InteligentAttackSkill ();
+				Debug.Log (currentSkill);
+				attackCoroutine = InvokeAttack (currentSkill);
 				StartCoroutine (attackCoroutine);
 			}
+				
 
 //			this.UpdateStatusPlane();
 //
@@ -228,7 +222,7 @@ namespace WordJourney
 		}
 
 		public override void UpdateStatusPlane(){
-			bmUICtr.UpdateMonsterStatusPlane ();
+			bmUICtr.UpdateAgentStatusPlane ();
 		}
 
 		/// <summary>
@@ -240,11 +234,7 @@ namespace WordJourney
 
 			this.armatureCom.animation.Stop ();
 
-			bpCtr.PlayRoleAnim ("wait", 0, null);
-
 			CancelInvoke ();
-
-//			StopAllCoroutines ();
 
 			if (attackCoroutine != null) {
 				StopCoroutine (attackCoroutine);
@@ -290,6 +280,15 @@ namespace WordJourney
 		public override void TowardsRight ()
 		{
 			modelActive.transform.localScale = Vector3.one;
+		}
+
+		public void AddToPool(InstancePool pool){
+
+			boxCollider.enabled = false;
+			gameObject.SetActive (false);
+			PlayRoleAnim ("", -1, null);
+			pool.AddInstanceToPool (this.gameObject);
+
 		}
 
 	}

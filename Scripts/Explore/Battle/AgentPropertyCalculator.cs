@@ -146,10 +146,10 @@ namespace WordJourney
 
 			magicalHurtToEnemy = (int)(magicalHurtToEnemy * magicalHurtScaler / (1 + magicResistSeed * enemy.propertyCalculator.magicResist));
 
-			string fightResult = string.Format ("战斗结果:角色名称：{0}，造成的物理伤害：{1}，造成的魔法伤害：{2},暴击系数：{3},原始物理伤害：{4},",
-				self.agent.agentName, physicalHurtToEnemy, magicalHurtToEnemy,tempCritScaler,oriPhysicalHurtToEnemy);
+//			string fightResult = string.Format ("战斗结果:角色名称：{0}，造成的物理伤害：{1}，造成的魔法伤害：{2},暴击系数：{3},原始物理伤害：{4},",
+//				self.agent.agentName, physicalHurtToEnemy, magicalHurtToEnemy,tempCritScaler,oriPhysicalHurtToEnemy);
 
-			Debug.Log (fightResult);	
+//			Debug.Log (fightResult);	
 
 		}
 
@@ -165,31 +165,77 @@ namespace WordJourney
 			magicalHurtToEnemy = 0;
 			hurtReflect = 0;
 			healthAbsorb = 0;
-//			specialAttackResult = SpecialAttackResult.None;
 		}
 
 		public List<TriggeredSkill> triggeredSkills = new List<TriggeredSkill>();
 		public List<ConsumablesSkill> consumablesSkills = new List<ConsumablesSkill> ();
 
 		public void AddSkill<T>(T skill){
+
 			if (typeof(T) == typeof(TriggeredSkill)) {
-				triggeredSkills.Add (skill as TriggeredSkill);
+				
+				TriggeredSkill trigSkill = skill as TriggeredSkill;
+
+				if (trigSkill.statusName == "") {
+					return;
+				}
+				triggeredSkills.Add (trigSkill);
+
+				self.agent.allStatus.Add (trigSkill.statusName);
+
+				self.UpdateStatusPlane ();
+
 			} else if (typeof(T) == typeof(ConsumablesSkill)) {
-				consumablesSkills.Add (skill as ConsumablesSkill);
+				ConsumablesSkill consSkill = skill as ConsumablesSkill;
+				if (consSkill.statusName == "") {
+					return;
+				}
+				consumablesSkills.Add (consSkill);
+				self.agent.allStatus.Add (consSkill.statusName);
+				self.UpdateStatusPlane ();
 			}
 		}
 
 		public void RemoveTriggeredSkill<T>(T skill){
 			if (typeof(T) == typeof(TriggeredSkill) && triggeredSkills.Contains(skill as TriggeredSkill)) {
-				triggeredSkills.Remove (skill as TriggeredSkill);
+				TriggeredSkill trigSkill = skill as TriggeredSkill;
+
+				if (trigSkill.statusName == "") {
+					return;
+				}
+
+				triggeredSkills.Remove (trigSkill);
+
+				self.agent.allStatus.Remove (trigSkill.statusName);
+
+				self.UpdateStatusPlane ();
+
 			} else if (typeof(T) == typeof(ConsumablesSkill) && consumablesSkills.Contains(skill as ConsumablesSkill)) {
-				consumablesSkills.Remove (skill as ConsumablesSkill);
+
+				ConsumablesSkill consSkill = skill as ConsumablesSkill;
+
+				if (consSkill.statusName != "") {
+					return;
+				}
+
+				consumablesSkills.Remove (consSkill);
+
+				self.agent.allStatus.Remove (consSkill.statusName);
+
+				self.UpdateStatusPlane ();
 			}
 		}
 
 		public List<TriggeredSkill> GetTriggeredSkillsWithSameStatus(string statusName){
+			
+			if (statusName == "") {
+				string error = "技能的状态名不能为空";
+				Debug.LogError (error);
+				return null;
+			}
 
 			List<TriggeredSkill> sameStatusSkills = new List<TriggeredSkill> ();
+
 			for (int i = 0; i < triggeredSkills.Count; i++) {
 				if (triggeredSkills [i].statusName == statusName) {
 					sameStatusSkills.Add (triggeredSkills [i]);
@@ -230,7 +276,7 @@ namespace WordJourney
 		/// 属性变更
 		/// </summary>
 		/// <param name="propertyType">Property type.</param>
-		/// <param name="gain">Gain.</param>
+		/// <param name="change">change.</param>
 		public void AgentPropertyChange(PropertyType propertyType,float change,bool fromTriggeredSkill = true){
 
 			self.agent.AddPropertyChangeFromOther (propertyType, change);

@@ -39,7 +39,7 @@ namespace WordJourney{
 		}
 
 		public static Item NewItemWith(Item item,int itemCount){
-			ItemModel itemModel = null;
+//			ItemModel itemModel = null;
 			Item newItem = null;
 			switch (item.itemType) {
 			case ItemType.Equipment:
@@ -61,7 +61,7 @@ namespace WordJourney{
 			ItemModel itemModel = null;
 			Item newItem = null;
 
-			if (itemId < 1000) {
+			if (itemId < 200) {
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
 					return item.itemId == itemId;
 				});

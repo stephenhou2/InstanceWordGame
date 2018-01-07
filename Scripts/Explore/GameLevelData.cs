@@ -131,7 +131,7 @@ namespace WordJourney
 				Transform monster = GameManager.Instance.gameDataCenter.allMonsters.Find (delegate(Transform obj) {
 					return obj.GetComponent<Monster>().monsterId == monsterIds [i];
 				});
-
+					
 				if (monster != null) {
 					monsters.Add (monster);
 				} else {

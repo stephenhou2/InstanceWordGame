@@ -15,7 +15,6 @@ namespace WordJourney
 			GameLevelDatas,
 			Materials,
 			MaterialSprites,
-//			EquipmentAttachedProperties,
 			ItemModels,
 			ItemSprites,
 			MapSprites,
@@ -36,7 +35,6 @@ namespace WordJourney
 		private List<GameLevelData> mGameLevelDatas = new List<GameLevelData>();
 		private List<Material> mAllMaterials = new List<Material> ();
 		private List<Sprite> mAllMaterialSprites = new List<Sprite> ();
-//		private List<EquipmentAttachedProperty> mAllEquipmentAttachedProperties = new List<EquipmentAttachedProperty> ();
 		private List<ItemModel> mAllItemModels = new List<ItemModel> ();
 		private List<Sprite> mAllItemSprites = new List<Sprite>();
 		private List<Sprite> mAllMapSprites = new List<Sprite> ();
@@ -114,9 +112,6 @@ namespace WordJourney
 			case GameDataType.MaterialSprites:
 				LoadMaterialSprites ();
 				break;
-//			case GameDataType.EquipmentAttachedProperties:
-//				LoadEquipmentAttachedProperties ();
-//				break;
 			case GameDataType.ItemModels:
 				LoadItemModels ();
 				break;
@@ -209,7 +204,6 @@ namespace WordJourney
 			if (mLearnInfo == null) {
 				mLearnInfo = new LearningInfo ();
 			}
-			mLearnInfo.GetCurrentLearningTypeWords ();
 			dataReadyDic [GameDataType.LearnInfo] = true;
 			inLoadingDataTypes.Remove (GameDataType.LearnInfo);
 		}

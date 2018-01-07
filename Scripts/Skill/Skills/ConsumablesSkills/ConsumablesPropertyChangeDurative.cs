@@ -32,6 +32,8 @@ namespace WordJourney
 
 			List<TriggeredSkill> sameStatusSkills = self.propertyCalculator.GetTriggeredSkillsWithSameStatus (statusName);
 
+
+
 			// 如果技能效果不可叠加，则被影响人身上原有的同种状态技能效果全部取消，并从战斗结算器中移除这些技能
 			if (!canOverlay) {
 				for (int i = 0; i < sameStatusSkills.Count; i++) {

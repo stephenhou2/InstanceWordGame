@@ -297,7 +297,7 @@ namespace WordJourney
 					if(!buySuccess){
 						GetComponent<ExploreUICotroller>().SetUpTintHUD("金币不足");
 					}else{
-						GetComponent<BattlePlayerUIController>().UpdatePlayerStatusPlane();
+						GetComponent<BattlePlayerUIController>().UpdateAgentStatusPlane();
 						itemDetailHUDInTrade.gameObject.SetActive(false);
 						SetUpTradePlane();
 					}

@@ -17,9 +17,6 @@ namespace WordJourney
 		public GameObject playerBackWard;
 		public GameObject playerSide;
 
-		// 普通攻击技能（角色自带）
-		public Skill defaultSkill;
-
 		// 事件回调
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterNpc;
@@ -45,7 +42,7 @@ namespace WordJourney
 		private bool inSingleMoving;
 
 		// 移动路径点集
-		private List<Vector3> pathPosList = new List<Vector3>();
+		public List<Vector3> pathPosList;
 
 		// 正在前往的节点位置
 		public Vector3 singleMoveEndPos;
@@ -78,7 +75,29 @@ namespace WordJourney
 			base.Awake ();
 
 		}
+			
+		public void InitBattlePlayer(){
+			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
 
+			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+		}
+
+		private bool onlyStoreDestination;
+		private bool thereIsStoredDestination;
+
+		private Vector3 storedDestination;
+
+		public void TempStoreDestinationAndDontMove(){
+			onlyStoreDestination = true;
+		}
+
+		public void MoveToStoredDestination(){
+			onlyStoreDestination = false;
+			if (thereIsStoredDestination) {
+				MoveToPosition (storedDestination, exploreManager.GetComponent<MapGenerator> ().mapWalkableInfoArray);
+				thereIsStoredDestination = false;
+			}
+		}
 
 
 		/// <summary>
@@ -87,8 +106,16 @@ namespace WordJourney
 		/// <param name="pathPosList">Path position list.</param>
 		/// <param name="moveDestination">End position.</param>
 		public bool MoveToPosition(Vector3 moveDestination,int[,] mapWalkableInfoArray){
+
+			if (onlyStoreDestination) {
+				storedDestination = moveDestination;
+				thereIsStoredDestination = true;
+				return navHelper.FindPath (singleMoveEndPos, moveDestination, mapWalkableInfoArray).Count > 0;
+			}
+
 			// 计算自动寻路路径
 			pathPosList = navHelper.FindPath(singleMoveEndPos,moveDestination,mapWalkableInfoArray);
+
 
 			StopCoroutine ("MoveWithNewPath");
 
@@ -103,13 +130,14 @@ namespace WordJourney
 					inSingleMoving = false;
 					PlayRoleAnim ("wait", 0, null);
 				});
-					
+
 				Debug.Log ("无有效路径");
 
 				return false;
 			}
 
 			StartCoroutine ("MoveWithNewPath");
+//			MoveWithNewPath ();
 
 			return pathPosList.Count > 0;
 
@@ -124,15 +152,12 @@ namespace WordJourney
 			// 如果移动动画不为空，则等待当前移动结束
 			if (moveTweener != null) {
 
-				// 动画结束时标记isSingleMoving为false（单步行动结束），不删除路径点（因为该单步行动是旧路径上的行动点）
+				// 原来有移动动画，则将当步的动画结束回调改为只标记已走完，而不删除路径点（因为新的路径就是根据当步的结束点计算的，改点不在新路径内）
 				moveTweener.OnComplete (() => {
 					inSingleMoving = false;
 				});
 
-				// 等待单步行动结束
-				while (inSingleMoving) {
-					yield return null;
-				}
+				yield return new WaitUntil (() => !inSingleMoving);
 
 			} 
 
@@ -164,11 +189,6 @@ namespace WordJourney
 				// 将当前节点从路径点中删除
 				pathPosList.RemoveAt(0);
 
-//				if(trapTriggered != null && !trapTriggered.transform.position.Equals(singleMoveEndPos)){
-//					trapTriggered.GetComponent<BoxCollider2D>().enabled = true;
-//					trapTriggered = null;
-//				}
-
 				// 移动到下一个节点位置
 				MoveToNextPosition();
 			});
@@ -183,19 +203,20 @@ namespace WordJourney
 			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.3f, moveVector.y * 0.2f, 0);
 
 //			Debug.LogFormat ("背景层移动目标位置[{0},{1}]", backgroundImageTargetPos.x, backgroundImageTargetPos.y);
-				
+
 			Tweener backgroundMoveTweener = background.DOLocalMove(backgroundImageTargetPos,moveDuration);
 
 			backgroundMoveTweener.SetEase (Ease.Linear);
 
 
 		}
-			
+
 		/// <summary>
 		/// 判断当前是否已经走到了终点位置，位置度容差0.05
 		/// </summary>
 		/// <returns><c>true</c>, if end point was arrived, <c>false</c> otherwise.</returns>
 		private bool ArriveEndPoint(){
+
 
 			if(Mathf.Abs(transform.position.x - moveDestination.x) <= 0.05f &&
 				Mathf.Abs(transform.position.y - moveDestination.y) <= 0.05f){
@@ -205,21 +226,10 @@ namespace WordJourney
 			return false;
 
 		}
-
-		/// <summary>
-		/// 继续当前未完成的单步移动
-		/// </summary>
-		public void ContinueMove(){
-
-			MoveToNextPosition ();
-
-			boxCollider.enabled = true;
-
-		}
-
+			
 
 		public void ActiveBattlePlayer(bool forward,bool backward,bool side){
-			
+
 			playerForward.SetActive (forward);
 			playerBackWard.SetActive (backward);
 			playerSide.SetActive (side);
@@ -242,11 +252,13 @@ namespace WordJourney
 		{
 			Vector3 nextPos = Vector3.zero;
 
+			boxCollider.enabled = true;
+
 			if (pathPosList.Count > 0) {
-				
+
 				nextPos = pathPosList [0];
 
-				if (nextPos.x == transform.position.x && nextPos.y == transform.position.y) {
+				if (ArriveEndPoint() && armatureCom.animation.lastAnimationName != "wait") {
 					PlayRoleAnim ("wait", 0, null);
 					return;
 				}
@@ -268,7 +280,7 @@ namespace WordJourney
 					}
 
 				}
-					
+
 				if(Mathf.RoundToInt(nextPos.y) == Mathf.RoundToInt(transform.position.y)){
 					if (nextPos.x > transform.position.x) {
 						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (1, 1, 1))) {
@@ -300,9 +312,6 @@ namespace WordJourney
 			// 2.如果未检测到碰撞体，则开始本次移动
 			if (pathPosList.Count == 1) {
 
-				// 禁用自身包围盒（否则射线检测时监测到的是自己的包围盒）
-//				boxCollider.enabled = false;
-
 				Vector3 rayStartPos = (transform.position + pathPosList [0]) / 2;
 
 				RaycastHit2D r2d = Physics2D.Linecast (rayStartPos, pathPosList [0], collosionLayer);
@@ -323,22 +332,18 @@ namespace WordJourney
 					case "npc":
 						StopWalkBeforeEvent ();
 						enterNpc (r2d.transform);
-//						boxCollider.enabled = true;
 						return;
 					case "workbench":
 						StopWalkBeforeEvent ();
 						enterWorkBench (r2d.transform);
-//						boxCollider.enabled = true;
 						return;
 					case "crystal":
 						StopWalkBeforeEvent ();
 						enterCrystal (r2d.transform);
-//						boxCollider.enabled = true;
 						return;
 					case "billboard":
 						StopWalkBeforeEvent ();
 						enterBillboard (r2d.transform);
-//						boxCollider.enabled = true;
 						return;
 					case "movablefloor":
 						break;
@@ -358,8 +363,6 @@ namespace WordJourney
 
 						enterObstacle (r2d.transform);
 
-//						boxCollider.enabled = true;
-
 						return;
 					case "treasurebox":
 
@@ -368,7 +371,7 @@ namespace WordJourney
 						enterTreasureBox (r2d.transform);
 
 						return;
-					
+
 					case "normalswitch":
 
 						StopWalkBeforeEvent ();
@@ -390,7 +393,7 @@ namespace WordJourney
 						StopWalkBeforeEvent ();
 						return;
 					case "plant":
-						StopWalkBeforeEvent ();
+//						StopWalkBeforeEvent ();
 						enterPlant (r2d.transform);
 						return;
 					case "pressswitch":
@@ -458,23 +461,10 @@ namespace WordJourney
 
 		public void StopMove(){
 			StopCoroutine ("MoveWithNewPath");
-//			moveDestination = new Vector3 (Mathf.RoundToInt(transform.position.x),
-//				Mathf.RoundToInt(transform.position.y),
-//				Mathf.RoundToInt(transform.position.z));
 			moveTweener.Kill (false);
 			inSingleMoving = false;
 			PlayRoleAnim ("wait", 0, null);
 		}
-
-//		private void FinishCurrentStepAndWait(){
-//			StartCoroutine ("WaitCurrentStepFinishAndPlayWaitAnim");
-//		}
-//
-//		private IEnumerator WaitCurrentStepFinishAndPlayWaitAnim(){
-//			yield return new WaitUntil (() => inSingleMoving);
-//			StopWalkBeforeEvent ();
-//			PlayRoleAnim ("wait", 0, null);
-//		}
 
 		public override void TowardsLeft(){
 			ActiveBattlePlayer (false, false, true);
@@ -488,20 +478,36 @@ namespace WordJourney
 			playerSide.transform.localScale = Vector3.one;
 		}
 			
-
 		/// <summary>
-		///  初始化探索界面中的玩家UI
+		/// 战斗结束之后玩家移动到怪物原来的位置
 		/// </summary>
-		public void SetUpExplorePlayerUI(){
+		public void PlayerMoveToEnemyPosAfterFight(){
 
-			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
+			PlayRoleAnim ("wait", 0, null);
 
-			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+			playerSide.transform.localPosition = Vector3.zero;
 
-			#warning 这里技能选择回调暂时传了null
-			bpUICtr.SetUpExplorePlayerView (agent as Player, null);
+			Vector3 targetPos = pathPosList [0];
+
+			// 玩家角色位置和原来的怪物位置之间间距大于0.5（玩家是横向进入战斗的），则播放跑的动画到指定位置
+			if (Mathf.Abs (targetPos.x - transform.position.x) > 0.5) {
+				MoveToNextPosition ();
+
+			} else {// 玩家角色位置和原来的怪物位置之间间距小于0.5（玩家是纵向进入战斗的），则角色直接移动到指定位置，不播动画
+
+				transform.position = targetPos;
+
+				singleMoveEndPos = targetPos;
+
+				pathPosList.Clear ();
+
+				exploreManager.GetComponent<ExploreManager>().ItemsAroundAutoIntoLifeWithBasePoint (targetPos);
+
+			}
 
 		}
+
+
 
 		public override void InitFightTextDirectionTowards (Vector3 position)
 		{
@@ -515,11 +521,6 @@ namespace WordJourney
 				bpUICtr.fightTextManager.AddFightText (ft);
 			}
 		}
-
-//		public override void ShowFightTextInOrder ()
-//		{
-//			bpUICtr.fightTextManager.ShowFightTextInOrder ();
-//		}
 
 
 		/// <summary>
@@ -538,7 +539,8 @@ namespace WordJourney
 
 			if (autoFight) {
 				// 默认玩家在战斗中将先出招，首次攻击不用等待
-				UseSkill (defaultSkill);
+				currentSkill = InteligentAttackSkill();
+				UseSkill (currentSkill);
 			} else {
 				PlayRoleAnim ("wait", 0, null);
 			}
@@ -555,80 +557,26 @@ namespace WordJourney
 			if (!autoFight) {
 				PlayRoleAnim ("wait", 0, null);
 			} else {
-				attackCoroutine = InvokeAttack (defaultSkill);
+				currentSkill = InteligentAttackSkill ();
+				attackCoroutine = InvokeAttack (currentSkill);
 			}
 		}
 
 		public void UseDefaultSkill(){
-			UseSkill (defaultSkill);
+			currentSkill = InteligentAttackSkill ();
+			UseSkill (currentSkill);
 		}
 
 		/// <summary>
 		/// 使用技能
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		protected override void UseSkill (Skill skill)
+		protected override void UseSkill (ActiveSkill skill)
 		{
-			// 停止播放当前的等待动画
-			this.armatureCom.animation.Stop ();
-
-			currentSkill = skill;
-
-			string skillRoleAnimName = string.Empty;
-			string skillIntervalRoleAnimName = string.Empty;
-
-			skillRoleAnimName = "attackSword";
-			skillIntervalRoleAnimName = "intervalSword";
-
-//			if (skill.selfAnimName == "AttackOnce") {
-//
-//				Equipment weapon = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
-//					return obj.equipmentType == EquipmentType.Weapon;
-//				});
-//
-//				if (weapon == null) {
-//					skillRoleAnimName = "attackDefault";
-//					skillIntervalRoleAnimName = "intervalDefault";
-//				} else {
-//					switch (weapon.detailType) {
-//					case "剑":
-//						skillRoleAnimName = "attackSword";
-//						skillIntervalRoleAnimName = "intervalSword";
-//						break;
-//					case "刀":
-//						skillRoleAnimName = "attackBlade";
-//						skillIntervalRoleAnimName = "intervalBlade";
-//						break;
-//					case "斧子":
-//						skillRoleAnimName = "attackAxe";
-//						skillIntervalRoleAnimName = "intervalAxe";
-//						break;
-//					case "锤":
-//						skillRoleAnimName = "attackHammer";
-//						skillIntervalRoleAnimName = "intervalHammer";
-//						break;
-//					case "法杖":
-//						skillRoleAnimName = "attackStaff";
-//						skillIntervalRoleAnimName = "intervalStaff";
-//						break;
-//					case "匕首":
-//						skillRoleAnimName = "attackDragger";
-//						skillIntervalRoleAnimName = "intervalDragger";
-//						break;
-//					}
-//				}
-//
-//			} else {
-//				skillRoleAnimName = skill.selfAnimName;
-//				skillIntervalRoleAnimName = skill.selfIntervalAnimName;
-//			}
-
-
-
-			// 播放技能对应的角色动画，角色动画结束后播放技能特效动画，实现技能效果并更新角色状态栏
-			this.PlayRoleAnim (skillRoleAnimName, 1, () => {
+			// 播放技能对应的角色动画，角色动画结束后播放攻击间隔动画
+			this.PlayRoleAnim (skill.selfRoleAnimName, 1, () => {
 				// 播放等待动画
-				this.PlayRoleAnim(skillIntervalRoleAnimName,0,null);
+				this.PlayRoleAnim("interval",0,null);
 			});
 
 		}
@@ -670,11 +618,6 @@ namespace WordJourney
 			// 播放技能对应的音效
 			GameManager.Instance.soundManager.PlaySkillEffectClips(currentSkill.sfxName);
 
-//			GameManager.Instance.soundManager.PlayClips (
-//				GameManager.Instance.gameDataCenter.allExploreAudioClips, 
-//				SoundDetailTypeName.Skill, 
-//				currentSkill.sfxName);
-			
 
 			// 技能效果影响玩家和怪物
 			currentSkill.AffectAgents(this,bmCtr);
@@ -682,7 +625,8 @@ namespace WordJourney
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if (!FightEnd ()) {
 				if (autoFight) {
-					attackCoroutine = InvokeAttack (defaultSkill);
+					currentSkill = InteligentAttackSkill ();
+					attackCoroutine = InvokeAttack (currentSkill);
 					StartCoroutine (attackCoroutine);
 				} else {
 //					TransformManager.FindTransform("ExploreCanvas").GetComponent<ExploreUICotroller> ().ResetAttackCheckPosition ();
@@ -730,11 +674,13 @@ namespace WordJourney
 
 			if (bmCtr.agent.health <= 0) {
 				bmCtr.AgentDie ();
-				agent.ResetBattleAgentProperties ();
+				agent.ResetBattleAgentProperties (false);
 				isInFight = false;
 				return true;
 			} else if (agent.health <= 0) {
 				isInFight = false;
+				agent.ResetBattleAgentProperties (true);
+				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene ();
 				return true;
 			}else {
 				return false;
@@ -749,12 +695,8 @@ namespace WordJourney
 		/// </summary>
 		public override void UpdateStatusPlane(){
 			if (bpUICtr != null) {
-				bpUICtr.UpdatePlayerStatusPlane ();
+				bpUICtr.UpdateAgentStatusPlane ();
 			}
-			Transform bagCanvas = TransformManager.FindTransform ("BagCanvas");
-//			if (bagCanvas != null) {
-//				bagCanvas.GetComponent<BagView>().SetUpPlayerStatusPlane(
-//			}
 		}
 
 

@@ -97,9 +97,9 @@ namespace WordJourney
 			}
 
 			#warning 这里测试拼写，人物字母碎片全都初始化为10个，后面去掉
-			for (int i = 0; i < 26; i++) {
-				Player.mainPlayer.charactersCount [i] = 10;
-			}
+//			for (int i = 0; i < 26; i++) {
+//				Player.mainPlayer.charactersCount [i] = 10;
+//			}
 				
 			spellView.SetUpSpellViewWith (itemModel);
 

@@ -33,18 +33,6 @@ namespace WordJourney
 
 		public bool isIdle;
 
-		// 角色攻击触发的技能
-//		public List<Skill> attackTriggerSkill = new List<Skill> ();
-//
-//		// 角色被攻击触发的技能
-//		public List<Skill> beAttackedTriggerSkill = new List<Skill>();
-//
-//		// 角色死亡触发的技能
-//		public List<Skill> agentDieTriggerSkill = new List<Skill> ();
-//
-//		// 角色完成一次攻击触发事件回调队列
-//		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
-
 		// 进入战斗前触发事件回调队列
 		public List<TriggeredSkillExcutor> beforeFightTriggerExcutors = new List<TriggeredSkillExcutor>();
 
@@ -53,9 +41,6 @@ namespace WordJourney
 
 		// 角色攻击命中触发的时间回调队列
 		public List<TriggeredSkillExcutor> hitTriggerExcutors = new List<TriggeredSkillExcutor>();
-
-		// 角色完成一次攻击触发事件回调队列
-//		public List<SkillCallBack> attackFinishTriggerCallBacks = new List<SkillCallBack> ();
 
 		// 角色被攻击触发事件回调队列
 		public List<TriggeredSkillExcutor> beAttackedTriggerExcutors = new List<TriggeredSkillExcutor>();
@@ -66,20 +51,13 @@ namespace WordJourney
 		// 战斗结束触发事件回调队列
 		public List<TriggeredSkillExcutor> fightEndTriggerExcutors = new List<TriggeredSkillExcutor>();
 
-		// 角色身上的所有状态
-//		public List<SkillState> states = new List<SkillState>();
-
-//		// 角色身上的所有状态名称
-//		public List<string> states = new List<string>();
-//		// 角色身上所有状态协程
-//		public List<IEnumerator> stateEffectCoroutines = new List<IEnumerator> ();
 
 		// 碰撞检测层
 		public LayerMask collosionLayer;
 
 		// 碰撞检测包围盒
 		public BoxCollider2D boxCollider;
-	
+
 		// 激活的龙骨状态模型
 		protected GameObject modelActive;
 
@@ -88,9 +66,14 @@ namespace WordJourney
 		// 等待角色动画结束协程
 		public IEnumerator waitRoleAnimEndCoroutine;
 		// 等待技能动画结束协程
-		public IEnumerator waitEffectAnimEndCoroutine;
+		public IEnumerator skillEffectReuseCoroutine;
 
-		protected Skill currentSkill;
+		protected ActiveSkill currentSkill;
+
+
+		public List<ActiveSkill> activeSkills= new List<ActiveSkill>();
+
+
 
 		// 骨骼动画控制器
 		protected UnityArmatureComponent armatureCom{
@@ -110,22 +93,6 @@ namespace WordJourney
 			}
 		}
 
-		// 技能特效信息类
-		protected class SkillEffectInfo{
-
-			// 特效游戏体的transform
-			public Transform skillEffectTrans;
-			// 特效名称
-			public string triggerName;
-
-			public SkillEffectInfo(string triggerName,Transform skillEffectTrans){
-				this.skillEffectTrans = skillEffectTrans;
-				this.triggerName = triggerName;
-			}
-		}
-
-		// 角色身上仍然在播放中的技能特效
-		protected Dictionary<string,SkillEffectInfo> skillEffectDic = new Dictionary<string,SkillEffectInfo> ();
 
 		public List<string> currentTriggeredEffectAnim = new List<string>();
 
@@ -156,7 +123,26 @@ namespace WordJourney
 
 		public abstract void InitFightTextDirectionTowards (Vector3 position);
 
-//		public abstract void ShowFightTextInOrder ();
+		protected ActiveSkill InteligentAttackSkill(){
+
+			float seed = Random.Range (0, 1f);
+
+			float max = 0;
+
+			for (int i = 0; i < activeSkills.Count; i++) {
+
+				max += activeSkills [i].probability;
+
+				if (seed <= max) {
+					return activeSkills [i];
+				}
+
+			}
+
+			return null;
+
+		}
+
 
 		public void SetUpPropertyCalculator(){
 			propertyCalculator.enemy = enemy;
@@ -184,7 +170,7 @@ namespace WordJourney
 
 			if (frameObject.name == "hit") {
 				AgentExcuteHitEffect ();
-				Debug.LogFormat ("hit---{0}", agent.name);
+//				Debug.LogFormat ("hit---{0}", agent.name);
 			} else {
 				Debug.LogError ("事件帧消息名称必须是hit");
 			}
@@ -201,7 +187,7 @@ namespace WordJourney
 		/// 角色攻击间隔计时器
 		/// </summary>
 		/// <param name="skill">计时结束后使用的技能</param>
-		protected IEnumerator InvokeAttack(Skill skill){
+		protected IEnumerator InvokeAttack(ActiveSkill skill){
 
 			float timePassed = 0;
 
@@ -212,13 +198,14 @@ namespace WordJourney
 				yield return null;
 
 			}
-				
+
 			UseSkill (skill);
 
 		}
 
 		public void PlayShakeAnim(){
-			PlayRoleAnim ("hit", 1, null);
+			#warning 受击动画逻辑上有冲突，暂时先不使用受击动画
+//			PlayRoleAnim ("hit", 1, null);
 			StartCoroutine ("PlayAgentShake");
 		}
 
@@ -233,7 +220,7 @@ namespace WordJourney
 
 			float timer = 0f;
 
-			float deltaX = 0.1f;
+			float deltaX = 0.2f;
 
 			float backwardSpeed = deltaX / backwardTime;
 			float forwardSpeed = deltaX / forwardTime;
@@ -277,38 +264,18 @@ namespace WordJourney
 
 			isIdle = animName == "wait";
 
-		
-			if (armatureCom.animation.lastAnimationName == "attack" && animName == "hit") {
-				// 播放新的角色动画
-				armatureCom.animation.Play (animName, playTimes);
-					
-				// 如果还有等待上个角色动作结束的协程存在，则结束该协程
-				if (waitRoleAnimEndCoroutine != null) {
-					StopCoroutine (waitRoleAnimEndCoroutine);
-				}
-
-				waitRoleAnimEndCoroutine = ExcuteCallBackAtEndOfRoleAnim (delegate {
-					armatureCom.animation.Play ("attack", 1);
-				});
-
-				StartCoroutine (waitRoleAnimEndCoroutine);
-
-				return;
-
-			} 
-
-			// 播放新的角色动画
-			armatureCom.animation.Play (animName,playTimes);
-
 			// 如果还有等待上个角色动作结束的协程存在，则结束该协程
 			if (waitRoleAnimEndCoroutine != null) {
 				StopCoroutine (waitRoleAnimEndCoroutine);
 			}
+				
 
+			// 播放新的角色动画
+			armatureCom.animation.Play (animName,playTimes);
+				
 			// 如果有角色动画结束后要执行的回调，则开启一个新的等待角色动画结束的协程，等待角色动画结束后执行回调
 			if (cb != null) {
 				waitRoleAnimEndCoroutine = ExcuteCallBackAtEndOfRoleAnim (cb);
-//				waitRoleAnimEndCoroutine = StartCoroutine ("ExcuteCallBackAtEndOfRoleAnim", cb);
 				StartCoroutine(waitRoleAnimEndCoroutine);
 			}
 		}
@@ -318,119 +285,97 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="animName">触发器名称</param>
 		/// <param name="arg">bool型参数</param>
-		public void SetEffectAnim(string triggerName,bool arg){
-			
-			if (triggerName != string.Empty) {
-				
-				Transform skillEffect = null;
-
-				Animator skillEffectAnim = null;
-
-				SkillEffectInfo effectInfo = null;
-
-				if (skillEffectDic.ContainsKey (triggerName)) {
-					
-					skillEffectAnim = skillEffectDic [triggerName].skillEffectTrans.GetComponent<Animator> ();
-
-					effectInfo = skillEffectDic [triggerName];
-				
-				} else {
-
-					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
-
-					effectInfo = new SkillEffectInfo (triggerName, skillEffect);
-
-					skillEffectDic.Add (triggerName, effectInfo);
-
-//					skillEffect.localPosition = Vector3.zero;
-//					skillEffect.localRotation = Quaternion.identity;
-//					skillEffect.localScale = Vector3.one;
-
-					skillEffectAnim = skillEffect.GetComponent<Animator> ();
-				
-				}
-
-				skillEffectAnim.SetBool (triggerName, arg);
-
-				if (!arg) {
-					exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (effectInfo.skillEffectTrans);
-				}
-			}
-		}
+//		public void SetEffectAnim(string triggerName,bool arg){
+//
+//			if (triggerName != string.Empty) {
+//
+//				Transform skillEffect = null;
+//
+//				Animator skillEffectAnim = null;
+//
+//				SkillEffectInfo effectInfo = null;
+//
+//				if (skillEffectDic.ContainsKey (triggerName)) {
+//
+//					skillEffectAnim = skillEffectDic [triggerName].skillEffectTrans.GetComponent<Animator> ();
+//
+//					effectInfo = skillEffectDic [triggerName];
+//
+//				} else {
+//
+//					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
+//
+//					effectInfo = new SkillEffectInfo (triggerName, skillEffect);
+//
+//					skillEffectDic.Add (triggerName, effectInfo);
+//
+//					skillEffectAnim = skillEffect.GetComponent<Animator> ();
+//
+//				}
+//
+//				skillEffectAnim.SetBool (triggerName, arg);
+//
+//				if (!arg) {
+//					exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (effectInfo.skillEffectTrans);
+//				}
+//			}
+//		}
 
 		/// <summary>
 		/// 设置角色特效动画，string 型触发器
 		/// </summary>
 		/// <param name="animName">触发器名称</param>
 		public void SetEffectAnim(string triggerName){
-			
+
+
+
 			if(triggerName != string.Empty){
 
 				Transform skillEffect = null;
 				Animator skillEffectAnim = null;
-				SkillEffectInfo effectInfo = null;
 
-				if (skillEffectDic.ContainsKey (triggerName)) {
-					
-					skillEffectAnim = skillEffectDic [triggerName].skillEffectTrans.GetComponent<Animator> ();
 
-					effectInfo = skillEffectDic [triggerName];
+				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
 
-					if (waitEffectAnimEndCoroutine != null) {
-						StopCoroutine (waitEffectAnimEndCoroutine);
-					}
+				skillEffectAnim = skillEffect.GetComponent<Animator> ();
 
-				} else {
-
-					skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
-
-					effectInfo = new SkillEffectInfo (triggerName, skillEffect);
-
-					skillEffectDic.Add (triggerName, effectInfo);
-
-//					skillEffect.localPosition = Vector3.zero;
-//					skillEffect.localRotation = Quaternion.identity;
-//					skillEffect.localScale = Vector3.one;
-
-					skillEffectAnim = skillEffect.GetComponent<Animator> ();
-
-				}
 
 				skillEffectAnim.SetTrigger (triggerName);
 
 //				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
-				waitEffectAnimEndCoroutine = AddSkillEffectToPoolAfterAnimEnd (effectInfo);
+				skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform);
 
-				StartCoroutine (waitEffectAnimEndCoroutine);
-
-//				waitEffectAnimEndCoroutine = StartCoroutine ("AddSkillEffectToPoolAfterAnimEnd", effectInfo);
-
+				StartCoroutine (skillEffectReuseCoroutine);
 
 			}
 		}
-			
+
 
 		/// <summary>
 		/// 技能特效动画结束后将特效显示器重置后（带SkillEffectAnimtor的游戏体）加入缓存池
 		/// </summary>
 		/// <returns>The skill effect to pool after animation end.</returns>
 		/// <param name="effectInfo">Effect info.</param>
-		protected IEnumerator AddSkillEffectToPoolAfterAnimEnd(SkillEffectInfo effectInfo){
+		protected IEnumerator AddSkillEffectToPoolAfterAnimEnd(Transform skillEffectTrans){
 
 			yield return null;
 
-			Animator animator = effectInfo.skillEffectTrans.GetComponent<Animator> ();
+			Animator animator = skillEffectTrans.GetComponent<Animator> ();
 
 			AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 
 			yield return new WaitForSeconds (stateInfo.length);
 
+			animator.SetTrigger ("Empty");
+
+			yield return null;
+
 			exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (animator.transform);
 
-			skillEffectDic.Remove (effectInfo.triggerName);
+//			skillEffectDic.Remove (effectInfo.triggerName);
 
-			animator.ResetTrigger (effectInfo.triggerName);
+//			animator.ResetTrigger (triggerName);
 
 //			Debug.LogFormat ("{0}回收技能特效{1}", agent.agentName, effectInfo.triggerName);
 
@@ -450,14 +395,12 @@ namespace WordJourney
 		/// 使用技能
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		protected abstract void UseSkill (Skill skill);
+		protected abstract void UseSkill (ActiveSkill skill);
 
 		/// <summary>
 		/// 角色默认的战斗方法
 		/// </summary>
 		public abstract void Fight ();
-
-//		public void 
 
 		public void UpdateFightStatus (){
 			agent.ResetPropertiesWithPropertyCalculator (propertyCalculator);
@@ -516,13 +459,7 @@ namespace WordJourney
 				cb (this, enemy);
 			}
 		}
-
-//		public void ExcuteAttackFinishSkillCallBacks(BattleAgentController enemy){
-//			for (int i = 0; i < attackTriggerExcutors.Count; i++) {
-//				SkillCallBack cb = attackFinishTriggerCallBacks [i];
-//				cb (this, enemy);
-//			}
-//		}
+			
 
 		public void ExcuteFightEndCallBacks(BattleAgentController enemy){
 			for (int i = 0; i < fightEndTriggerExcutors.Count; i++) {
@@ -579,6 +516,10 @@ namespace WordJourney
 		/// <returns>The call back at end of animation.</returns>
 		/// <param name="cb">Cb.</param>
 		protected IEnumerator ExcuteCallBackAtEndOfRoleAnim(CallBack cb){
+//			while (!armatureCom.animation.isCompleted) {
+//				Debug.LogFormat ("agent:{0},animName:{1},playtime:{2}", agent.agentName,armatureCom.animation.lastAnimationName, armatureCom.animation.lastAnimationState.currentTime);
+//				yield return null;
+//			}
 			yield return new WaitUntil (() => armatureCom.animation.isCompleted);
 			cb ();
 		}

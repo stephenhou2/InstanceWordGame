@@ -80,6 +80,10 @@ namespace WordJourney
 
 		}
 
+		public void QuitChapterSelect(){
+			homeView.QuitChapterSelectPlane ();
+		}
+
 		public void SelectChapter(int chapterIndex){
 			
 			Player.mainPlayer.currentLevelIndex = 5 * chapterIndex;
@@ -89,6 +93,9 @@ namespace WordJourney
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 
 			QuitHomeView();
+
+			#warning 下面这个代码是使用场景管理器方式加载探索界面
+//			SceneManager.LoadSceneAsync ("ExploreScene", LoadSceneMode.Single);
 
 			GameManager.Instance.UIManager.UnloadAllCanvasInSceneExcept(new string[]{"BagCanvas"});
 
@@ -131,36 +138,12 @@ namespace WordJourney
 		public void OnLearnButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
-				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView(false);
+				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
 				homeView.OnQuitHomeView();
 			},false,true);
 
 		}
 
-		public void OnMaterialsButtonClick(){
-
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", () => {
-				TransformManager.FindTransform("MaterialDisplayCanvas").GetComponent<MaterialDisplayViewController>().SetUpMaterialView();
-				homeView.OnQuitHomeView();
-			},false,true);
-		}
-
-		public void OnProduceButtonClick(){
-
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.workBenchCanvasBundleName, "WorkbenchCanvas", () => {
-//				TransformManager.FindTransform("WorkbenchCanvas").GetComponent<WorkBenchViewController> ().SetUpWorkBenchView();
-//				homeView.OnQuitHomeView();
-//			},false,true);
-		}
-
-
-		public void OnSkillButtonClick(){
-
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.skillCanvasBundleName, "SkillsCanvas", () => {
-//				TransformManager.FindTransform("SkillsCanvas").GetComponent<SkillsViewController>().SetUpSkillsView();
-//				homeView.OnQuitHomeView();
-//			},false,true);
-		}
 
 		public void OnBagButtonClick(){
 
@@ -178,7 +161,7 @@ namespace WordJourney
 			},false,true);
 		}
 
-		public void OnMaterialProduceButtonClick(){
+		public void OnSpellButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
 				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels[0];
@@ -186,15 +169,6 @@ namespace WordJourney
 				homeView.OnQuitHomeView();
 			},false,true);
 		}
-
-		public void OnFuseStoneButtonClick(){
-
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-//				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreateFuseStone();
-//				homeView.OnQuitHomeView();
-//			},false,true);
-		}
-
 
 		private void QuitHomeView(){
 			homeView.OnQuitHomeView ();

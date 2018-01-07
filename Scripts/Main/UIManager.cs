@@ -194,6 +194,9 @@ namespace WordJourney
 				case "SpellCanvas":
 					UIDic [key].GetComponent<SpellViewController> ().DestroyInstances ();
 					break;
+				case "LearnCanvas":
+					UIDic [key].GetComponent<LearnViewController> ().DestroyInstances ();
+					break;
 				}
 
 				UIDic.Remove (key);

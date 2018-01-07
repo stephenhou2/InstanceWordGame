@@ -13,7 +13,7 @@ namespace WordJourney
 
 		public Item currentSelectItem;
 
-		public Transform currentSelectDragControl;
+//		public Transform currentSelectDragControl;
 
 		private int minResolveCount;
 		private int maxResolveCount;
@@ -109,9 +109,7 @@ namespace WordJourney
 					GameDataCenter.GameDataType.UISprites,
 					GameDataCenter.GameDataType.ItemModels,
 					GameDataCenter.GameDataType.ItemSprites,
-					GameDataCenter.GameDataType.Materials,
-					GameDataCenter.GameDataType.MaterialSprites,
-//					GameDataCenter.GameDataType.EquipmentAttachedProperties
+					GameDataCenter.GameDataType.Skills
 				});
 				yield return null;
 			}
@@ -182,7 +180,7 @@ namespace WordJourney
 					Agent.PropertyChange propertyChange = Player.mainPlayer.EquipEquipment (currentSelectItem as Equipment, i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-					bagView.RemoveItemInBag(currentSelectDragControl);
+					bagView.RemoveItemInBag(equipment);
 					bagView.QuitItemDetailHUD ();
 					bagView.SetUpEquipedEquipmentsPlane ();
 					return;
@@ -330,15 +328,16 @@ namespace WordJourney
 //				break;
 			case ItemType.FuseStone:
 				
-				RemoveCurrentSelectItem ();
+				RemoveItem (item);
 //				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
 				break;
 			}
 
 		}
+			
 
-		public void RemoveCurrentSelectItem(){
-			bagView.RemoveItemInBag (currentSelectDragControl);
+		public void RemoveItem(Item item){
+			bagView.RemoveItemInBag (item);
 		}
 
 		/// <summary>
@@ -355,7 +354,7 @@ namespace WordJourney
 
 			currentSelectItem = null;
 
-			bagView.RemoveItemInBag (currentSelectDragControl);
+			bagView.RemoveItemInBag (item);
 
 //			bagView.ResetBagView<Equipment> (Player.mainPlayer.allEquipmentsInBag,currentSelectItem);
 

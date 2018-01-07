@@ -13,6 +13,8 @@ namespace WordJourney
 
 		public PropertyType propertyType;
 
+		public bool canOverlay;// 技能效果是否可以叠加
+
 		//技能持续事件或状态持续时间
 		//单次型技能代表技能对应状态的持续时间（如 ： 减少10点护甲，【持续】90秒）
 		//连续型技能代表技能持续时间(如 ：每秒损失10点生命，【持续】3秒）

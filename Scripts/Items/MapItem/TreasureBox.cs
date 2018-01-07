@@ -10,7 +10,7 @@ namespace WordJourney
 		public bool walkableAfterChangeStatus;
 
 		// 开启所需物品的名称
-		public int unlockItemId;
+		public string unlockItemName;
 
 		// 是否有锁
 		public bool locked;
@@ -28,8 +28,18 @@ namespace WordJourney
 		/// </summary>
 		public override void InitMapItem ()
 		{
-			bc2d.enabled = true;
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+			mapItemAnimator.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
+			SetSortingOrder (-(int)transform.position.y);
+		}
+
+		public override void AddToPool (InstancePool pool)
+		{
+			gameObject.SetActive (false);
+//			bc2d.enabled = false;
+			pool.AddInstanceToPool (this.gameObject);
 		}
 
 
@@ -42,7 +52,7 @@ namespace WordJourney
 			animEndCallBack = cb;
 
 			// 播放对应动画
-			mapItemAnimator.SetTrigger ("Play");
+			mapItemAnimator.SetBool ("Play",true);
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}

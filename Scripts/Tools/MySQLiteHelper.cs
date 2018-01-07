@@ -434,11 +434,29 @@ namespace WordJourney{
 		/// </summary>
 		/// <returns>The item count of table.</returns>
 		/// <param name="tableName">Table name.</param>
-		public int GetItemCountOfTable(string tableName){
+		public int GetItemCountOfTable(string tableName,string[] conditions,bool isLinkStrAND){
 
-			string queryString = "SELECT COUNT(*) FROM " + tableName;
+			StringBuilder queryString = new StringBuilder ();
 
-			IDataReader reader = ExecuteQuery (queryString);
+			queryString.AppendFormat ("SELECT COUNT(*) FROM {0}",tableName);
+
+			if (conditions != null && conditions.Length > 0) {
+
+				queryString.Append (" WHERE ");
+
+				string linkString = isLinkStrAND ? "AND" : "OR";
+
+				for (int i = 0; i < conditions.Length; i++) {
+
+					queryString.AppendFormat ("{0} {1} ", conditions [i],linkString);
+
+				}
+
+				queryString.Remove (queryString.Length - linkString.Length - 1, linkString.Length);
+
+			}
+
+			IDataReader reader = ExecuteQuery (queryString.ToString());
 
 			reader.Read ();
 

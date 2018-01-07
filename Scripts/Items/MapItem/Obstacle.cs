@@ -15,8 +15,16 @@ namespace WordJourney
 		/// </summary>
 		public override void InitMapItem ()
 		{
-			bc2d.enabled = true;
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+//			mapItemAnimator.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
+			SetSortingOrder (-(int)transform.position.y);
+		}
+			
+		public override void AddToPool(InstancePool pool){
+			gameObject.SetActive (false);
+			pool.AddInstanceToPool (this.gameObject);
 		}
 
 		/// <summary>
@@ -27,8 +35,11 @@ namespace WordJourney
 
 			animEndCallBack = cb;
 
+			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
+			GetComponent<BoxCollider2D> ().enabled = false;
+
 			// 播放对应动画
-			mapItemAnimator.SetTrigger ("Play");
+			mapItemAnimator.SetBool ("Play",true);
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}
@@ -38,6 +49,8 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>The map item on animation finished.</returns>
 		protected IEnumerator ResetMapItemOnAnimFinished(){
+
+			yield return null;
 
 			float animTime = mapItemAnimator.GetCurrentAnimatorStateInfo (0).normalizedTime;
 
@@ -49,12 +62,10 @@ namespace WordJourney
 
 			}
 
-			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
-			GetComponent<BoxCollider2D> ().enabled = false;
-
 			AnimEnd ();
 
 		}
+
 
 		protected virtual void AnimEnd (){
 			if (animEndCallBack != null) {

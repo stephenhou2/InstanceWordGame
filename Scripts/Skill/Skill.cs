@@ -14,15 +14,13 @@ namespace WordJourney
 
 		public int skillId;
 
-		public string skillIconName;
-
 		public string skillDescription;
 
 
 
 
 
-		public bool canOverlay;// 技能效果是否可以叠加
+
 
 
 //		public string selfRoleAnimName;
@@ -56,7 +54,7 @@ namespace WordJourney
 
 
 		// 判断概率性技能是否生效
-		protected bool isEffective(float chance){
+		protected virtual bool isEffective(float chance){
 			float randomNum = Random.Range (0, 100)/100f;
 			return randomNum <= chance;
 		}

@@ -35,7 +35,7 @@ namespace WordJourney
 
 		public SkillInfo[] attachedSkillInfos;
 
-		public List<Skill> attachedSkills = new List<Skill> ();
+		public List<TriggeredSkill> attachedSkills = new List<TriggeredSkill> ();
 
 		public int[] itemIdsForProduce;
 

@@ -30,7 +30,7 @@ namespace WordJourney
 
 		private ExploreUICotroller expUICtr;
 
-		private Transform currentEnteredTransform;
+		private Transform crystalEntered;
 
 		[HideInInspector]public bool clickForConsumablesPos;
 
@@ -38,8 +38,6 @@ namespace WordJourney
 		{
 
 			mapGenerator = GetComponent<MapGenerator>();
-
-
 
 			Transform battlePlayer = Player.mainPlayer.transform.Find ("BattlePlayer");
 
@@ -68,6 +66,9 @@ namespace WordJourney
 
 			expUICtr = exploreCanvas.GetComponent<ExploreUICotroller> ();
 
+//			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
+//
+//			SetupExploreView (levelData);
 
 		}
 			
@@ -85,22 +86,15 @@ namespace WordJourney
 			while (!dataReady) {
 
 				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-//					GameDataCenter.GameDataType.AnimatorControllers,
 					GameDataCenter.GameDataType.UISprites,
 					GameDataCenter.GameDataType.GameLevelDatas,
 					GameDataCenter.GameDataType.Monsters,
 					GameDataCenter.GameDataType.NPCs,
 					GameDataCenter.GameDataType.ItemModels,
 					GameDataCenter.GameDataType.ItemSprites,
-					GameDataCenter.GameDataType.Materials,
-					GameDataCenter.GameDataType.MaterialSprites,
 					GameDataCenter.GameDataType.MapSprites,
 					GameDataCenter.GameDataType.Skills,
-//					GameDataCenter.GameDataType.EquipmentAttachedProperties,
-					GameDataCenter.GameDataType.Skills,
 					GameDataCenter.GameDataType.SkillSprites,
-
-
 				});
 
 				yield return null;
@@ -118,9 +112,7 @@ namespace WordJourney
 
 			expUICtr.SetUpExploreCanvas ();
 
-			battlePlayerCtr.SetUpExplorePlayerUI ();
-
-//			expUICtr.GetComponent<Canvas> ().enabled = true;
+			battlePlayerCtr.InitBattlePlayer ();
 
 		}
 
@@ -131,19 +123,21 @@ namespace WordJourney
 		}
 
 
-
-
 		private void Update(){
 
 
-			Vector3 clickPos = Vector3.zero;
-
 #if UNITY_STANDALONE || UNITY_EDITOR
+
+			if(!Input.GetMouseButtonDown(0)){
+				return;
+			}
+
+			Vector3 clickPos = Vector3.zero;
 
 			if(Input.GetMouseButtonDown(0)){
 
 				if(EventSystem.current.IsPointerOverGameObject()){
-//					Debug.Log("点击在UI上");
+					Debug.Log("点击在UI上");
 					return;
 				}
 
@@ -152,6 +146,13 @@ namespace WordJourney
 			}
 
 #elif UNITY_ANDROID || UNITY_IOS
+
+			if (Input.touchCount == 0) {
+				return;
+			}
+
+			Vector3 clickPos = Vector3.zero;
+
 
 			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began){
 
@@ -163,9 +164,11 @@ namespace WordJourney
 #endif
 			// 未检测到点击位置
 			//（初始设置点击位置在世界坐标原点，如果检测到点击点并初始化点击点之后，z一定会和camera的z保持一致，为－10，如果为0表示没有重设点击点）
-			if (clickPos.z == 0) {
-				return;
-			}
+//			if (clickPos.z == 0) {
+//				return;
+//			}
+
+			Debug.Log ("点击在探索界面内");
 
 			int targetX = 0;
 			int targetY = 0;
@@ -211,8 +214,6 @@ namespace WordJourney
 
 			// 地图上点击位置生成提示动画
 			mapGenerator.PlayDestinationAnim(targetPos,arrivable);
-
-
 
 		}
 
@@ -262,24 +263,21 @@ namespace WordJourney
 			battleMonsterCtr.boxCollider.enabled = false;
 
 			battlePlayerCtr.enemy = battleMonsterCtr;
-
 			battleMonsterCtr.enemy = battlePlayerCtr;
 
-			battlePlayerCtr.InitFightTextDirectionTowards (battleMonsterCtr.transform.position);
-			battleMonsterCtr.InitFightTextDirectionTowards (battlePlayerCtr.transform.position);
 
 			battlePlayerCtr.SetUpPropertyCalculator ();
 			battleMonsterCtr.SetUpPropertyCalculator ();
 
 			// 初始化人物被动技能
-			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedTriggeredSkills.Count; i++) {
-				Skill skill = (battlePlayerCtr.agent as Player).attachedTriggeredSkills [i];
+			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedEquipmentSkills.Count; i++) {
+				Skill skill = (battlePlayerCtr.agent as Player).attachedEquipmentSkills [i];
 				skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
 			}
 
 			// 初始化怪物被动技能
-			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedTriggeredSkills.Count; i++) {
-				Skill skill = (battleMonsterCtr.agent as Monster).attachedTriggeredSkills [i];
+			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedEquipmentSkills.Count; i++) {
+				Skill skill = (battleMonsterCtr.agent as Monster).attachedEquipmentSkills [i];
 				skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 			}
 
@@ -326,6 +324,8 @@ namespace WordJourney
 				}
 			}
 
+			battlePlayerCtr.InitFightTextDirectionTowards (battleMonsterCtr.transform.position);
+			battleMonsterCtr.InitFightTextDirectionTowards (battlePlayerCtr.transform.position);
 
 			DisableInteractivity ();
 
@@ -399,12 +399,12 @@ namespace WordJourney
 			TreasureBox tb = treasureBoxTrans.GetComponent<TreasureBox>();
 
 			// 如果mapitem已打开，则直接返回
-			if (tb.unlockItemId != -1 && !tb.locked) {
+			if (tb.unlockItemName != "" && !tb.locked) {
 				return;
 			}
 
 			// 如果该宝箱不需要使用钥匙开启
-			if (tb.unlockItemId == -1) {
+			if (tb.unlockItemName == "") {
 
 				GameManager.Instance.soundManager.PlayMapEffectClips (tb.audioClipName);
 
@@ -423,11 +423,10 @@ namespace WordJourney
 
 			}
 
-
 			// 宝箱需要使用钥匙开启
 			// 查找背包中是否有钥匙
 			Consumables key = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemId == tb.unlockItemId;
+				return obj.itemName == tb.unlockItemName;
 			});
 
 			// 如果背包中有钥匙，则进入工具选择栏
@@ -455,14 +454,14 @@ namespace WordJourney
 
 			Debug.Log ("进入工作台");
 
-			expUICtr.SetUpWorkBenchPlane ();
+			expUICtr.SetUpProducePlane ();
 
 
 		}
 
 		private void EnterCrystal(Transform crystal){
 			Debug.Log ("进入水晶");
-			currentEnteredTransform = crystal;
+			crystalEntered = crystal;
 			expUICtr.SetUpCrystaleQueryHUD();
 		}
 
@@ -509,11 +508,8 @@ namespace WordJourney
 
 		}
 
-
-		#warning 退出学习貌似不应该放在这里，后面在看一看
-		public void FinishLearning(){
-			GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
-			currentEnteredTransform.GetComponent<Animator> ().SetTrigger ("ChangeStatus");
+		public void ChangeCrystalStatus(){
+			crystalEntered.GetComponent<Crystal> ().CrystalExausted ();
 		}
 
 
@@ -600,7 +596,8 @@ namespace WordJourney
 
 			StartCoroutine ("ResetCamera");
 
-			battlePlayerCtr.ContinueMove ();
+			battlePlayerCtr.PlayerMoveToEnemyPosAfterFight ();
+
 
 		}
 

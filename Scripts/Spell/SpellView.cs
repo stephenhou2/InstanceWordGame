@@ -86,6 +86,8 @@ namespace WordJourney
 //				break; 
 //			}
 
+			ClearEnteredCharactersPlane ();
+
 			InitCharacterButtons ();
 
 			GetComponent<Canvas> ().enabled = true;

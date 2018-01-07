@@ -10,8 +10,19 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-			bc2d.enabled = true;
+//			gameObject.SetActive (true);
+//			bc2d.enabled = true;
+			mapItemAnimator.enabled = true;
+//			SetSortingOrder (-(int)transform.position.y);
 		}
+
+		public override void AddToPool(InstancePool pool){
+//			bc2d.enabled = false;
+//			mapItemAnimator.enabled = false;
+			gameObject.SetActive(false);
+			pool.AddInstanceToPool (this.gameObject);
+		}
+
 
 	}
 }

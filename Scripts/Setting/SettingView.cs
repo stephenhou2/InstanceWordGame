@@ -28,6 +28,8 @@ namespace WordJourney{
 		public Toggle daily;
 		public Toggle bussiness;
 
+		public Transform alertHUD;
+
 		public void SetUpSettingView(GameSettings settings){
 
 			volumeControl.value = settings.systemVolume;
@@ -86,16 +88,10 @@ namespace WordJourney{
 
 		public void QuitSettingView(){
 
-//			settingViewContainer.GetComponent<Image>().color = new Color (0, 0, 0, 0);
-
 			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
 
 			Vector3 originalPosition = settingPlane.localPosition;
 
-			settingPlane.transform.DOLocalMoveY (-offsetY, 0.5f).OnComplete(()=>{
-//				GetComponent<Canvas>().enabled = false;
-				settingPlane.localPosition = originalPosition;
-			});
 		}
 
 	}

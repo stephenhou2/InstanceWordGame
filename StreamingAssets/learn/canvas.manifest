@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1308094654
+CRC: 679473410
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a254fba5fdb4d113774af6ecaccd4a44
+    Hash: fb66cb2dbc7cfafcb89ef56cbdae8a88
   TypeTreeHash:
     serializedVersion: 2
-    Hash: dcf4a49fd3ccd44053ed59cba991185f
+    Hash: f6c907cd75926ce6f876286d4138fb26
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -16,6 +16,8 @@ ClassTypes:
 - Class: 28
   Script: {instanceID: 0}
 - Class: 48
+  Script: {instanceID: 0}
+- Class: 95
   Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -51,3 +53,4 @@ Assets:
 - Assets/Prefabs/Learn/LearnCanvas.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
+- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons

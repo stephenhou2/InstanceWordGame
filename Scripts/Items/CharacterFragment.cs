@@ -10,6 +10,7 @@ namespace WordJourney
 		public char character;
 
 		public CharacterFragment(char character,int count = 1){
+			this.itemType = ItemType.CharacterFragment;
 			this.itemId = 200;
 			this.character = character;
 			itemName = string.Format ("字母碎片-{0}", character.ToString());

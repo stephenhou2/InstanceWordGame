@@ -59,10 +59,6 @@ namespace WordJourney
 		 * 上例中假设一共有8个单词，则是以4组为循环基数，以2次为背诵次数循环基数
 		 */ 
 
-		// 每次单词能量槽满了时的字母奖励数
-		private int singleRewardCharactersCount;
-		// 测试时选择错误的字母损失数
-//		private int singleLoseCharactersCount;
 
 
 		private WWW pronunciationWWW;
@@ -82,6 +78,18 @@ namespace WordJourney
 		private List<LearnWord> ungraspedWordsList;
 
 		private List<LearnWord> graspedWordsList;
+
+		private int learnedWordCount;
+
+		private int correctWordCount;
+
+		private int coinGain;
+
+
+		private MySQLiteHelper mySql;
+
+
+		private Examination.ExaminationType examType;
 
 		// 当前正在学习的单词（未掌握单词列表的首项）
 		private LearnWord currentLearningWord{
@@ -123,21 +131,15 @@ namespace WordJourney
 		// 是否自动发音
 		private bool autoPronounce;
 
-		// 单词能量数（测试中每答对一次+1，每答错一次-1）
-		private int wordEnergyCount;
+		private bool addToTrailIfWrong;
 
-		// 单词能量积满所需单词能量数
-		private int energyFullCount;
 
 		private char characterAsReward;
 
 		void Awake(){
 			singleLearnWordsCount = 9;
-			singleRewardCharactersCount = 1;
-//			singleLoseCharactersCount = 1;
 			recycleGroupBase = 8;
 			recycleLearnTimeBase = 2;
-			energyFullCount = 3;
 			wordsToLearnArray = new LearnWord[singleLearnWordsCount];
 			finalExaminationsList = new List<Examination> ();
 			learnExaminationsList = new List<Examination> ();
@@ -149,12 +151,12 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化学习界面
 		/// </summary>
-		public void SetUpLearnView(bool beginWithLearn){
-			StartCoroutine ("SetUpViewAfterDataReady",beginWithLearn);
+		public void SetUpLearnView(){
+			StartCoroutine ("SetUpViewAfterDataReady");
 		}
 
 
-		private IEnumerator SetUpViewAfterDataReady(bool beginWithLearn){
+		private IEnumerator SetUpViewAfterDataReady(){
 
 			bool dataReady = false;
 
@@ -162,15 +164,38 @@ namespace WordJourney
 
 				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
 					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.LearnInfo
 				});
 				yield return null;
 			}
 
+
+
 			// 查询是否允许自动发音
 			autoPronounce = GameManager.Instance.gameDataCenter.gameSettings.autoPronounce;
 
+			GameSettings.LearnMode learnMode = GameManager.Instance.gameDataCenter.gameSettings.learnMode;
+
+			switch (learnMode) {
+			case GameSettings.LearnMode.Test:
+				#warning 这里暂时只做英->中
+				this.examType = Examination.ExaminationType.EngToChn;
+				addToTrailIfWrong = false;
+				beginWithLearn = false;
+				break;
+			case GameSettings.LearnMode.Learn:
+				this.examType = Examination.ExaminationType.Both;
+				addToTrailIfWrong = true;
+				beginWithLearn = true;
+				break;
+			}
+
+			learnedWordCount = 0;
+			coinGain = 0;
+			correctWordCount = 0;
+
 			InitWordsToLearn ();
+
+			learnView.InitLearnView (wordsToLearnArray.Length);
 
 			if (beginWithLearn) {
 				learnView.SetUpLearnViewWithWord (currentLearningWord);
@@ -178,8 +203,8 @@ namespace WordJourney
 					OnPronunciationButtonClick ();
 				}
 			} else {
-				GenerateFinalExams ();
-				learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0], Examination.ExaminationType.EngToChn);
+				GenerateFinalExams (examType);
+				learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0], examType);
 			}
 
 			GetComponent<Canvas> ().enabled = true;
@@ -190,20 +215,18 @@ namespace WordJourney
 		/// </summary>
 		private void InitWordsToLearn(){
 
-			MySQLiteHelper mySql = MySQLiteHelper.Instance;
+			mySql = MySQLiteHelper.Instance;
 
 			mySql.GetConnectionWith (CommonData.dataBaseName);
 
 			int totalLearnTimeCount = GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount;
 
-			int totalWordsCount = mySql.GetItemCountOfTable (CommonData.CET4Table);
+			int totalWordsCount = mySql.GetItemCountOfTable (CommonData.CET4Table,null,true);
 
 			// 大循环的次数
 			int bigCycleCount = totalLearnTimeCount * singleLearnWordsCount / (totalWordsCount * recycleLearnTimeBase);
 
 			currentWordsLearnedTime = totalLearnTimeCount % (recycleLearnTimeBase * recycleGroupBase) / recycleGroupBase + recycleLearnTimeBase * bigCycleCount;
-
-
 
 			mySql.BeginTransaction ();
 
@@ -244,7 +267,7 @@ namespace WordJourney
 
 			mySql.EndTransaction ();
 
-			mySql.CloseConnection (CommonData.dataBaseName);
+
 
 			// 当前要学习的单词全部加入到未掌握单词列表中，用户选择掌握或者学习过该单词后从未掌握单词列表中移除
 			for (int i = 0; i < wordsToLearnArray.Length; i++) {
@@ -258,13 +281,13 @@ namespace WordJourney
 		/// <summary>
 		/// 直接从本次学习单词生成最终测试列表
 		/// </summary>
-		private void GenerateFinalExams(){
+		private void GenerateFinalExams(Examination.ExaminationType examType){
 
 			for (int i = 0; i < ungraspedWordsList.Count; i++) {
 
 				LearnWord word = ungraspedWordsList [i];
 
-				Examination finalExam = new Examination (word, wordsToLearnArray);
+				Examination finalExam = new Examination (word, wordsToLearnArray, examType);
 
 				finalExaminationsList.Add (finalExam);
 
@@ -298,13 +321,6 @@ namespace WordJourney
 
 				StartCoroutine ("PlayPronunciationWhenFinishDownloading", pronunciationWWW);
 			} else {
-				
-//				AudioSource pronunciationAS = GameManager.Instance.soundManager.pronunciationAS;
-//
-//				pronunciationAS.clip = pro.pronunciation;
-//
-//				pronunciationAS.Play ();
-
 				GameManager.Instance.soundManager.PlayWordPronunciation (pro.pronunciation);
 			}
 		}
@@ -354,7 +370,7 @@ namespace WordJourney
 			}
 
 			// 使用当前学习中的单词（在这时已掌握）生成对应的单词测试
-			Examination exam = new Examination (currentLearningWord, wordsToLearnArray);
+			Examination exam = new Examination (currentLearningWord, wordsToLearnArray,examType);
 
 			// 单词测试加入到最终测试列表中
 			finalExaminationsList.Add (exam);
@@ -375,8 +391,8 @@ namespace WordJourney
 				}
 
 				for (int i = 0; i < 3; i++) {
-					Examination learnExam = new Examination (wordsArray [i], wordsArray);  
-					learnExaminationsList.Add (learnExam);
+					Examination learnExam = new Examination (wordsArray [i], wordsArray, examType);  
+					learnExaminationsList.Add (learnExam); 
 				}
 
 				learnView.SetUpLearnViewWithLearnExam (learnExaminationsList [0]);
@@ -468,14 +484,14 @@ namespace WordJourney
 				else if (learnExaminationsList.Count <= 0 && ungraspedWordsList.Count <= 0) {
 
 					// 随机字母
-					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
+//					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
+//
+//					characterAsReward = characterFragmentGain;
 
-					characterAsReward = characterFragmentGain;
-
-					learnView.ResetEnergySlider (characterAsReward);
+//					learnView.ResetEnergySlider (characterAsReward);
 
 					// 更新单词能量条
-					learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
+//					learnView.UpdateLearningProgress (wordEnergyCount,energyFullCount);
 
 					Examination.ExaminationType examType = currentExamination.GetCurrentExamType();
 					learnView.SetUpLearnViewWithFinalExam (currentExamination,examType);
@@ -502,136 +518,26 @@ namespace WordJourney
 			}
 
 		}
+			
 
 		/// <summary>
 		/// 用户点击了最终测试界面中的答案选项卡
 		/// </summary>
-		/// <param name="selectWord">Select word.</param>
-//		public void OnAnswerChoiceButtonOfFinalExamsClick(LearnWord selectWord){
-//
-//			// 如果选择正确，则将该单词的测试从测试列表中移除
-//			if (selectWord.wordId == currentExamination.question.wordId) {
-//				Debug.Log ("选择正确");
-//
-//				// 单词能量+1
-//				wordEnergyCount++;
-//
-//
-//				// 更新单词能量条
-//				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
-//
-//				// 如果单词能量条满了，则随机获得一个字母碎片
-//				if (wordEnergyCount >= energyFullCount) {
-//
-//					Player.mainPlayer.AddCharacterFragment(characterAsReward,singleRewardCharactersCount);
-//					Debug.LogFormat ("获得字母碎片{0}{1}个", characterAsReward, singleRewardCharactersCount);
-//
-//					wordEnergyCount = 0;
-//
-//					// 随机字母
-//					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
-//
-//					characterAsReward = characterFragmentGain;
-//
-//					learnView.ResetEnergySlider (characterAsReward);
-//
-//				}
-//
-//
-//				currentExamination.RemoveCurrentExamType ();
-//
-//				// 如果当前单词测试的中译英和英译中都已经完成，则从测试列表中删除该测试
-//				bool currentExamFinished = currentExamination.CheckCurrentExamFinished();
-//				if (currentExamFinished) {
-//					currentExamination.question.learnedTimes++;
-//					finalExaminationsList.RemoveAt (0);
-//
-//				}else{
-//					// 当前单词测试未完成
-//					Examination exam = currentExamination;
-//					finalExaminationsList.RemoveAt (0);
-//					finalExaminationsList.Add (exam);
-//				}
-//
-//				// 单词测试环节结束
-//				if (finalExaminationsList.Count <= 0) {
-//
-//					MySQLiteHelper sql = MySQLiteHelper.Instance;
-//
-//					sql.GetConnectionWith (CommonData.dataBaseName);
-//
-//
-//					for (int i = 0; i < singleLearnWordsCount; i++) {
-//						LearnWord word = wordsToLearnArray [i];
-//						string condition = string.Format ("wordId={0}", word.wordId);
-//						string newLearnedTime = (word.learnedTimes).ToString ();
-//						string newUngraspTime = (word.ungraspTimes).ToString();
-//						// 更新数据库中当前背诵单词的背诵次数和背错次数
-//						sql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[]{ newLearnedTime, newUngraspTime }, new string[] {
-//							condition
-//						}, true);
-//					}
-//
-//
-//					sql.CloseConnection (CommonData.dataBaseName);
-//
-//					CurrentWordsLearningFinished ();
-//
-//					return;
-//
-//				}
-//
-//				// 测试环节还没有结束，则初始化下一个单词的测试
-//				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
-//				learnView.SetUpLearnViewWithFinalExam (currentExamination, examType);
-//			
-//
-//			} else {
-//				// 如果选择错误，则将该单词的测试移至测试列表的尾部
-//				Debug.Log ("选择错误");
-//
-//				Examination exam = currentExamination;
-//
-//				finalExaminationsList.RemoveAt (0);
-//
-//				finalExaminationsList.Add (exam);
-//
-//				// 单词的背错次数+1
-//				GetWordFromWordsToLearnArrayWith(currentExamination.question.wordId).ungraspTimes++;
-//
-//				// 扣除用户字母碎片
-////				int characterIndex = Random.Range (0, currentExamination.question.spell.Length);
-////				char characterFragmentGain = currentExamination.question.spell.ToCharArray () [characterIndex];
-////				Player.mainPlayer.RemoveCharacterFragment(characterFragmentGain,singleRewardCharactersCount);
-////				Debug.LogFormat ("扣除字母碎片{0}{1}个", characterFragmentGain, singleLoseCharactersCount);
-//
-//				// 单词能量数-1
-//				wordEnergyCount--;
-//
-//				if (wordEnergyCount < 0) {
-//					wordEnergyCount = 0;
-//				}
-//
-//				// 更新单词能量条
-//				learnView.UpdateWordEnergySlider (wordEnergyCount,energyFullCount);
-//
-//				// 显示该选项的单词对应的拼写或释义
-////				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
-//
-//			}
-//
-//		}
-//
-
-
 		public void OnAnswerChoiceButtonOfFinalExamsClick(LearnWord selectWord){
+
+			learnedWordCount++;
+
+			learnView.UpdateLearningProgress (learnedWordCount, wordsToLearnArray.Length, true);
 
 			// 如果选择正确，则将该单词的测试从测试列表中移除
 			if (selectWord.wordId == currentExamination.question.wordId) {
 				Debug.Log ("选择正确");
 
-				// 玩家金币数量+1
-				Player.mainPlayer.totalCoins++;
+				correctWordCount++;
+
+				coinGain++;
+
+				learnView.UpdateCrystalHarvest (coinGain);
 
 				currentExamination.RemoveCurrentExamType ();
 
@@ -640,78 +546,56 @@ namespace WordJourney
 				if (currentExamFinished) {
 					currentExamination.question.learnedTimes++;
 					finalExaminationsList.RemoveAt (0);
-
 				}else{
 					// 当前单词测试未完成
 					Examination exam = currentExamination;
 					finalExaminationsList.RemoveAt (0);
 					finalExaminationsList.Add (exam);
 				}
-
-				// 单词测试环节结束
-				if (finalExaminationsList.Count <= 0) {
-
-					MySQLiteHelper sql = MySQLiteHelper.Instance;
-
-					sql.GetConnectionWith (CommonData.dataBaseName);
-
-
-					for (int i = 0; i < singleLearnWordsCount; i++) {
-						LearnWord word = wordsToLearnArray [i];
-						string condition = string.Format ("wordId={0}", word.wordId);
-						string newLearnedTime = (word.learnedTimes).ToString ();
-						string newUngraspTime = (word.ungraspTimes).ToString();
-						// 更新数据库中当前背诵单词的背诵次数和背错次数
-						sql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[]{ newLearnedTime, newUngraspTime }, new string[] {
-							condition
-						}, true);
-					}
-
-
-					sql.CloseConnection (CommonData.dataBaseName);
-
-					CurrentWordsLearningFinished ();
-
-					return;
-
-				}
-
-				// 测试环节还没有结束，则初始化下一个单词的测试
-				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
-				learnView.SetUpLearnViewWithFinalExam (currentExamination, examType);
-
-
+					
 			} else {
 				// 如果选择错误，则将该单词的测试移至测试列表的尾部
 				Debug.Log ("选择错误");
 
-
 				// 单词的背错次数+1
 				GetWordFromWordsToLearnArrayWith(currentExamination.question.wordId).ungraspTimes++;
-
-
-				// 玩家金币数量-2
-				Player.mainPlayer.totalCoins -= 2;
-				if (Player.mainPlayer.totalCoins < 0) {
-					Player.mainPlayer.totalCoins = 0;
-				}
-
-
-
-				if (wordEnergyCount < 0) {
-					wordEnergyCount = 0;
-				}
 
 				// 当前测试加入到测试列表尾部
 				Examination exam = currentExamination;
 
 				finalExaminationsList.RemoveAt (0);
 
-				finalExaminationsList.Add (exam);
+				if (addToTrailIfWrong) {
+					finalExaminationsList.Add (exam);
+					coinGain--;
+				}
 
-				learnView.SetUpLearnViewWithFinalExam (currentExamination, currentExamination.GetCurrentExamType ());
 
-//				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
+				learnView.ShowRightAnswerAndEnterNextExam (exam.correctAnswerIndex ,currentExamination);
+			}
+
+			// 单词测试环节结束
+			if (finalExaminationsList.Count <= 0) {
+
+				for (int i = 0; i < singleLearnWordsCount; i++) {
+					LearnWord word = wordsToLearnArray [i];
+					string condition = string.Format ("wordId={0}", word.wordId);
+					string newLearnedTime = (word.learnedTimes).ToString ();
+					string newUngraspTime = (word.ungraspTimes).ToString ();
+					// 更新数据库中当前背诵单词的背诵次数和背错次数
+					mySql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[] {
+						newLearnedTime,
+						newUngraspTime
+					}, new string[] {
+						condition
+					}, true);
+				}
+
+				CurrentWordsLearningFinished ();
+			} else {
+				// 测试环节还没有结束，则初始化下一个单词的测试
+				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
+				learnView.SetUpLearnViewWithFinalExam (currentExamination, examType);
 			}
 
 		}
@@ -721,8 +605,6 @@ namespace WordJourney
 		/// 当前需要学习的单词组内的单词已经全部学习完毕
 		/// </summary>
 		private void CurrentWordsLearningFinished(){
-
-			StopAllCoroutines ();
 
 			// 清理内存
 			for (int i = 0; i < singleLearnWordsCount; i++) {
@@ -737,12 +619,42 @@ namespace WordJourney
 
 			// 总背诵次数++
 			GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount++;
+			GameManager.Instance.persistDataManager.SaveLearnInfo ();
 
+
+			Player.mainPlayer.totalCoins += coinGain;
+
+			learnView.ShowFinishLearningHUD (coinGain,correctWordCount);
+
+		}
+
+
+		public void OnQuitButtonClick(){
+			learnView.ShowQuitQueryHUD ();
+		}
+
+		public void CancelQuit(){
+			learnView.HideQuitQueryHUD ();
+		}
+			
+
+		public void DestroyInstances(){
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", null,null);
+		}
+
+		public void QuitLearnView(bool finishLearning){
+
+			mySql.CloseConnection (CommonData.dataBaseName);
+
+			learnView.QuitLearnView ();
 
 			Transform em = TransformManager.FindTransform ("ExploreManager");
 
 			if (em != null) {
-				em.GetComponent<ExploreManager> ().FinishLearning ();
+				GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
+				if (finishLearning) {
+					em.GetComponent<ExploreManager> ().ChangeCrystalStatus ();
+				}
 			} else {
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 					TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
@@ -750,135 +662,6 @@ namespace WordJourney
 			}
 
 		}
-
-
-		
-	}
-
-	/// <summary>
-	/// 单词测试类
-	/// </summary>
-	public class Examination{
-
-		// 测试类型
-		public enum ExaminationType
-		{
-			EngToChn,//给拼写，选释义
-			ChnToEng//给释义，选拼写
-		}
-		// 测试题目（测试的单词）
-		public LearnWord question;
-		// 题目备选答案（测试单词+2个混淆单词）
-		public LearnWord[] answers;
-		// 正确答案在答案中的序号
-		public int correctAnswerIndex;
-		// 当前测试的测试类型
-		private ExaminationType currentExamType;
-		// 测试类型列表（中-英&英-中）
-		private List<ExaminationType> examTypeList = new List<ExaminationType>(){ExaminationType.EngToChn,ExaminationType.ChnToEng};
-
-		// 测试备选单词数组
-		private LearnWord[] wordsArray;
-
-		public ExaminationType GetCurrentExamType(){
-
-			int examTypeIndex = Random.Range (0, examTypeList.Count);
-
-			currentExamType = examTypeList [examTypeIndex];
-
-			return currentExamType;
-
-		}
-
-		/// <summary>
-		/// 查询当前单词的测试是否完全完成（中-英和英-中两种测试已经全部答对）
-		/// </summary>
-		/// <returns><c>true</c>, if current exam finished was checked, <c>false</c> otherwise.</returns>
-		public bool CheckCurrentExamFinished(){
-			return examTypeList.Count <= 0;
-		}
-
-		/// <summary>
-		/// 从单词测试类型列表中移除测试单词的当前测试类型
-		/// </summary>
-		public void RemoveCurrentExamType(){
-			examTypeList.Remove (currentExamType);
-			//如果还有测试未完成，则重新生成备选答案
-			if (examTypeList.Count > 0) {
-				RandomAnswersFromLearningWords (wordsArray);
-			}
-		}
-
-		/// <summary>
-		/// 从当前学习中的所有单词列表中生成备选答案（当前学习的单词+2个混淆单词）
-		/// </summary>
-		private void RandomAnswersFromLearningWords(LearnWord[] wordsArray){
-
-			answers = new LearnWord[3];
-
-			List<int> indexList = new List<int>{ 0, 1, 2 };
-
-			int questionWordIndex = Random.Range (0, indexList.Count);
-
-			answers [questionWordIndex] = question;
-
-			indexList.Remove (questionWordIndex);
-
-			LearnWord confuseWord1 = GetConfuseWordFromArray (wordsArray, new LearnWord[]{ question });
-
-			int confuseWord1Index = indexList [Random.Range (0, indexList.Count)];
-
-			answers [confuseWord1Index] = confuseWord1;
-
-			indexList.Remove (confuseWord1Index);
-
-			int confuseWord2Index = indexList [Random.Range (0, indexList.Count)];
-
-			LearnWord confuseWord2 = GetConfuseWordFromArray (wordsArray, new LearnWord[]{ question, confuseWord1 });
-
-			answers [confuseWord2Index] = confuseWord2;
-
-			this.correctAnswerIndex = questionWordIndex;
-
-		}
-
-
-		/// <summary>
-		/// 初始化测试数据
-		/// </summary>
-		/// <param name="question">Question.</param>
-		/// <param name="answers">Answers.</param>
-		/// <param name="correctAnswerIndex">Correct answer index.</param>
-		/// <param name="examType">Exam type.</param>
-		public Examination(LearnWord questionWord, LearnWord[] choiceWordsArray){
-
-			this.question = questionWord;
-			this.wordsArray = choiceWordsArray;
-
-			RandomAnswersFromLearningWords (choiceWordsArray);
-
-		}
-			
-
-
-		private LearnWord GetConfuseWordFromArray(LearnWord[] wordsToLearnArray,LearnWord[] existWords){
-
-			LearnWord learnWord = null;
-
-			int randomWordId = Random.Range (0, wordsToLearnArray.Length);
-
-			learnWord = wordsToLearnArray [randomWordId];
-
-			for (int i = 0; i < existWords.Length; i++) {
-				if (learnWord.wordId == existWords [i].wordId) {
-					return GetConfuseWordFromArray (wordsToLearnArray, existWords);
-				}
-			}
-
-			return learnWord;
-
-		}
-
 
 	}
 

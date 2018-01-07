@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1920876405
+CRC: 1512565010
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 80cde4e48ea80dad8d813d246c28ccbd
+    Hash: c83f250cd0719f45f4490a380d5ab86b
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -67,7 +67,6 @@ Assets:
 - Assets/Textures/ItemIcons/08_battle_armor.png
 - Assets/Textures/ItemIcons/18_canglangpifeng.png
 - Assets/Textures/ItemIcons/02_stone_necklace.png
-- Assets/Textures/MapIcons/press_switch_on.png
 - Assets/Textures/ItemIcons/07_speedPaper.png
 - Assets/Textures/ItemIcons/10_miracle_belt.png
 - Assets/Textures/ItemIcons/10_alloy_armor.png
@@ -128,7 +127,6 @@ Assets:
 - Assets/Textures/ItemIcons/34_shootingstar_harmer.png
 - Assets/Textures/ItemIcons/02_broad_sword.png
 - Assets/Textures/ItemIcons/21_hand_axe.png
-- Assets/Textures/MapIcons/press_switch_off.png
 - Assets/Textures/ItemIcons/08_oracle_helmet.png
 - Assets/Textures/ItemIcons/15_gild_armor.png
 - Assets/Textures/ItemIcons/08_armorPaper.png

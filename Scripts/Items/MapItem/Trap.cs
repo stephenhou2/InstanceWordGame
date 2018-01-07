@@ -8,23 +8,15 @@ namespace WordJourney
 	public abstract class Trap : MapItem {
 
 		// 陷阱已经关闭
-		public bool trapOn;
-
-		/// <summary>
-		/// 初始化陷阱
-		/// </summary>
-		public override void InitMapItem ()
-		{
-			bc2d.enabled = true;
-		}
+		public bool isTrapOn;
 
 		public void ChangeTrapStatus(){
-			if (trapOn) {
+			if (isTrapOn) {
 				SetTrapOff ();
-				trapOn = false;
+				isTrapOn = false;
 			} else {
 				SetTrapOn ();
-				trapOn = true;
+				isTrapOn = true;
 			}
 		}
 

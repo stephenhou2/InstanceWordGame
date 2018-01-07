@@ -162,6 +162,7 @@ namespace WordJourney
 
 				// 伤害文本二次跳跃
 				hurtText.transform.DOLocalJump (secondHurtPos, secondJumpPower, 1, 0.15f).OnComplete(()=>{
+					hurtText.text = "";
 					hurtText.gameObject.SetActive(false);
 					fightTextPool.AddInstanceToPool(hurtText.gameObject);
 //					fightTextList.Remove(hurtText);
@@ -200,6 +201,7 @@ namespace WordJourney
 			float endY = pos.y + 100f;
 
 			gainText.transform.DOLocalMoveY (endY, 1f).OnComplete(()=>{
+				gainText.text = "";
 				gainText.gameObject.SetActive(false);
 				fightTextPool.AddInstanceToPool(gainText.gameObject);
 //				fightTextList.Remove(gainText);
@@ -223,6 +225,8 @@ namespace WordJourney
 			tintText.gameObject.SetActive (true);
 
 			tintText.transform.DOScale(new Vector3(1.5f,1.5f,1.5f),0.5f).OnComplete (() => {
+
+				tintText.text = "";
 
 				tintText.transform.localScale = Vector3.one;
 

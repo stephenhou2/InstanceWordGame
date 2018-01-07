@@ -8,7 +8,6 @@ namespace WordJourney
 {
 	public class BattlePlayerUIController : BattleAgentUIController {
 
-
 		private Player player;
 
 		//魔法槽
@@ -37,16 +36,13 @@ namespace WordJourney
 		public Transform toolChoicesContaienr;
 		private InstancePool toolChoiceButtonPool;
 		private Transform toolChoiceButtonModel;
-			
-//		private Sequence mSequence;
-
-//		private List<Button> skillButtons = new List<Button>();
-
-//		private InstancePool skillButtonPool;
-
-//		private CallBack<int> skillSelectCallBack;
 
 
+
+		public void InitExplorePlayerView(Transform statusTintModel, InstancePool statusTintPool){
+			this.statusTintModel = statusTintModel;
+			this.statusTintPool = statusTintPool;
+		}
 
 		/// <summary>
 		/// 初始化探索界面中玩家UI
@@ -54,10 +50,9 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="player">Player.</param>
 		/// <param name="skillSelectCallBack">Skill select call back.</param>
-		public void SetUpExplorePlayerView(Player player,CallBack<int> skillSelectCallBack){
-
+		public void SetUpExplorePlayerView(Player player){
+			
 			this.player = player;
-//			this.skillSelectCallBack = skillSelectCallBack;
 
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
@@ -102,12 +97,13 @@ namespace WordJourney
 		/// <summary>
 		/// 更新人物状态栏
 		/// </summary>
-		public void UpdatePlayerStatusPlane(){
+		public override void UpdateAgentStatusPlane(){
 			UpdateHealthBarAnim(player);
-//			UpdateManaBarAnim (player);
+			UpdateSkillStatusPlane (player);
 			coinCount.text = player.totalCoins.ToString ();
 		}
 			
+
 
 		/// <summary>
 		/// 初始化人物技能栏
@@ -382,7 +378,7 @@ namespace WordJourney
 		public void UpdateItemButtonsAndStatusPlane(){
 
 			UpdateItemButtons ();
-			UpdatePlayerStatusPlane ();
+			UpdateAgentStatusPlane ();
 
 		}
 
@@ -453,50 +449,23 @@ namespace WordJourney
 			// 播放对应的音效
 			GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.audioClipName);
 
-			// 播放地图物品对应的动画
-//			mapItem.UnlockOrDestroyMapItem (()=>{
-//
-//				if (mapItem.walkableAfterChangeStatus) {
-//					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().mapWalkableInfoArray [(int)mapItem.transform.position.x, (int)mapItem.transform.position.y] = 1;
-//				}
+			Vector3 mapItemPos = mapItem.transform.position;
+			MapGenerator mapGenerator = TransformManager.FindTransform ("ExploreManager").GetComponent<MapGenerator> ();
+			int[,] mapWalkableInfoArray = mapGenerator.mapWalkableInfoArray;
 
-//				switch (mapItem.mapItemType) {
-//				// 十字镐清理障碍物有随机获得稀有材料（暂时设定为必出）
-//				case MapItemType.Obstacle:
-//					
-//					List<Material> allMaterials = GameManager.Instance.gameDataCenter.allMaterials;
-//
-//					int rareMaterialIndex = Random.Range (0, allMaterials.Count);
-//
-//					Material rareMaterial = allMaterials [rareMaterialIndex];
-//
-//					// 奖励一种随机稀有材料
-//					rewardItem = new Material(rareMaterial,1);
-//
-//					TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-//
-////						// 显示奖励栏
-////						GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
-//
-//					break;
-//					// 钥匙开宝箱一定成功
-//				case MapItemType.TreasureBox:
-//					
-//					rewardItem = (mapItem as TreasureBox).rewardItem;
-//
-//					if(rewardItem.itemType == ItemType.Formula){
-//						GetComponent<ExploreUICotroller>().SetUpRewardFormulaPlane(rewardItem as Formula);
-//					}else{
-//
-//						TransformManager.FindTransform("ExploreManager").GetComponent<MapGenerator>().SetUpRewardInMap(rewardItem,mapItem.transform.position);
-//
-////							GetComponent<ExploreUICotroller>().SetUpRewardItemsPlane(rewardItem);
-//					}
-//
-//					break;
-//				}
-
-//			});
+			switch (mapItem.mapItemType) {
+			case MapItemType.Stone:
+			case MapItemType.Tree:
+				(mapItem as Obstacle).DestroyObstacle (null);
+				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
+				break;
+			case MapItemType.TreasureBox:
+				TreasureBox tb = mapItem as TreasureBox;
+				tb.UnlockTreasureBox (null);
+				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
+				mapGenerator.SetUpRewardInMap (tb.rewardItem, mapItemPos);
+				break;
+			}
 
 		}
 

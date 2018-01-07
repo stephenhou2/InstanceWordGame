@@ -30,7 +30,6 @@ namespace WordJourney
 
 			this.bulletPool = bulletPool;
 
-
 			Vector3 bulletLaunchPos = Vector3.zero;
 
 			switch (towards) {

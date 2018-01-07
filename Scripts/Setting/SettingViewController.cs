@@ -140,6 +140,12 @@ namespace WordJourney
 
 		}
 
+		public void QuitSettingView(){
+
+
+
+		}
+
 		public void Comment(){
 
 		}

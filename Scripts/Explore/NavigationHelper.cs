@@ -23,7 +23,7 @@ namespace WordJourney
 		private List<PointIn2D> closedList = new List<PointIn2D>();
 
 		// 自动寻路路径上的点集
-		private List<Vector3> pathPos = new List<Vector3>();
+		private List<Vector3> pathPos;
 
 		// 地图宽度
 		private int mapWidth;
@@ -39,13 +39,16 @@ namespace WordJourney
 		/// <param name="mapWalkableInfoArray">Map walkable info array.</param>
 		public List<Vector3> FindPath(Vector3 startPos,Vector3 endPos,int[,] mapWalkableInfoArray){
 
+
 			PointIn2D startPoint = new PointIn2D(startPos);
 			PointIn2D endPoint = new PointIn2D(endPos);
+
+			pathPos = new List<Vector3> ();
 
 			// 每次自动探测路径前将待检测点集和已关闭点集和路径点集清空
 			openList.Clear ();
 			closedList.Clear ();
-			pathPos.Clear ();
+//			pathPos.Clear ();
 
 			// 拿到全地图信息（包括是否可行走和每个点上的行走消耗）
 			this.mapWalkableInfoArray = mapWalkableInfoArray;

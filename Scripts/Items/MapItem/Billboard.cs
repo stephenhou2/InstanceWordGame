@@ -11,7 +11,15 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-			
+//			gameObject.SetActive (true);
+			SetSortingOrder (-(int)transform.position.y);
+		}
+
+
+		public override void AddToPool (InstancePool pool)
+		{
+			gameObject.SetActive (false);
+			pool.AddInstanceToPool (this.gameObject);
 		}
 
 

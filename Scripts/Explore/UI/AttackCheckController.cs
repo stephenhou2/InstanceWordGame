@@ -222,7 +222,7 @@ namespace WordJourney
 				return true;
 			}
 				
-			Debug.LogFormat ("未命中： 指针位置：{0}，命中区域位置：[{1},{2}]", circleAttackCheckRotation, circleAttackZoneRotation, circleAttackZoneRotation + circleAttackZoneSize);
+//			Debug.LogFormat ("未命中： 指针位置：{0}，命中区域位置：[{1},{2}]", circleAttackCheckRotation, circleAttackZoneRotation, circleAttackZoneRotation + circleAttackZoneSize);
 
 			return false;
 

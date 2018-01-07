@@ -13,7 +13,7 @@ namespace WordJourney
 		private Sprite switchOffSprite{
 			get{
 				if (m_SwitchOffSprite == null) {
-					m_SwitchOffSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					m_SwitchOffSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
 						return obj.name == "press_switch_off";
 					});
 				}
@@ -25,7 +25,7 @@ namespace WordJourney
 		private Sprite switchOnSprite{
 			get{
 				if (m_SwitchOnSprite == null) {
-					m_SwitchOnSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					m_SwitchOnSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
 						return obj.name == "press_switch_on";
 					});
 				}
@@ -70,11 +70,19 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
+//			gameObject.SetActive (true);
 			isPressOn = false;
-			bc2d.enabled = true;
+//			bc2d.enabled = true;
 			mapItemRenderer.sprite = switchOnSprite;
+			SetSortingOrder (1);
 		}
 
+		public override void AddToPool (InstancePool pool)
+		{
+			gameObject.SetActive (false);
+//			bc2d.enabled = false;
+			pool.AddInstanceToPool (this.gameObject);
+		}
 
 		public void ResetPressSwitch(Transform door){
 			mapItemRenderer.sprite = switchOffSprite;
@@ -83,7 +91,7 @@ namespace WordJourney
 
 		void OnTriggerEnter2D(Collider2D other){
 
-			if (other.GetComponent<Bullet> () != null) {
+			if (other.GetComponent<BattleAgentController> () == null && other.GetComponent<MovableBox>() == null) {
 				return;
 			}
 				

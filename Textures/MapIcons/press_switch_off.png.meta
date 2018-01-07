@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 4f85ab9b6e797411987acce5c64d738e
-timeCreated: 1497883277
+guid: c3a490054aa9341bbafd918fbab2141f
+timeCreated: 1515298128
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -40,7 +40,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 240
+  spritePixelsToUnits: 150
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -88,5 +88,5 @@ TextureImporter:
     outline: []
   spritePackingTag: 
   userData: 
-  assetBundleName: item/icons
+  assetBundleName: explore/mapicons
   assetBundleVariant: 

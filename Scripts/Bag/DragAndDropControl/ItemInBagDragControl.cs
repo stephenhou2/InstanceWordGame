@@ -39,7 +39,7 @@ namespace WordJourney
 
 			bagView.GetComponent<BagViewController> ().currentSelectItem = item;
 
-			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
+//			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
 
 			item.isNewItem = false;
 

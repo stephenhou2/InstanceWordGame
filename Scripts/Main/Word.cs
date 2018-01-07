@@ -41,7 +41,7 @@ namespace WordJourney
 			// 连接数据库
 			sql.GetConnectionWith (CommonData.dataBaseName);
 
-			int wordsCount = sql.GetItemCountOfTable (tableName);
+			int wordsCount = sql.GetItemCountOfTable (tableName,null,true);
 
 			int wordId = Random.Range (0, wordsCount);
 
@@ -101,18 +101,20 @@ namespace WordJourney
 
 			int wordId = 0;
 
-			if (learnInfo.learnedWords.Count != 0) {
+			if (learnInfo.learnedWordCount != 0) {
 
-				wordId = Random.Range (0, learnInfo.learnedWords.Count);
+				wordId = Random.Range (0, learnInfo.learnedWordCount);
 
-				return learnInfo.learnedWords [wordId];
+				List<LearnWord> learnedWords = learnInfo.GetAllLearnedWords ();
+
+				return learnedWords [wordId];
 
 			}
 
 
 			string tableName = string.Empty;
 
-			WordType wt = GameManager.Instance.gameDataCenter.learnInfo.wordType;
+			WordType wt = GameManager.Instance.gameDataCenter.gameSettings.wordType;
 
 			switch (wt) {
 			case WordType.CET4:
@@ -134,7 +136,7 @@ namespace WordJourney
 			// 连接数据库
 			sql.GetConnectionWith (CommonData.dataBaseName);
 
-			int wordsCount = sql.GetItemCountOfTable (tableName);
+			int wordsCount = sql.GetItemCountOfTable (tableName,null,true);
 
 			wordId = Random.Range (0, wordsCount);
 
