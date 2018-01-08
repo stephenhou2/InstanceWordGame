@@ -583,7 +583,7 @@ namespace WordJourney
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 
 			if (exploreCanvas != null) {
-				exploreCanvas.GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
+				exploreCanvas.GetComponent<BattlePlayerUIController> ().SetUpExplorePlayerView (Player.mainPlayer);
 			}
 
 			GameManager.Instance.UIManager.HideCanvas ("SpellCanvas");

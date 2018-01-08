@@ -77,9 +77,11 @@ namespace WordJourney
 		}
 			
 		public void InitBattlePlayer(){
+			
 			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
 
 			bpUICtr = canvas.GetComponent<BattlePlayerUIController> ();
+
 		}
 
 		private bool onlyStoreDestination;
@@ -179,12 +181,12 @@ namespace WordJourney
 
 			Vector3 moveVector = transform.position - targetPos;
 
-			SetSortingOrder(-(int)targetPos.y);
-
 			moveTweener =  transform.DOMove (targetPos, moveDuration).OnComplete (() => {
 
 				// 动画结束时已经移动到指定节点位置，标记单步行动结束
 				inSingleMoving = false;
+
+				SetSortingOrder(-(int)transform.position.y);
 
 				// 将当前节点从路径点中删除
 				pathPosList.RemoveAt(0);
@@ -393,7 +395,6 @@ namespace WordJourney
 						StopWalkBeforeEvent ();
 						return;
 					case "plant":
-//						StopWalkBeforeEvent ();
 						enterPlant (r2d.transform);
 						return;
 					case "pressswitch":
@@ -699,40 +700,6 @@ namespace WordJourney
 			}
 		}
 
-
-		public void UseItem(Consumables consumables){
-
-			return;
-
-//			Player player = agent as Player;
-
-//			switch (consumables.consumablesType) {
-//			case ConsumablesType.MedicineAndScroll:
-//				if (consumables.effectDuration == 0) {
-//					player.health += (int)(consumables.healthGain * agent.maxHealth);
-//					player.mana += (int)(consumables.manaGain * agent.maxMana);
-//				} else {
-//					ConsumablesEffectState consumablesEffectState = player.allConsumablesEffectStates.Find (delegate(ConsumablesEffectState obj) {
-//						return obj.consumables.itemId == consumables.itemId;
-//					});
-//					if (consumablesEffectState == null) {
-//						consumablesEffectState = new ConsumablesEffectState (consumables);
-//						player.allConsumablesEffectStates.Add (consumablesEffectState);
-//						StartCoroutine ("ConsumablesEffectOn", consumablesEffectState);
-//					}
-//				}
-//				break;
-//			}
-//
-//			consumables.itemCount--;
-//
-//			if (consumables.itemCount <= 0) {
-//				player.allConsumablesInBag.Remove (consumables);
-//			}
-//
-//			bpUICtr.UpdateItemButtonsAndStatusPlane ();
-
-		}
 
 //		private IEnumerator ConsumablesEffectOn(ConsumablesEffectState consumablesEffectState){
 //

@@ -54,11 +54,16 @@ namespace WordJourney
 
 		public void SetUpFightTextManager(Vector3 selfPos,Vector3 enemyPos){
 
-			direction = selfPos.x <= enemyPos.x ? MyTowards.Left : MyTowards.Right;
+			direction = selfPos.x < enemyPos.x ? MyTowards.Left : MyTowards.Right;
 
 			basePosition = ToPointInCanvas (selfPos);
 
 		}
+
+//		public void SetUpFightTextManager(Vector3 selfPos,MyTowards towards){
+//			direction = towards;
+//			basePosition = selfPos;
+//		}
 
 
 		public void AddFightText(FightText fightText){

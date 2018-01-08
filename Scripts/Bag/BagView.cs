@@ -8,16 +8,27 @@ namespace WordJourney
 
 	using UnityEngine.UI;
 	using DG.Tweening;
+	using System.Text;
 
 	public class BagView : MonoBehaviour {
 
-//		public Transform bagViewContainer;
-//		public GameObject bagPlane;
+		public Slider healthBar;
+		public Text healthText;
+		public Text coinCount;
 
-		public Transform playerPropertiesPlane;
-		public Transform playerStatusPlane;
+		public Slider playerExperienceBar;
+		public Text playerExperienceText;
+		public Text playerLevelText;
 
-		public Button[] bagTypeButtons;
+		public Transform playerMaxHealth;
+		public Transform playerAttack;
+		public Transform playerCrit;
+		public Transform playerHit;
+		public Transform playerMana;
+		public Transform playerMagicResist;
+		public Transform playerArmor;
+		public Transform playerDodge;
+
 		public Transform[] allEquipedEquipmentButtons;
 
 		public Transform bagItemsPlane;
@@ -32,24 +43,22 @@ namespace WordJourney
 
 		public Transform itemDetailHUD;
 
-
-//		public Transform specificTypeItemHUD;
-//		public Transform specificTypeItemsScrollView;
-//		public Transform specificTypeItemDetailsContainer;
-
-		private Transform itemDetailsModel;
-		private InstancePool itemDetailsPool;
-
-		public Transform resolveCountHUD;
-	
 		public Transform resolveGainsHUD;
 		public Transform resolveGainsContainer;
 
 		private InstancePool resolveGainsPool;
 		private Transform resolveGainModel;
 
+		public Transform helpPlane;
+
 		private Sequence[] changeTintFromEqSequences = new Sequence[8];
 		private Sequence[] changeTintFromOtherSequences = new Sequence[8];
+
+		public Transform queryResolveHUD;
+
+		public Transform tintHUD;
+		private float tintHUDShowDuration = 1f;
+		private IEnumerator tintHUDCoroutine;
 
 		/// <summary>
 		/// 初始化背包界面
@@ -68,7 +77,7 @@ namespace WordJourney
 			if (poolContainerOfBagCanvas.childCount == 0) {
 				//创建缓存池
 				bagItemsPool = InstancePool.GetOrCreateInstancePool ("BagItemsPool",poolContainerOfBagCanvas.name);
-				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfBagCanvas.name);
+//				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfBagCanvas.name);
 				resolveGainsPool = InstancePool.GetOrCreateInstancePool ("ResolveGainsPool",poolContainerOfBagCanvas.name);
 
 			}
@@ -76,11 +85,11 @@ namespace WordJourney
 			if (modelContainerOfBagCanvas.childCount == 0) {
 				// 获取模型
 				bagItemModel = TransformManager.FindTransform ("BagItemModel");
-				itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModelInBagCanvas");
+//				itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModelInBagCanvas");
 				resolveGainModel = TransformManager.FindTransform ("ResolveGainModel");
 
 				bagItemModel.SetParent (modelContainerOfBagCanvas);
-				itemDetailsModel.SetParent (modelContainerOfBagCanvas);
+//				itemDetailsModel.SetParent (modelContainerOfBagCanvas);
 				resolveGainModel.SetParent (modelContainerOfBagCanvas);
 			}
 
@@ -103,48 +112,40 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpPlayerStatusPlane(Agent.PropertyChange propertyChange){
 
-			Slider healthBar = playerStatusPlane.Find ("HealthBar").GetComponent<Slider> ();
-
-			Image playerIcon = playerStatusPlane.Find ("PlayerIcon").GetComponent<Image> ();
-
-			Text healthText = healthBar.transform.Find ("HealthText").GetComponent<Text> ();
-
-//			Text playerLevel = playerPropertiesPlane.Find("PlayerLevel").GetComponent<Text>();
-
-			Transform playerMaxHealth = playerPropertiesPlane.Find ("MaxHealth");
-			Transform playerHit = playerPropertiesPlane.Find ("Hit");
-			Transform playerAttack = playerPropertiesPlane.Find ("Attack");
-			Transform playerMana = playerPropertiesPlane.Find ("Mana");
-			Transform playerArmor = playerPropertiesPlane.Find ("Armor");
-			Transform playerMagicResist = playerPropertiesPlane.Find ("MagicResist");
-			Transform playerDodge = playerPropertiesPlane.Find ("Dodge");
-			Transform playerCrit = playerPropertiesPlane.Find ("Crit");
-
-
-			playerMaxHealth.Find ("PropertyValue").GetComponent<Text> ().text = player.maxHealth.ToString ();
-			playerHit.Find ("PropertyValue").GetComponent<Text> ().text = player.hit.ToString ();
-			playerAttack.Find ("PropertyValue").GetComponent<Text> ().text = player.attack.ToString ();
-			playerMana.Find ("PropertyValue").GetComponent<Text> ().text = player.mana.ToString ();
-			playerArmor.Find ("PropertyValue").GetComponent<Text> ().text = player.armor.ToString ();
-			playerMagicResist.Find ("PropertyValue").GetComponent<Text> ().text = player.magicResist.ToString ();
-			playerDodge.Find ("PropertyValue").GetComponent<Text> ().text = player.dodge.ToString ();
-			playerCrit.Find ("PropertyValue").GetComponent<Text> ().text = player.crit.ToString ();
-
+			// 玩家生命条
 			healthBar.maxValue = player.maxHealth;
 			healthBar.value = player.health;
 			healthText.text = player.health.ToString () + "/" + player.maxHealth.ToString ();
 
-//			playerLevel.text = "Lv." + player.agentLevel;
+			// 玩家水晶数量
+			coinCount.text = player.totalCoins.ToString ();
 
-//			for (int i = 0; i < changeTintFromEqSequences.Length; i++) {
-//				if (changeTintFromEqSequences [i] != null) {
-//					changeTintFromEqSequences [i].Complete ();
-//				}
-//				if (changeTintFromOtherTweens [i] != null) {
-//					changeTintFromOtherTweens [i].Kill(false);
-//				}
-//			}
-		
+			// 玩家经验条
+			playerLevelText.text = "Lv." + player.agentLevel.ToString();
+			playerExperienceBar.maxValue = player.upgradeExprience;
+			playerExperienceBar.value = player.experience;
+			playerExperienceText.text = player.experience.ToString() + "/" + player.upgradeExprience.ToString ();
+
+
+			// 玩家属性面板
+			Text playerMaxHealthValue = playerMaxHealth.Find("PropertyValue").GetComponent<Text>();
+			Text playerHitValue = playerHit.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerAttackValue = playerAttack.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerManaValue = playerMana.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerArmorValue = playerArmor.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerMagicResistValue = playerMagicResist.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerDodgeValue = playerDodge.Find ("PropertyValue").GetComponent<Text> ();
+			Text playerCritValue = playerCrit.Find ("PropertyValue").GetComponent<Text> ();
+
+			playerMaxHealthValue.text = player.maxHealth.ToString();
+			playerHitValue.text = player.hit.ToString ();
+			playerAttackValue.text = player.attack.ToString ();
+			playerManaValue.text = player.mana.ToString ();
+			playerArmorValue.text = player.armor.ToString ();
+			playerMagicResistValue.text = player.magicResist.ToString ();
+			playerDodgeValue.text = player.dodge.ToString ();
+			playerCritValue.text = player.crit.ToString ();
+
 
 			ShowEquipmentChangeTint (playerMaxHealth, propertyChange.maxHealthChangeFromEq,0);
 			ShowEquipmentChangeTint (playerHit, propertyChange.hitChangeFromEq,1);
@@ -287,37 +288,42 @@ namespace WordJourney
 		}
 
 		public void SetUpTintHUD(string tint){
-			Debug.Log (tint);
+
+			Text tintText = tintHUD.Find ("TintText").GetComponent<Text> ();
+
+			tintText.text = tint;
+
+			tintHUD.gameObject.SetActive (true);
+
+			if (tintHUDCoroutine != null) {
+				StopCoroutine (tintHUDCoroutine);
+			}
+
+			tintHUDCoroutine = TintHUDLatelyDisappear ();
+
+			StartCoroutine (tintHUDCoroutine);
+
 		}
 			
+		private IEnumerator TintHUDLatelyDisappear(){
+			
+			yield return new WaitForSeconds (tintHUDShowDuration);
+
+			tintHUD.gameObject.SetActive (false);
+		}
+
+		public void ShowQueryResolveHUD(){
+			queryResolveHUD.gameObject.SetActive (true);
+		}
+
+		public void QuitQueryResolveHUD(){
+			queryResolveHUD.gameObject.SetActive (false);
+		}
+
 		/// <summary>
 		/// 初始化背包物品界面
 		/// </summary>
-		public void SetUpItemsDiaplayPlane<T>(List<T> items)
-			where T:Item
-		{
-
-//			int lastItemCount = itemDisplayButtonsContainer.childCount;
-//
-//			for (int i = 0; i < lastItemCount; i++) {
-//
-//				Button itemDisplayButton = itemDisplayButtonsContainer.GetChild (i).GetComponent<Button>();
-//
-//				Item item = items [i];
-//
-//				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
-//
-//			}
-//
-//			for (int i = lastItemCount; i < items.Count; i++) {
-//
-//				Button itemDisplayButton = itemDisplayButtonsPool.GetInstance<Button> (itemDisplayButtonModel.gameObject, itemDisplayButtonsContainer);
-//
-//				Item item = items [i];
-//
-//				SetUpItemButton (item, itemDisplayButton, currentSelectItem);
-//
-//			}
+		public void SetUpItemsDiaplayPlane(List<Item> items){
 
 			bagItemsPlane.GetComponent<ScrollRect> ().velocity = Vector2.zero;
 
@@ -328,13 +334,7 @@ namespace WordJourney
 			int loadCount = items.Count <= maxPreloadCountOfItem ? items.Count : maxPreloadCountOfItem;
 
 			for (int i = 0; i < loadCount; i++) {
-
-				Item item = items [i] as Item;
-
-//				itemDisplayButton.SetUpItemButtonView (item, itemDisplayButtonsContainer, currentSelectItem);
-
-				AddBagItem (item);
-
+				AddBagItem (items[i]);
 			}
 				
 			if (loadCount < items.Count) {
@@ -374,7 +374,7 @@ namespace WordJourney
 			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
 			Text itemName = itemDetailsContainer.Find("ItemName").GetComponent<Text>();
 			Text itemType = itemDetailsContainer.Find("ItemType").GetComponent<Text>();
-			Text itemDamagePercentage = itemDetailsContainer.Find("ItemDamagePercentage").GetComponent<Text>();
+			Text itemDescription = itemDetailsContainer.Find ("ItemDescription").GetComponent<Text> ();
 			Text itemProperties = itemDetailsContainer.Find("ItemProperties").GetComponent<Text>();
 			Image itemIcon = itemDetailsContainer.Find("ItemIcon").GetComponent<Image>();
 
@@ -395,7 +395,7 @@ namespace WordJourney
 			itemProperties.text = item.itemDescription;
 
 			// 如果物品是装备
-			switch(item.itemType){
+			switch (item.itemType) {
 
 			case ItemType.Equipment:
 
@@ -403,19 +403,7 @@ namespace WordJourney
 
 				itemName.text = equipment.itemName;
 
-				string colorText = string.Empty;
-
-				float damagePercentage = (float)equipment.durability / equipment.maxDurability;
-
-				if (damagePercentage <= 0.5f) {
-					colorText = "red";
-				} else if (damagePercentage <= 0.8f) {
-					colorText = "orange";
-				} else {
-					colorText = "green";
-				}
-
-				itemDamagePercentage.text = string.Format ("耐久度：<color={0}>{1}/{2}</color>", colorText, equipment.durability, equipment.maxDurability);
+				itemDescription.text = item.itemDescription;
 
 				choiceHUDWithTwoBtns.gameObject.SetActive (true);
 
@@ -433,110 +421,21 @@ namespace WordJourney
 			case ItemType.Consumables:
 				itemProperties.text = item.itemDescription;
 				itemName.text = item.itemName;
-				itemDamagePercentage.text = string.Empty;
+				itemDescription.text = item.itemDescription;
 
+				Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
 
-				choiceHUDWithTwoBtns.gameObject.SetActive (true);
-
-				choiceHUDWithTwoBtns.Find ("UnloadButton").gameObject.SetActive (false);
-				choiceHUDWithTwoBtns.Find ("EquipButton").gameObject.SetActive (false);
-				choiceHUDWithTwoBtns.Find ("UseButton").gameObject.SetActive (true);
-
+				if (exploreManager != null) {
+					choiceHUDWithTwoBtns.gameObject.SetActive (true);
+					choiceHUDWithTwoBtns.Find ("UnloadButton").gameObject.SetActive (false);
+					choiceHUDWithTwoBtns.Find ("EquipButton").gameObject.SetActive (false);
+					choiceHUDWithTwoBtns.Find ("UseButton").gameObject.SetActive (true);
+				} else {
+					choiceHUDWithOneBtn.gameObject.SetActive (true);
+				}
 				break;
-			case ItemType.FuseStone:
-				itemProperties.text = item.itemDescription;
-				itemName.text = item.itemName;
-				itemDamagePercentage.text = string.Empty;
-				choiceHUDWithOneBtn.gameObject.SetActive (true);
-				break;
-			case ItemType.Task:
-				itemProperties.text = item.itemDescription;
-				itemName.text = item.itemName;
-				itemDamagePercentage.text = string.Empty;
-				break;
-			} 
+			}
 			itemDetailHUD.gameObject.SetActive (true);
-		}
-
-		public void UpdateItemDetailHUDAfterFix(Equipment equipment){
-
-			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
-
-			Text itemDamagePercentage = itemDetailsContainer.Find("ItemDamagePercentage").GetComponent<Text>();
-
-			string colorText = string.Empty;
-
-			float damagePercentage = (float)equipment.durability / equipment.maxDurability;
-
-			if (damagePercentage <= 0.5f) {
-				colorText = "red";
-			} else if (damagePercentage <= 0.8f) {
-				colorText = "orange";
-			} else {
-				colorText = "green";
-			}
-
-			itemDamagePercentage.text = string.Format("损坏率：<color={0}>{1}/{2}</color>",colorText, equipment.durability,equipment.maxDurability);
-
-			GetComponent<Canvas> ().enabled = true;
-
-		}
-
-		/// <summary>
-		/// 初始化选择分解数量界面
-		/// </summary>
-		public void SetUpResolveCountHUD(int minValue,int maxValue){
-
-			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
-
-			Button minusBtn = resolveCountContainer.Find("MinusButton").GetComponent<Button>();
-			Button plusBtn = resolveCountContainer.Find("PlusButton").GetComponent<Button>();
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
-			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
-
-
-			resolveCountHUD.gameObject.SetActive (true);
-
-			if (minusBtn.GetComponent<Image> ().sprite == null 
-				|| plusBtn.GetComponent<Image>().sprite == null) 
-			{
-				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
-					return obj.name == "arrowIcon";
-				});
-
-				minusBtn.GetComponent<Image> ().sprite = arrowSprite;
-				plusBtn.GetComponent<Image> ().sprite = arrowSprite;
-			}
-
-			resolveCountSlider.minValue = minValue;
-			resolveCountSlider.maxValue = maxValue;
-
-			resolveCountSlider.value = minValue;
-			resolveCount.text = "分解1个";
-
-
-		}
-
-		public int GetResolveCountBySlider(){
-			
-			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
-
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
-
-			return (int)resolveCountSlider.value;
-		}
-
-		public void UpdateResolveCountHUD(int count){
-
-			Transform resolveCountContainer = resolveCountHUD.Find ("ResolveCountContainer");
-
-			Slider resolveCountSlider = resolveCountContainer.Find("ResolveCountSlider").GetComponent<Slider>();
-
-			Text resolveCount = resolveCountContainer.Find("ResolveCount").GetComponent<Text>();
-
-			resolveCountSlider.value = count;
-
-			resolveCount.text = "分解" + count.ToString() + "个";
 		}
 
 		/// <summary>
@@ -586,10 +485,6 @@ namespace WordJourney
 			// 如果是新物品，则显示新物品提示图片
 			newItemTintIcon.enabled = item.isNewItem;
 
-//			if (updateBagView) {
-//				SetUpEquipedEquipmentsPlane ();
-//				SetUpPlayerStatusPlane ();
-//			}
 
 		}
 
@@ -608,32 +503,44 @@ namespace WordJourney
 
 		}
 
-		public void SetUpResolveGainHUD(List<Item> resolveGains){
+		public void SetUpResolveGainHUD(List<CharacterFragment> characters){
 
-			for (int i = 0; i < resolveGains.Count; i++) {
+			StringBuilder tint = new StringBuilder();
 
-				Item resolveGainItem = resolveGains [i];
+			tint.Append ("分解获得字母碎片");
 
-				Transform resolveGain = resolveGainsPool.GetInstance<Transform> (resolveGainModel.gameObject, resolveGainsContainer);
+			for (int i = 0; i < characters.Count; i++) {
 
-				Image resolveGainIcon = resolveGain.Find ("ResolveGainIcon").GetComponent<Image> ();
-
-				Text resolveGainName = resolveGain.Find ("ResolveGainName").GetComponent<Text> ();
-
-				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
-					return obj.name == resolveGainItem.spriteName;
-				});
-
-				if (s != null) {
-					resolveGainIcon.sprite = s;
-				}
-
-				resolveGainName.text = resolveGainItem.itemName;
-
+				tint.Append (characters [i].character);
 
 			}
-				
-			resolveGainsHUD.gameObject.SetActive (true);
+
+			SetUpTintHUD (tint.ToString());
+
+//			for (int i = 0; i < resolveGains.Count; i++) {
+//
+//				Item resolveGainItem = resolveGains [i];
+//
+//				Transform resolveGain = resolveGainsPool.GetInstance<Transform> (resolveGainModel.gameObject, resolveGainsContainer);
+//
+//				Image resolveGainIcon = resolveGain.Find ("ResolveGainIcon").GetComponent<Image> ();
+//
+//				Text resolveGainName = resolveGain.Find ("ResolveGainName").GetComponent<Text> ();
+//
+//				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
+//					return obj.name == resolveGainItem.spriteName;
+//				});
+//
+//				if (s != null) {
+//					resolveGainIcon.sprite = s;
+//				}
+//
+//				resolveGainName.text = resolveGainItem.itemName;
+//
+//
+//			}
+//				
+//			resolveGainsHUD.gameObject.SetActive (true);
 
 		}
 
@@ -645,75 +552,6 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 更换装备／物品的方法
-		/// </summary>
-		/// <param name="equipedEquipmentToCompare">Equiped equipment to compare.</param>
-		/// <param name="allEquipmentsOfCurrentSelectTypeInBag">All equipments of current select type in bag.</param>
-		public void SetUpAllEquipmentsPlaneOfEquipmentType(Equipment equipedEquipmentToCompare,List<Equipment> allEquipmentsOfCurrentSelectTypeInBag){
-
-
-//			MyVerticalScrollView scrollView = specificTypeItemsScrollView.GetComponent<MyVerticalScrollView> ();
-//	
-//			List<object> dataList = new List<object> ();
-//
-//			for (int i = 0; i < allEquipmentsOfCurrentSelectTypeInBag.Count; i++) {
-//
-//				dataList.Add(new EquipmentAndCompareEquipment(allEquipmentsOfCurrentSelectTypeInBag[i],equipedEquipmentToCompare));
-//
-//			}
-//
-//			scrollView.InitVerticalScrollViewData (dataList, itemDetailsPool, itemDetailsModel);
-//
-//			scrollView.SetUpScrollView ();
-//
-//			specificTypeItemHUD.gameObject.SetActive (true);
-
-		}
-			
-
-
-		public void OnResolveCountSliderDrag(){
-			int resolveCount = GetResolveCountBySlider ();
-			UpdateResolveCountHUD (resolveCount);
-		}
-	
-
-//		public void OnEquipButtonOfDetailHUDClick(List<Item> itemsOfCurrentSelectType,Item currentSelectItem){
-//
-//			OnQuitSpecificTypePlane ();
-//
-//			SetUpPlayerStatusPlane ();
-//
-////			SetUpEquipedEquipmentsPlane ();
-//
-//			SetUpItemsDiaplayPlane (itemsOfCurrentSelectType);
-//
-//		}
-
-
-//		public void ResetBagView<T>(List<T> currentSelectedTypeItemsInBag,Item currentSelectItem)
-//			where T:Item
-//		{
-//
-//			QuitResolveCountHUD ();
-//
-//			QuitItemDetailHUD ();
-//
-//			SetUpPlayerStatusPlane ();
-//
-////			SetUpEquipedEquipmentsPlane ();
-//
-//			SetUpItemsDiaplayPlane<T> (currentSelectedTypeItemsInBag);
-//
-//		}
-
-		public void QuitResolveCountHUD(){
-
-			resolveCountHUD.gameObject.SetActive (false);
-
-		}
-					
 
 		// 关闭物品详细说明HUD
 		public void QuitItemDetailHUD(){
@@ -724,18 +562,7 @@ namespace WordJourney
 			itemDetailHUD.Find ("ItemDetailsContainer/ChoiceHUDWithTwoBtns").gameObject.SetActive (false);
 
 		}
-
-		// 关闭更换物品的界面
-		public void OnQuitSpecificTypePlane(){
-
-//			specificTypeItemHUD.gameObject.SetActive (false);
-//
-//			for (int i = 0; i < specificTypeItemDetailsContainer.childCount; i++) {
-//				Transform trans = specificTypeItemDetailsContainer.GetChild (i);
-//				trans.GetComponent<ItemDetailView> ().ResetItemDetail ();
-//			}
-
-		}
+			
 
 		// 关闭背包界面
 		public void QuitBagPlane(){

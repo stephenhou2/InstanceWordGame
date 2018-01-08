@@ -14,6 +14,8 @@ namespace WordJourney
 		private LearningInfo learnInfo;
 
 
+
+
 		/// <summary>
 		/// 初始化学习记录界面
 		/// </summary>
@@ -55,11 +57,14 @@ namespace WordJourney
 		public void OnQuitWordsPlaneButtonClick(){
 			recordView.QuitWordsPlane ();
 		}
+			
 
 		/// <summary>
 		/// 退出学习记录界面
 		/// </summary>
 		public void QuitRecordPlane(){
+
+			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
 			recordView.OnQuitRecordPlane ();
 

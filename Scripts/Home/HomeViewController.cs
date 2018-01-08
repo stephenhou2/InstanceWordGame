@@ -137,12 +137,16 @@ namespace WordJourney
 
 		public void OnLearnButtonClick(){
 
+			homeView.StartLearnCountDown ();
+
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
 				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
 				homeView.OnQuitHomeView();
 			},false,true);
 
 		}
+
+
 
 
 		public void OnBagButtonClick(){

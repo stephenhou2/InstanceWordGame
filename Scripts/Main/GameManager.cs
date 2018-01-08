@@ -25,7 +25,6 @@ namespace WordJourney
 
 					instance.persistDataManager = new PersistDataManager ();
 
-
 					DontDestroyOnLoad (instance);
 				}  
 				return instance;  
@@ -40,7 +39,7 @@ namespace WordJourney
 
 		public PersistDataManager persistDataManager;
 
-		public ResourceLoader emptyResourceLoader;
+		public PronounceManager pronounceManager;
 			
 		#warning 如果决定使用scene来进行场景转换打开下面的代码
 //		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

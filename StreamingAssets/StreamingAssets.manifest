@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3710548709
+CRC: 382819016
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -60,7 +60,9 @@ AssetBundleManifest:
       Name: bag/canvas
       Dependencies:
         Dependency_0: ui/icons
-        Dependency_1: skills/icons
+        Dependency_1: item/icons
+        Dependency_2: material/icons
+        Dependency_3: skills/icons
     Info_15:
       Name: spell/canvas
       Dependencies:

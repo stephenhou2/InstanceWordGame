@@ -28,15 +28,21 @@ namespace WordJourney
 	public class Goods{
 
 		// 商品对应物品的id
-		public int goodsId;
+		public int[] goodsIds;
 		// 商品的价格
-		public int goodsPrice;
+		public int goodsPrice{
+			get {
+				return itemAsGoods.price;
+			}
+		}
 
 		private Item myItemAsGoods;
 		public Item itemAsGoods{
 			get{
 				if (myItemAsGoods == null) {
-					myItemAsGoods = Item.NewItemWith (goodsId, 1);
+					int randomIndex = Random.Range (0, goodsIds.Length);
+					int goodsIdAsItem = goodsIds [randomIndex];
+					myItemAsGoods = Item.NewItemWith (randomIndex, 1);
 				}
 				return myItemAsGoods;
 			}

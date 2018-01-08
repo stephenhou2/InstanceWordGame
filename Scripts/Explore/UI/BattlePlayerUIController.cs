@@ -17,20 +17,19 @@ namespace WordJourney
 
 		public Text coinCount;
 
+		public Button[] equipedConsumablesButtons;
+
 //		public Transform skillsContainer;
 //		private Transform skillButtonModel;
 	
 		/**********  ConsumablesPlane UI *************/
-		public Transform allConsumablesPlane;
-		public Transform allConsumablesContainer;
+		public Transform consumablesInBagPlane;
+		public Transform consumablesInBagContainer;
 		private Transform consumablesButtonModel;
 		private InstancePool consumablesButtonPool;
 		/**********  ConsumablesPlane UI *************/
 
-		public Button allConsumablesButton;
-		public Button healthBottleButton;
-		public Button manaBottleButton;
-		public Button antiDebuffButton;
+		public Button showConsumablesInBagButton;
 
 		public Transform toolChoicesPlane;
 		public Transform toolChoicesContaienr;
@@ -38,10 +37,28 @@ namespace WordJourney
 		private Transform toolChoiceButtonModel;
 
 
+		private ExploreManager mExploreManager;
+		private ExploreManager exploreManager{
+			get{
+				if (mExploreManager == null) {
+					mExploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager>();
+				}
+				return mExploreManager;
+			}
+		}
+
+		private int consumablesCountInOnePage = 8;
+
+		private int currentConsumablesPage;
+
+		public Button nextPageButton;
+		public Button lastPageButton;
+
 
 		public void InitExplorePlayerView(Transform statusTintModel, InstancePool statusTintPool){
 			this.statusTintModel = statusTintModel;
 			this.statusTintPool = statusTintPool;
+			currentConsumablesPage = 0;
 		}
 
 		/// <summary>
@@ -57,22 +74,17 @@ namespace WordJourney
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
-
-//			skillButtonPool = InstancePool.GetOrCreateInstancePool ("SkillButtonPool",poolContainerOfExploreCanvas.name);
 			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
 			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
 
-
-//			skillButtonModel = TransformManager.FindTransform ("SkillButtonModel");
 			consumablesButtonModel = TransformManager.FindTransform ("ConsumablesButtonModel");
 			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
 
 			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
-//			skillButtonModel.SetParent (modelContainerOfExploreScene);
 			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
-			UpdateItemButtons ();
+			SetUpBottomConsumablesButtons ();
 
 		}
 
@@ -83,11 +95,9 @@ namespace WordJourney
 		private void SetUpPlayerStatusPlane(){
 
 			healthBar.maxValue = player.maxHealth;
-//			manaBar.maxValue = player.maxMana;
 			coinCount.text = player.totalCoins.ToString ();
 
 			healthText.text = string.Format ("{0}/{1}", player.health, player.maxHealth);
-//			manaText.text = string.Format ("{0}/{1}", player.mana, player.maxMana);
 
 			healthBar.value = player.health;
 			manaBar.value = player.mana;
@@ -106,125 +116,27 @@ namespace WordJourney
 
 
 		/// <summary>
-		/// 初始化人物技能栏
-		/// </summary>
-		/// <param name="player">Player.</param>
-//		public void SetUpPlayerSkillPlane(Player player){
-//
-//			skillButtons.Clear ();
-//
-//			for (int i = 0; i < player.equipedActiveSkills.Count; i++) {
-//
-//				ActiveSkill skill = player.equipedActiveSkills [i];
-//
-//				Button skillButton = skillButtonPool.GetInstance<Button> (skillButtonModel.gameObject, skillsContainer);
-//
-//				Image skillIcon = skillButton.transform.Find ("SkillIcon").GetComponent<Image> ();
-//				Text skillName = skillButton.transform.Find ("SkillName").GetComponent<Text> ();
-//				Text manaConsume = skillButton.transform.Find ("ManaConsume").GetComponent<Text> ();
-//
-//
-//				Sprite sprite = GameManager.Instance.gameDataCenter.allSkillSprites.Find(delegate (Sprite s){
-//					return s.name == skill.skillIconName;
-//				});
-//
-//				if (sprite != null) {
-//					skillIcon.sprite = sprite;
-//					skillIcon.enabled = true;
-//				}
-//
-//				skillName.text = skill.skillName;
-//				manaConsume.text = (skill as ActiveSkill).manaConsume.ToString();
-//
-//				UpdateSkillButtonsStatus ();
-//
-//				int index = i;
-//
-//				skillButton.onClick.RemoveAllListeners ();
-//				skillButton.onClick.AddListener (delegate() {
-//					skillSelectCallBack(new int[]{index});
-//					SkillButtonCoolen(skill);
-//				});
-//
-//				skillButtons.Add (skillButton);
-//
-//			}
-//
-//			skillsContainer.gameObject.SetActive (true);
-//
-//		}
-
-		/// <summary>
-		/// 技能按钮的冷却(所有技能共同进入冷却)
-		/// </summary>
-//		private void SkillButtonCoolen(Skill skill){
-//
-//			for (int i = 0; i < skillButtons.Count; i++) {
-//				
-//				Button skillButton = skillButtons [i];
-//
-//				skillButton.interactable = false;
-//
-//				Image coolenMask = skillButton.transform.Find ("CoolenMask").GetComponent<Image> ();
-//
-//				coolenMask.enabled = true;
-//
-//				coolenMask.fillAmount = 1;
-//
-//				coolenMask.DOFillAmount (0, player.skillCoolenInterval).OnComplete (() => {
-//					coolenMask.enabled = false;
-//					UpdateSkillButtonsStatus ();
-//				});
-//			}
-//				
-//		}
-
-		/// <summary>
-		/// 更新技能按钮是否可交互，根据玩家魔法值更新技能所需魔法的显示颜色
-		/// </summary>
-//		private void UpdateSkillButtonsStatus(){
-//			
-//			for (int i = 0; i < skillButtons.Count; i++) {
-//				
-//				Button skillButton = skillButtons [i];
-//				ActiveSkill skill = player.equipedActiveSkills [i];
-//				Text manaConsume = skillButton.GetComponentInChildren<Text> ();
-//
-//				skillButton.interactable = player.mana >= skill.manaConsume;
-//
-//				if (!skillButton.interactable) {
-//					manaConsume.color = Color.red;
-//				} else {
-//					manaConsume.color = Color.green;
-//				}
-//
-//			}
-//		}
-
-		/// <summary>
 		/// 更新底部物品栏状态
 		/// </summary>
-		public void UpdateItemButtons(){
+		public void SetUpBottomConsumablesButtons(){
 
-			// 背包中的血瓶
-			Item healthBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemId == 500;
-			});
+			int totalConsumablesCount = player.allConsumablesInBag.Count;
 
-			// 背包中的蓝屏
-			Item manaBottle = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemId == 501;
-			});
+			for (int i = 0; i < equipedConsumablesButtons.Length; i++) {
 
-			// 背包中的回程卷轴
-			Item TP = player.allConsumablesInBag.Find (delegate(Consumables obj) {
-				return obj.itemId == 514;
-			});
+				Button equipedConsumablesButton = equipedConsumablesButtons [i];
 
-			SetUpItemButton (healthBottle, healthBottleButton);
-			SetUpItemButton (manaBottle, manaBottleButton);
-			SetUpItemButton (TP, antiDebuffButton);
+				if (i < totalConsumablesCount) {
 
+					Consumables consumables = player.allConsumablesInBag [i];
+
+					AddBottomConsumablesButton (consumables, equipedConsumablesButton);
+
+				} else {
+					AddBottomConsumablesButton (null, equipedConsumablesButton);
+				}
+
+			}
 		}
 
 		/// <summary>
@@ -232,16 +144,25 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="item">Item.</param>
 		/// <param name="itemButton">Item button.</param>
-		private void SetUpItemButton(Item item,Button itemButton){
+		private void AddBottomConsumablesButton(Consumables consumables,Button consumablesButton){
 
-			if (item == null) {
-				itemButton.interactable = false;
-				itemButton.GetComponentInChildren<Text> ().text = "0";
-			} else {
-				itemButton.interactable = true;
-				itemButton.GetComponentInChildren<Text> ().text = item.itemCount.ToString ();
+			Image consumablesIcon = consumablesButton.transform.Find ("ConsumablesIcon").GetComponent<Image> ();
+
+			if (consumables == null) {
+				consumablesButton.interactable = false;
+				consumablesIcon.enabled = false;
+				return;
+
 			}
 
+			consumablesButton.interactable = true;
+
+			Sprite consumablesSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == consumables.spriteName;
+			});
+			consumablesIcon.sprite = consumablesSprite;
+			consumablesIcon.enabled = true;
+			consumablesButton.GetComponentInChildren<Text> ().text = consumables.itemCount.ToString ();
 
 		}
 
@@ -257,118 +178,177 @@ namespace WordJourney
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				Transform bagCanvas = TransformManager.FindTransform("BagCanvas");
 				bagCanvas.GetComponent<BagViewController>().SetUpBagView(true);
-//				bagCanvas.gameObject.SetActive(true);
 			}, false,true);
 
 		}
-
-		/// <summary>
-		/// 底部物品栏上的消耗品按钮点击响应
-		/// </summary>
-		/// <param name="buttonIndex">Button index.</param>
-		public void OnItemButtonClick(int buttonIndex){
-
-			Consumables consumables = null;
-
-			switch (buttonIndex) {
-			case 0://生命药剂
-				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 500;
-				});
-				break;
-			case 1://魔法药剂
-				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 501;
-				});
-				break;
-			case 2://回程卷轴
-				consumables = player.allConsumablesInBag.Find (delegate (Consumables obj) {
-					return obj.itemId == 514;
-				});
-				break;
-			}
-
-
-			BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
-
-			bpCtr.UseItem (consumables);
-
-			// 更新底部物品栏和人物状态栏
-			UpdateItemButtonsAndStatusPlane ();
-
-		}
+			
 
 		/// <summary>
 		/// 打开所有消耗品界面的 箭头按钮 的点击响应
 		/// </summary>
-		public void OnAllConsumablesButtonClick(){
+		public void OnShowConsumablesInBagButtonClick(){
+
+			currentConsumablesPage = 0;
 
 			// 如果箭头朝下，则退出所有消耗品显示界面
-			if (allConsumablesButton.transform.localRotation != Quaternion.identity) {
+			if (showConsumablesInBagButton.transform.localRotation != Quaternion.identity) {
 
-				QuitAllConsumablesPlane ();
+				QuitConsumablesInBagPlane ();
 
 				return;
 
 			}
 
-			// 箭头朝上，初始化所有消耗品显示界面
-			SetUpAllConsumablesPlane ();
+			Time.timeScale = 0f;
 
-			allConsumablesPlane.gameObject.SetActive (true);
+			// 箭头朝上，初始化剩余的消耗品显示界面
+			SetUpConsumablesInBagPlane ();
+
+			consumablesInBagPlane.gameObject.SetActive (true);
+
+		}
+
+		private void UpdatePageButtonStatus(){
+
+			bool nextButtonEnable = player.allConsumablesInBag.Count > equipedConsumablesButtons.Length + (currentConsumablesPage + 1) * consumablesCountInOnePage;
+			bool lastButtonEnable = currentConsumablesPage >= 1;
+
+			nextPageButton.gameObject.SetActive (nextButtonEnable);
+			lastPageButton.gameObject.SetActive (lastButtonEnable);
 
 		}
 
 		/// <summary>
 		/// 初始化所有消耗品显示界面
 		/// </summary>
-		private void SetUpAllConsumablesPlane(){
+		public void SetUpConsumablesInBagPlane(){
+			
+			UpdatePageButtonStatus ();
 
-			consumablesButtonPool.AddChildInstancesToPool (allConsumablesContainer);
+			if (player.allConsumablesInBag.Count <= equipedConsumablesButtons.Length) {
+				return;
+			}
 
-			allConsumablesButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
+			consumablesButtonPool.AddChildInstancesToPool (consumablesInBagContainer);
 
-			for (int i = 0; i < Player.mainPlayer.allConsumablesInBag.Count; i++) {
+			showConsumablesInBagButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
+
+			int firstIndexOfCurrentPage = equipedConsumablesButtons.Length + currentConsumablesPage * consumablesCountInOnePage; 
+
+			int firstIndexOfNextPage = firstIndexOfCurrentPage + consumablesCountInOnePage;
+
+			int endIndexOfConsumablesInCurrentPage = player.allConsumablesInBag.Count < firstIndexOfNextPage ? player.allConsumablesInBag.Count - 1 : firstIndexOfNextPage - 1;
+
+			for (int i = firstIndexOfCurrentPage; i <= endIndexOfConsumablesInCurrentPage; i++) {
 
 				Consumables consumables = Player.mainPlayer.allConsumablesInBag [i];
 
-				Button consumablesButton = consumablesButtonPool.GetInstance<Button> (consumablesButtonModel.gameObject, allConsumablesContainer);
-
-				Image consumablesIcon = consumablesButton.GetComponent<Image> ();
-				Text consumablesCount = consumablesButton.GetComponentInChildren<Text> ();
-
-				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == consumables.spriteName;
-				});
-
-				consumablesIcon.sprite = s;
-
-				consumablesCount.text = consumables.itemCount.ToString ();
-
-				consumablesButton.onClick.RemoveAllListeners ();
-
-				consumablesButton.onClick.AddListener (delegate {
-
-					BattlePlayerController bpCtr = GameObject.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
-
-					bpCtr.UseItem (consumables);
-
-					SetUpAllConsumablesPlane();
-
-				});
+				AddConsumablesButton (consumables);
 
 			}
 
 		}
 
+		public void OnNextPageButtonClick(){
+			currentConsumablesPage++;
+			SetUpConsumablesInBagPlane ();
+		}
+
+		public void OnLastPageButtonClick(){
+			currentConsumablesPage--;
+			SetUpConsumablesInBagPlane ();
+		}
+
+		public void AddConsumablesButton(Consumables consumables){
+
+			Button consumablesButton = consumablesButtonPool.GetInstance<Button> (consumablesButtonModel.gameObject, consumablesInBagContainer);
+
+			consumablesButton.GetComponent<ConsumablesInBagDragControl> ().item = consumables;
+
+			Image consumablesIcon = consumablesButton.transform.Find ("ConsumablesIcon").GetComponent<Image> ();
+			Text consumablesCount = consumablesButton.transform.Find ("ConsumablesCount").GetComponent<Text> ();
+			Text consumablesName = consumablesButton.transform.Find ("ConsumablesName").GetComponent<Text> ();
+			Image newItemTint = consumablesButton.transform.Find ("NewItemTint").GetComponent<Image> ();
+
+			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == consumables.spriteName;
+			});
+
+			consumablesIcon.sprite = s;
+
+			consumablesIcon.enabled = true;
+
+			consumablesCount.text = consumables.itemCount.ToString ();
+
+			newItemTint.enabled = consumables.isNewItem;
+
+			consumablesName.text = consumables.itemName;
+
+		}
+
+		public void OnEquipedConsumablesButtonClick(int indexInPanel){
+			Consumables consumables = player.allConsumablesInBag [indexInPanel];
+			OnConsumablesButtonClick (consumables);
+		}
+
+
+		public void OnConsumablesButtonClick(Consumables consumables){
+			
+			bool consumblesUsedInExploreScene = false;
+
+			switch (consumables.itemName) {
+			case "药剂":
+			case "草药":
+			case "蓝莓":
+			case "菠菜":
+			case "香蕉":
+			case "菠萝":
+			case "南瓜":
+			case "葡萄":
+			case "柠檬":
+				Player.mainPlayer.UseMedicines (consumables);
+				consumblesUsedInExploreScene = false;
+				break;  
+			case "卷轴":
+				consumblesUsedInExploreScene = false;
+				break;
+			case "锄头":
+			case "锯子":
+			case "镰刀":
+			case "钥匙":
+			case "树苗":
+			case "火把":
+			case "水":
+			case "地板":
+				consumblesUsedInExploreScene = true;
+				break;
+			}
+
+			if (consumblesUsedInExploreScene) {
+				QuitConsumablesInBagPlane ();
+				exploreManager.clickForConsumablesPos = true;
+				exploreManager.ShowConsumablesValidPointTintAround (consumables);
+
+			} else {
+				SetUpBottomConsumablesButtons ();
+				SetUpConsumablesInBagPlane ();
+			}
+
+
+		}
+
+
+
 		/// <summary>
 		/// 退出所有消耗品显示栏
 		/// </summary>
-		public void QuitAllConsumablesPlane(){
+		public void QuitConsumablesInBagPlane(){
 
-			allConsumablesButton.transform.localRotation = Quaternion.identity;
+			Time.timeScale = 1f;
 
-			allConsumablesPlane.gameObject.SetActive (false);
+			showConsumablesInBagButton.transform.localRotation = Quaternion.identity;
+
+			consumablesInBagPlane.gameObject.SetActive (false);
 
 		}
 
@@ -377,7 +357,7 @@ namespace WordJourney
 		/// </summary>
 		public void UpdateItemButtonsAndStatusPlane(){
 
-			UpdateItemButtons ();
+			SetUpBottomConsumablesButtons ();
 			UpdateAgentStatusPlane ();
 
 		}

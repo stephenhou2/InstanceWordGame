@@ -66,6 +66,8 @@ namespace WordJourney
 
 			expUICtr = exploreCanvas.GetComponent<ExploreUICotroller> ();
 
+
+
 //			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 //
 //			SetupExploreView (levelData);
@@ -138,6 +140,8 @@ namespace WordJourney
 
 				if(EventSystem.current.IsPointerOverGameObject()){
 					Debug.Log("点击在UI上");
+					mapGenerator.ClickConsumablesPosAt (Vector3.zero);
+					clickForConsumablesPos = false;
 					return;
 				}
 
@@ -157,7 +161,9 @@ namespace WordJourney
 			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began){
 
 				if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
-						return;
+					mapGenerator.ClickConsumablesPosAt (Vector3.zero);
+					clickForConsumablesPos = false;
+					return;
 				}
 				clickPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
 			}
@@ -231,7 +237,7 @@ namespace WordJourney
 
 		public void ObtainReward(Item reward){
 
-			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateItemButtons ();
+			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpBottomConsumablesButtons ();
 
 		}
 

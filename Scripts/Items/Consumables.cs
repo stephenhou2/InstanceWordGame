@@ -27,13 +27,11 @@ namespace WordJourney
 //		public float critHurtScalerGain;
 
 
-//		public bool isOnceEffect;
-
 		public SkillInfo[] attachedSkillInfos;
 
 		public int[] itemIdsForProduce;
 
-//		public string target;
+
 
 		/// <summary>
 		/// 构造函数
@@ -59,9 +57,7 @@ namespace WordJourney
 		}
 
 		public Consumables (Consumables cons,int count){
-			
-
-
+	
 			// 初始化物品基础属性
 			this.itemId = cons.itemId;
 			this.itemName = cons.itemName;

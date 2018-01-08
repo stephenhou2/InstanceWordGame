@@ -12,10 +12,6 @@ namespace WordJourney
 
 	public class HomeView : MonoBehaviour {
 
-//		public Text playerLevelText;
-
-//		public Slider playerHealthBar;
-
 		public Image maskImage;
 
 		public Transform chapterSelectPlane;
@@ -24,6 +20,12 @@ namespace WordJourney
 
 		private Transform chapterButtonModel;
 		private InstancePool chapterButtonPool;
+
+		public Button learnButton;
+
+		public Text timerText;
+
+		private int learnInterval = 60;
 
 		public float chapterSelectPlaneZoomInDuration = 0.2f;
 
@@ -42,9 +44,10 @@ namespace WordJourney
 				chapterButtonModel.SetParent (modelContainerOfHomeCanvas);
 			}
 
-			GetComponent<Canvas> ().enabled = true;
+			learnButton.interactable = true;
+			timerText.text = learnInterval.ToString ();
 
-			SetUpTopBar ();
+			GetComponent<Canvas> ().enabled = true;
 
 		}
 		public void ShowMaskImage (){
@@ -54,26 +57,38 @@ namespace WordJourney
 		private void HideMaskImage(){
 			maskImage.gameObject.SetActive (false);
 		}
+			
 
-//		private void VotexRotate(){
-//			votexRotate = votexImage.DOLocalRotate (new Vector3 (0, 0, 360),10.0f, RotateMode.FastBeyond360);
-//			votexRotate.SetLoops (-1);
-//			votexRotate.SetEase (Ease.Linear);
-//		}
+		public void StartLearnCountDown(){
+			learnButton.interactable = false;
+			StartCoroutine ("LearnCountDown");
+		}
+
+		private IEnumerator LearnCountDown(){
+
+			int timer = learnInterval;
+
+			while (timer > 0) {
+
+				yield return new WaitForSeconds (1f);
+
+				timer++;
+
+				timerText.text = timer.ToString ();
+
+			}
+
+			timerText.text = learnInterval.ToString ();
+			learnButton.interactable = true;
 
 
-		// 初始化顶部bar
-		private void SetUpTopBar(){
-
-			Player player = Player.mainPlayer;
-
-//			playerLevelText.text = player.agentLevel.ToString();
-//
-//			playerHealthBar.maxValue = player.maxHealth;
-//			playerHealthBar.value = player.health;
-//			playerHealthBar.transform.Find ("HealthText").GetComponent<Text> ().text = player.health + "/" + Player.mainPlayer.maxHealth;
 
 		}
+
+
+
+
+
 
 		public void SetUpChapterSelectPlane(){
 

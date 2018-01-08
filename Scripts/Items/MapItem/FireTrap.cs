@@ -118,12 +118,12 @@ namespace WordJourney
 					(agentOriPos.x - ba.transform.position.x) / burnBackDuration,
 					(agentOriPos.y - ba.transform.position.y) / burnBackDuration, 0) * Time.deltaTime;
 
-
-
 				ba.transform.position += burnBackVector;
 				timer += Time.deltaTime;
 				yield return null;
 			}
+
+			ba.transform.position = agentOriPos;
 
 		}
 

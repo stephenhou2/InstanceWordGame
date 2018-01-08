@@ -56,23 +56,13 @@ namespace WordJourney
 		}
 
 
-
-//		public List<Skill> allLearnedSkills = new List<Skill>();//技能数组
-
-//		public float skillCoolenInterval;// 技能的冷却时间
-
-//		public int skillPointsLeft;
-
-//		public List<Material> allMaterialsInBag = new List<Material>();
-
-//		public Equipment[] allEquipedEquipments;
 		public List<Item> allItemsInBag = new List<Item>();
 		public List<Consumables> allConsumablesInBag = new List<Consumables> ();
 		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
 		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
-//		public List<CharacterFragment> allCharacterFragmentsInBag = new List<CharacterFragment> ();
 		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
+//		public Consumables[] consumablesEquiped;
 
 		public int maxUnlockLevelIndex;
 
@@ -182,7 +172,7 @@ namespace WordJourney
 				return new PropertyChange();
 			}
 
-			allEquipmentsInBag.Add (equipment);
+//			allEquipmentsInBag.Add (equipment);
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
 				TriggeredSkill attachedSkill = equipment.attachedSkills [i];
@@ -196,7 +186,7 @@ namespace WordJourney
 
 			allEquipedEquipments [equipmentIndexInPanel] = emptyEquipment;
 
-			//			equipmentDragControl.item = emptyEquipment;
+//			equipmentDragControl.item = emptyEquipment;
 
 			return ResetBattleAgentProperties (false);
 
@@ -217,7 +207,7 @@ namespace WordJourney
 
 			allEquipedEquipments [equipmentIndexInPanel] = equipment;
 
-			//			equipmentDragControl.item = equipment;
+//			equipmentDragControl.item = equipment;
 
 			for (int i = 0; i < equipment.attachedSkillInfos.Length; i++) {
 				TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i],triggeredSkillsContainer);
@@ -227,7 +217,7 @@ namespace WordJourney
 			}
 
 
-			allEquipmentsInBag.Remove (equipment);
+//			allEquipmentsInBag.Remove (equipment);
 
 			return ResetBattleAgentProperties (false);
 
@@ -397,20 +387,23 @@ namespace WordJourney
 		}
 
 		public void RemoveItem(Item item){
-//			bool removeFromBag = false;
 			switch(item.itemType){
 			case ItemType.Equipment:
-				Equipment equipment = item as Equipment;
-				allEquipmentsInBag.Remove (equipment);
-				allItemsInBag.Remove (equipment);
+				Equipment equipment = allEquipmentsInBag.Find(delegate(Equipment obj) {
+					return obj.itemId == item.itemId;
+				});
+	
 				if (equipment.equiped) {
 					for (int i = 0; i < allEquipedEquipments.Length; i++) {
 						if (allEquipedEquipments [i] == equipment) {
-							allEquipedEquipments [i] = null;
+							allEquipedEquipments [i] = new Equipment();
 						}
 					}
 				}
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
+
+				allEquipmentsInBag.Remove (equipment);
+				allItemsInBag.Remove (equipment);
+//				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
 				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
@@ -421,18 +414,18 @@ namespace WordJourney
 				if (consumablesInBag.itemCount <= 0) {
 					allConsumablesInBag.Remove (consumablesInBag);
 					allItemsInBag.Remove (consumablesInBag);
-					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
+//					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				}
 				break;
 			case ItemType.FuseStone:
 				allFuseStonesInBag.Remove (item as FuseStone);
 				allItemsInBag.Remove (item);
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
+//				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
 			case ItemType.Task:
 				allTaskItemsInBag.Remove (item as TaskItem);
 				allItemsInBag.Remove (item);
-				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
+//				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
@@ -485,63 +478,6 @@ namespace WordJourney
 //		}
 
 
-		/// <summary>
-		/// 分解材料
-		/// </summary>
-		/// <returns>分解后获得的字母碎片</returns>
-		public List<char> GetCharactersFromItem(Item item,int resolveCount){
-
-			// 分解后得到的字母碎片
-			List<char> charactersReturn = new List<char> ();
-
-			// 每分解一个物品可以获得的字母碎片数量
-			int charactersReturnCount = 1;
-
-			// 物品英文名称转换为char数组
-			char[] charArray = item.itemNameInEnglish.ToCharArray ();
-
-			// char数组转换为可以进行增减操作的list
-			List<char> charList = new List<char> ();
-
-			for (int i = 0; i < charArray.Length; i++) {
-				charList.Add (charArray [i]);
-			}
-
-			// 分解物品，背包中的字母碎片数量增加
-			for (int j = 0; j < resolveCount; j++) {
-
-				for (int i = 0; i < charactersReturnCount; i++) {
-
-					char character = ReturnRandomCharacters (ref charList);
-
-					int characterIndex = (int)character - CommonData.aInASCII;
-
-					charactersCount [i]++;
-
-//					CharacterFragment cf = allCharacterFragmentsInBag.Find (delegate(CharacterFragment obj) {
-//						return obj.itemName == character.ToString ();
-//					});
-//
-//					if (cf == null) {
-//						
-//						cf = new CharacterFragment (character, 0);
-//
-//						allCharacterFragmentsInBag.Add (cf);
-//					}
-//
-//					cf.itemCount++;
-
-					charactersReturn.Add (character);
-				}
-			}
-
-			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
-			RemoveItem(item);
-		
-
-			return charactersReturn;
-
-		}
 
 
 
@@ -581,21 +517,7 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 从单词的字母组成中随机返回一个字母
-		/// </summary>
-		/// <returns>The random characters.</returns>
-		private char ReturnRandomCharacters(ref List<char> charList){
 
-			int charIndex = Random.Range (0, charList.Count);
-
-			char character = charList [charIndex];
-
-			charList.RemoveAt (charIndex);
-
-			return character;
-
-		}
 			
 
 

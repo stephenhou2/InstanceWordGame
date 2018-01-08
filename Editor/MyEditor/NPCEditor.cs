@@ -510,22 +510,13 @@ namespace WordJourney
 
 						EditorGUILayout.BeginHorizontal ();
 
-						EditorGUILayout.LabelField ("物品id：", new GUILayoutOption[] {
+						EditorGUILayout.LabelField ("物品id组：", new GUILayoutOption[] {
 							GUILayout.Height(20),
 							GUILayout.Width(50)
 						});
 
-						goods.goodsId = EditorGUILayout.IntField (goods.goodsId, normalInputLayouts);
-
-						EditorGUILayout.EndHorizontal ();
-
-						EditorGUILayout.BeginHorizontal ();
-						EditorGUILayout.LabelField("物品价格：",new GUILayoutOption[] {
-							GUILayout.Height(20),
-							GUILayout.Width(50)
-						});
-
-						goods.goodsPrice = EditorGUILayout.IntField (goods.goodsPrice, normalInputLayouts);
+						#warning 商品id数组，后续修正一下
+//						goods.goodsId = EditorGUILayout.IntField (goods.goodsId, normalInputLayouts);
 
 						EditorGUILayout.EndHorizontal ();
 

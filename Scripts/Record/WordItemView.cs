@@ -11,6 +11,7 @@ namespace WordJourney
 
 		public Text spellText;
 		public Text explainationText;
+		public Button pronounceButton;
 
 		public override void SetUpCellDetailView (object data)
 		{
@@ -19,6 +20,14 @@ namespace WordJourney
 			spellText.text = word.spell;
 
 			explainationText.text = word.explaination;
+
+			pronounceButton.onClick.RemoveAllListeners ();
+
+			pronounceButton.onClick.AddListener (delegate {
+				GameManager.Instance.pronounceManager.CancelPronounce();
+				GameManager.Instance.pronounceManager.PronounceWord (word);
+			});
+
 		}
 
 	}

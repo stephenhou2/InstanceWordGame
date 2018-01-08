@@ -27,6 +27,7 @@ namespace WordJourney{
 		public ItemType itemType;
 
 		public int itemCount;
+		public int price;
 
 		public bool isNewItem = true;
 

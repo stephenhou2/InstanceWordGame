@@ -7,18 +7,11 @@ namespace WordJourney
 {
 	using System.Data;
 
+
+
 	public class LearnViewController : MonoBehaviour {
 
-		private class Pronunciation
-		{
-			public LearnWord word;
-			public AudioClip pronunciation;
 
-			public Pronunciation(LearnWord word,AudioClip pronunciation){
-				this.word = word;
-				this.pronunciation = pronunciation;
-			}
-		}
 
 		// 单词学习view
 		public LearnView learnView;
@@ -61,15 +54,9 @@ namespace WordJourney
 
 
 
-		private WWW pronunciationWWW;
-		// 下载发音的超时时长
-		public float wwwTimeOutInterval;
-
 		// 当前应该学习的单词组的学习次数
 		private int currentWordsLearnedTime;
 
-		// 当前应该学习的单词组的首个单词id
-//		private int firstIdOfCurrentLearningWords;
 
 		// 本次所有需要记忆的单词数组
 		private LearnWord[] wordsToLearnArray;
@@ -122,11 +109,7 @@ namespace WordJourney
 			}
 		}
 
-		// 当前正在学习的单词的发音
-		private AudioClip pronunciationOfCurrentWord;
 
-		// 读音缓存
-		private List<Pronunciation> pronunciationCache;
 
 		// 是否自动发音
 		private bool autoPronounce;
@@ -145,7 +128,7 @@ namespace WordJourney
 			learnExaminationsList = new List<Examination> ();
 			ungraspedWordsList = new List<LearnWord> ();
 			graspedWordsList = new List<LearnWord> ();
-			pronunciationCache = new List<Pronunciation> ();
+
 		}
 
 		/// <summary>
@@ -307,67 +290,18 @@ namespace WordJourney
 				return;
 			}
 
-			Pronunciation pro = pronunciationCache.Find (delegate(Pronunciation obj) {
-				return obj.word.wordId == word.wordId;
-			});
-
-			if (pro == null) {
-				
-				string firstLetter = word.spell.Substring (0, 1);
-
-				string url = string.Format ("https://wordsound.b0.upaiyun.com/voice/{0}/{1}.wav", firstLetter, word.spell);
-
-				pronunciationWWW = new WWW (url);
-
-				StartCoroutine ("PlayPronunciationWhenFinishDownloading", pronunciationWWW);
-			} else {
-				GameManager.Instance.soundManager.PlayWordPronunciation (pro.pronunciation);
-			}
-		}
-
-		/// <summary>
-		/// 下载读音文件并在下载完成后播放单词读音的协程
-		/// </summary>
-		/// <returns>The pronunciation when finish downloading.</returns>
-		/// <param name="www">Www.</param>
-		private IEnumerator PlayPronunciationWhenFinishDownloading(WWW www){
-
-			AudioSource pronunciationAS = GameManager.Instance.soundManager.pronunciationAS;
-
-			float timer = 0;
-
-			while (!www.isDone && timer < wwwTimeOutInterval) {
-				timer += Time.deltaTime;
-				yield return null;
-			}
-
-
-			if (www.isDone) {
-
-				AudioClip pronunciationClip = WWWAudioExtensions.GetAudioClip (www);
-
-				Pronunciation pro = new Pronunciation (currentLearningWord, pronunciationClip);
-
-				pronunciationCache.Add (pro);
-
-				pronunciationAS.clip = pronunciationClip;
-
-				pronunciationAS.Play ();
-			} else {
-				// 下载超时时不播放读音,并关闭下载任务
-				www.Dispose ();
-			}
+			GameManager.Instance.pronounceManager.PronounceWord (word);
 
 		}
+
+
 
 		/// <summary>
 		/// 用户点击了已掌握按钮
 		/// </summary>
 		public void OnHaveGraspedButtonClick(){
 
-			if (!pronunciationWWW.isDone) {
-				pronunciationWWW.Dispose ();
-			}
+			GameManager.Instance.pronounceManager.CancelPronounce ();
 
 			// 使用当前学习中的单词（在这时已掌握）生成对应的单词测试
 			Examination exam = new Examination (currentLearningWord, wordsToLearnArray,examType);
@@ -615,7 +549,7 @@ namespace WordJourney
 
 			finalExaminationsList.Clear ();
 
-			pronunciationCache.Clear ();
+			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
 			// 总背诵次数++
 			GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount++;

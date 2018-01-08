@@ -63,6 +63,8 @@ namespace WordJourney
 
 			while (timer < duration) {
 
+				self.InitFightTextDirectionTowards (self.transform.position);
+
 				self.propertyCalculator.InstantPropertyChange (self, propertyType, skillSourceValue, false);
 
 				propertyChange += skillSourceValue;

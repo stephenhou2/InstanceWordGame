@@ -10,7 +10,6 @@ namespace WordJourney
 
 	public class EquipedItemDropControl : ItemDropControl {
 
-//		public Image tintImage;
 
 		private BagView mBagView;
 		private BagView bagView{
@@ -70,10 +69,6 @@ namespace WordJourney
 			tintImage.enabled = false;
 		}
 
-//		protected override void OnUserPointerUp (PointerEventData eventData)
-//		{
-////			tintImage.enabled = false;
-//		}
 
 
 		protected override void OnUserDrop (PointerEventData eventData)
@@ -99,8 +94,8 @@ namespace WordJourney
 
 			// 如果是从装备栏中拖拽出来的物品
 			if (draggedObject.GetComponent<EquipedItemDragControl>() != null) {
-				// 装备标记为拖拽过来的物品的装备标记
-				equipmentPrepareToUnload.equiped = true;
+//				// 装备标记为拖拽过来的物品的装备标记
+//				equipmentPrepareToUnload.equiped = true;
 				// 装上背包中拖拽过来的装备标记为已装备
 				equipmentPrepareToLoad.equiped = true;
 
@@ -139,7 +134,7 @@ namespace WordJourney
 					// 该装备移入背包中
 					propertyChangeFromUnload = Player.mainPlayer.UnloadEquipment (equipmentPrepareToUnload, equipmentIndexInPanel);
 //					Player.mainPlayer.allEquipmentsInBag.Add (equipmentPrepareToUnload);
-					bagView.SetUpEquipedEquipmentsPlane();
+//					bagView.SetUpEquipedEquipmentsPlane();
 					bagView.AddBagItem (equipmentPrepareToUnload);
 				}
 
@@ -162,9 +157,7 @@ namespace WordJourney
 
 				Player.mainPlayer.ResetBattleAgentProperties (false);
 
-				Item origItem = GetDraggedObject (eventData).GetComponent<ItemDragControl> ().item;
-
-				bagView.RemoveItemInBag (origItem);
+				bagView.RemoveItemInBag (equipmentPrepareToLoad);
 
 				SetDropResult (eventData, true);
 

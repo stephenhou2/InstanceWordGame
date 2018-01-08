@@ -93,7 +93,7 @@ namespace WordJourney
 		/// <param name="target">Target.</param>
 		/// <param name="propertyType">Property type.</param>
 		/// <param name="change">Change.</param>
-		public Agent.PropertyChange InstantPropertyChange(BattleAgentController target,PropertyType propertyType,float change,bool fromTriggeredSkill = true){
+		public void InstantPropertyChange(BattleAgentController target,PropertyType propertyType,float change,bool fromTriggeredSkill = true){
 
 			string instantChange = string.Format ("即时性属性变化: 角色名称：{0}，类型：{1}，变化：{2}",
 				target.agent.agentName, propertyType,change);
@@ -101,28 +101,32 @@ namespace WordJourney
 			Debug.Log (instantChange);
 
 			if (change == 0) {
-				return new Agent.PropertyChange();
+				return;
 			}
 
 			AgentPropertyChange (propertyType, change, fromTriggeredSkill);
 
-			Agent.PropertyChange propretyChange = self.agent.ResetBattleAgentProperties (false);
+			self.agent.ResetBattleAgentProperties (false);
 
 			target.UpdateFightStatus ();
 
 			target.UpdateStatusPlane ();
 
 			if (propertyType == PropertyType.Health) {
-				if (change > 0) {
-					string gainText = string.Format("<color=green>{0}</color>",(int)change);
-					target.AddFightTextToQueue(gainText,SpecialAttackResult.Gain);
+				if (change > 0 && change <= 1) {
+					string gainText = string.Format ("<color=green>{0}</color>", (int)(change * maxHealth));
+					target.AddFightTextToQueue (gainText, SpecialAttackResult.Gain);
+				} else if (change > 1) {
+					string gainText = string.Format ("<color=green>{0}</color>", (int)change);
+					target.AddFightTextToQueue (gainText, SpecialAttackResult.Gain);
+				} else if (change < 0 && change > -1) {
+					string hurtText = string.Format ("<color=red>{0}</color>", (int)(-change * maxHealth));
+					target.AddFightTextToQueue (hurtText, SpecialAttackResult.None);
 				} else {
 					string hurtText = string.Format ("<color=red>{0}</color>", (int)(-change));
 					target.AddFightTextToQueue (hurtText, SpecialAttackResult.None);
 				}
 			}
-
-			return propretyChange;
 			
 		}
 

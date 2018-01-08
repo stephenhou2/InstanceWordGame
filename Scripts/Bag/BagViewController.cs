@@ -9,15 +9,7 @@ namespace WordJourney
 
 		public BagView bagView;
 
-		private ItemType currentSelectItemType;
-
 		public Item currentSelectItem;
-
-//		public Transform currentSelectDragControl;
-
-		private int minResolveCount;
-		private int maxResolveCount;
-		private int resolveCount;
 
 		private ExploreManager mExploreManager;
 		private ExploreManager exploreManager{
@@ -28,17 +20,6 @@ namespace WordJourney
 				return mExploreManager;
 			}
 		}
-
-//		private Transform mExploreCanvas;
-//		private Transform exploreCanvas{
-//			get{
-//				if (mExploreCanvas == null) {
-//					mExploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
-//				}
-//				return mExploreCanvas;
-//			}
-//		}
-
 
 		void Awake(){
 
@@ -92,7 +73,6 @@ namespace WordJourney
 //			Player.mainPlayer.AddItem (new Consumables (key, 5));
 //			Player.mainPlayer.AddItem (new Consumables (pickAxe, 5));
 
-			resolveCount = 1;
 
 		}
 
@@ -114,62 +94,15 @@ namespace WordJourney
 				yield return null;
 			}
 
-			currentSelectItemType = ItemType.Equipment;
-
-			InitItemsOfCurrentSelectType<Equipment> (Player.mainPlayer.allEquipmentsInBag);
-
 			bagView.SetUpBagView (setVisible);
 
 		}
 
 
-		public void OnItemTypeButtonClick(int index){
-
-			ItemType itemType = (ItemType)index;
-
-			if (itemType == currentSelectItemType) {
-				return;
-			}
-
-			currentSelectItemType = itemType;
-
-			switch (itemType) {
-			case ItemType.Equipment:
-				InitItemsOfCurrentSelectType(Player.mainPlayer.allEquipmentsInBag);
-				break;
-			case ItemType.Consumables:
-				InitItemsOfCurrentSelectType(Player.mainPlayer.allConsumablesInBag);
-				break;
-			case ItemType.Task:
-				InitItemsOfCurrentSelectType(Player.mainPlayer.allTaskItemsInBag);
-				break;
-			case ItemType.FuseStone:
-				InitItemsOfCurrentSelectType(Player.mainPlayer.allFuseStonesInBag);
-				break;
-//			case ItemType.Material:
-//				InitItemsOfCurrentSelectType(Player.mainPlayer.allMaterialsInBag);
-//				break;
-			}
-
-//			bagView.SetUpItemsDiaplayPlane (allItemsOfCurrentSelectType,currentSelectItem);
-
-		}
 
 		/// <summary>
-		/// 将指定类型的物品加入到 <所有当前选择类型的物品> 列表中
+		/// 在物品详细信息页点击了装备按钮（装备）
 		/// </summary>
-		/// <param name="itemsInBag">Items in bag.</param>
-		private void InitItemsOfCurrentSelectType<T>(List<T> itemsInBag)
-			where T:Item
-		{
-			
-//			allItemsOfCurrentSelectType.Clear ();
-
-//			for (int i = 0; i < itemsInBag.Count; i++) {
-//				allItemsOfCurrentSelectType.Add (itemsInBag [i]);
-//			}
-		}
-
 		public void OnEquipButtonClick(){
 
 			for (int i = 0; i < Player.mainPlayer.allEquipedEquipments.Length; i++) {
@@ -186,10 +119,14 @@ namespace WordJourney
 					return;
 				}
 			}
+
 			bagView.SetUpTintHUD ("装备栏已满");
 
 		}
 
+		/// <summary>
+		/// 在物品详细信息页点击了卸下按钮（装备）
+		/// </summary>
 		public void OnUnloadButtonClick(){
 
 			for (int i = 0; i < Player.mainPlayer.allEquipedEquipments.Length; i++) {
@@ -205,9 +142,12 @@ namespace WordJourney
 
 		}
 
+
+		/// <summary>
+		/// 在物品详细信息页点击了使用按钮（消耗品）
+		/// </summary>
 		public void OnUseButtonClick(){
 
-//			bool removeFromBag = false;
 			bool consumblesUsedInExploreScene = false;
 
 			Consumables consumables = currentSelectItem as Consumables;
@@ -253,57 +193,42 @@ namespace WordJourney
 
 		}
 	
+		/// <summary>
+		/// 在物品详细信息页点击了分解按钮
+		/// </summary>
 		public void OnResolveButtonClick(){
-
-			switch (currentSelectItem.itemType) {
-			case ItemType.Equipment:
-				ResolveAndGetMaterials (currentSelectItem);
-				break;
-			case ItemType.Consumables:
-				maxResolveCount = currentSelectItem.itemCount;
-				minResolveCount = 1;
-				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
-				break;
-//			case ItemType.Material:
-//				maxResolveCount = currentSelectItem.itemCount;
-//				minResolveCount = 1;
-//				bagView.SetUpResolveCountHUD (1, currentSelectItem.itemCount);
-//				break;
-			case ItemType.FuseStone:
-				ResolveAndGetCharacters (currentSelectItem);
-//				allItemsOfCurrentSelectType.Remove (currentSelectItem);
-				break;
-			}
-
+			bagView.ShowQueryResolveHUD ();
 		}
 
+
+		/// <summary>
+		/// 在分解确认页点击了确认按钮
+		/// </summary>
 		public void OnConfirmResolveButtonClick(){
-
-			resolveCount = bagView.GetResolveCountBySlider();
-
-			switch (currentSelectItem.itemType) {
-//			case ItemType.Material:
-//				ResolveAndGetCharacters (new Material(currentSelectItem as Material,resolveCount));
-//				break;
-			case ItemType.Consumables:
-				ResolveAndGetMaterials (new Consumables(currentSelectItem as Consumables,resolveCount));
-				break;
-			}
-
-
-			bagView.QuitResolveCountHUD ();
-
+			ResolveAndGetCharacters (currentSelectItem);
+			bagView.QuitQueryResolveHUD ();
 		}
 
 		/// <summary>
-		/// 分解物品（材料和融合石）并获得字母碎片
+		/// 在分解确认页点击了取消按钮
+		/// </summary>
+		public void OnCancelResolveButtonClick(){
+			bagView.QuitQueryResolveHUD ();
+		}
+
+
+
+		/// <summary>
+		/// 分解物品并获得字母碎片
 		/// </summary>
 		/// <param name="item">Item.</param>
 		private void ResolveAndGetCharacters(Item item){
 
-			List<char> charactersReturn = Player.mainPlayer.GetCharactersFromItem (item, resolveCount);
+			Item resolvedItem = Item.NewItemWith (item, 1);
 
-			List<Item> resolveGainCharacterFragments = new List<Item> ();
+			List<char> charactersReturn = ResolveItemAndGetCharacters (resolvedItem);
+
+			List<CharacterFragment> resolveGainCharacterFragments = new List<CharacterFragment> ();
 
 			// 返回的有字母，生成字母碎片表
 			if (charactersReturn.Count > 0) {
@@ -314,123 +239,99 @@ namespace WordJourney
 
 			}
 
-			if (resolveCount >= currentSelectItem.itemCount) {
-//				allItemsOfCurrentSelectType.Remove (currentSelectItem);
+			Item itemInBag = Player.mainPlayer.allItemsInBag.Find (delegate(Item obj) {
+				return obj.itemId == resolvedItem.itemId;
+			});
+
+			if (itemInBag == null) {
+				bagView.QuitItemDetailHUD ();
 			}
 
-			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
+			if (item is Equipment && (item as Equipment).equiped) {
+				bagView.SetUpEquipedEquipmentsPlane ();
+			}
 
-			currentSelectItem = null;
 
-			switch(item.itemType){
-//			case ItemType.Material:
-//				bagView.ResetBagView<Material> (Player.mainPlayer.allMaterialsInBag,currentSelectItem);
-//				break;
-			case ItemType.FuseStone:
+			bagView.SetUpItemsDiaplayPlane (Player.mainPlayer.allItemsInBag);
 				
-				RemoveItem (item);
-//				bagView.ResetBagView<FuseStone> (Player.mainPlayer.allFuseStonesInBag,currentSelectItem);
-				break;
+			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
+		}
+
+		/// <summary>
+		/// 分解材料
+		/// </summary>
+		/// <returns>分解后获得的字母碎片</returns>
+		public List<char> ResolveItemAndGetCharacters(Item item){
+
+			// 分解后得到的字母碎片
+			List<char> charactersReturn = new List<char> ();
+
+			// 每分解一个物品可以获得的字母碎片数量
+			int charactersReturnCount = 1;
+
+			// 物品英文名称转换为char数组
+			char[] charArray = item.itemNameInEnglish.ToCharArray ();
+
+			// char数组转换为可以进行增减操作的list
+			List<char> charList = new List<char> ();
+
+			for (int i = 0; i < charArray.Length; i++) {
+				charList.Add (charArray [i]);
 			}
+
+			// 分解物品，背包中的字母碎片数量增加
+			for (int j = 0; j < item.itemCount; j++) {
+
+				for (int i = 0; i < charactersReturnCount; i++) {
+
+					char character = ReturnRandomCharacters (ref charList);
+
+					int characterIndex = (int)character - CommonData.aInASCII;
+
+					Player.mainPlayer.charactersCount [characterIndex]++;
+
+					charactersReturn.Add (character);
+				}
+			}
+
+			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
+			Player.mainPlayer.RemoveItem(item);
+
+			return charactersReturn;
 
 		}
+
+		/// <summary>
+		/// 从单词的字母组成中随机返回一个字母
+		/// </summary>
+		/// <returns>The random characters.</returns>
+		private char ReturnRandomCharacters(ref List<char> charList){
+
+			int charIndex = Random.Range (0, charList.Count);
+
+			char character = charList [charIndex];
+
+			charList.RemoveAt (charIndex);
+
+			return character;
+
+		}
+
+
 			
 
 		public void RemoveItem(Item item){
 			bagView.RemoveItemInBag (item);
 		}
 
-		/// <summary>
-		/// 分解物品（装备和消耗品）并获得材料
-		/// </summary>
-		/// <param name="item">Item.</param>
-		private void ResolveAndGetMaterials(Item item){
-
-			List<Item> returnedMaterials = (item as Equipment).ResolveEquipment ();
-
-			bagView.SetUpResolveGainHUD (returnedMaterials);
-
-//			allItemsOfCurrentSelectType.Remove (currentSelectItem);
-
-			currentSelectItem = null;
-
-			bagView.RemoveItemInBag (item);
-
-//			bagView.ResetBagView<Equipment> (Player.mainPlayer.allEquipmentsInBag,currentSelectItem);
-
-		}
-
-
-
-		// 数量加减按钮点击响应
-		public void ResolveCountPlus(int plus){
-
-			int targetCount = resolveCount + plus;
-
-			// 最大或最小值直接返回
-			if (targetCount > maxResolveCount || targetCount < minResolveCount) {
-				return;
-			}
-
-			bagView.UpdateResolveCountHUD (targetCount);
-
-			resolveCount = targetCount;
-
-		}
-
-		/// <summary>
-		/// 选择数量的slider拖动时响应方法
-		/// </summary>
-
-//		public void OnFixButtonClick(){
-//
-//			Equipment equipment = currentSelectItem as Equipment;
-//
-//			GeneralWord word = GeneralWord.RandomGeneralWord();
-//				
-//			Transform spellCanvas = TransformManager.FindTransform ("SpellCanvas");
-//
-//			if (spellCanvas != null) {
-//
-//				spellCanvas.GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
-//
-//				return;
-//			} else {// 如果当前没有拼写界面的缓存，则从本地加载拼写界面
-//				ResourceLoader spellCanvasLoader = ResourceLoader.CreateNewResourceLoader<GameObject> (CommonData.spellCanvasBundleName);
-//
-//				ResourceManager.Instance.LoadAssetsUsingWWW (spellCanvasLoader, () => {
-//
-//					TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForFix (equipment, word);
-//
-//				});
-//			}
-//
-//		}
-
-
-
-		public void OnQuitResolveCountHUD(){
-
-			resolveCount = 1;
-
-			bagView.QuitResolveCountHUD ();
-		}
 
 
 		// 退出物品详细页HUD
 		public void OnQuitItemDetailHUD(){
-
 			bagView.QuitItemDetailHUD ();
 
 		}
 
-
-		// 退出更换物品页面
-		public void OnQuitSpecificTypeHUD(){
-
-			bagView.OnQuitSpecificTypePlane ();
-
-		}
 
 		// 退出背包界面
 		public void OnQuitBagPlaneButtonClick(){
