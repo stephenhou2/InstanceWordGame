@@ -13,6 +13,8 @@ namespace WordJourney
 
 		private bool settingChanged;
 
+		private int currentSelectWordTypeIndex;
+
 
 		public void SetUpSettingView(){
 
@@ -57,27 +59,30 @@ namespace WordJourney
 
 
 		}
-
-		public void SetDownloadEnable(bool enable){
-
-			GameManager.Instance.gameDataCenter.gameSettings.isDownloadEnable = enable;
-
-			settingView.UpdateDownloadControl (enable);
-
-			settingChanged = true;
-
-
-		}
+			
 
 		public void ChangeWordType(int index){
+			int wordTypeIndex = (int)GameManager.Instance.gameDataCenter.gameSettings.wordType;
+			if (wordTypeIndex != index) {
+				currentSelectWordTypeIndex = index;
+				settingView.ShowAlertHUD ();
 
-			int wordTypeIndex = settingView.GetCurrentWordType (index);
-
-			if (wordTypeIndex == -1) {
-				return;
 			}
+		}
 
-			switch (wordTypeIndex) {
+		public void OnConfirmButtonClick(){
+			
+//			int wordTypeIndex = settingView.GetCurrentWordType (index);
+//
+//			if (wordTypeIndex == -1) {
+//				return;
+//			}
+
+			settingView.QuitAlertHUD ();
+
+			GameManager.Instance.persistDataManager.ResetPlayerDataToOriginal ();
+
+			switch (currentSelectWordTypeIndex) {
 			case 0:
 				GameManager.Instance.gameDataCenter.gameSettings.wordType = WordType.CET4;
 				break;
@@ -93,11 +98,23 @@ namespace WordJourney
 
 			}
 
+			ExploreManager exploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ();
+			if (exploreManager != null) {
+				exploreManager.QuitExploreScene (false);
+			}
+
 			settingChanged = true;
+			OnQuitSettingViewButtonClick ();
 
 		}
 
-		public void QuitSettingPlane(){
+		public void OnCancelButtonClick(){
+			settingView.SetUpSettingView (GameManager.Instance.gameDataCenter.gameSettings);
+			settingView.QuitAlertHUD ();
+		}
+
+
+		public void OnQuitSettingViewButtonClick(){
 
 			if (settingChanged) {
 				ChangeSettingsAndSave ();
@@ -107,13 +124,18 @@ namespace WordJourney
 
 			settingView.QuitSettingView ();
 
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
-			});
+			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
+			if (exploreCanvas == null) {
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+					TransformManager.FindTransform ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+				});
+			} else {
+				exploreCanvas.GetComponent<ExploreUICotroller> ().QuitPauseHUD ();
+			}
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
-				GameDataCenter.GameDataType.GameSettings
-			});
+//			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+//				GameDataCenter.GameDataType.GameSettings
+//			});
 
 		}
 
@@ -140,11 +162,6 @@ namespace WordJourney
 
 		}
 
-		public void QuitSettingView(){
-
-
-
-		}
 
 		public void Comment(){
 
@@ -153,6 +170,8 @@ namespace WordJourney
 		public void DestroyInstances(){
 
 			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", null, null);
+
+
 
 		}
 

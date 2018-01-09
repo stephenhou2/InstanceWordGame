@@ -112,7 +112,7 @@ namespace WordJourney
 
 			ExploreUICotroller expUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent <ExploreUICotroller> ();
 
-			expUICtr.SetUpExploreCanvas ();
+			expUICtr.SetUpExploreCanvas (levelData.gameLevelIndex,levelData.chapterName);
 
 			battlePlayerCtr.InitBattlePlayer ();
 
@@ -577,10 +577,7 @@ namespace WordJourney
 
 			player.ResetBattleAgentProperties (true);
 
-			#warning 玩家死亡后掉落的物品是否需要展示出来
-			Item lostItem = player.LostItemWhenDie ();
-
-			QuitExploreScene ();
+			QuitExploreScene (false);
 		}
 
 		private void FightEndCallBacks(){
@@ -634,6 +631,19 @@ namespace WordJourney
 
 		}
 
+		public void RefrestCurrentLevel(){
+
+			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
+
+			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
+
+			int gameLevel = Player.mainPlayer.currentLevelIndex;
+
+			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [gameLevel];
+
+			SetupExploreView (levelData);
+		}
+
 
 		public void EnterNextLevel(){
 
@@ -658,7 +668,15 @@ namespace WordJourney
 		}
 
 
-		public void QuitExploreScene(){
+		public void QuitExploreScene(bool saveData){
+
+			if (saveData) {
+				GameManager.Instance.persistDataManager.SavePlayerData ();
+			}
+
+			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
+
+			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
 			Camera.main.transform.SetParent (null);
 

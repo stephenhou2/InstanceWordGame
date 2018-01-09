@@ -90,7 +90,7 @@ namespace WordJourney
 
 					switch (itemModel.itemType) {
 					case ItemType.Equipment:
-						item = new Equipment (itemModel);
+						item = new Equipment (itemModel,1);
 						break;
 					case ItemType.Consumables:
 						item = new Consumables (itemModel, 1);
@@ -110,7 +110,7 @@ namespace WordJourney
 
 			for (int i = 0; i < formulaIds.Length; i++) {
 
-				Formula formula = new Formula (FormulaType.Equipment, formulaIds [i]);
+				Formula formula = new Formula (formulaIds [i]);
 
 				if (formula != null) {
 					lockedItems.Add (formula);

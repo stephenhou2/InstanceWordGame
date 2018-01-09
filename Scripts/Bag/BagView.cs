@@ -41,13 +41,8 @@ namespace WordJourney
 
 		private Player player;
 
-		public Transform itemDetailHUD;
 
-		public Transform resolveGainsHUD;
-		public Transform resolveGainsContainer;
 
-		private InstancePool resolveGainsPool;
-		private Transform resolveGainModel;
 
 		public Transform helpPlane;
 
@@ -56,9 +51,12 @@ namespace WordJourney
 
 		public Transform queryResolveHUD;
 
-		public Transform tintHUD;
-		private float tintHUDShowDuration = 1f;
-		private IEnumerator tintHUDCoroutine;
+		public TintHUD tintHUD;
+		public CharactersInBagHUD charactersInBag;
+
+		public ItemDetailHUD itemDetail;
+		public Transform choiceHUDWithOneBtn;
+		public Transform choiceHUDWithTwoBtns;
 
 		/// <summary>
 		/// 初始化背包界面
@@ -66,6 +64,8 @@ namespace WordJourney
 		public void SetUpBagView(bool setVisible){
 
 			this.GetComponent<Canvas> ().enabled = setVisible;
+
+			itemDetail.InitItemDetailHUD (true, HideOperationButtons);
 
 			//获取所有item的图片
 //			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
@@ -77,20 +77,14 @@ namespace WordJourney
 			if (poolContainerOfBagCanvas.childCount == 0) {
 				//创建缓存池
 				bagItemsPool = InstancePool.GetOrCreateInstancePool ("BagItemsPool",poolContainerOfBagCanvas.name);
-//				itemDetailsPool = InstancePool.GetOrCreateInstancePool ("ItemDetailsPool",poolContainerOfBagCanvas.name);
-				resolveGainsPool = InstancePool.GetOrCreateInstancePool ("ResolveGainsPool",poolContainerOfBagCanvas.name);
 
 			}
 
 			if (modelContainerOfBagCanvas.childCount == 0) {
 				// 获取模型
 				bagItemModel = TransformManager.FindTransform ("BagItemModel");
-//				itemDetailsModel = TransformManager.FindTransform ("ItemDetailsModelInBagCanvas");
-				resolveGainModel = TransformManager.FindTransform ("ResolveGainModel");
 
 				bagItemModel.SetParent (modelContainerOfBagCanvas);
-//				itemDetailsModel.SetParent (modelContainerOfBagCanvas);
-				resolveGainModel.SetParent (modelContainerOfBagCanvas);
 			}
 
 			// 背包中单类物品最大预加载数量
@@ -287,30 +281,9 @@ namespace WordJourney
 
 		}
 
-		public void SetUpTintHUD(string tint){
 
-			Text tintText = tintHUD.Find ("TintText").GetComponent<Text> ();
-
-			tintText.text = tint;
-
-			tintHUD.gameObject.SetActive (true);
-
-			if (tintHUDCoroutine != null) {
-				StopCoroutine (tintHUDCoroutine);
-			}
-
-			tintHUDCoroutine = TintHUDLatelyDisappear ();
-
-			StartCoroutine (tintHUDCoroutine);
-
-		}
 			
-		private IEnumerator TintHUDLatelyDisappear(){
-			
-			yield return new WaitForSeconds (tintHUDShowDuration);
 
-			tintHUD.gameObject.SetActive (false);
-		}
 
 		public void ShowQueryResolveHUD(){
 			queryResolveHUD.gameObject.SetActive (true);
@@ -369,30 +342,13 @@ namespace WordJourney
 		/// 初始化物品详细介绍页面
 		/// </summary>
 		/// <param name="item">Item.</param>
-		public void SetUpItemDetailHUD(Item item,Sprite itemSprite){
+		public void SetUpItemDetailHUD(Item item){
+			itemDetail.SetUpItemDetailHUD (item);
+			SetUpOperationButtons (item);
+		}
 
-			Transform itemDetailsContainer = itemDetailHUD.Find ("ItemDetailsContainer");
-			Text itemName = itemDetailsContainer.Find("ItemName").GetComponent<Text>();
-			Text itemType = itemDetailsContainer.Find("ItemType").GetComponent<Text>();
-			Text itemDescription = itemDetailsContainer.Find ("ItemDescription").GetComponent<Text> ();
-			Text itemProperties = itemDetailsContainer.Find("ItemProperties").GetComponent<Text>();
-			Image itemIcon = itemDetailsContainer.Find("ItemIcon").GetComponent<Image>();
 
-			Transform choiceHUDWithOneBtn = itemDetailsContainer.Find("ChoiceHUDWithOneBtn");
-			Transform choiceHUDWithTwoBtns = itemDetailsContainer.Find("ChoiceHUDWithTwoBtns");
-
-			choiceHUDWithOneBtn.gameObject.SetActive (false);
-			choiceHUDWithTwoBtns.gameObject.SetActive (false);
-
-			itemIcon.sprite = itemSprite;
-
-			itemIcon.enabled = true;
-
-			itemName.text = item.itemName;
-
-			itemType.text = item.GetItemTypeString ();
-
-			itemProperties.text = item.itemDescription;
+		private void SetUpOperationButtons(Item item){
 
 			// 如果物品是装备
 			switch (item.itemType) {
@@ -400,10 +356,6 @@ namespace WordJourney
 			case ItemType.Equipment:
 
 				Equipment equipment = item as Equipment;
-
-				itemName.text = equipment.itemName;
-
-				itemDescription.text = item.itemDescription;
 
 				choiceHUDWithTwoBtns.gameObject.SetActive (true);
 
@@ -419,9 +371,6 @@ namespace WordJourney
 
 				break;
 			case ItemType.Consumables:
-				itemProperties.text = item.itemDescription;
-				itemName.text = item.itemName;
-				itemDescription.text = item.itemDescription;
 
 				Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
 
@@ -435,8 +384,11 @@ namespace WordJourney
 				}
 				break;
 			}
-			itemDetailHUD.gameObject.SetActive (true);
+
 		}
+
+
+
 
 		/// <summary>
 		/// 背包中单个物品按钮的初始化方法
@@ -444,6 +396,10 @@ namespace WordJourney
 		/// <param name="item">Item.</param>
 		/// <param name="btn">Button.</param>
 		public void AddBagItem(Item item){
+
+//			if (item is Equipment && (item as Equipment).equiped) {
+//				return;
+//			}
 
 			Transform bagItem = bagItemsPool.GetInstance<Transform> (bagItemModel.gameObject, bagItemsContainer);
 
@@ -454,16 +410,13 @@ namespace WordJourney
 			Text extraInfo = bagItem.Find ("ExtraInfo").GetComponent<Text> ();
 			Image itemIcon = bagItem.Find ("ItemIcon").GetComponent<Image>();
 			Image newItemTintIcon = bagItem.Find ("NewItemTintIcon").GetComponent<Image> ();
-			Image selectBorder = bagItem.Find ("SelectBorder").GetComponent<Image> ();
 
 			itemIcon.enabled = false;
 			newItemTintIcon.enabled = false;
 
 			itemName.text = item.itemName;
 
-			if (item.itemType == ItemType.Equipment && (item as Equipment).equiped) {
-				extraInfo.text = "<color=green>已装备</color>";
-			} else if (item.itemType == ItemType.Consumables) {
+			if (item.itemType == ItemType.Consumables) {
 				extraInfo.text = item.itemCount.ToString ();
 			} else {
 				extraInfo.text = string.Empty;
@@ -515,7 +468,7 @@ namespace WordJourney
 
 			}
 
-			SetUpTintHUD (tint.ToString());
+			tintHUD.SetUpTintHUD (tint.ToString());
 
 //			for (int i = 0; i < resolveGains.Count; i++) {
 //
@@ -544,28 +497,36 @@ namespace WordJourney
 
 		}
 
-		public void QuitResolveGainHUD(){
-
-			resolveGainsPool.AddChildInstancesToPool (resolveGainsContainer);
-
-			resolveGainsHUD.gameObject.SetActive (false);
-
-		}
 
 
 		// 关闭物品详细说明HUD
 		public void QuitItemDetailHUD(){
-			
-			itemDetailHUD.gameObject.SetActive (false);
+			HideOperationButtons ();
+			itemDetail.QuitItemDetailHUD ();
+		}
 
-			itemDetailHUD.Find ("ItemDetailsContainer/ChoiceHUDWithOneBtn").gameObject.SetActive (false);
-			itemDetailHUD.Find ("ItemDetailsContainer/ChoiceHUDWithTwoBtns").gameObject.SetActive (false);
+		private void HideOperationButtons(){
+			choiceHUDWithOneBtn.gameObject.SetActive (false);
+			choiceHUDWithTwoBtns.gameObject.SetActive (false);
+		}
 
+		public void SetUpCharactersInBagPlane(){
+			charactersInBag.SetUpCharactersHUD ();
+		}
+
+		public void QuitCharactersInBagPlane(){
+			charactersInBag.QuitCharactersHUD ();
+		}
+
+		public void SetUpTintHUD(string tint){
+			tintHUD.SetUpTintHUD (tint);
 		}
 			
 
 		// 关闭背包界面
 		public void QuitBagPlane(){
+
+			tintHUD.QuitTintHUD ();
 
 			for (int i = 0; i < changeTintFromEqSequences.Length; i++) {
 				changeTintFromEqSequences [i].Kill (false);

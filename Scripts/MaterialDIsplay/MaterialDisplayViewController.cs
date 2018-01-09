@@ -120,7 +120,7 @@ namespace WordJourney
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", "PoolContainerOfMaterialDisplayCanvas", "ModelContainerOfMaterialDisplayCanvas");
+//			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.materialDisplayCanvasBundleName, "MaterialDisplayCanvas", "PoolContainerOfMaterialDisplayCanvas", "ModelContainerOfMaterialDisplayCanvas");
 
 		}
 

@@ -85,10 +85,10 @@ namespace WordJourney
 		/// <summary>
 		/// 构造函数
 		/// </summary>
-		public Equipment(ItemModel itemModel, FuseStone fuseStone = null){
+		public Equipment(ItemModel itemModel,int itemCount, FuseStone fuseStone = null){
 
 			this.itemType = ItemType.Equipment;
-			this.itemCount = 1;
+			this.itemCount = itemCount;
 
 			// 初始化物品基本属性
 			InitBaseProperties (itemModel);

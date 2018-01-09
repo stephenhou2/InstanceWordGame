@@ -872,20 +872,20 @@ namespace WordJourney
 		/// <summary>
 		/// 根据玩家已获得的配方解锁对应装备和技能
 		/// </summary>
-		public void InitItemsAndSkillDataByFormula(){
-			
-			for (int i = 0; i < Player.mainPlayer.allFormulasInBag.Count; i++) {
-				Formula formula = Player.mainPlayer.allFormulasInBag [i];
-				switch (formula.formulaType) {
-				case FormulaType.Equipment:
-					formula.GetItemModelUnlock ();
-					break;
-				case FormulaType.Skill:
-					formula.GetSkillUnlock ();
-					break;
-				}
-			}
-		}
+//		public void InitItemsAndSkillDataByFormula(){
+//			
+//			for (int i = 0; i < Player.mainPlayer.allFormulasInBag.Count; i++) {
+//				Formula formula = Player.mainPlayer.allFormulasInBag [i];
+//				switch (formula.formulaType) {
+//				case FormulaType.Equipment:
+//					formula.GetItemModelUnlock ();
+//					break;
+//				case FormulaType.Skill:
+//					formula.GetSkillUnlock ();
+//					break;
+//				}
+//			}
+//		}
 
 	}
 }

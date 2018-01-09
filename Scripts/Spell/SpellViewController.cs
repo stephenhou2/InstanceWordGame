@@ -8,11 +8,7 @@ using System.Text;
 namespace WordJourney
 {
 
-//	public enum SpellPurpose{
-//		CreateEquipment,
-//		CreateFuseStone,
-//		CreateConsumables
-//	}
+
 	public class SpellViewController : MonoBehaviour {
 
 
@@ -21,54 +17,46 @@ namespace WordJourney
 		// 已输入的所有字母
 		private StringBuilder charactersEntered = new StringBuilder();
 
-		// 制造还是修复
-//		private SpellPurpose spellPurpose;
 
 		// 容器，记录所有输入的字母及数量
 		private int[] charactersEnteredArray = new int[26];
 
 		private int[] charactersInsufficientArray = new int[26];
 
-		// 最小制造数量
-//		private int minCreateCount = 1;
-
-		// 指定拼写的单词（材料图鉴进入或者修复装备进入时不为null）
-//		private string spell;
-
 		// 目标物品（从图鉴系统中选择的物品）
-		private ItemModel itemToCreate;
+		[HideInInspector]public ItemModel itemToCreate;
 
 		// 制造出的物品
 		private Item itemCreated;
 
-		// 想要修复的装备
-//		private Equipment equipmentToFix;
+		// 最小制造数量
+		private int minCreateCount = 1;
 
 		// 根据玩家已有字母碎片数量计算出得目标物品最大制造数
-//		private int maxCreateCount{
-//
-//			get{
-//				int myMaxCreateCount = int.MaxValue;
-//
-//				for(int i = 0;i<charactersEnteredArray.Length;i++){
-//
-//					int characterNeed = charactersEnteredArray [i];
-//
-//					if (characterNeed > 0) {
-//						int maxCreateCount = Player.mainPlayer.charactersCount [i] / characterNeed;
-//						if (maxCreateCount < myMaxCreateCount) {
-//							myMaxCreateCount = maxCreateCount;
-//						}
-//					}
-//				}
-//
-//				return myMaxCreateCount;
-//
-//			}
-//		}
+		private int maxCreateCount{
+
+			get{
+				int myMaxCreateCount = int.MaxValue;
+
+				for(int i = 0;i<charactersEnteredArray.Length;i++){
+
+					int characterNeed = charactersEnteredArray [i];
+
+					if (characterNeed > 0) {
+						int maxCreateCount = Player.mainPlayer.charactersCount [i] / characterNeed;
+						if (maxCreateCount < myMaxCreateCount) {
+							myMaxCreateCount = maxCreateCount;
+						}
+					}
+				}
+
+				return myMaxCreateCount;
+
+			}
+		}
 
 		// 目标物品制造数量，默认为1个
-//		private int createCount = 1;
+		private int createCount = 1;
 
 
 		/// <summary>
@@ -88,8 +76,6 @@ namespace WordJourney
 			while (!dataReady) {
 				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
 					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.Materials,
-					GameDataCenter.GameDataType.MaterialSprites,
 					GameDataCenter.GameDataType.ItemModels,
 					GameDataCenter.GameDataType.ItemSprites
 				});
@@ -97,42 +83,16 @@ namespace WordJourney
 			}
 
 			#warning 这里测试拼写，人物字母碎片全都初始化为10个，后面去掉
-//			for (int i = 0; i < 26; i++) {
-//				Player.mainPlayer.charactersCount [i] = 10;
-//			}
+			for (int i = 0; i < 26; i++) {
+				Player.mainPlayer.charactersCount [i] = 10;
+			}
 				
 			spellView.SetUpSpellViewWith (itemModel);
 
 			ClearUnsufficientCharacters ();
 
 		}
-
-
-
-//		public void SetUpSpellViewForCreateFuseStone(){
-//
-//			this.spellPurpose = SpellPurpose.CreateFuseStone;
-//
-//			spellView.SetUpSpellViewWith (null,SpellPurpose.CreateFuseStone);
-//
-//		}
-
-		/// <summary>
-		/// 初始化拼写界面（强化）
-		/// </summary>
-		/// <param name="item">Item.</param>
-//		public void SetUpSpellViewForFix(Equipment equipment, GeneralWord word){
-//			
-//			this.spellPurpose = SpellPurpose.Fix;
-//
-//			this.spell = word.spell;
-//
-//			this.equipmentToFix = equipment;
-//
-//			spellView.SetUpSpellViewWith (word.explaination,SpellPurpose.Fix);
-//
-//			ClearUnsufficientCharacters ();
-//		}
+			
 
 		/// <summary>
 		/// Clears the unsufficient characters.
@@ -182,18 +142,6 @@ namespace WordJourney
 			// 更新拼写界面已输入字母界面ui
 			spellView.UpdateCharactersEntered(charactersEntered.ToString(),charactersInsufficientArray);
 
-//			if (spellPurpose == SpellPurpose.Fix) {
-//
-//				if (charactersEntered.ToString () != equipmentToFix.itemNameInEnglish) {
-//					return;
-//				}
-//
-//				if (!CheckCharactersSufficient (1)) {
-//					return;
-//				}
-//
-//				StartCoroutine ("FixItem");
-//			}
 
 		}
 
@@ -204,6 +152,14 @@ namespace WordJourney
 
 		public void OnCharacterButtonUp(int index){
 			spellView.HideCharacterTintHUD (index);
+		}
+
+		public void OnShowCharactersInBagButtonClick(){
+			spellView.ShowAllCharactersInBagPlane ();
+		}
+
+		public void QuitCharactersInBagPlane(){
+			spellView.QuitAllCharactersInBagPlane ();
 		}
 
 
@@ -242,11 +198,15 @@ namespace WordJourney
 				return;
 			}
 
-			itemToCreate = CheckEnteredWord ();
+			bool isValidWord = CheckEnteredWord ();
 
-			if (itemToCreate == null) {
+			if (!isValidWord) {
+				string tint = "拼写不正确或物品未解锁";
+				spellView.SetUpTintHUD (tint);
 				return;
 			}
+
+
 
 			CreateItem (itemToCreate,createCount);
 
@@ -255,60 +215,62 @@ namespace WordJourney
 		/// <summary>
 		/// 选择制造多个物品
 		/// </summary>
-//		public void SelectCreateCount(){
-//
-//			itemToCreate = CheckEnteredWord ();
-//
-//			if (itemToCreate == null) {
-//				return;
-//			}
-//				
-//			spellView.SetUpCreateCountHUD (minCreateCount, maxCreateCount);
-//
-//
-//		}
+		public void SelectCreateCount(){
+
+			bool isValidWord = CheckEnteredWord ();
+
+			if (!isValidWord) {
+				return;
+			}
+				
+			spellView.SetUpCreateCountHUD (minCreateCount, maxCreateCount);
+
+
+		}
 
 		/// <summary>
 		/// 选择数量界面确认按钮点击响应方法
 		/// </summary>
-//		public void ConfirmCreateCount(){
-//
-//			if (!CheckCharactersSufficient(createCount)) {
-//				return;
-//			}
-//
-//			CreateItem (itemToCreate,createCount);
-//		
-//		}
+		public void ConfirmCreateCount(){
+
+			if (!CheckCharactersSufficient(createCount)) {
+				return;
+			}
+				
+
+			CreateItem (itemToCreate,createCount);
+
+			QuitCreateCountHUD ();
+
+		
+		}
 
 		/// <summary>
 		/// 如果从图鉴系统进入，检查输入的单词是否和对应物品一致
 		/// 检查拼写的单词是否存在
 		/// </summary>
 		/// return 返回对应的物品，不一致或不存在返回null，其余返回对应的item
-		private ItemModel CheckEnteredWord(){
+		private bool CheckEnteredWord(){
 
 			// 从图鉴接口进入，目标物品名称不为空
 			if (itemToCreate.itemNameInEnglish != null) {
 				
 				if (!charactersEntered.ToString ().Equals (itemToCreate.itemNameInEnglish)) {
 					Debug.Log ("请输入正确的单词");
-					return null;
+					return false;
 				} 
 
 			}
 
 			ItemModel item = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				
 				return obj.itemNameInEnglish == charactersEntered.ToString ();
-
 			});
 
-			if (item == null) {
-				Debug.Log("没有这种物品");
+			if (item == null || !Player.mainPlayer.CheckItemUnlocked(item.itemId)) {
+				return false;
 			}
 
-			return item;
+			return true;
 
 		}
 			
@@ -359,77 +321,19 @@ namespace WordJourney
 			// 生成物品
 			itemCreated = Item.NewItemWith (itemModel.itemId, createCount);
 
-			// 更新玩家物品数据
-			Player.mainPlayer.AddItem (itemCreated);
-
 			// 更新剩余字母碎片
 			UpdateOwnedCharacters ();
 
 			// 初始化制造的物品列表界面
-			spellView.SetUpCreateItemDetailHUD (itemCreated);
+			spellView.SetUpCreatedItemDetailHUD (itemCreated);
 
 			spellView.UpdateCharactersPlane ();
 
 			// 清除制造信息
 			ClearSpellInfos ();
 
-//			// 如果制造的物品不是消耗品，则每个物品都不一样，根据制造数量单独生成每一个物品
-//			else {
-//
-//				for (int i = 0; i < createCount; i++) {
-//
-//					Item newItem = null;
-//					switch(itemModel.itemType){
-//					case ItemType.Equipment:
-//						newItem = new Equipment (itemModel);
-//						break;
-//					case ItemType.Inscription:
-//						newItem = new Inscription (itemModel);
-//						break;
-//					case ItemType.Task:
-//						newItem = new TaskItem (itemModel);
-//						break;
-//
-//					}
-//
-//					newItem.itemCount = 1;
-//
-//					Player.mainPlayer.allItems.Add (newItem);
-//
-//					createdItems.Add (newItem);
-//
-//				}
-
-//				UpdateOwnedCharacters ();
-//
-//				spellView.SetUpCreateItemDetailHUD (createdItems);
-//
-//				ClearSpellInfos ();
-//
-//			}
-
 		}
-
-		/// <summary>
-		/// Strengthens the item.
-		/// </summary>
-		/// <returns>The item.</returns>
-		private void FixItem(){
-
-			// 修复1次
-//			equipmentToFix.FixEquipment();
-
-			// 更新玩家字母碎片数量
-//			UpdateOwnedCharacters ();
-
-			// 退出拼写界面
-			QuitSpellPlane();
-
-			// 清除输入信息
-			ClearSpellInfos ();
-
-		}
-	
+			
 
 		/// <summary>
 		/// 清除本次制造信息
@@ -444,83 +348,43 @@ namespace WordJourney
 
 			}
 
-			itemCreated = null;
+			createCount = 1;
 
-//			createCount = 1;
-//
-//			equipmentToFix = null;
 		}
 
 
 		// 数量加减按钮点击响应
-//		public void CreateCountPlus(int plus){
-//			
-//			int targetCount = createCount + plus;
-//			// 最大或最小值直接返回
-//			if (targetCount > maxCreateCount || targetCount <minCreateCount) {
-//				return;
-//			}
-//
-//			spellView.UpdateCreateCountHUD (targetCount,spellPurpose);
-//
-//			createCount = targetCount;
-//		
-//		}
+		public void CreateCountPlus(int plus){
+			
+			int targetCount = createCount + plus;
+			// 最大或最小值直接返回
+			if (targetCount > maxCreateCount || targetCount <minCreateCount) {
+				return;
+			}
+
+			spellView.UpdateCreateCountHUD (targetCount);
+
+			createCount = targetCount;
+		
+		}
 
 		/// <summary>
 		/// 选择数量的slider拖动时响应方法
 		/// </summary>
-//		public void CreateSliderDrag(){
-//
-//			createCount = (int)spellView.countSlider.value;
-//
-//			spellView.UpdateCreateCountHUD (createCount,spellPurpose);
-//
-//		}
+		public void CreateSliderDrag(){
+
+			createCount = (int)spellView.countSlider.value;
+
+			spellView.UpdateCreateCountHUD (createCount);
+
+		}
 			
-
-//		public void OnConfirmButtonClick(){
-//
-//			switch (spellPurpose) {
-//			case SpellPurpose.CreateFuseStone:
-//				FuseStone fuseStone = FuseStone.CreateFuseStoneIfExist (charactersEntered.ToString ());
-//				if (fuseStone != null) {
-//					
-//					Player.mainPlayer.allFuseStonesInBag.Add (fuseStone);
-//				
-//					// 更新剩余字母碎片
-//					UpdateOwnedCharacters ();
-//
-//					// 初始化制造的物品列表界面
-//					spellView.SetUpCreateItemDetailHUD (fuseStone);
-//
-//					spellView.UpdateCharactersPlane ();
-//
-//					// 清除制造信息
-//					ClearSpellInfos ();
-//
-//				}
-//				break;
-//			case SpellPurpose.Fix:
-//				if (charactersEntered.ToString () == spell) {
-//					FixItem ();
-//				} else {
-//					Debug.Log ("Wrong word");
-//				}
-//				break;
-//
-//
-//			}
-//
-//
-//		}
-
 			
 		public void QuitCreateCountHUD(){
 
-//			createCount = 1;
+			createCount = 1;
 
-//			spellView.QuitSpellCountHUD ();
+			spellView.QuitSpellCountHUD ();
 
 		}
 
@@ -533,52 +397,38 @@ namespace WordJourney
 			}
 		}
 
-		/// <summary>
-		/// 退出制造出的物品描述界面
-		/// </summary>
-		public void QuitCreateDetailHUD(){
+		public void AddItemToBag(){
 
-			spellView.OnQuitCreateDetailHUD ();
+			// 更新玩家物品数据
+			Player.mainPlayer.AddItem (itemCreated);
+
+			spellView.QuitCreateDetailHUD ();
+
+			string tint = string.Format ("获得{0} x {1}", itemCreated.itemName, itemCreated.itemCount);
+
+			spellView.SetUpTintHUD (tint);
+
+			itemCreated = null;
+
 		}
-			
+
+		public void OnUnlockedItemsButtonClick(){
+
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
+
+				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
+
+			},false,true);
+
+		}
+
 
 		/// <summary>
 		/// Quits the spell plane.
 		/// </summary>
-		public void QuitSpellPlane(){
-			
-			spellView.OnQuitSpellPlane ();
+		public void QuitSpellView(){
 
-//			switch (spellPurpose) {
-//			case SpellPurpose.CreateMaterial:
-//				if (spell == null) {
-//					// 如果从制造接口的任意制造接口进入
-//					GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-//						TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
-//					});
-//					GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
-//						GameDataCenter.GameDataType.Materials, 
-//						GameDataCenter.GameDataType.MaterialSprites
-//					});
-//				} 
-////				else {
-////					Transform materialDisplayCanvas = TransformManager.FindTransform ("MaterialDisplayCanvas");
-////					if (materialDisplayCanvas != null) {
-////						materialDisplayCanvas.GetComponent<Canvas> ().enabled = true;
-////					}
-////				}
-//				break;
-//			case SpellPurpose.CreateFuseStone:
-//				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-//					TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
-//				});
-//				break;
-//			case SpellPurpose.Fix:
-//				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
-//					TransformManager.FindTransform ("BagCanvas").GetComponent<BagView> ().UpdateItemDetailHUDAfterFix (equipmentToFix);
-//				});
-//				break;
-//			}
+			spellView.OnQuitSpellPlane ();
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");
 

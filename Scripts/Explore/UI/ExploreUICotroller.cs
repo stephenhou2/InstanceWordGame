@@ -9,6 +9,11 @@ namespace WordJourney
 {
 	public class ExploreUICotroller : MonoBehaviour {
 
+		private enum QueryType{
+			Refresh,
+			Quit
+		}
+
 		public Transform tintTextContainer;
 		private InstancePool tintTextPool;
 		private Transform tintTextModel;
@@ -24,12 +29,9 @@ namespace WordJourney
 //		public NPCUIController npcUIController;
 
 		private InstancePool materialCardPool;
-
-
-		public Transform formulaDetailPlane;
-
-		public Transform materialCardContainer;
 		private Transform materialCardModel;
+		public Transform formulaDetailPlane;
+		public Transform materialCardContainer;
 
 
 		private InstancePool choiceButtonPool;
@@ -40,13 +42,17 @@ namespace WordJourney
 		private Transform statusTintModel;
 		private InstancePool statusTintPool;
 
+		public Text gameLevelText;
+		public Text gameLevelLocationText;
+
 //		private Dialog[] dialogs;
 //		private Choice[] choices;
 
 //		private List<Item> itemsToPickUp = new List<Item>();
 		private Item itemToPickUp;
 
-		public AttackCheckController attackCheckController;
+		public Transform pauseHUD;
+		public Transform queryHUD;
 
 
 		public Transform billboardPlane;
@@ -55,9 +61,11 @@ namespace WordJourney
 
 		public Transform crystalQueryHUD;
 
+		private QueryType queryType;
 
 
-		public void SetUpExploreCanvas(){
+
+		public void SetUpExploreCanvas(int gameLevelIndex, string gameLevelLocation){
 
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
 			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
@@ -89,6 +97,12 @@ namespace WordJourney
 					
 			}
 
+			int chapterIndex = gameLevelIndex / 5 + 1;
+			int levelIndex = gameLevelIndex % 5 + 1;
+
+			gameLevelText.text = string.Format ("第 {0} 层    第 {1} 关", chapterIndex, levelIndex);
+			gameLevelLocationText.text = gameLevelLocation;
+
 			GetComponent<BattlePlayerUIController> ().InitExplorePlayerView (statusTintModel, statusTintPool);
 			GetComponent<BattlePlayerUIController> ().SetUpExplorePlayerView (Player.mainPlayer);
 			GetComponent<BattleMonsterUIController> ().InitExploreMonsterView (statusTintModel, statusTintPool);
@@ -107,8 +121,8 @@ namespace WordJourney
 
 		public void ShowFightPlane(){
 			battlePlane.gameObject.SetActive (true);
-//			attackCheckController.StartRectAttackCheck ();
-			attackCheckController.StartCircleAttackCheck();
+			GetComponent<BattlePlayerUIController> ().SetUpFightAttackCheck ();
+
 		}
 
 		public void HideFightPlane(){
@@ -168,7 +182,7 @@ namespace WordJourney
 		public void SetUpRewardFormulaPlane(Formula formula){
 
 			ItemModel equipment = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == formula.itemOrSkillId;
+				return obj.itemId == formula.unlockedItemId;
 			});
 
 			Transform formulaDetailContainer = formulaDetailPlane.Find ("FormulaDetailContainer");
@@ -255,17 +269,68 @@ namespace WordJourney
 
 		}
 
+		public void OnPauseButtonClick(){
+			ShowPauseHUD ();
+		}
+
+		public void ShowPauseHUD(){
+			Time.timeScale = 0;
+			pauseHUD.gameObject.SetActive (true);
+		}
+
+		public void QuitPauseHUD(){
+			Time.timeScale = 1f;
+			pauseHUD.gameObject.SetActive (false);
+		}
+
+		public void OnRefreshButtonClick(){
+			queryType = QueryType.Refresh;
+			ShowQueryHUD ();
+		}
+
+		public void OnHomeButtonClick(){
+			queryType = QueryType.Quit;
+			ShowQueryHUD ();
+		}
+
+		public void OnSettingsButtonClick(){
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
+				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController>().SetUpSettingView();
+			},false,true);
+		}
+
+		public void ShowQueryHUD(){
+			queryHUD.gameObject.SetActive (true);
+		}
+		public void QuitQueryHUD(){
+			queryHUD.gameObject.SetActive (false);
+		}
+
+		public void OnConfirmButtonClick(){
+			QuitQueryHUD ();
+			QuitPauseHUD ();
+
+			ExploreManager exploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ();
+
+			switch (queryType) {
+			case QueryType.Refresh:
+				exploreManager.RefrestCurrentLevel ();
+				break;
+			case QueryType.Quit:
+				exploreManager.QuitExploreScene (false);
+				break;
+			}
+		}
+
+		public void OnCancelButtonClick(){
+			QuitQueryHUD ();
+		}
 
 
-//		public void HideFightPlane(){
-//			GetComponent<BattlePlayerUIController> ().QuitFight ();
-//			GetComponent<BattleMonsterUIController>().QuitFight ();
-//		}
 
 		public void QuitFight(){
 			GetComponent<BattlePlayerUIController> ().QuitFight ();
 			GetComponent<BattleMonsterUIController>().QuitFight ();
-			attackCheckController.QuitAttackCheck ();
 			HideFightPlane ();
 		}
 

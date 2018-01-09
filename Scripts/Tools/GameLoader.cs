@@ -52,13 +52,11 @@ namespace WordJourney
 			
 			Caching.maximumAvailableDiskSpace = maxCaching * 1024 * 1024;
 
-
-
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
-			GameManager.Instance.gameDataCenter.InitItemsAndSkillDataByFormula ();
+//			GameManager.Instance.gameDataCenter.InitItemsAndSkillDataByFormula ();
 
 		}
 

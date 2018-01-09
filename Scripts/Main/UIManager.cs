@@ -13,7 +13,7 @@ namespace WordJourney
 		public Dictionary<string,Transform> UIDic = new Dictionary<string, Transform> ();
 
 
-		public void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb,bool isSync = false,bool othersVisible = false){
+		public void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb,bool isSync = false,bool keepBackCanvas = true){
 
 			IDictionaryEnumerator dicEnumerator = UIDic.GetEnumerator ();
 
@@ -23,7 +23,7 @@ namespace WordJourney
 
 				if (isSync) {
 					ResourceManager.Instance.LoadAssetsFromFileSync (loader, () => {
-						if (!othersVisible) {
+						if (!keepBackCanvas) {
 							while (dicEnumerator.MoveNext ()) {
 								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
 								canvas.enabled = false;
@@ -55,7 +55,7 @@ namespace WordJourney
 
 					ResourceManager.Instance.LoadAssetsUsingWWW (loader, () => {
 
-						if (!othersVisible) {
+						if (!keepBackCanvas) {
 							while (dicEnumerator.MoveNext ()) {
 								Canvas canvas = (dicEnumerator.Value as Transform).GetComponent<Canvas> ();
 								canvas.enabled = false;
@@ -97,7 +97,7 @@ namespace WordJourney
 						}
 						c.transform.SetAsLastSibling ();
 					} else {
-						c.enabled = c.enabled && othersVisible;
+						c.enabled = c.enabled && keepBackCanvas;
 					}
 				}
 
@@ -176,8 +176,8 @@ namespace WordJourney
 //				case "WorkbenchCanvas":
 //					UIDic [key].GetComponent<WorkBenchViewController> ().DestroyInstances ();
 //					break;
-				case "MaterialDisplayCanvas":
-					UIDic [key].GetComponent<MaterialDisplayViewController> ().DestroyInstances ();
+				case "UnlockedItemsCanvas":
+					UIDic [key].GetComponent<UnlockedItemsViewController> ().DestroyInstances ();
 					break;
 //				case "ProduceCanvas":
 //					UIDic [key].GetComponent<ProduceViewController> ().DestroyInstances ();

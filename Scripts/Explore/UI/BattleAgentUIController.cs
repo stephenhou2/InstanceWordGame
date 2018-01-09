@@ -37,6 +37,8 @@ namespace WordJourney
 		protected Transform statusTintModel;
 		protected InstancePool statusTintPool;
 
+
+
 		protected void Start(){
 
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
@@ -62,6 +64,7 @@ namespace WordJourney
 			} else {
 				healthBar.DOValue (agent.health, 0.2f);
 			}
+				
 		}
 			
 		protected void UpdateSkillStatusPlane(Agent agent){

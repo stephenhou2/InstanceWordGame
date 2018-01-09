@@ -13,7 +13,7 @@ namespace WordJourney
 		public Image itemImage;
 		public Image backgroundImage;
 		public Text itemName;
-		public Image selectBorder;
+//		public Image selectBorder;
 		public Image newItemTintIcon;
 		public Text extroInfo;
 
@@ -35,7 +35,7 @@ namespace WordJourney
 			}
 //			Debug.Log (string.Format("点击了{0}",item.itemName));
 
-			bagView.SetUpItemDetailHUD (item, itemImage.sprite);
+			bagView.SetUpItemDetailHUD (item);
 
 			bagView.GetComponent<BagViewController> ().currentSelectItem = item;
 
@@ -84,7 +84,7 @@ namespace WordJourney
 			backgroundImage.enabled = false;
 			itemImage.enabled = false;
 			itemName.enabled = false;
-			selectBorder.enabled = false;
+//			selectBorder.enabled = false;
 			newItemTintIcon.enabled = false;
 			extroInfo.enabled = false;
 		}
@@ -133,7 +133,7 @@ namespace WordJourney
 			backgroundImage.enabled = true;
 			itemImage.enabled = true;
 			itemName.enabled = true;
-			selectBorder.enabled = false;
+//			selectBorder.enabled = false;
 			newItemTintIcon.enabled = false;
 			extroInfo.enabled = true;
 

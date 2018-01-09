@@ -54,6 +54,28 @@ namespace WordJourney{
 			return newItem;
 		}
 
+		public static Item NewItemWith(ItemModel itemModel,int itemCount){
+
+			Item newItem = null;
+
+			if (itemModel == null) {
+				string error = string.Format ("传入的物品模型为null");
+				Debug.LogError (error);
+			}
+
+			switch (itemModel.itemType) {
+			case ItemType.Equipment:
+				newItem = new Equipment (itemModel,itemCount);
+				break;
+			case ItemType.Consumables:
+				newItem = new Consumables (itemModel, itemCount);
+				break;
+			}
+
+			return newItem;
+
+		}
+
 		/// <summary>
 		/// 通过物品id和数量初始化物品
 		/// </summary>
@@ -74,17 +96,17 @@ namespace WordJourney{
 
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
-					newItem = new Equipment (itemModel);
+					newItem = new Equipment (itemModel,itemCount);
 					break;
 				case ItemType.Consumables:
-					newItem = new Consumables (itemModel, 1);
+					newItem = new Consumables (itemModel, itemCount);
 					break;
 				}
-			} else if (itemId < 3000) {
+			} else if (itemId < 400) {
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
-					return item.itemId == itemId - 2000;
+					return item.itemId == itemId - 200;
 				});
-				newItem = new Formula (FormulaType.Equipment, itemId - 2000);
+				newItem = new Formula ( itemId - 200);
 			} 
 
 			return newItem;
@@ -122,7 +144,7 @@ namespace WordJourney{
 
 				if (itemModel.itemType == ItemType.Equipment) {
 					#warning 这里耐久度都设为0
-					Equipment equipment = new Equipment (itemModel);
+					Equipment equipment = new Equipment (itemModel,1);
 					allEquipment.Add (equipment);
 				}
 					

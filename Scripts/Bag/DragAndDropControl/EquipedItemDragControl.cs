@@ -34,7 +34,7 @@ namespace WordJourney
 			if ((item as Equipment).itemId < 0) {
 				return;
 			}
-			bagView.SetUpItemDetailHUD (item, itemImage.sprite);
+			bagView.SetUpItemDetailHUD (item);
 			bagView.GetComponent<BagViewController> ().currentSelectItem = item;
 //			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
 		}

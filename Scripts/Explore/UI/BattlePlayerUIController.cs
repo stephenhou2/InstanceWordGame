@@ -10,11 +10,6 @@ namespace WordJourney
 
 		private Player player;
 
-		//魔法槽
-		public Slider manaBar;
-		//魔法值
-		public Text manaText;
-
 		public Text coinCount;
 
 		public Button[] equipedConsumablesButtons;
@@ -46,6 +41,19 @@ namespace WordJourney
 				return mExploreManager;
 			}
 		}
+
+		private BattlePlayerController mBpCtr;
+		private BattlePlayerController bpCtr{
+			get{
+				if (mBpCtr == null) {
+					mBpCtr = player.transform.Find("BattlePlayer").GetComponent<BattlePlayerController> ();
+				}
+				return mBpCtr;
+			}
+		}
+
+		public AttackCheckController attackCheckController;
+
 
 		private int consumablesCountInOnePage = 8;
 
@@ -100,7 +108,6 @@ namespace WordJourney
 			healthText.text = string.Format ("{0}/{1}", player.health, player.maxHealth);
 
 			healthBar.value = player.health;
-			manaBar.value = player.mana;
 
 		}
 
@@ -111,6 +118,9 @@ namespace WordJourney
 			UpdateHealthBarAnim(player);
 			UpdateSkillStatusPlane (player);
 			coinCount.text = player.totalCoins.ToString ();
+			if (bpCtr.isInFight) {
+				attackCheckController.UpdateHealth ();
+			}
 		}
 			
 
@@ -362,24 +372,11 @@ namespace WordJourney
 
 		}
 
-		/// <summary>
-		/// 更新人物魔法槽
-		/// </summary>
-		/// <param name="ba">Ba.</param>
-//		private void UpdateManaBarAnim(Agent ba){
-//			
-////			manaBar.maxValue = ba.maxMana;
-////			manaText.text = ba.mana + "/" + ba.maxMana;
-//
-//			if (firstSetManaBar) {
-//				manaBar.value = ba.mana;
-//			} else {
-//				manaBar.DOValue (ba.mana, 0.2f);
-//			}
-//
-//		}
+		public void SetUpFightAttackCheck(){
+//			attackCheckController.StartRectAttackCheck ();
+			attackCheckController.StartCircleAttackCheck();
+		}
 			
-
 		/// <summary>
 		/// 初始化工具选择栏
 		/// </summary>
@@ -455,8 +452,6 @@ namespace WordJourney
 		/// </summary>
 		public void QuitToolChoicePlane(){
 
-//			GetComponent<ExploreUICotroller>().HideMask();
-
 			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
 
 			toolChoicesPlane.gameObject.SetActive (false);
@@ -469,10 +464,7 @@ namespace WordJourney
 		/// 退出战斗时的逻辑
 		/// </summary>
 		public override void QuitFight(){
-
-//			skillButtonPool.AddChildInstancesToPool (skillsContainer);
-
-//			skillsContainer.gameObject.SetActive (false);
+			attackCheckController.QuitAttackCheck ();
 		}
 	}
 }

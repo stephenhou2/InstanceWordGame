@@ -13,9 +13,6 @@ namespace WordJourney{
 
 		public Image pronounceOffImage;
 
-		public Image downloadOnImage;
-
-		public Image downloadOffIamge;
 
 		public ToggleGroup tg;
 
@@ -37,8 +34,6 @@ namespace WordJourney{
 			pronounceOnImage.enabled = !settings.isPronunciationEnable;
 			pronounceOffImage.enabled = settings.isPronunciationEnable;
 
-			downloadOnImage.enabled = !settings.isDownloadEnable;
-			downloadOffIamge.enabled = settings.isDownloadEnable;
 
 			tg.SetAllTogglesOff ();
 
@@ -68,12 +63,7 @@ namespace WordJourney{
 
 		}
 
-		public void UpdateDownloadControl(bool enable){
 
-			downloadOnImage.enabled = !enable;
-			downloadOffIamge.enabled = enable;
-
-		}
 
 		public int GetCurrentWordType(int index){
 
@@ -86,11 +76,18 @@ namespace WordJourney{
 			return index;
 		}
 
+		public void ShowAlertHUD(){
+			alertHUD.gameObject.SetActive (true);
+		}
+
+		public void QuitAlertHUD(){
+			alertHUD.gameObject.SetActive (false);
+		}
+
+
 		public void QuitSettingView(){
 
-			float offsetY = GetComponent<CanvasScaler> ().referenceResolution.y;
-
-			Vector3 originalPosition = settingPlane.localPosition;
+			GetComponent<Canvas> ().enabled = false;
 
 		}
 

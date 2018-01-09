@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 382819016
+CRC: 3985894329
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -69,5 +69,9 @@ AssetBundleManifest:
         Dependency_0: ui/icons
     Info_16:
       Name: setting/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_17:
+      Name: unlockeditems/canvas
       Dependencies:
         Dependency_0: ui/icons

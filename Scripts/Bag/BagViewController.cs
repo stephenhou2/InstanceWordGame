@@ -33,7 +33,7 @@ namespace WordJourney
 						return obj.itemId == i;
 					});
 
-					Equipment e = new Equipment (im);
+					Equipment e = new Equipment (im,1);
 
 					Player.mainPlayer.AddItem (e);
 				}
@@ -113,7 +113,7 @@ namespace WordJourney
 					Agent.PropertyChange propertyChange = Player.mainPlayer.EquipEquipment (currentSelectItem as Equipment, i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-					bagView.RemoveItemInBag(equipment);
+					bagView.RemoveItemInBag(currentSelectItem);
 					bagView.QuitItemDetailHUD ();
 					bagView.SetUpEquipedEquipmentsPlane ();
 					return;
@@ -216,6 +216,14 @@ namespace WordJourney
 			bagView.QuitQueryResolveHUD ();
 		}
 
+
+		public void OnShowCharactersButtonClick(){
+			bagView.SetUpCharactersInBagPlane ();
+		}
+
+		public void QuitCharactersPlane(){
+			bagView.QuitCharactersInBagPlane ();
+		}
 
 
 		/// <summary>

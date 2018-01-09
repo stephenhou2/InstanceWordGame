@@ -157,9 +157,12 @@ namespace WordJourney
 		public static void CopyFile(string sourceFileName,string destFileName){
 
 			try{
+				if(File.Exists(destFileName)){
+					File.Delete(destFileName);
+				}
 				File.Copy (sourceFileName, destFileName);
 			}catch(System.Exception e){
-				Debug.Log (e);
+				throw(e);
 			}
 
 		}

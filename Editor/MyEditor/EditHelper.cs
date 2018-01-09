@@ -26,6 +26,11 @@ namespace WordJourney
 			gldh.SaveGameDatas ();
 		}
 
+		[MenuItem("EditHelper/TempHelper")]
+		public static void TempHelper(){
+
+		}
+
 		[MenuItem("EditHelper/GeneratePlayerJson")]
 		public static void GeneratePlayerJsonData(){
 

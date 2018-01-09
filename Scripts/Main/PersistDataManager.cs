@@ -82,7 +82,11 @@ namespace WordJourney
 		}
 
 
-
+		public void ResetPlayerDataToOriginal(){
+			string sourcePlayerDataPath = CommonData.originDataPath + "/PlayerData.json";
+			string targetPlayerDataPath = CommonData.persistDataPath + "/PlayerData.json";
+			DataHandler.CopyFile (sourcePlayerDataPath, targetPlayerDataPath);
+		}
 
 	}
 }

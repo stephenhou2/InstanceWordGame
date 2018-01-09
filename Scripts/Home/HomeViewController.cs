@@ -145,12 +145,9 @@ namespace WordJourney
 			},false,true);
 
 		}
-
-
-
+			
 
 		public void OnBagButtonClick(){
-
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView (true);
 				homeView.OnQuitHomeView();
@@ -158,7 +155,6 @@ namespace WordJourney
 		}
 
 		public void OnSettingButtonClick(){
-
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
 				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController> ().SetUpSettingView ();
 				homeView.OnQuitHomeView();
@@ -173,6 +169,15 @@ namespace WordJourney
 				homeView.OnQuitHomeView();
 			},false,true);
 		}
+
+
+		public void OnUnlockedItemsButtonClick(){
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
+				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
+				homeView.OnQuitHomeView();
+			},false,true);
+		}
+
 
 		private void QuitHomeView(){
 			homeView.OnQuitHomeView ();

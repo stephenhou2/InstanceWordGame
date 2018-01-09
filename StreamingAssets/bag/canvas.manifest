@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1783899442
+CRC: 3264902825
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b9367887360f2ffe2ff6e87da9a21d6b
+    Hash: 1b3c5c4ac19363df3c48becb6f6ac655
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 83baf92df0c04de5e73675ccc5778c34
+    Hash: fced7c62baa1ff91134ce4c2dce53bb9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -17,6 +17,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: ee0b8ce0c0e0d43be8acfe8dd5de182b, type: 3}
 - Class: 114
   Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
@@ -42,11 +44,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: df8dcc92c4282487eb98d7f066796e45, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: d814ceb2d00c94cb289f2705ef9c0c6d, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 542466c372e374808b3b5e72a45a3341, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d7a7a324f663b4f8ea3875072425d4c9, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: e4013854c8e234d0eaf22ede16aaab72, type: 3}
 - Class: 114
@@ -55,6 +57,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 0e3c46282241d4629a34097e458044dc, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 77491de856b5e47af942a08470d5d4fe, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 84e48e1bf700744fca03b75772915b32, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -68,9 +72,7 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Bag/ItemDetailsModelInBagCanvas.prefab
 - Assets/Prefabs/Bag/BagItemModel.prefab
-- Assets/Prefabs/Bag/ResolveGainModel.prefab
 - Assets/Prefabs/Bag/BagCanvas.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

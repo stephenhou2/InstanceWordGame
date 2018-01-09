@@ -21,6 +21,7 @@ namespace WordJourney
 		public RectTransform rectValidZone;
 		public float rectAttackCheckMoveSpeed;
 		public float rectAttackZoneMoveSpeed;
+		public Image healthInRectAttackCheck;
 
 		public Transform circleAttackCheckPlane;
 		public RectTransform circleAttackZone;
@@ -28,6 +29,8 @@ namespace WordJourney
 		public RectTransform circleValidZone;
 		public float circleAttackCheckRotateSpeed;
 		public float circleAttackZoneRotateSpeed;
+		public Image healthInCircleAttackCheck;
+
 	
 		private float validZoneEdgeLeft{
 			get{ return rectValidZone.rect.center.x - rectValidZone.rect.width / 2; }
@@ -245,6 +248,22 @@ namespace WordJourney
 			return rotation;
 
 		}
+
+		public void UpdateHealth(){
+
+			switch (attackCheckType) {
+			case AttackCheckType.Circle:
+				healthInCircleAttackCheck.fillAmount = 0.5f * Player.mainPlayer.health / Player.mainPlayer.maxHealth;
+				break;
+			case AttackCheckType.Rect:
+				healthInRectAttackCheck.fillAmount = Player.mainPlayer.health / Player.mainPlayer.maxHealth;
+				break;
+			}
+
+
+
+		}
+
 
 
 		public void QuitAttackCheck(){

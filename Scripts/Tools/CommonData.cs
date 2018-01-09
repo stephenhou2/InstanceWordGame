@@ -51,12 +51,12 @@ namespace WordJourney{
 //		public static string allMaterialsBundleName = "allMaterials";
 //		public static string allItemModelsBundleName = "AllItemModels";
 
-		public static string mainStaticBundleName = "main/static";
+
 		public static string homeCanvasBundleName = "home/canvas";
 		public static string recordCanvasBundleName = "record/canvas";
-		public static string materialDisplayCanvasBundleName = "material/canvas";
-		public static string workBenchCanvasBundleName = "workbench/canvas";
-		public static string skillCanvasBundleName = "skills/canvas";
+		public static string unlockedItemsCanvasBundleName = "unlockeditems/canvas";
+//		public static string workBenchCanvasBundleName = "workbench/canvas";
+//		public static string skillCanvasBundleName = "skills/canvas";
 		public static string bagCanvasBundleName = "bag/canvas";
 		public static string settingCanvasBundleName = "setting/canvas";
 		public static string spellCanvasBundleName = "spell/canvas";

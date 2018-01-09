@@ -583,27 +583,6 @@ namespace WordJourney
 		}
 			
 
-		/// <summary>
-		/// 玩家选择技能后的响应方法
-		/// </summary>
-		/// <param name="btnIndex">Button index.</param>
-//		public void PlayerSelectSkill(int[] btnIndexArray){
-//
-//			int btnIndex = btnIndexArray [0];
-//
-//			// 获得选择的技能
-//			Skill skill = (agent as Player).validSkills [btnIndex];
-//
-//			// 停止自动攻击的协程
-//			if (attackCoroutine != null) {
-//				StopCoroutine (attackCoroutine);
-//			}
-//
-//			UseSkill (skill);
-//		}
-
-
-
 		protected override void AgentExcuteHitEffect ()
 		{
 			// 播放技能对应的玩家技能特效动画
@@ -635,35 +614,6 @@ namespace WordJourney
 
 			} 
 
-			// 更新玩家状态栏
-//			this.UpdateStatusPlane();
-//
-//			// 更新怪物状态栏
-//			bmCtr.UpdateStatusPlane();
-
-			// 如果该次攻击是物理攻击，对应减少当前武器的耐久度
-//			switch (currentSkill.hurtType) {
-//			case HurtType.Physical:
-//
-//				Equipment equipment = agent.allEquipedEquipments.Find (delegate(Equipment obj) {
-//					return obj.equipmentType == EquipmentType.Weapon;
-//				});
-//
-//				if (equipment == null) {
-//					break;
-//				}
-//
-//				bool completeDamaged = equipment.EquipmentDamaged (EquipmentDamageSource.PhysicalAttack);
-//
-//				if (completeDamaged) {
-//					string tint = string.Format("{0}完全损坏",equipment.itemName);
-//					bpUICtr.GetComponent<ExploreUICotroller>().SetUpTintHUD(tint);
-//				}
-//				break;
-//			default:
-//				break;
-//			}
-
 		}
 
 
@@ -681,7 +631,7 @@ namespace WordJourney
 			} else if (agent.health <= 0) {
 				isInFight = false;
 				agent.ResetBattleAgentProperties (true);
-				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene ();
+				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene (false);
 				return true;
 			}else {
 				return false;
