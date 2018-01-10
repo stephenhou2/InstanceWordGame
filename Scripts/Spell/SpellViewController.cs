@@ -62,14 +62,14 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化拼写界面（制造）
 		/// </summary>
-		public void SetUpSpellViewForCreate(ItemModel itemModel){
+		public void SetUpSpellViewForCreate(ItemModel itemModel,CallBack cb){
 			itemToCreate = itemModel;
-			IEnumerator coroutine = SetUpViewAfterDataReady (itemModel);
+			IEnumerator coroutine = SetUpViewAfterDataReady (itemModel,cb);
 			StartCoroutine (coroutine);
 		}
 
 
-		private IEnumerator SetUpViewAfterDataReady(ItemModel itemModel){
+		private IEnumerator SetUpViewAfterDataReady(ItemModel itemModel,CallBack cb){
 
 			bool dataReady = false;
 
@@ -89,7 +89,12 @@ namespace WordJourney
 				
 			spellView.SetUpSpellViewWith (itemModel);
 
+
 			ClearUnsufficientCharacters ();
+
+			if (cb != null) {
+				cb ();
+			}
 
 		}
 			
@@ -252,23 +257,36 @@ namespace WordJourney
 		/// return 返回对应的物品，不一致或不存在返回null，其余返回对应的item
 		private bool CheckEnteredWord(){
 
-			// 从图鉴接口进入，目标物品名称不为空
-			if (itemToCreate.itemNameInEnglish != null) {
-				
-				if (!charactersEntered.ToString ().Equals (itemToCreate.itemNameInEnglish)) {
-					Debug.Log ("请输入正确的单词");
+			string enteredSpell = charactersEntered.ToString ();
+
+			if (itemToCreate == null) {
+
+				ItemModel item = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+					return obj.itemNameInEnglish == enteredSpell;
+				});
+
+				if (item == null || !Player.mainPlayer.CheckItemUnlocked (item.itemId)) {
 					return false;
-				} 
+				}
 
-			}
+				itemToCreate = item;
 
-			ItemModel item = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemNameInEnglish == charactersEntered.ToString ();
-			});
-
-			if (item == null || !Player.mainPlayer.CheckItemUnlocked(item.itemId)) {
+			} else if(itemToCreate.itemNameInEnglish != enteredSpell){
 				return false;
 			}
+
+
+
+			// 从图鉴接口进入，目标物品名称不为空
+//			if (itemToCreate != null && itemToCreate.itemNameInEnglish != null) {
+//				
+//				if (!charactersEntered.ToString ().Equals (itemToCreate.itemNameInEnglish)) {
+//					Debug.Log ("请输入正确的单词");
+//					return false;
+//				} 
+//
+//			}
+
 
 			return true;
 

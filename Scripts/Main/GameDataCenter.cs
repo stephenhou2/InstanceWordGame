@@ -13,8 +13,6 @@ namespace WordJourney
 			GameSettings,
 			LearnInfo,
 			GameLevelDatas,
-			Materials,
-			MaterialSprites,
 			ItemModels,
 			ItemSprites,
 			MapSprites,
@@ -105,12 +103,6 @@ namespace WordJourney
 				break;
 			case GameDataType.GameLevelDatas:
 				LoadGameLevelDatas ();
-				break;
-			case GameDataType.Materials:
-				LoadMaterials ();
-				break;
-			case GameDataType.MaterialSprites:
-				LoadMaterialSprites ();
 				break;
 			case GameDataType.ItemModels:
 				LoadItemModels ();
@@ -233,83 +225,6 @@ namespace WordJourney
 			dataReadyDic [GameDataType.GameLevelDatas] = true;
 			inLoadingDataTypes.Remove (GameDataType.GameLevelDatas);
 		}
-
-
-		public List<Material> allMaterials{
-			get{
-				if (mAllMaterials.Count == 0) {
-					LoadMaterials ();
-				}
-				return mAllMaterials;
-			}
-		}
-
-		private void LoadMaterials(){
-			if(inLoadingDataTypes.Contains(GameDataType.Materials)){
-				return;
-			}
-			inLoadingDataTypes.Add (GameDataType.Materials);
-			Material[] materials = DataHandler.LoadDataToModelsWithPath<Material> (CommonData.materialsDataFilePath);
-			for (int i = 0; i < materials.Length; i++) {
-				mAllMaterials.Add (materials [i]);
-			}
-			dataReadyDic [GameDataType.Materials] = true;
-			inLoadingDataTypes.Remove (GameDataType.Materials);
-		}
-
-
-		public List<Sprite> allMaterialSprites{
-			get{
-				if (mAllMaterialSprites.Count == 0) {
-					LoadMaterialSprites ();
-				}
-				return mAllMaterialSprites;
-			}
-		}
-
-		private void LoadMaterialSprites(){
-			if(inLoadingDataTypes.Contains(GameDataType.MaterialSprites)){
-				return;
-			}
-			inLoadingDataTypes.Add (GameDataType.MaterialSprites);
-
-			ResourceLoader materialSpritesLoader = ResourceLoader.CreateNewResourceLoader<Sprite> (CommonData.allMaterialSpritesBundleName);
-
-			ResourceManager.Instance.LoadAssetsUsingWWW(materialSpritesLoader,()=>{
-
-				for(int i = 0;i<materialSpritesLoader.assets.Length;i++){
-					Sprite s = materialSpritesLoader.assets[i] as Sprite;
-					mAllMaterialSprites.Add(s);
-				}
-				dataReadyDic [GameDataType.MaterialSprites] = true;
-				inLoadingDataTypes.Remove(GameDataType.MaterialSprites);
-			});
-
-		}
-
-
-//		public List<EquipmentAttachedProperty> allEquipmentAttachedProperties{
-//			get{
-//				if (mAllEquipmentAttachedProperties.Count == 0) {
-//					LoadEquipmentAttachedProperties ();
-//				}
-//				return mAllEquipmentAttachedProperties;
-//			}
-//		}
-
-//		private void LoadEquipmentAttachedProperties(){
-//			if(inLoadingDataTypes.Contains(GameDataType.EquipmentAttachedProperties)){
-//				return;
-//			}
-//			inLoadingDataTypes.Add (GameDataType.EquipmentAttachedProperties);
-////			EquipmentAttachedProperty[] attachedPropertiesArray = DataHandler.LoadDataToModelsWithPath<EquipmentAttachedProperty> (CommonData.persistDataPath + "/AttachedProperties.json");
-//
-////			for (int i = 0; i < attachedPropertiesArray.Length; i++) {
-////				mAllEquipmentAttachedProperties.Add (attachedPropertiesArray [i]);
-////			}
-//			dataReadyDic [GameDataType.EquipmentAttachedProperties] = true;
-//			inLoadingDataTypes.Remove (GameDataType.EquipmentAttachedProperties);
-//		}
 
 
 		public List<ItemModel> allItemModels{
@@ -793,15 +708,6 @@ namespace WordJourney
 				mGameLevelDatas.Clear ();
 				dataReadyDic [GameDataType.GameLevelDatas] = false;
 				break;
-			case GameDataType.Materials:
-				mAllMaterials.Clear ();
-				dataReadyDic [GameDataType.Materials] = false;
-				break;
-			case GameDataType.MaterialSprites:
-				mAllMaterialSprites.Clear ();
-				dataReadyDic [GameDataType.MaterialSprites] = false;
-				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allMaterialSpritesBundleName);
-				break;
 			case GameDataType.ItemModels:
 				mAllItemModels.Clear ();
 				dataReadyDic [GameDataType.ItemModels] = false;
@@ -868,24 +774,6 @@ namespace WordJourney
 
 		}
 
-
-		/// <summary>
-		/// 根据玩家已获得的配方解锁对应装备和技能
-		/// </summary>
-//		public void InitItemsAndSkillDataByFormula(){
-//			
-//			for (int i = 0; i < Player.mainPlayer.allFormulasInBag.Count; i++) {
-//				Formula formula = Player.mainPlayer.allFormulasInBag [i];
-//				switch (formula.formulaType) {
-//				case FormulaType.Equipment:
-//					formula.GetItemModelUnlock ();
-//					break;
-//				case FormulaType.Skill:
-//					formula.GetSkillUnlock ();
-//					break;
-//				}
-//			}
-//		}
 
 	}
 }

@@ -1503,7 +1503,7 @@ namespace WordJourney
 			}
 
 			if (removeConsumablesFromBag) {
-				Player.mainPlayer.RemoveItem (currentUsingConsumables);
+				Player.mainPlayer.RemoveItem (currentUsingConsumables,1);
 			}
 
 		}
@@ -1607,13 +1607,13 @@ namespace WordJourney
 			float rewardUpAndDownSpeed = 0.5f;
 
 			float timer = 0;
-			while (timer < 1f) {
+			while (timer < 0.5f) {
 				Vector3 moveVector = new Vector3 (0, rewardUpAndDownSpeed * Time.deltaTime, 0);
 				rewardTrans.position += moveVector;
 				timer += Time.deltaTime;
 				yield return null;
 			}
-			while (timer < 2f) {
+			while (timer < 1f) {
 				Vector3 moveVector = new Vector3 (0, -rewardUpAndDownSpeed * Time.deltaTime, 0);
 				rewardTrans.position += moveVector;
 				timer += Time.deltaTime;
@@ -1653,8 +1653,6 @@ namespace WordJourney
 			}
 
 			Item reward = rewardInMap.reward;
-
-			Debug.LogFormat ("获得{0}", reward.itemName);
 
 			Player.mainPlayer.AddItem (reward);
 

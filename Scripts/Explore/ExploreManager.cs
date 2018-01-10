@@ -49,7 +49,7 @@ namespace WordJourney
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
-			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
+//			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
 			battlePlayerCtr.enterCrystal = new ExploreEventHandler (EnterCrystal);
 
 			battlePlayerCtr.enterTreasureBox = new ExploreEventHandler (EnterTreasureBox);
@@ -139,7 +139,7 @@ namespace WordJourney
 			if(Input.GetMouseButtonDown(0)){
 
 				if(EventSystem.current.IsPointerOverGameObject()){
-					Debug.Log("点击在UI上");
+					Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
 					mapGenerator.ClickConsumablesPosAt (Vector3.zero);
 					clickForConsumablesPos = false;
 					return;
@@ -237,7 +237,24 @@ namespace WordJourney
 
 		public void ObtainReward(Item reward){
 
-			expUICtr.GetComponent<BattlePlayerUIController> ().SetUpBottomConsumablesButtons ();
+			switch (reward.itemType) {
+			case ItemType.Equipment:
+				string tint = string.Format ("获得 <color=green>{0}</color> x{1}", reward.itemName,reward.itemCount);
+				expUICtr.SetUpTintHUD (tint);
+				break;
+			case ItemType.Consumables:
+				tint = string.Format ("获得 <color=green>{0}</color>x{1}", reward.itemName, reward.itemCount);
+				expUICtr.SetUpTintHUD (tint);
+				expUICtr.UpdateBottomBar ();
+				break;
+			case ItemType.UnlockScroll:
+				expUICtr.SetUpUnlockScrollHUD (reward);
+				break;
+			case ItemType.CraftingRecipes:
+				expUICtr.SetUpCraftingRecipesHUD (reward);
+				break;
+
+			}
 
 		}
 
@@ -456,14 +473,14 @@ namespace WordJourney
 
 		}
 
-		private void EnterWorkBench(Transform workBench){
-
-			Debug.Log ("进入工作台");
-
-			expUICtr.SetUpProducePlane ();
-
-
-		}
+//		private void EnterWorkBench(Transform workBench){
+//
+//			Debug.Log ("进入工作台");
+//
+//			expUICtr.SetUpProducePlane ();
+//
+//
+//		}
 
 		private void EnterCrystal(Transform crystal){
 			Debug.Log ("进入水晶");
@@ -687,8 +704,6 @@ namespace WordJourney
 			Destroy(this.gameObject);
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[] {
-				GameDataCenter.GameDataType.Materials,
-				GameDataCenter.GameDataType.MaterialSprites,
 				GameDataCenter.GameDataType.MapSprites,
 				GameDataCenter.GameDataType.Skills, 
 				GameDataCenter.GameDataType.SkillSprites,

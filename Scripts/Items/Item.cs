@@ -10,9 +10,10 @@ namespace WordJourney{
 	public enum ItemType{
 		Equipment,
 		Consumables,
-		Task,
-		FuseStone,
-		Formula,
+//		Task,
+//		FuseStone,
+		UnlockScroll,
+		CraftingRecipes,
 		CharacterFragment
 	}
 
@@ -85,8 +86,8 @@ namespace WordJourney{
 			Item newItem = null;
 
 			if (itemId < 200) {
-				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
-					return item.itemId == itemId;
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+					return obj.itemId == itemId;
 				});
 					
 				if (itemModel == null) {
@@ -96,18 +97,23 @@ namespace WordJourney{
 
 				switch (itemModel.itemType) {
 				case ItemType.Equipment:
-					newItem = new Equipment (itemModel,itemCount);
+					newItem = new Equipment (itemModel, itemCount);
 					break;
 				case ItemType.Consumables:
 					newItem = new Consumables (itemModel, itemCount);
 					break;
 				}
 			} else if (itemId < 400) {
-				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel item) {
-					return item.itemId == itemId - 200;
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+					return obj.itemId == itemId - 200;
 				});
-				newItem = new Formula ( itemId - 200);
-			} 
+				newItem = new UnlockScroll (itemModel);
+			} else {
+				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+					return obj.itemId == itemId - 400;
+				});
+				newItem = new CraftingRecipes (itemModel);
+			}
 
 			return newItem;
 
@@ -152,15 +158,7 @@ namespace WordJourney{
 			return allEquipment;
 		}
 			
-		/// <summary>
-		/// 物品是否可以进行强化
-		/// </summary>
-		/// <returns><c>true</c>, if can strengthen was checked, <c>false</c> otherwise.</returns>
-		public bool CheckCanStrengthen(){
 
-			return itemType == ItemType.Equipment;
-
-		}
 
 
 		/// <summary>
@@ -189,7 +187,19 @@ namespace WordJourney{
 	/// </summary>
 	[System.Serializable]
 	public class ItemModel{
-		
+
+		[System.Serializable]
+		public struct ItemInfoForProduce
+		{
+			public int itemId;
+			public int itemCount;
+
+			public ItemInfoForProduce(int itemId,int itemCount){
+				this.itemId = itemId;
+				this.itemCount = itemCount;
+			}
+		}
+
 		public int itemId;
 		public string itemName;
 		public string itemNameInEnglish;
@@ -214,7 +224,7 @@ namespace WordJourney{
 
 		public SkillInfo[] attachedSkillInfos;
 
-		public int[] itemIdsForProduce;
+		public ItemInfoForProduce[] itemInfosForProduce;
 
 
 		public override string ToString ()
@@ -224,7 +234,7 @@ namespace WordJourney{
 				"dodgeGain:{11},critGain:{12},wholePropertyGain:{13},physicalHurtScalerGain:{14},magicalHurtScalerGain:{15},critHurtScalerGain:{16}," +
 				"attachedSkillInfosCount:{17},itemForProduceCount:{18}",
 				itemId,itemName,itemNameInEnglish,spriteName,itemDescription,healthGain,manaGain,attackGain,hitGain,armorGain,magicResistGain,
-				dodgeGain,critGain,wholePropertyGain,physicalHurtScalerGain,magicalHurtScalerGain,critHurtScalerGain,attachedSkillInfos.Length,itemIdsForProduce.Length);
+				dodgeGain,critGain,wholePropertyGain,physicalHurtScalerGain,magicalHurtScalerGain,critHurtScalerGain,attachedSkillInfos.Length,itemInfosForProduce.Length);
 		}
 
 	}

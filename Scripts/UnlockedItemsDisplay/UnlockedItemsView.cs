@@ -17,21 +17,24 @@ namespace WordJourney
 
 		public ItemDetailHUD itemDetailHUD;
 
-		private ItemModel itemToCreate;
+//		private ItemModel itemToCreate;
 
-		public void InitUnlockedItemView(ItemModel itemToCreate){
-			this.itemToCreate = itemToCreate;
+		public void InitUnlockedItemView(){
+//			this.itemToCreate = itemToCreate;
 			unlockedItemsPool = InstancePool.GetOrCreateInstancePool ("UnlockedItemPool", CommonData.poolContainerName);
 		}
 
 
-		public void SetUpUnlockedItemsView(FormulaType formulaType){
+		public void SetUpUnlockedItemsView(UnlockScrollType unlockScrollType){
 
-			for (int i = 0; i < Player.mainPlayer.allFormulasInBag.Count; i++) {
-				Formula formula = Player.mainPlayer.allFormulasInBag [i];
-				if (formula.unlocked && formula.formulaType == formulaType) {
+//			QuitUnlockedItemDetailHUD ();
+			unlockedItemsPool.AddChildInstancesToPool(unlockedItemsContainer);
+
+			for (int i = 0; i < Player.mainPlayer.allUnlockScrollsInBag.Count; i++) {
+				UnlockScroll unlockScroll = Player.mainPlayer.allUnlockScrollsInBag [i];
+				if (unlockScroll.unlocked && unlockScroll.unlockScrollType == unlockScrollType) {
 					Transform unlockedItem = unlockedItemsPool.GetInstance<Transform> (unlockedItemModel.gameObject, unlockedItemsContainer);
-					SetUpUnlockedItem (unlockedItem, formula);
+					SetUpUnlockedItem (unlockedItem, unlockScroll);
 				}
 			}
 
@@ -40,10 +43,10 @@ namespace WordJourney
 		}
 
 
-		private void SetUpUnlockedItem(Transform unlockedItem,Formula formula){
+		private void SetUpUnlockedItem(Transform unlockedItem,UnlockScroll unlockScroll){
 
 			ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == formula.unlockedItemId;
+				return obj.itemId == unlockScroll.unlockedItemId;
 			});
 
 			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
@@ -61,7 +64,7 @@ namespace WordJourney
 			unlockedItem.GetComponent<Button> ().onClick.RemoveAllListeners ();
 			unlockedItem.GetComponent<Button> ().onClick.AddListener (delegate {
 				Item item = Item.NewItemWith(im,1);
-				itemToCreate = im;
+				GetComponent<UnlockedItemsViewController>().itemToCreate = im;
 				SetUpUnlockedItemDetailHUD(item);
 			});
 		}
@@ -77,12 +80,10 @@ namespace WordJourney
 		}
 
 		public void SetUpUnlockedItemDetailHUD(Item item){
-			beginSpellButton.gameObject.SetActive (true);
 			itemDetailHUD.SetUpItemDetailHUD (item);
 		}
 
 		public void QuitUnlockedItemDetailHUD(){
-			beginSpellButton.gameObject.SetActive (false);
 			itemDetailHUD.QuitItemDetailHUD ();
 		}
 

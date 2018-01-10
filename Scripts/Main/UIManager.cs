@@ -9,6 +9,16 @@ namespace WordJourney
 
 	public class UIManager{
 
+		private Transform mCanvasContainer;
+		private Transform canvasContainer{
+			get{
+				if (mCanvasContainer == null) {
+					mCanvasContainer = TransformManager.FindTransform ("CanvasContainer");
+				}
+				return mCanvasContainer;
+			}
+		}
+
 
 		public Dictionary<string,Transform> UIDic = new Dictionary<string, Transform> ();
 
@@ -46,7 +56,10 @@ namespace WordJourney
 							cb ();
 						}
 
+						c.transform.SetParent(canvasContainer);
 						c.transform.SetAsLastSibling ();
+
+						ResetCanvasesSortintOrder ();
 
 						UIDic.Add (canvasName, c.transform);
 
@@ -78,7 +91,10 @@ namespace WordJourney
 							cb ();
 						}
 
+						c.transform.SetParent(canvasContainer);
 						c.transform.SetAsLastSibling ();
+
+						ResetCanvasesSortintOrder ();
 
 						UIDic.Add (canvasName, c.transform);
 
@@ -106,13 +122,19 @@ namespace WordJourney
 				}
 
 			}
-			
+
+			ResetCanvasesSortintOrder ();
 
 			Resources.UnloadUnusedAssets ();
 			System.GC.Collect ();
 		}
 			
-
+		private void ResetCanvasesSortintOrder(){
+			for (int i = 0; i < canvasContainer.childCount; i++) {
+				Canvas canvas = canvasContainer.GetChild (i).GetComponent<Canvas>();
+				canvas.sortingOrder = i;
+			}
+		}
 
 		public void HideCanvas(string canvasName){
 

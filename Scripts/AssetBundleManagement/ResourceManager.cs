@@ -181,7 +181,7 @@ namespace WordJourney
 		/// <param name="bundleName">Bundle name.</param>
 		public void RemoveWWWFromCache(string bundleName){
 
-			Debug.LogFormat ("remove www {0} into cache", bundleName);
+			Debug.LogFormat ("remove www {0} from cache", bundleName);
 
 			if (!m_DownloadingWWWs.ContainsKey (bundleName)) {
 				string error = string.Format ("there is not a loading www named {0}", bundleName);

@@ -29,7 +29,7 @@ namespace WordJourney
 		/// <param name="itemModel">Item model.</param>
 		public FuseStone(string fuseStoneName,string spell){
 
-			this.itemType = ItemType.FuseStone;
+//			this.itemType = ItemType.FuseStone;
 			this.itemName = fuseStoneName;
 			this.itemNameInEnglish = spell;
 			this.spriteName = "sword";

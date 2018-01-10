@@ -9,7 +9,7 @@ namespace WordJourney
 
 		public UnlockedItemsView unlockedItemsView;
 
-		private ItemModel itemToCreate;
+		[HideInInspector]public ItemModel itemToCreate;
 
 		public void SetUpUnlockedItemsView(){
 
@@ -32,30 +32,32 @@ namespace WordJourney
 				yield return null;
 			}
 
-			unlockedItemsView.InitUnlockedItemView (itemToCreate);
-			unlockedItemsView.SetUpUnlockedItemsView (FormulaType.Equipment);
+			unlockedItemsView.InitUnlockedItemView ();
+			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Equipment);
 
 		}
 
 
 		public void OnBeginSpellButtonClick(){
-			unlockedItemsView.QuitUnlockedItemDetailHUD ();
+			
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(itemToCreate);
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(itemToCreate,delegate{
+					unlockedItemsView.QuitUnlockedItemDetailHUD ();
+				});
 			}, false, true);
 
 		}
 
 		public void OnUnlockedEqiupmentButtonClick(){
-			unlockedItemsView.SetUpUnlockedItemsView (FormulaType.Equipment);
+			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Equipment);
 		}
 
 		public void OnUnlockedConsumablesButtonClick(){
-			unlockedItemsView.SetUpUnlockedItemsView (FormulaType.Consumables);
+			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Consumables);
 		}
 
 		public void DestroyInstances(){
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.spellCanvasBundleName, "UnlockedItemsCanvas", null, null);
+			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", null, null);
 		}
 
 		public void OnQuitButtonClick(){

@@ -33,10 +33,7 @@ namespace WordJourney
 		public TintHUD tintHUD;
 		public CharactersInBagHUD charactersInBag;
 		public ItemDetailHUD itemDetail;
-
-
-
-		public Button addToBagButton;
+	
 
 
 
@@ -44,7 +41,7 @@ namespace WordJourney
 		public void SetUpSpellViewWith(ItemModel itemModel){
 
 			if (itemModel == null) {
-				spellRequestText.text = string.Format ("拼写任意物品", itemModel.itemName);
+				spellRequestText.text = "拼写任意物品";
 			} else {
 
 				if (itemModel.itemNameInEnglish == "") {
@@ -59,7 +56,7 @@ namespace WordJourney
 
 			ClearEnteredCharactersPlane ();
 
-			itemDetail.InitItemDetailHUD (false, HideAddToBagButton);
+			itemDetail.InitItemDetailHUD (false, null);
 
 			InitCharacterButtons ();
 
@@ -160,7 +157,7 @@ namespace WordJourney
 
 			QuitSpellCountHUD ();
 
-			ShowAddToBagButton ();
+//			ShowAddToBagButton ();
 			itemDetail.SetUpItemDetailHUD (item);
 
 			ClearEnteredCharactersPlane ();
@@ -178,25 +175,23 @@ namespace WordJourney
 
 
 		public void QuitSpellCountHUD(){
-
 			createCountHUD.gameObject.SetActive (false);
-
 		}
 
 
 
 		public void QuitCreateDetailHUD(){
-			HideAddToBagButton ();
+//			HideAddToBagButton ();
 			itemDetail.QuitItemDetailHUD ();
 		}
 
-		private void ShowAddToBagButton(){
-			addToBagButton.gameObject.SetActive (true);
-		}
-
-		private void HideAddToBagButton(){
-			addToBagButton.gameObject.SetActive (false);
-		}
+//		private void ShowAddToBagButton(){
+//			addToBagButton.gameObject.SetActive (true);
+//		}
+//
+//		private void HideAddToBagButton(){
+//			addToBagButton.gameObject.SetActive (false);
+//		}
 
 
 		public void SetUpTintHUD(string tint){

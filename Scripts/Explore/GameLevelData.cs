@@ -110,12 +110,12 @@ namespace WordJourney
 
 			for (int i = 0; i < formulaIds.Length; i++) {
 
-				Formula formula = new Formula (formulaIds [i]);
+				UnlockScroll unlockScroll = new UnlockScroll (formulaIds [i]);
 
-				if (formula != null) {
-					lockedItems.Add (formula);
+				if (unlockScroll != null) {
+					lockedItems.Add (unlockScroll);
 				} else {
-					Debug.LogError ("formula null when load level info");
+					Debug.LogError ("unlockScroll null when load level info");
 				}
 			}
 		

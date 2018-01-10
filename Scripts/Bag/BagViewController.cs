@@ -49,6 +49,19 @@ namespace WordJourney
 				}
 			}
 
+			#warning 测试解锁卷轴
+			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
+				for(int i = 0;i<5;i++){
+					Item unlockScroll = Item.NewItemWith (200 + i,1);
+					Player.mainPlayer.AddItem (unlockScroll);
+				}
+			}
+
+			Player.mainPlayer.AddItem (Item.NewItemWith (200, 1));
+
+			Player.mainPlayer.AddItem (Item.NewItemWith (430, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (459, 1));
+
 //			for (int i = 0; i < 114; i++) {
 //
 //				Material m = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
@@ -98,7 +111,14 @@ namespace WordJourney
 
 		}
 
-
+		public void OnItemInBagClick(Item item){
+			currentSelectItem = item;
+			if (item is CraftingRecipes) {
+				bagView.SetUpCraftRecipesDetailHUD (item);
+			} else {
+				bagView.SetUpItemDetailHUD (item);
+			}
+		}
 
 		/// <summary>
 		/// 在物品详细信息页点击了装备按钮（装备）
@@ -134,11 +154,13 @@ namespace WordJourney
 					Agent.PropertyChange propertyChange = Player.mainPlayer.UnloadEquipment (currentSelectItem as Equipment,i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-					bagView.AddBagItem (currentSelectItem);
+					bagView.SetUpItemsDiaplayPlane ();
 					bagView.QuitItemDetailHUD ();
 					return;
 				}
 			}
+
+
 
 		}
 
@@ -205,7 +227,7 @@ namespace WordJourney
 		/// 在分解确认页点击了确认按钮
 		/// </summary>
 		public void OnConfirmResolveButtonClick(){
-			ResolveAndGetCharacters (currentSelectItem);
+			ResolveCurrentSelectItemAndGetCharacters ();
 			bagView.QuitQueryResolveHUD ();
 		}
 
@@ -230,103 +252,67 @@ namespace WordJourney
 		/// 分解物品并获得字母碎片
 		/// </summary>
 		/// <param name="item">Item.</param>
-		private void ResolveAndGetCharacters(Item item){
+		public void ResolveCurrentSelectItemAndGetCharacters(){
 
-			Item resolvedItem = Item.NewItemWith (item, 1);
+			List<char> charactersReturn = Player.mainPlayer.ResolveItemAndGetCharacters (currentSelectItem,1);
 
-			List<char> charactersReturn = ResolveItemAndGetCharacters (resolvedItem);
-
-			List<CharacterFragment> resolveGainCharacterFragments = new List<CharacterFragment> ();
+//			List<CharacterFragment> resolveGainCharacterFragments = new List<CharacterFragment> ();
 
 			// 返回的有字母，生成字母碎片表
-			if (charactersReturn.Count > 0) {
+//			if (charactersReturn.Count > 0) {
+//
+//				foreach (char c in charactersReturn) {
+//					resolveGainCharacterFragments.Add (new CharacterFragment (c));
+//				}
+//
+//			}
 
-				foreach (char c in charactersReturn) {
-					resolveGainCharacterFragments.Add (new CharacterFragment (c));
-				}
+//			Item itemInBag = Player.mainPlayer.allItemsInBag.Find (delegate(Item obj) {
+//				return obj == currentSelectItem;
+//			});
+//
+//			if (itemInBag == null) {
+//				bagView.QuitItemDetailHUD ();
+//			}
 
-			}
-
-			Item itemInBag = Player.mainPlayer.allItemsInBag.Find (delegate(Item obj) {
-				return obj.itemId == resolvedItem.itemId;
-			});
-
-			if (itemInBag == null) {
-				bagView.QuitItemDetailHUD ();
-			}
-
-			if (item is Equipment && (item as Equipment).equiped) {
+			if (currentSelectItem is Equipment && (currentSelectItem as Equipment).equiped) {
 				bagView.SetUpEquipedEquipmentsPlane ();
 			}
 
 
-			bagView.SetUpItemsDiaplayPlane (Player.mainPlayer.allItemsInBag);
+			bagView.SetUpItemsDiaplayPlane ();
 				
-			bagView.SetUpResolveGainHUD (resolveGainCharacterFragments);
+			bagView.SetUpResolveGainHUD (charactersReturn);
 		}
 
-		/// <summary>
-		/// 分解材料
-		/// </summary>
-		/// <returns>分解后获得的字母碎片</returns>
-		public List<char> ResolveItemAndGetCharacters(Item item){
+		public void CraftCurrentSelectItem(){
 
-			// 分解后得到的字母碎片
-			List<char> charactersReturn = new List<char> ();
+			CraftingRecipes craftRecipes = currentSelectItem as CraftingRecipes;
 
-			// 每分解一个物品可以获得的字母碎片数量
-			int charactersReturnCount = 1;
+			ItemModel craftItemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+				return obj.itemId == craftRecipes.craftItemId;
+			});
 
-			// 物品英文名称转换为char数组
-			char[] charArray = item.itemNameInEnglish.ToCharArray ();
-
-			// char数组转换为可以进行增减操作的list
-			List<char> charList = new List<char> ();
-
-			for (int i = 0; i < charArray.Length; i++) {
-				charList.Add (charArray [i]);
-			}
-
-			// 分解物品，背包中的字母碎片数量增加
-			for (int j = 0; j < item.itemCount; j++) {
-
-				for (int i = 0; i < charactersReturnCount; i++) {
-
-					char character = ReturnRandomCharacters (ref charList);
-
-					int characterIndex = (int)character - CommonData.aInASCII;
-
-					Player.mainPlayer.charactersCount [characterIndex]++;
-
-					charactersReturn.Add (character);
+			for (int i = 0; i < craftItemModel.itemInfosForProduce.Length; i++) {
+				ItemModel.ItemInfoForProduce itemInfo = craftItemModel.itemInfosForProduce [i];
+				for (int j = 0; j < itemInfo.itemCount; j++) {
+					Item item = Player.mainPlayer.allItemsInBag.Find (delegate (Item obj) {
+						return obj.itemId == itemInfo.itemId;
+					});
+					Player.mainPlayer.RemoveItem (item,1);
 				}
 			}
 
-			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
-			Player.mainPlayer.RemoveItem(item);
+			Item craftedItem = Item.NewItemWith (craftItemModel,1);
+			Player.mainPlayer.AddItem (craftedItem);
 
-			return charactersReturn;
+			string tint = string.Format ("获得 <color=orange>{0}</color> x1", craftedItem.itemName);
 
-		}
-
-		/// <summary>
-		/// 从单词的字母组成中随机返回一个字母
-		/// </summary>
-		/// <returns>The random characters.</returns>
-		private char ReturnRandomCharacters(ref List<char> charList){
-
-			int charIndex = Random.Range (0, charList.Count);
-
-			char character = charList [charIndex];
-
-			charList.RemoveAt (charIndex);
-
-			return character;
+			bagView.SetUpTintHUD (tint);
 
 		}
 
-
-			
+	
 
 		public void RemoveItem(Item item){
 			bagView.RemoveItemInBag (item);

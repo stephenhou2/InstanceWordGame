@@ -157,10 +157,12 @@ namespace WordJourney
 		private void AddBottomConsumablesButton(Consumables consumables,Button consumablesButton){
 
 			Image consumablesIcon = consumablesButton.transform.Find ("ConsumablesIcon").GetComponent<Image> ();
+			Text cosumbablesCount = consumablesButton.GetComponentInChildren<Text> ();
 
 			if (consumables == null) {
 				consumablesButton.interactable = false;
 				consumablesIcon.enabled = false;
+				cosumbablesCount.text = "";
 				return;
 
 			}
@@ -172,7 +174,7 @@ namespace WordJourney
 			});
 			consumablesIcon.sprite = consumablesSprite;
 			consumablesIcon.enabled = true;
-			consumablesButton.GetComponentInChildren<Text> ().text = consumables.itemCount.ToString ();
+			cosumbablesCount.text = consumables.itemCount.ToString ();
 
 		}
 
@@ -235,14 +237,14 @@ namespace WordJourney
 			
 			UpdatePageButtonStatus ();
 
-			if (player.allConsumablesInBag.Count <= equipedConsumablesButtons.Length) {
-				return;
-			}
+			showConsumablesInBagButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
 
 			consumablesButtonPool.AddChildInstancesToPool (consumablesInBagContainer);
 
-			showConsumablesInBagButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
-
+			if (player.allConsumablesInBag.Count <= equipedConsumablesButtons.Length) {
+				return;
+			}
+				
 			int firstIndexOfCurrentPage = equipedConsumablesButtons.Length + currentConsumablesPage * consumablesCountInOnePage; 
 
 			int firstIndexOfNextPage = firstIndexOfCurrentPage + consumablesCountInOnePage;
@@ -421,7 +423,7 @@ namespace WordJourney
 			QuitToolChoicePlane ();
 				
 			// 背包中的工具数量-1
-			player.RemoveItem (new Consumables (tool, 1));
+			player.RemoveItem (tool, 1);
 
 			// 播放对应的音效
 			GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.audioClipName);

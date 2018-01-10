@@ -20,7 +20,7 @@ namespace WordJourney
 		// 事件回调
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterNpc;
-		public ExploreEventHandler enterWorkBench;
+//		public ExploreEventHandler enterWorkBench;
 		public ExploreEventHandler enterCrystal;
 		public ExploreEventHandler enterTreasureBox;
 		public ExploreEventHandler enterObstacle;
@@ -335,10 +335,10 @@ namespace WordJourney
 						StopWalkBeforeEvent ();
 						enterNpc (r2d.transform);
 						return;
-					case "workbench":
-						StopWalkBeforeEvent ();
-						enterWorkBench (r2d.transform);
-						return;
+//					case "workbench":
+//						StopWalkBeforeEvent ();
+//						enterWorkBench (r2d.transform);
+//						return;
 					case "crystal":
 						StopWalkBeforeEvent ();
 						enterCrystal (r2d.transform);
@@ -701,7 +701,7 @@ namespace WordJourney
 
 			enterMonster = null;
 			enterNpc = null;
-			enterWorkBench = null;
+//			enterWorkBench = null;
 			enterCrystal = null;
 			enterTreasureBox = null;
 			enterObstacle = null;

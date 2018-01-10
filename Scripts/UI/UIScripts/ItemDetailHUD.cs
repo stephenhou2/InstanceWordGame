@@ -17,7 +17,7 @@ namespace WordJourney
 		public Text itemProperties;
 		public Image itemIcon;
 
-		private bool quitWhenClickBackground;
+		private bool quitWhenClickBackground = true;
 		private CallBack quitCallBack;
 
 

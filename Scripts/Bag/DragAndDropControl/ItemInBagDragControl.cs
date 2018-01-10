@@ -35,15 +35,11 @@ namespace WordJourney
 			}
 //			Debug.Log (string.Format("点击了{0}",item.itemName));
 
-			bagView.SetUpItemDetailHUD (item);
-
-			bagView.GetComponent<BagViewController> ().currentSelectItem = item;
-
-//			bagView.GetComponent<BagViewController> ().currentSelectDragControl = this.transform;
-
 			item.isNewItem = false;
 
 			newItemTintIcon.enabled = false;
+
+			bagView.GetComponent<BagViewController> ().OnItemInBagClick (item);
 
 		}
 

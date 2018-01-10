@@ -56,13 +56,12 @@ namespace WordJourney
 		}
 
 
-		public List<Item> allItemsInBag = new List<Item>();
+		public List<Item> allItemsInBag = new List<Item>();//背包中要显示的所有物品（已穿戴的装备和已解锁的卷轴将会从这个表中删除）
 		public List<Consumables> allConsumablesInBag = new List<Consumables> ();
 //		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
 //		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
-		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
-
-//		public Consumables[] consumablesEquiped;
+		public List<UnlockScroll> allUnlockScrollsInBag = new List<UnlockScroll>();//所有背包中的解锁卷轴
+		public List<CraftingRecipes> allCraftingRecipesInBag = new List<CraftingRecipes>();//所有背包中的合成配方
 
 		public int maxUnlockLevelIndex;
 
@@ -78,7 +77,6 @@ namespace WordJourney
 			this.agentIconName = playerData.agentIconName;
 			this.agentLevel = playerData.agentLevel;
 			this.isActive = false;
-//			this.isActive = playerData.isActive;
 
 			this.originalMaxHealth = playerData.originalMaxHealth;
 			this.originalMana = playerData.originalMana;
@@ -95,30 +93,22 @@ namespace WordJourney
 			this.originalMagicalHurtScaler = 1.0f;
 			this.originalCritHurtScaler = 1.5f;
 
-//			this.attack = playerData.attack;//攻击力
-//			this.attackSpeed = playerData.attackSpeed;//攻速
-//			this.armor = playerData.armor;//护甲
-//			this.magicResist = playerData.manaResist;//魔抗
-//			this.dodge = playerData.dodge;//闪避
-//			this.crit = playerData.crit;//暴击
-//			this.maxHealth = playerData.maxHealth;//最大生命值
-//			this.mana = playerData.mana;//法强
-//			this.health = playerData.health;//生命
-//			this.mana = playerData.mana;//魔法
 
 			this.charactersCount = playerData.charactersCount;
 
-//			this.allMaterialsInBag = playerData.allMaterialsInBag;
 			this.allEquipmentsInBag = playerData.allEquipmentsInBag;
 			this.allEquipedEquipments = playerData.allEquipedEquipments;
 			this.allConsumablesInBag = playerData.allConsumablesInBag;
-//			this.allFuseStonesInBag = playerData.allFuseStonesInBag;
-//			this.allTaskItemsInBag = playerData.allTaskItemsInBag;
-//			this.allCharacterFragmentsInBag = playerData.allCharacterFragmentsInBag;
-			this.allFormulasInBag = playerData.allFormulasInBag;
+			this.allItemsInBag = playerData.allItemsInBag;
+			this.allUnlockScrollsInBag = playerData.allUnlockScrollsInBag;
+			this.allCraftingRecipesInBag = playerData.allCraftRecipesInBag;
+
 
 			this.maxUnlockLevelIndex = playerData.maxUnlockLevelIndex;
 			this.currentLevelIndex = playerData.currentLevelIndex;
+
+			this.totalCoins = playerData.totalCoins;
+			this.experience = playerData.experience;
 
 			this.attachedEquipmentSkills.Clear ();
 			this.attachedConsumablesSkills.Clear ();
@@ -143,7 +133,23 @@ namespace WordJourney
 
 			}
 
+			allItemsInBag = new List<Item> ();
 
+			for (int i = 0; i < allEquipmentsInBag.Count; i++) {
+				allItemsInBag.Add (allEquipmentsInBag [i]);
+			}
+
+			for (int i = 0; i < allConsumablesInBag.Count; i++) {
+				allItemsInBag.Add(allConsumablesInBag[i]);
+			}
+
+			for (int i = 0; i < allUnlockScrollsInBag.Count; i++) {
+				allItemsInBag.Add (allUnlockScrollsInBag [i]);
+			}
+
+			for (int i = 0; i < allCraftingRecipesInBag.Count; i++) {
+				allItemsInBag.Add(allCraftingRecipesInBag[i]);
+			}
 
 //			this.skillPointsLeft = playerData.skillPointsLeft;
 
@@ -172,7 +178,7 @@ namespace WordJourney
 				return new PropertyChange();
 			}
 
-			allEquipmentsInBag.Add (equipment);
+			allItemsInBag.Remove (equipment);
 			allItemsInBag.Add (equipment);
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
@@ -181,6 +187,7 @@ namespace WordJourney
 				equipment.attachedSkills.RemoveAt (i);
 				Destroy (attachedSkill.gameObject);
 			}
+
 
 
 			Equipment emptyEquipment = new Equipment ();
@@ -217,8 +224,8 @@ namespace WordJourney
 				attachedSkill.transform.SetParent (triggeredSkillsContainer);
 			}
 
-			allItemsInBag.Remove (equipment);
-			allEquipmentsInBag.Remove (equipment);
+//			allItemsInBag.Remove (equipment);
+//			allEquipmentsInBag.Remove (equipment);
 
 			return ResetBattleAgentProperties (false);
 
@@ -233,7 +240,7 @@ namespace WordJourney
 					ConsumablesSkill cs = SkillGenerator.Instance.GenerateConsumablesSkill (consumables, si, consumablesSkillsContainer);
 					cs.AffectAgents (battleAgentCtr, null);
 				}
-				RemoveItem (consumables);
+				RemoveItem (consumables,1);
 			}
 
 			Debug.LogFormat ("{0}使用了{1}", agentName, consumables.itemName);
@@ -275,9 +282,9 @@ namespace WordJourney
 		/// <param name="item">Item.</param>
 		public bool CheckItemUnlocked(int itemId){
 
-			for (int i = 0; i < allFormulasInBag.Count; i++) {
-				Formula formula = allFormulasInBag [i];
-				if (formula.unlocked && formula.unlockedItemId == itemId) {
+			for (int i = 0; i < allUnlockScrollsInBag.Count; i++) {
+				UnlockScroll unlockScroll = allUnlockScrollsInBag [i];
+				if (unlockScroll.unlocked && unlockScroll.unlockedItemId == itemId) {
 					return true;
 				}
 			}
@@ -359,8 +366,14 @@ namespace WordJourney
 //				allTaskItemsInBag.Add (item as TaskItem);
 //				allItemsInBag.Add (item);
 //				break;
-			case ItemType.Formula:
-				allFormulasInBag.Add (item as Formula);
+			case ItemType.UnlockScroll:
+				UnlockScroll unlockScroll = item as UnlockScroll;
+				allUnlockScrollsInBag.Add (unlockScroll);
+				allItemsInBag.Add (unlockScroll);
+				break;
+			case ItemType.CraftingRecipes:
+				allItemsInBag.Add (item);
+				allCraftingRecipesInBag.Add (item as CraftingRecipes);
 				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
@@ -370,12 +383,14 @@ namespace WordJourney
 			}
 				
 		}
+			
 
-		public void RemoveItem(Item item){
+		public void RemoveItem(Item item,int resolveCount){
+
 			switch(item.itemType){
 			case ItemType.Equipment:
 				Equipment equipment = allEquipmentsInBag.Find(delegate(Equipment obj) {
-					return obj.itemId == item.itemId;
+					return obj == item;
 				});
 	
 				if (equipment.equiped) {
@@ -393,9 +408,9 @@ namespace WordJourney
 				// 如果是消耗品，且背包中已经存在该消耗品，则只合并数量
 			case ItemType.Consumables:
 				Consumables consumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
-					return obj.itemId == item.itemId;	
+					return obj == item;	
 				});
-				consumablesInBag.itemCount -= item.itemCount;
+				consumablesInBag.itemCount -= resolveCount;
 				if (consumablesInBag.itemCount <= 0) {
 					allConsumablesInBag.Remove (consumablesInBag);
 					allItemsInBag.Remove (consumablesInBag);
@@ -412,6 +427,19 @@ namespace WordJourney
 //				allItemsInBag.Remove (item);
 ////				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 //				break;
+			case ItemType.UnlockScroll:
+				UnlockScroll unlockScroll = allUnlockScrollsInBag.Find (delegate(UnlockScroll obj) {
+					return obj == item;	
+				});
+				if (!unlockScroll.unlocked) {
+					allUnlockScrollsInBag.Remove (unlockScroll);
+					allItemsInBag.Remove (unlockScroll);
+				} 
+				break;
+			case ItemType.CraftingRecipes:
+				allItemsInBag.Remove (item);
+				allCraftingRecipesInBag.Remove (item as CraftingRecipes);
+				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
 				int characterIndex = (int)(characterFragment.character) - CommonData.aInASCII;
@@ -423,46 +451,66 @@ namespace WordJourney
 //			return removeFromBag;
 		}
 
+
 		/// <summary>
-		/// Adds the material.
+		/// 分解物品
 		/// </summary>
-		/// <param name="material">Material.</param>
-//		private void AddMaterial(Material material){
-//
-//			Material materialInBag = allMaterialsInBag.Find(delegate(Material obj){
-//				return obj.itemId == material.itemId;
-//			});
-//
-//			if (materialInBag != null) {
-//				// 如果玩家背包中存在对应材料 ＋＝ 材料数量
-//				materialInBag.itemCount += material.itemCount;		
-//			}else{
-//				// 如果玩家背包中不存在对应材料，则背包中添加该材料
-//				Player.mainPlayer.allMaterialsInBag.Add(material);
-//			} 
-//		}
+		/// <returns>分解后获得的字母碎片</returns>
+		public List<char> ResolveItemAndGetCharacters(Item item,int resolveCount){
 
-//		public Material GetMaterialInBagWithId(int materialId){
-//			return allMaterialsInBag.Find(delegate(Material obj) {
-//				return obj.itemId == materialId;
-//			});
-//		}
+			// 分解后得到的字母碎片
+			List<char> charactersReturn = new List<char> ();
 
-//		private void RemoveMaterial(Material material){
-//
-//			Material materialInBag = allMaterialsInBag.Find (delegate(Material obj) {
-//				return obj.itemId == material.itemId;
-//			});
-//
-//			materialInBag.itemCount -= material.itemCount;
-//
-//			if (materialInBag.itemCount <= 0) {
-//				allMaterialsInBag.Remove (materialInBag);
-//			}
-//				
-//		}
+			// 每分解一个物品可以获得的字母碎片数量
+			int charactersReturnCount = 1;
 
+			// 物品英文名称转换为char数组
+			char[] charArray = item.itemNameInEnglish.ToCharArray ();
 
+			// char数组转换为可以进行增减操作的list
+			List<char> charList = new List<char> ();
+
+			for (int i = 0; i < charArray.Length; i++) {
+				charList.Add (charArray [i]);
+			}
+
+			// 分解物品，背包中的字母碎片数量增加
+			for (int j = 0; j < item.itemCount; j++) {
+
+				for (int i = 0; i < charactersReturnCount; i++) {
+
+					char character = ReturnRandomCharacters (ref charList);
+
+					int characterIndex = (int)character - CommonData.aInASCII;
+
+					charactersCount [characterIndex]++;
+
+					charactersReturn.Add (character);
+				}
+			}
+
+			// 被分解的物品减去分解数量，如果数量<=0,从背包中删除物品
+			RemoveItem(item,resolveCount);
+
+			return charactersReturn;
+
+		}
+
+		/// <summary>
+		/// 从单词的字母组成中随机返回一个字母
+		/// </summary>
+		/// <returns>The random characters.</returns>
+		private char ReturnRandomCharacters(ref List<char> charList){
+
+			int charIndex = Random.Range (0, charList.Count);
+
+			char character = charList [charIndex];
+
+			charList.RemoveAt (charIndex);
+
+			return character;
+
+		}
 
 
 
@@ -675,35 +723,25 @@ namespace WordJourney
 
 
 
-//		public int attack;//攻击力
-//		public int attackSpeed;//攻速
-//		public int armor;//护甲
-//		public int manaResist;//魔抗
-//		public int dodge;//敏捷
-//		public int crit;//暴击
-//		public int maxHealth;//最大生命值
-//		public int maxMana;//最大魔法值
-//		public int health;//生命
-//		public int mana;//魔法
-
 		public int[] charactersCount = new int[26];//剩余的字母碎片信息
 
-		public List<Material> allMaterialsInBag;//背包中所有材料信息
+//		public List<Material> allMaterialsInBag;//背包中所有材料信息
 		public List<Equipment> allEquipmentsInBag;//背包中所有装备信息
 		public Equipment[] allEquipedEquipments;//已装备的所有装备信息
 		public List<Consumables> allConsumablesInBag;//背包中所有消耗品信息
-		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
-		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
+		public List<Item> allItemsInBag;
+		public List<UnlockScroll> allUnlockScrollsInBag;
+		public List<CraftingRecipes> allCraftRecipesInBag;
+//		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
+//		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
 //		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片
-		public List<Formula> allFormulasInBag = new List<Formula>();//所有背包中的配方
 
 		public int maxUnlockLevelIndex;//最大解锁关卡序号
 		public int currentLevelIndex;//当前所在关卡序号
 
-//		public List<SkillInfo> allEquipedActiveSkillInfo = new List<SkillInfo> ();//所有已装备的主动技能信息
-//		public List<SkillInfo> allLearnedSkillInfo = new List<SkillInfo>();//所有已学习的技能信息
+		public int experience;//人物经验值
+		public int totalCoins;//人物金币数量
 
-//		public int skillPointsLeft;//剩余可用技能点
 
 		public PlayerData(Player player){
 
@@ -723,30 +761,21 @@ namespace WordJourney
 			this.originalHealth = player.originalHealth;
 			this.originalMana = player.originalMana;
 
-//			this.ori
-
-//			this.attack = player.attack;//攻击力
-//			this.attackSpeed = player.attackSpeed;//攻速
-//			this.armor = player.armor;//护甲
-//			this.manaResist = player.magicResist;//魔抗
-//			this.dodge = player.dodge;//闪避
-//			this.crit = player.crit;//暴击
-//			this.maxHealth = player.maxHealth;//最大生命值
-//			this.maxMana = player.mana;//最大魔法值
-//			this.health = player.health;//生命
-//			this.mana = player.mana;//魔法
 
 			this.charactersCount = player.charactersCount;
 
+			this.allItemsInBag = player.allItemsInBag;
 			this.allEquipmentsInBag = player.allEquipmentsInBag;
 			this.allEquipedEquipments = player.allEquipedEquipments;
 			this.allConsumablesInBag = player.allConsumablesInBag;
-//			this.allFuseStonesInBag = player.allFuseStonesInBag;
-//			this.allTaskItemsInBag = player.allTaskItemsInBag;
-			this.allFormulasInBag = player.allFormulasInBag;
+			this.allUnlockScrollsInBag = player.allUnlockScrollsInBag;
+			this.allCraftRecipesInBag = player.allCraftingRecipesInBag;
 
 			this.maxUnlockLevelIndex = player.maxUnlockLevelIndex;
 			this.currentLevelIndex = player.currentLevelIndex;
+
+			this.totalCoins = player.totalCoins;
+			this.experience = player.experience;
 
 		}
 

@@ -34,14 +34,12 @@ namespace WordJourney
 		public Transform bagItemsPlane;
 		private InstancePool bagItemsPool;
 		public Transform bagItemsContainer;
-		private Transform bagItemModel;
+		public Transform bagItemModel;
 
 
 		private int maxPreloadCountOfItem;
 
 		private Player player;
-
-
 
 
 		public Transform helpPlane;
@@ -55,6 +53,8 @@ namespace WordJourney
 		public CharactersInBagHUD charactersInBag;
 
 		public ItemDetailHUD itemDetail;
+		public UnlockScrollDetailHUD unlockScrollDetail;
+		public CraftingRecipesHUD craftRecipesDetail;
 		public Transform choiceHUDWithOneBtn;
 		public Transform choiceHUDWithTwoBtns;
 
@@ -66,6 +66,8 @@ namespace WordJourney
 			this.GetComponent<Canvas> ().enabled = setVisible;
 
 			itemDetail.InitItemDetailHUD (true, HideOperationButtons);
+			unlockScrollDetail.InitUnlockScrollDetailHUD (true, null, UnlockItemCallBack, ResolveScrollCallBack);
+			craftRecipesDetail.InitCraftingRecipesHUD (true, null, CraftItemCallBack);
 
 			//获取所有item的图片
 //			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
@@ -80,13 +82,6 @@ namespace WordJourney
 
 			}
 
-			if (modelContainerOfBagCanvas.childCount == 0) {
-				// 获取模型
-				bagItemModel = TransformManager.FindTransform ("BagItemModel");
-
-				bagItemModel.SetParent (modelContainerOfBagCanvas);
-			}
-
 			// 背包中单类物品最大预加载数量
 			maxPreloadCountOfItem = 24;
 
@@ -96,7 +91,7 @@ namespace WordJourney
 
 			SetUpEquipedEquipmentsPlane ();
 
-			SetUpItemsDiaplayPlane (player.allItemsInBag);
+			SetUpItemsDiaplayPlane ();
 
 		}
 
@@ -296,7 +291,9 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化背包物品界面
 		/// </summary>
-		public void SetUpItemsDiaplayPlane(List<Item> items){
+		public void SetUpItemsDiaplayPlane(){
+
+			List<Item> items = player.allItemsInBag;
 
 			bagItemsPlane.GetComponent<ScrollRect> ().velocity = Vector2.zero;
 
@@ -343,10 +340,26 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="item">Item.</param>
 		public void SetUpItemDetailHUD(Item item){
-			itemDetail.SetUpItemDetailHUD (item);
-			SetUpOperationButtons (item);
+			switch (item.itemType) {
+			case ItemType.Equipment:
+			case ItemType.Consumables:
+				itemDetail.SetUpItemDetailHUD (item);
+				SetUpOperationButtons (item);
+				break;
+			case ItemType.UnlockScroll:
+				unlockScrollDetail.SetUpUnlockScrollDetailHUD (item);
+				HideOperationButtons ();
+				break;
+			}
+
 		}
 
+		/// <summary>
+		/// 解锁卷轴展示界面点击事件原本就会退出展示页面，一般情况下不用主动调用这个方法
+		/// </summary>
+		public void QuitUnlockScrollHUD(){
+			unlockScrollDetail.QuitUnlockScrollDetailHUD ();
+		}
 
 		private void SetUpOperationButtons(Item item){
 
@@ -397,9 +410,13 @@ namespace WordJourney
 		/// <param name="btn">Button.</param>
 		public void AddBagItem(Item item){
 
-//			if (item is Equipment && (item as Equipment).equiped) {
-//				return;
-//			}
+			if (item is Equipment && (item as Equipment).equiped) {
+				return;
+			}
+
+			if (item is UnlockScroll && (item as UnlockScroll).unlocked) {
+				return;
+			}
 
 			Transform bagItem = bagItemsPool.GetInstance<Transform> (bagItemModel.gameObject, bagItemsContainer);
 
@@ -422,18 +439,13 @@ namespace WordJourney
 				extraInfo.text = string.Empty;
 			}
 
-
-			Sprite itemSprite = null;
-
-			itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
 			});
+				
+			itemIcon.sprite = itemSprite;
 
-			if(itemSprite != null){
-				itemIcon.sprite = itemSprite;
-			}
-
-			itemIcon.enabled = itemIcon.sprite != null;
+			itemIcon.enabled = itemSprite != null;
 
 			// 如果是新物品，则显示新物品提示图片
 			newItemTintIcon.enabled = item.isNewItem;
@@ -442,6 +454,18 @@ namespace WordJourney
 		}
 
 
+		private void UnlockItemCallBack(){
+			UnlockScroll currentSelectedUnlockScroll= unlockScrollDetail.unlockScroll;
+			currentSelectedUnlockScroll.unlocked = true;
+			player.RemoveItem (currentSelectedUnlockScroll,1);
+			string tint = string.Format ("解锁拼写 <color=green>{0}</color>", currentSelectedUnlockScroll.itemName);
+			SetUpTintHUD (tint);
+			SetUpItemsDiaplayPlane ();
+		}
+
+		private void ResolveScrollCallBack(){
+			GetComponent<BagViewController> ().ResolveCurrentSelectItemAndGetCharacters ();
+		}
 	
 
 		public void RemoveItemInBag(Item item){
@@ -456,7 +480,7 @@ namespace WordJourney
 
 		}
 
-		public void SetUpResolveGainHUD(List<CharacterFragment> characters){
+		public void SetUpResolveGainHUD(List<char> characters){
 
 			StringBuilder tint = new StringBuilder();
 
@@ -464,40 +488,29 @@ namespace WordJourney
 
 			for (int i = 0; i < characters.Count; i++) {
 
-				tint.Append (characters [i].character);
+				tint.Append (characters [i]);
 
 			}
 
 			tintHUD.SetUpTintHUD (tint.ToString());
 
-//			for (int i = 0; i < resolveGains.Count; i++) {
-//
-//				Item resolveGainItem = resolveGains [i];
-//
-//				Transform resolveGain = resolveGainsPool.GetInstance<Transform> (resolveGainModel.gameObject, resolveGainsContainer);
-//
-//				Image resolveGainIcon = resolveGain.Find ("ResolveGainIcon").GetComponent<Image> ();
-//
-//				Text resolveGainName = resolveGain.Find ("ResolveGainName").GetComponent<Text> ();
-//
-//				Sprite s = GameManager.Instance.gameDataCenter.allMaterialSprites.Find (delegate(Sprite obj) {
-//					return obj.name == resolveGainItem.spriteName;
-//				});
-//
-//				if (s != null) {
-//					resolveGainIcon.sprite = s;
-//				}
-//
-//				resolveGainName.text = resolveGainItem.itemName;
-//
-//
-//			}
-//				
-//			resolveGainsHUD.gameObject.SetActive (true);
-
 		}
 
 
+		public void SetUpCraftRecipesDetailHUD(Item item){
+			craftRecipesDetail.SetUpCraftingRecipesHUD (item);
+		}
+
+		/// <summary>
+		/// 合成界面点击事件原本就会退出展示页面，一般情况下不用主动调用这个方法
+		/// </summary>
+		public void QuitCraftRecipesDetailHUD(){
+			craftRecipesDetail.QuitCraftingRecipesHUD ();
+		}
+
+		public void CraftItemCallBack(){
+			GetComponent<BagViewController> ().CraftCurrentSelectItem ();
+		}
 
 		// 关闭物品详细说明HUD
 		public void QuitItemDetailHUD(){

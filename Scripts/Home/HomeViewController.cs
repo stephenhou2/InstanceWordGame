@@ -164,8 +164,8 @@ namespace WordJourney
 		public void OnSpellButtonClick(){
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels[0];
-				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(swordModel);
+//				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels[0];
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(null,null);
 				homeView.OnQuitHomeView();
 			},false,true);
 		}

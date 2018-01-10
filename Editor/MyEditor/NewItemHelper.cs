@@ -43,10 +43,12 @@ namespace WordJourney
 	public class TempItemModel{
 		public ItemModel itemModel;
 		public List<string> itemNamesForProduce;
+		public List<int> itemCountsForProduce;
 
 		public TempItemModel(){
 			itemModel = new ItemModel ();
 			itemNamesForProduce = new List<string> ();
+			itemCountsForProduce = new List<int> ();
 		}
 	}
 
@@ -116,10 +118,10 @@ namespace WordJourney
 
 				im.critHurtScalerGain = FromStringToSingle (itemDataArray [17]);
 
-				int attachedSkillColCount = dataLength - 22;
+				int attachedSkillColCount = dataLength - 24;
 
 				if (attachedSkillColCount % 13 != 0) {
-					string error = string.Format ("数据长度不正确,总数据长度{0}，装备属性数据长度{1}，附加技能数据长度{2}，配方数据长度{3}", dataLength, 18, attachedSkillColCount, 4);
+					string error = string.Format ("数据长度不正确,总数据长度{0}，装备属性数据长度{1}，附加技能数据长度{2}，配方数据长度{3}", dataLength, 18, attachedSkillColCount, 6);
 					Debug.LogError (error);
 					return;
 				}
@@ -164,17 +166,22 @@ namespace WordJourney
 
 //				List<int> itemIdsForProduce = new List<int> ();
 
-				for (int j = 4; j > 0; j--) {
+				for (int j = 6; j > 0; j--) {
 					int columnIndex = dataLength - j;
-					string itemName = itemDataArray [columnIndex];
-					if (itemName != "" && itemName != null) {
-						tempItemModel.itemNamesForProduce.Add (itemName);
+					if (j % 2 == 0) {
+						string itemName = itemDataArray [columnIndex];
+						if (itemName != "" && itemName != null) {
+							tempItemModel.itemNamesForProduce.Add (itemName);
+						}
+					} else {
+						int itemCount = FromStringToInt16 (itemDataArray [columnIndex]);
+						tempItemModel.itemCountsForProduce.Add (itemCount);
 					}
 				}
 
 			}
 
-			InitAllItemNameToItemId ();
+			InitAllItemNameToItemInfo ();
 
 			for (int i = 0; i < tempItemModels.Count; i++) {
 				newItemModels.Add(tempItemModels[i].itemModel);
@@ -182,8 +189,42 @@ namespace WordJourney
 
 		}
 
+
+		private void InitAllItemNameToItemInfo(){
+
+			for (int i = 0; i < tempItemModels.Count; i++) {
+
+				TempItemModel temp = tempItemModels [i];
+
+				int itemCountForProduce = temp.itemNamesForProduce.Count;
+
+				temp.itemModel.itemInfosForProduce = new ItemModel.ItemInfoForProduce[itemCountForProduce];
+
+				for (int j = 0; j < itemCountForProduce; j++) {
+
+					string itemName = temp.itemNamesForProduce [j];
+
+					TempItemModel itemForProduce = tempItemModels.Find (delegate(TempItemModel obj) {
+						return obj.itemModel.itemName == itemName;
+					});
+
+					if (itemForProduce == null) {
+						Debug.LogError(string.Format("{0}配方中的{1}名称不正确",temp.itemModel.itemName,itemName));
+					}
+
+					ItemModel.ItemInfoForProduce itemInfo = new ItemModel.ItemInfoForProduce(itemForProduce.itemModel.itemId,temp.itemCountsForProduce[j]);
+
+					temp.itemModel.itemInfosForProduce [j] = itemInfo;
+
+				}
+			}
+
+		}
+
+
+
 		private int FromStringToInt16(string str){
-//			Debug.Log (str);
+			Debug.Log (str);
 			return str == "" ? 0 : Convert.ToInt16 (str);
 		}
 
@@ -343,34 +384,6 @@ namespace WordJourney
 		}
 
 
-		private void InitAllItemNameToItemId(){
-
-			for (int i = 0; i < tempItemModels.Count; i++) {
-
-				TempItemModel temp = tempItemModels [i];
-
-				int itemCountForProduce = temp.itemNamesForProduce.Count;
-
-				temp.itemModel.itemIdsForProduce = new int[itemCountForProduce];
-
-				for (int j = 0; j < itemCountForProduce; j++) {
-
-					string itemName = temp.itemNamesForProduce [j];
-
-					TempItemModel itemForProduce = tempItemModels.Find (delegate(TempItemModel obj) {
-						return obj.itemModel.itemName == itemName;
-					});
-
-					if (itemForProduce == null) {
-						Debug.LogError(string.Format("{0}配方中的{1}名称不正确",temp.itemModel.itemName,itemName));
-					}
-
-					temp.itemModel.itemIdsForProduce [j] = itemForProduce.itemModel.itemId;
-
-				}
-			}
-
-		}
 
 
 	}

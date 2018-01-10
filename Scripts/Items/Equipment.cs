@@ -37,7 +37,7 @@ namespace WordJourney
 
 		public List<TriggeredSkill> attachedSkills = new List<TriggeredSkill> ();
 
-		public int[] itemIdsForProduce;
+		public ItemModel.ItemInfoForProduce[] itemInfosForProduce;
 
 		public int maxDurability;//装备最大耐久度
 		public int durability;//装备实际耐久度
@@ -75,7 +75,7 @@ namespace WordJourney
 			this.manaGain = equipment.manaGain;
 
 			this.attachedSkillInfos = equipment.attachedSkillInfos;
-			this.itemIdsForProduce = equipment.itemIdsForProduce;
+			this.itemInfosForProduce = equipment.itemInfosForProduce;
 
 			#warning 这里耐久度现都设为100;
 			this.maxDurability = 100;
@@ -103,7 +103,7 @@ namespace WordJourney
 			this.manaGain = itemModel.manaGain;
 
 			this.attachedSkillInfos = itemModel.attachedSkillInfos;
-			this.itemIdsForProduce = itemModel.itemIdsForProduce;
+			this.itemInfosForProduce = itemModel.itemInfosForProduce;
 
 			#warning 这里耐久度现都设为100;
 			this.maxDurability = 100;

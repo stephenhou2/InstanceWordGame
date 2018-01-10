@@ -29,7 +29,7 @@ namespace WordJourney
 
 		public SkillInfo[] attachedSkillInfos;
 
-		public int[] itemIdsForProduce;
+		public ItemModel.ItemInfoForProduce[] itemInfosForProduce;
 
 
 
@@ -51,7 +51,7 @@ namespace WordJourney
 
 			this.attachedSkillInfos = itemModel.attachedSkillInfos;
 
-			this.itemIdsForProduce = itemModel.itemIdsForProduce;
+			this.itemInfosForProduce = itemModel.itemInfosForProduce;
 
 
 		}
@@ -70,7 +70,7 @@ namespace WordJourney
 			this.itemCount = count;
 
 			this.attachedSkillInfos = cons.attachedSkillInfos;
-			this.itemIdsForProduce = cons.itemIdsForProduce;
+			this.itemInfosForProduce = cons.itemInfosForProduce;
 
 
 

@@ -10,7 +10,7 @@ namespace WordJourney
 	public class TaskItem : Item {
 
 		public TaskItem(ItemModel itemModel){
-			this.itemType = ItemType.Task;
+//			this.itemType = ItemType.Task;
 
 			InitBaseProperties (itemModel);
 
