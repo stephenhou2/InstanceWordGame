@@ -12,14 +12,13 @@ namespace WordJourney
 
 	public class ExploreUICotroller : MonoBehaviour {
 
-		private enum QueryType{
-			Refresh,
-			Quit
-		}
+//		private enum QueryType{
+//			Refresh,
+//			Quit
+//		}
+//
+//		private QueryType queryType;
 
-//		public Transform tintTextContainer;
-//		private InstancePool tintTextPool;
-//		private Transform tintTextModel;
 
 		public TintHUD tintHUD;
 		public UnlockScrollDetailHUD unlockScrollDetail;
@@ -33,21 +32,7 @@ namespace WordJourney
 
 		/**********  battlePlane UI *************/
 
-//		public NPCUIController npcUIController;
-
-//		private InstancePool materialCardPool;
-//		private Transform materialCardModel;
-//		public Transform unlockScrollDetailPlane;
-//		public Transform materialCardContainer;
-
-
-		private InstancePool choiceButtonPool;
-		private Transform choiceButtonModel;
-		private Transform goodsModel;
-		private InstancePool goodsPool;
-
-		private Transform statusTintModel;
-		private InstancePool statusTintPool;
+		public NPCUIController npcUIController;
 
 		public Text gameLevelText;
 		public Text gameLevelLocationText;
@@ -58,8 +43,9 @@ namespace WordJourney
 //		private List<Item> itemsToPickUp = new List<Item>();
 		private Item itemToPickUp;
 
-		public Transform pauseHUD;
-		public Transform queryHUD;
+//		public Transform pauseHUD;
+//		public Transform queryHUD;
+		public PauseHUD pauseHUD;
 
 
 		public Transform billboardPlane;
@@ -68,38 +54,14 @@ namespace WordJourney
 
 		public Transform crystalQueryHUD;
 
-		private QueryType queryType;
-
-
 
 		public void SetUpExploreCanvas(int gameLevelIndex, string gameLevelLocation){
-
-			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
-			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
-
-			choiceButtonPool = InstancePool.GetOrCreateInstancePool ("ChoiceButtonPool",poolContainerOfExploreCanvas.name);
-//			materialCardPool = InstancePool.GetOrCreateInstancePool ("MaterialCardPool", poolContainerOfExploreCanvas.name);
-			goodsPool = InstancePool.GetOrCreateInstancePool ("GoodsPool", poolContainerOfExploreCanvas.name);
-			statusTintPool = InstancePool.GetOrCreateInstancePool ("StatusTintPool", poolContainerOfExploreCanvas.name);
-//			tintTextPool = InstancePool.GetOrCreateInstancePool ("TintTextPool", poolContainerOfExploreCanvas.name);
-
-			choiceButtonModel = TransformManager.FindTransform ("ChoiceButtonModel");
-//			materialCardModel = TransformManager.FindTransform ("MaterialCardModel");
-			goodsModel = TransformManager.FindTransform ("GoodsModel");
-			statusTintModel = TransformManager.FindTransform ("StatusTintModel");
-//			tintTextModel = TransformManager.FindTransform ("TintTextModel");
-
-			choiceButtonModel.SetParent (modelContainerOfExploreScene);
-//			materialCardModel.SetParent (modelContainerOfExploreScene);
-			goodsModel.SetParent (modelContainerOfExploreScene);
-			statusTintModel.SetParent (modelContainerOfExploreScene);
-//			tintTextModel.SetParent (modelContainerOfExploreScene);
-
 
 
 			unlockScrollDetail.InitUnlockScrollDetailHUD (true, null, UnlockItemCallBack, ResolveScrollCallBack);
 			craftingRecipesDetail.InitCraftingRecipesHUD (true, UpdateBottomBar, CraftItemCallBack);
-
+			npcUIController.InitNPCHUD (gameLevelIndex);
+			pauseHUD.InitPauseHUD (true, null, null, null, null);
 
 			if (!GameManager.Instance.UIManager.UIDic.ContainsKey ("BagCanvas")) {
 
@@ -116,9 +78,9 @@ namespace WordJourney
 			gameLevelText.text = string.Format ("第 {0} 层    第 {1} 关", chapterIndex, levelIndex);
 			gameLevelLocationText.text = gameLevelLocation;
 
-			GetComponent<BattlePlayerUIController> ().InitExplorePlayerView (statusTintModel, statusTintPool);
+			GetComponent<BattlePlayerUIController> ().InitExploreAgentView ();
 			GetComponent<BattlePlayerUIController> ().SetUpExplorePlayerView (Player.mainPlayer);
-			GetComponent<BattleMonsterUIController> ().InitExploreMonsterView (statusTintModel, statusTintPool);
+			GetComponent<BattleMonsterUIController> ().InitExploreAgentView ();
 
 			GetComponent<Canvas> ().enabled = true;
 
@@ -154,6 +116,10 @@ namespace WordJourney
 			GetComponent<BattlePlayerUIController> ().SetUpBottomConsumablesButtons ();
 		}
 
+		public void UpdatePlayerStatusBar(){
+			GetComponent<BattlePlayerUIController> ().UpdateAgentStatusPlane ();
+		}
+
 //		public void SetUpTintHUD(string tint){
 //			Transform tintText = tintTextPool.GetInstance<Transform> (tintTextModel.gameObject, tintTextContainer);
 //			tintText.GetComponent<Text> ().text = tint;
@@ -175,7 +141,7 @@ namespace WordJourney
 
 		public void EnterNPC(NPC npc,int currentLevelIndex){
 
-			GetComponent<NPCUIController>().SetupNpcPlane (npc, currentLevelIndex,choiceButtonPool,choiceButtonModel,goodsPool,goodsModel);
+			npcUIController.SetUpNpcPlane (npc);
 
 		}
 
@@ -322,57 +288,37 @@ namespace WordJourney
 		}
 
 		public void ShowPauseHUD(){
-			Time.timeScale = 0;
-			pauseHUD.gameObject.SetActive (true);
+			pauseHUD.SetUpPauseHUD ();
 		}
 
 		public void QuitPauseHUD(){
-			Time.timeScale = 1f;
-			pauseHUD.gameObject.SetActive (false);
+			pauseHUD.QuitPauseHUD ();
 		}
 
-		public void OnRefreshButtonClick(){
-			queryType = QueryType.Refresh;
-			ShowQueryHUD ();
-		}
+//		public void OnRefreshButtonClick(){
+//			queryType = QueryType.Refresh;
+//			ShowQueryHUD ();
+//		}
 
-		public void OnHomeButtonClick(){
-			queryType = QueryType.Quit;
-			ShowQueryHUD ();
-		}
+//		public void OnHomeButtonClick(){
+//			queryType = QueryType.Quit;
+//			ShowQueryHUD ();
+//		}
 
-		public void OnSettingsButtonClick(){
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
-				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController>().SetUpSettingView();
-			},false,true);
-		}
+//		public void OnSettingsButtonClick(){
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
+//				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController>().SetUpSettingView();
+//			},false,true);
+//			QuitPauseHUD ();
+//		}
 
-		public void ShowQueryHUD(){
-			queryHUD.gameObject.SetActive (true);
-		}
-		public void QuitQueryHUD(){
-			queryHUD.gameObject.SetActive (false);
-		}
+//		public void ShowQueryHUD(){
+//			pauseHUD.SetUpPauseHUD ();
+//		}
+//		public void QuitQueryHUD(){
+//			pauseHUD.QuitPauseHUD ();
+//		}
 
-		public void OnConfirmButtonClick(){
-			QuitQueryHUD ();
-			QuitPauseHUD ();
-
-			ExploreManager exploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ();
-
-			switch (queryType) {
-			case QueryType.Refresh:
-				exploreManager.RefrestCurrentLevel ();
-				break;
-			case QueryType.Quit:
-				exploreManager.QuitExploreScene (false);
-				break;
-			}
-		}
-
-		public void OnCancelButtonClick(){
-			QuitQueryHUD ();
-		}
 
 
 		private void UnlockItemCallBack(){

@@ -116,6 +116,8 @@ namespace WordJourney
 
 		public void OnQuitSettingViewButtonClick(){
 
+
+
 			if (settingChanged) {
 				ChangeSettingsAndSave ();
 			}

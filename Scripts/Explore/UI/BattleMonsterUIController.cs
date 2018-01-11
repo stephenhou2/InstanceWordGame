@@ -15,14 +15,7 @@ namespace WordJourney
 		public Monster monster;
 
 		public Transform monsterStatusPlane;
-
-
-
-		public void InitExploreMonsterView(Transform statusTintModel,InstancePool statusTintPool){
-			this.statusTintModel = statusTintModel;
-			this.statusTintPool = statusTintPool;
-		}
-			
+	
 
 		public void SetUpMonsterStatusPlane(Monster monster){
 			

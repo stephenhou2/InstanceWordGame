@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2831633096
+CRC: 2639202785
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e91ebb1b2f93f4b0e7bf0f1c56f10465
+    Hash: c45cae5be6d3beef278ac4fb1f897f1e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 03954239cec01e8c288f6639d795c0ec
+    Hash: be25f1316f253af3b3f4af6f23896e58
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -68,6 +68,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 36de56933c4d74d809e32dcf1f2f3ccb, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: d7a7a324f663b4f8ea3875072425d4c9, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 7e1fad74685864326a004157ee082496, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: c3974e4509471446c8d846ed5ff1ba58, type: 3}
@@ -113,6 +115,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: cee4e3dfeadd74f98a0554c2aaa516cb, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 5ce39cdf0e9894890bbf003ab0053199, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 153f6a1d2998f46acb77d05fbb802398, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -130,19 +134,9 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Explore/ConsumablesButtonModel.prefab
-- Assets/Prefabs/Explore/RewardButtonModel.prefab
-- Assets/Prefabs/Explore/GoodsModel.prefab
-- Assets/Prefabs/Explore/ChoiceButtonModel.prefab
-- Assets/Prefabs/Explore/StatusTintModel.prefab
-- Assets/Prefabs/Explore/TintTextModel.prefab
-- Assets/Prefabs/Explore/SkillButtonModel.prefab
-- Assets/Prefabs/Explore/MaterialCardModel.prefab
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
-- Assets/Prefabs/Explore/ToolChoiceButtonModel.prefab
 - Assets/Prefabs/Explore/ExploreManager.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons

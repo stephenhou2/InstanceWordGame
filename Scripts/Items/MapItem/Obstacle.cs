@@ -20,6 +20,7 @@ namespace WordJourney
 //			mapItemAnimator.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
+			bc2d.enabled = true;
 		}
 			
 		public override void AddToPool(InstancePool pool){

@@ -49,8 +49,8 @@ namespace WordJourney
 			} else if (unlockedItemId >= 100 && unlockedItemId < 200) {
 				this.unlockScrollType = UnlockScrollType.Consumables;
 			}
-			#warning 配方图片只有配方和卷轴两种，直接在构造函数里赋值
-			this.spriteName = "";
+
+			this.spriteName = "unlockScroll";
 
 			this.itemName = itemModel.itemName;
 			this.itemNameInEnglish = itemModel.itemNameInEnglish;
@@ -60,6 +60,9 @@ namespace WordJourney
 			this.itemDescription = itemModel.itemDescription;
 
 			this.itemCount = 1;
+
+			#warning 解锁卷轴的价格全部定为5
+			this.price = 5;
 
 			this.unlocked = false;
 		}

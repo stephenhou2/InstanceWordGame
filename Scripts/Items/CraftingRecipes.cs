@@ -29,8 +29,8 @@ namespace WordJourney
 
 			this.itemType = ItemType.CraftingRecipes;
 			this.craftItemId = itemModel.itemId;
-			#warning 制造配方的图片名称唯一，初始化方法中直接赋值
-			this.spriteName = "";
+
+			this.spriteName = "craftingRecipes";
 
 			this.itemName = itemModel.itemName;
 			this.itemNameInEnglish = itemModel.itemNameInEnglish;
@@ -40,6 +40,8 @@ namespace WordJourney
 			this.itemDescription = itemModel.itemDescription;
 
 			this.itemCount = 1;
+
+			this.price = itemModel.price;
 
 		}
 

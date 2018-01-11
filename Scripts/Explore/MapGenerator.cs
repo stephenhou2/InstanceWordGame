@@ -183,6 +183,8 @@ namespace WordJourney
 
 			this.levelData = levelData;
 
+			levelData.LoadAllData ();
+
 			mapInfo = MapData.GetMapDataOfLevel(levelData.gameLevelIndex);
 
 			// 获取地图建模的行数和列数
@@ -302,7 +304,7 @@ namespace WordJourney
 			
 			}
 
-			for (int j = 0; j < floorLayer.tileDatas.Length; j++) {
+			for (int j = 0; j < floorLayer.tileDatas.Count; j++) {
 
 				Tile floorTile = floorLayer.tileDatas [j];
 
@@ -321,11 +323,11 @@ namespace WordJourney
 
 
 
-		private Item GetAttachedItem(Vector2 position){
+		private Item GetAttachedItem(Vector2 position,AttachedInfoType attachedInfoType){
 
 			Item attachedItem = null;
 
-			for (int i = 0; i < attachedItemInfoLayer.tileDatas.Length; i++) {
+			for (int i = 0; i < attachedItemInfoLayer.tileDatas.Count; i++) {
 
 				Tile attachedItemTile = attachedItemInfoLayer.tileDatas [i];
 
@@ -336,12 +338,6 @@ namespace WordJourney
 				}
 
 				switch (type) {
-				case AttachedItemType.Floor:
-					attachedItem = Item.NewItemWith (107, 1);
-					break;
-				case AttachedItemType.Key:
-					attachedItem = Item.NewItemWith (108, 1);
-					break;
 				case AttachedItemType.Medicine:
 					attachedItem = Item.NewItemWith (100, 1);
 					break;
@@ -354,7 +350,34 @@ namespace WordJourney
 				case AttachedItemType.Sickle:
 					attachedItem = Item.NewItemWith (103, 1);
 					break;
-
+				case AttachedItemType.Torch:
+					attachedItem = Item.NewItemWith (104, 1);
+					break;
+				case AttachedItemType.Soil:
+					attachedItem = Item.NewItemWith (105, 1);
+					break;
+				case AttachedItemType.Water:
+					attachedItem = Item.NewItemWith (106, 1);
+					break;
+				case AttachedItemType.Floor:
+					attachedItem = Item.NewItemWith (107, 1);
+					break;
+				case AttachedItemType.Key:
+					attachedItem = Item.NewItemWith (108, 1);
+					break;
+				case AttachedItemType.Tree:
+					int randomPlantId = Random.Range (109, 120);
+					attachedItem = Item.NewItemWith (randomPlantId, 1);
+					break;
+				case AttachedItemType.Switch:
+					attachedItem = Item.NewItemWith (110, 1);
+					break;
+				case AttachedItemType.Scroll:
+					attachedItem = Item.NewItemWith (111, 1);
+					break;
+				case AttachedItemType.Random:
+					attachedItem = GetRandomItemFromType (attachedInfoType);
+					break;
 				}
 
 			}
@@ -363,12 +386,41 @@ namespace WordJourney
 
 		}
 
+		private Item GetRandomItemFromType(AttachedInfoType attachedInfoType){
+
+			Item randomItem = null;
+
+			int randomIndex = 0;
+
+			switch (attachedInfoType) {
+			case AttachedInfoType.Pot:
+			case AttachedInfoType.Buck:
+				if (levelData.mustAppearItemsInUnlockedBox.Count > 0) {
+					randomIndex = Random.Range(0,levelData.mustAppearItemsInUnlockedBox.Count);
+					randomItem = levelData.mustAppearItemsInUnlockedBox[randomIndex];
+					levelData.mustAppearItemsInUnlockedBox.RemoveAt (0);
+				} else {
+					randomIndex = Random.Range (0, levelData.possiblyAppearItemsInUnlockedBox.Count);
+					randomItem = levelData.possiblyAppearItemsInUnlockedBox [randomIndex];
+				}
+				break;
+			case AttachedInfoType.TreasureBox:
+				randomIndex = Random.Range (0, levelData.possiblyAppearItemsInLockedBox.Count);
+				randomItem = levelData.possiblyAppearItemsInLockedBox [randomIndex];
+				break;
+
+			}
+
+			return randomItem;
+
+		}
+
 		/// <summary>
 		/// 根据附加信息层数据初始化关卡的其他信息
 		/// </summary>
 		private void SetUpMapWithAttachedInfo(){
 
-			for (int i = 0; i < attachedInfoLayer.tileDatas.Length; i++) {
+			for (int i = 0; i < attachedInfoLayer.tileDatas.Count; i++) {
 				Tile attachedInfoTile = attachedInfoLayer.tileDatas [i];
 				Vector2 pos = attachedInfoTile.position;
 				AttachedInfoType attachedInfoType = (AttachedInfoType)(attachedInfoTile.tileIndex);
@@ -385,6 +437,7 @@ namespace WordJourney
 					NPC trader = GameManager.Instance.gameDataCenter.allNpcs.Find (delegate(NPC obj) {
 						return obj.npcId == 0;
 					});
+					(trader as Trader).InitGoodsGroupOfLevel (levelData.gameLevelIndex);
 					SetUpNPC (trader, pos);
 					break;
 				case AttachedInfoType.NPC:
@@ -409,15 +462,15 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.Door, pos, null);
 					break;
 				case AttachedInfoType.Buck:
-					Item attachedItem = GetAttachedItem (pos);
+					Item attachedItem = GetAttachedItem (pos,attachedInfoType);
 					GenerateMapItem (MapItemType.Buck, pos, attachedItem);
 					break;
 				case AttachedInfoType.Pot:
-					attachedItem = GetAttachedItem (pos);
+					attachedItem = GetAttachedItem (pos,attachedInfoType);
 					GenerateMapItem (MapItemType.Pot, pos, attachedItem);
 					break;
 				case AttachedInfoType.TreasureBox:
-					attachedItem = GetAttachedItem (pos);
+					attachedItem = GetAttachedItem (pos,attachedInfoType);
 					GenerateMapItem (MapItemType.TreasureBox, pos, attachedItem);
 					break;
 				case AttachedInfoType.Stone:
@@ -491,6 +544,8 @@ namespace WordJourney
 
 			}
 		}
+
+
 
 		public MapItem GenerateMapItem(MapItemType mapItemType, Vector2 position, Item attachedItem = null){
 
@@ -636,7 +691,7 @@ namespace WordJourney
 
 		private Tile GetTileAtPosition(Layer layer,Vector3 position){
 			Tile tile = null;
-			for (int i = 0; i < layer.tileDatas.Length; i++) {
+			for (int i = 0; i < layer.tileDatas.Count; i++) {
 				Tile t = layer.tileDatas [i];
 				if ((int)(t.position.x) == (int)(position.x) && 
 					(int)(t.position.y) == (int)(position.y)) {
@@ -665,7 +720,7 @@ namespace WordJourney
 			Camera.main.transform.Find ("Background").GetComponent<SpriteRenderer> ().sprite = backgroundSprite;;
 
 			// 创建地板
-			for (int i = 0; i < floorLayer.tileDatas.Length; i++) {
+			for (int i = 0; i < floorLayer.tileDatas.Count; i++) {
 				Tile tile = floorLayer.tileDatas [i];
 
 				Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
@@ -707,10 +762,10 @@ namespace WordJourney
 		private void SetUpPlayer(){
 
 
-//			int randomIndex = Random.Range (0, playerOriginalPosList.Count);
+			int randomIndex = Random.Range (0, playerOriginalPosList.Count);
 //
-//			Vector3 position = playerOriginalPosList [randomIndex];
-			Vector3 position = new Vector3(11,4,0);
+			Vector3 position = playerOriginalPosList [randomIndex];
+//			Vector3 position = new Vector3(11,4,0);
 
 			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 
@@ -823,6 +878,8 @@ namespace WordJourney
 
 			allSleepingOtherItems.Add (mapNpc.transform);
 
+
+
 //			mapNpcs.Add (mapNpc);
 
 		}
@@ -835,10 +892,12 @@ namespace WordJourney
 		private void SetUpMonster(Vector2 position){
 
 			// 随机拿到一个本关中的怪物
-			int monsterIndexInData = Random.Range (0, levelData.monsterIds.Length);
+			int monsterIndexInData = Random.Range (0, levelData.monsters.Count);
 
 			// 拿到怪物模型
 			Transform monsterModel = levelData.monsters [monsterIndexInData];
+
+			levelData.monsters.RemoveAt (monsterIndexInData);
 
 			// 使用上面拿到的怪物模型初始化一个新的怪物
 			Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
@@ -858,6 +917,8 @@ namespace WordJourney
 			bmCtr.transform.position = new Vector3 (position.x, position.y, -100f);
 
 			allSleepingMonsters.Add (monster);
+
+
 
 		}
 
@@ -1125,16 +1186,13 @@ namespace WordJourney
 			int posX = (int)other.position.x;
 			int posY = (int)other.position.y;
 
-			mapWalkableInfoArray [posX,posY] = originalMapWalkableInfoArray[posX,posY];
-	
 
-//			if (other.GetComponent<BattleMonsterController> () != null) {
-//				other.GetComponent<BattleMonsterController> ().SetAlive ();
-//			} 
 			if (other.GetComponent<MapItem> () != null) {
 				other.GetComponent<MapItem> ().InitMapItem ();
 			}
 
+			mapWalkableInfoArray [posX,posY] = originalMapWalkableInfoArray[posX,posY];
+	
 		}
 
 
@@ -1298,7 +1356,13 @@ namespace WordJourney
 				targetMatch = CheckTargetMatchWater (pos);
 				break;
 			case "树苗":
-
+				targetMatch = CheckTargetMatchPlant (pos);
+				break;
+			case "土块":
+				
+				break;
+			case "开关":
+				targetMatch = CheckTargetMatchSwitch (pos);
 				break;
 			}
 
@@ -1384,6 +1448,35 @@ namespace WordJourney
 			}
 			MapItem mapItem = mapItemTrans.GetComponent<MapItem>();
 			return mapItem != null && mapItem.mapItemType == MapItemType.FireTrap;
+		}
+
+		private bool CheckTargetMatchPlant(Vector3 targetPos){
+			
+			if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] != 1) {
+				return false;
+			}
+
+			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
+			if (mapItemTrans != null) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool CheckTargetMatchSwitch(Vector3 targetPos){
+
+			if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] != 1) {
+				return false;
+			}
+
+			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
+			if (mapItemTrans != null) {
+				return false;
+			}
+
+			return true;
+
 		}
 
 
@@ -1485,8 +1578,13 @@ namespace WordJourney
 					fireTrap.GetComponent<FireTrap> ().SetTrapOn ();
 					allAliveOtherItems.Add (fireTrap);
 					removeConsumablesFromBag = true;
-				} else if (GetAliveMonsterAt(pos) != null) {
-
+				} else  {
+					Transform aliveMonster = GetAliveMonsterAt (pos);
+					if (aliveMonster != null) {
+						BattleMonsterController monster = aliveMonster.GetComponent<BattleMonsterController> ();
+						monster.propertyCalculator.InstantPropertyChange (monster, PropertyType.Health, -monster.agent.maxHealth, false);
+						monster.AgentDie ();
+					}
 				}
 				break;
 			case "水":
@@ -1498,12 +1596,34 @@ namespace WordJourney
 				}
 				break;
 			case "树苗":
+				if (CheckTargetMatchPlant (pos)) {
+					Transform tree = mapItemPool.GetInstanceWithName<Transform> (treeModel.name, treeModel.gameObject, mapItemsContainer);
+					tree.position = new Vector3 (posX, posY, 0);
+					mapWalkableInfoArray [posX, posY] = 0;
+					tree.GetComponent<MapItem> ().InitMapItem ();
+					allAliveOtherItems.Add (tree);
+					removeConsumablesFromBag = true;
+				}
+				break;
+			case "开关":
+				if (CheckTargetMatchSwitch (pos)) {
+					Transform normalTrapSwitch = mapItemPool.GetInstanceWithName<Transform> (trapSwitchModel.name, trapSwitchModel.gameObject, mapItemsContainer);
+					normalTrapSwitch.position = new Vector3 (posX, posY, 0);
+					mapWalkableInfoArray [posX, posY] = 0;
+					normalTrapSwitch.GetComponent<MapItem> ().InitMapItem ();
+					allAliveOtherItems.Add (normalTrapSwitch);
+					removeConsumablesFromBag = true;
+				}
+				break;
+			case "土块":
 
 				break;
+
 			}
 
 			if (removeConsumablesFromBag) {
 				Player.mainPlayer.RemoveItem (currentUsingConsumables,1);
+				GetComponent<ExploreManager> ().expUICtr.UpdateBottomBar ();
 			}
 
 		}

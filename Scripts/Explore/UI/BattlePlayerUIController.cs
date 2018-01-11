@@ -20,7 +20,7 @@ namespace WordJourney
 		/**********  ConsumablesPlane UI *************/
 		public Transform consumablesInBagPlane;
 		public Transform consumablesInBagContainer;
-		private Transform consumablesButtonModel;
+		public Transform consumablesButtonModel;
 		private InstancePool consumablesButtonPool;
 		/**********  ConsumablesPlane UI *************/
 
@@ -29,7 +29,7 @@ namespace WordJourney
 		public Transform toolChoicesPlane;
 		public Transform toolChoicesContaienr;
 		private InstancePool toolChoiceButtonPool;
-		private Transform toolChoiceButtonModel;
+		public Transform toolChoiceButtonModel;
 
 
 		private ExploreManager mExploreManager;
@@ -55,7 +55,7 @@ namespace WordJourney
 		public AttackCheckController attackCheckController;
 
 
-		private int consumablesCountInOnePage = 8;
+		private int consumablesCountInOnePage = 6;
 
 		private int currentConsumablesPage;
 
@@ -63,11 +63,6 @@ namespace WordJourney
 		public Button lastPageButton;
 
 
-		public void InitExplorePlayerView(Transform statusTintModel, InstancePool statusTintPool){
-			this.statusTintModel = statusTintModel;
-			this.statusTintPool = statusTintPool;
-			currentConsumablesPage = 0;
-		}
 
 		/// <summary>
 		/// 初始化探索界面中玩家UI
@@ -77,6 +72,8 @@ namespace WordJourney
 		/// <param name="skillSelectCallBack">Skill select call back.</param>
 		public void SetUpExplorePlayerView(Player player){
 			
+			currentConsumablesPage = 0;
+
 			this.player = player;
 
 			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
@@ -85,11 +82,10 @@ namespace WordJourney
 			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
 			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
 
-			consumablesButtonModel = TransformManager.FindTransform ("ConsumablesButtonModel");
-			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
+//			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
 
-			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
-			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
+//			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
+//			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
 			SetUpBottomConsumablesButtons ();
@@ -140,10 +136,10 @@ namespace WordJourney
 
 					Consumables consumables = player.allConsumablesInBag [i];
 
-					AddBottomConsumablesButton (consumables, equipedConsumablesButton);
+					UpdateBottomConsumablesButton (consumables, equipedConsumablesButton);
 
 				} else {
-					AddBottomConsumablesButton (null, equipedConsumablesButton);
+					UpdateBottomConsumablesButton (null, equipedConsumablesButton);
 				}
 
 			}
@@ -154,7 +150,7 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="item">Item.</param>
 		/// <param name="itemButton">Item button.</param>
-		private void AddBottomConsumablesButton(Consumables consumables,Button consumablesButton){
+		private void UpdateBottomConsumablesButton(Consumables consumables,Button consumablesButton){
 
 			Image consumablesIcon = consumablesButton.transform.Find ("ConsumablesIcon").GetComponent<Image> ();
 			Text cosumbablesCount = consumablesButton.GetComponentInChildren<Text> ();
@@ -211,6 +207,8 @@ namespace WordJourney
 
 			}
 
+			showConsumablesInBagButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
+
 			Time.timeScale = 0f;
 
 			// 箭头朝上，初始化剩余的消耗品显示界面
@@ -236,8 +234,6 @@ namespace WordJourney
 		public void SetUpConsumablesInBagPlane(){
 			
 			UpdatePageButtonStatus ();
-
-			showConsumablesInBagButton.transform.localRotation = Quaternion.Euler (new Vector3 (0, 0, 180));
 
 			consumablesButtonPool.AddChildInstancesToPool (consumablesInBagContainer);
 
@@ -313,15 +309,16 @@ namespace WordJourney
 			case "草药":
 			case "蓝莓":
 			case "菠菜":
-			case "香蕉":
-			case "菠萝":
+			case "胡萝卜":
+			case "樱桃":
 			case "南瓜":
-			case "葡萄":
-			case "柠檬":
+			case "蘑菇":
+			case "辣椒":
 				Player.mainPlayer.UseMedicines (consumables);
 				consumblesUsedInExploreScene = false;
 				break;  
 			case "卷轴":
+				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene (true);
 				consumblesUsedInExploreScene = false;
 				break;
 			case "锄头":
@@ -332,6 +329,8 @@ namespace WordJourney
 			case "火把":
 			case "水":
 			case "地板":
+			case "开关":
+			case "土块":
 				consumblesUsedInExploreScene = true;
 				break;
 			}

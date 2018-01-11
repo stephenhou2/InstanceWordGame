@@ -20,6 +20,8 @@ namespace WordJourney
 		private bool quitWhenClickBackground = true;
 		private CallBack quitCallBack;
 
+		private float zoomInDuration = 0.2f;
+		private IEnumerator zoomInCoroutine;
 
 		/// <summary>
 		/// quitWhenClickBackground 表示点击背景空白处是否可以退出物品详细页
@@ -48,9 +50,41 @@ namespace WordJourney
 
 			itemDescription.text = item.itemDescription;
 
+			itemDetailsContainer.transform.localScale = new Vector3 (0.1f, 0.1f, 1);
+
 			gameObject.SetActive (true);
 
+			zoomInCoroutine = ItemDetailHUDZoomIn ();
+
+			StartCoroutine (zoomInCoroutine);
+
 		}
+
+
+		private IEnumerator ItemDetailHUDZoomIn(){
+
+			float scale = itemDetailsContainer.transform.localScale.x;
+
+			float zoomInSpeed = (1 - scale) / zoomInDuration;
+
+			float lastFrameRealTime = Time.realtimeSinceStartup;
+
+			while (scale < 1) {
+
+				yield return null;
+
+				scale += zoomInSpeed * (Time.realtimeSinceStartup - lastFrameRealTime);
+
+				lastFrameRealTime = Time.realtimeSinceStartup;
+
+				itemDetailsContainer.transform.localScale = new Vector3 (scale, scale, 1);
+
+			}
+
+			itemDetailsContainer.transform.localScale = Vector3.one;
+
+		}
+
 
 		public void OnBackgroundClicked(){
 			if (quitWhenClickBackground) {
@@ -62,6 +96,11 @@ namespace WordJourney
 			if (quitCallBack != null) {
 				quitCallBack ();
 			}
+
+			if (zoomInCoroutine != null) {
+				StopCoroutine (zoomInCoroutine);
+			}
+
 			gameObject.SetActive (false);
 		}
 

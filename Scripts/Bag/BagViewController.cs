@@ -229,6 +229,7 @@ namespace WordJourney
 		public void OnConfirmResolveButtonClick(){
 			ResolveCurrentSelectItemAndGetCharacters ();
 			bagView.QuitQueryResolveHUD ();
+			bagView.QuitItemDetailHUD ();
 		}
 
 		/// <summary>

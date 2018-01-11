@@ -83,11 +83,12 @@ namespace WordJourney{
 		// 当前屏幕分辨率和预设屏幕分辨率之间的转换比例
 		public static float scalerToPresetResulotion = 1920f / Camera.main.pixelHeight;
 
-		public static int durabilityDecreaseWhenAttack = 1;
-		public static int durabilityDecreaseWhenBeAttacked = 1;
-		public static int durabilityDecreaseWhenBeMagicAttacked = 2;
-		public static int durabilityDecreaseWhenAttackObstacle = 20;
-		public static int fixDurability = 5;//每次修复百分比
+
+		public static char diamond = (char)6;
+
+
+
+
 
 	}
 

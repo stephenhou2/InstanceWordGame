@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3246923779
+CRC: 3505507951
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e9e77b33896dda53ac02eb6aa607d80b
+    Hash: d84ba19ca67b4116e5db817e181e1f01
   TypeTreeHash:
     serializedVersion: 2
-    Hash: ef6a833d145ce2f37f0879e10c3d5a5a
+    Hash: d76a30196954e02f86a99a10efbf28f2
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -55,7 +55,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Home/HomeCanvas.prefab
-- Assets/Prefabs/Home/ChapterButtonModel.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons

@@ -29,7 +29,7 @@ namespace WordJourney
 //		private Sprite typeBtnSelectedSprite;
 
 		// 单词cell模型
-		private Transform wordModel;
+		public Transform wordModel;
 
 		// 复用缓存池
 		private InstancePool wordPool;

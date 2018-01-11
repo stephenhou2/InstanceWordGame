@@ -28,7 +28,7 @@ namespace WordJourney
 		private BattlePlayerController battlePlayerCtr;
 
 
-		private ExploreUICotroller expUICtr;
+		public ExploreUICotroller expUICtr;
 
 		private Transform crystalEntered;
 
@@ -70,12 +70,12 @@ namespace WordJourney
 
 //			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 //
-//			SetupExploreView (levelData);
+//			SetUpExploreView (levelData);
 
 		}
 			
 		//Initializes the game for each level.
-		public void SetupExploreView(GameLevelData levelData)
+		public void SetUpExploreView(GameLevelData levelData)
 		{
 			StartCoroutine ("SetUpExploreAfterDataReady",levelData);
 
@@ -104,7 +104,7 @@ namespace WordJourney
 
 			GameManager.Instance.soundManager.PlayExploreBackgroundMusic ();
 
-			levelData.LoadAllData ();
+//			levelData.LoadAllData ();
 
 			currentLevelIndex = levelData.gameLevelIndex;
 
@@ -516,6 +516,8 @@ namespace WordJourney
 
 		private void EnterTransport(Transform transportTrans){
 
+			EnterNextLevel ();
+
 			Debug.Log ("进入传送阵");
 
 
@@ -533,6 +535,8 @@ namespace WordJourney
 
 		public void ChangeCrystalStatus(){
 			crystalEntered.GetComponent<Crystal> ().CrystalExausted ();
+			mapGenerator.mapWalkableInfoArray [(int)crystalEntered.position.x, (int)crystalEntered.position.y] = 1;
+			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateAgentStatusPlane ();
 		}
 
 
@@ -658,7 +662,7 @@ namespace WordJourney
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [gameLevel];
 
-			SetupExploreView (levelData);
+			SetUpExploreView (levelData);
 		}
 
 
@@ -680,7 +684,7 @@ namespace WordJourney
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
 
-			SetupExploreView (levelData);
+			SetUpExploreView (levelData);
 
 		}
 

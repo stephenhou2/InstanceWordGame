@@ -22,6 +22,8 @@ namespace WordJourney
 
 			isExausted = true;
 
+			bc2d.enabled = false;
+
 			mapItemAnimator.SetBool ("Play",true);
 
 		}

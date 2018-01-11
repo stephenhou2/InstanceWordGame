@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 4170205006
+CRC: 1387315303
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 17eae482823891ca5c26ce306620667a
+    Hash: 20879931586599e833ce44f6057ea117
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -16,9 +16,7 @@ ClassTypes:
 Assets:
 - Assets/Textures/Frame/wordFrame.png
 - Assets/Textures/Explore/watchIcon.png
-- Assets/Textures/attack_icon.png
 - Assets/Textures/Background/bottomPanel.png
-- Assets/Textures/armor_icon.png
 - Assets/Textures/Button/dangerButton.png
 - Assets/Textures/Explore/cutPic/skillPanel.png
 - Assets/Textures/Skills/closeBtn.png
@@ -69,7 +67,6 @@ Assets:
 - Assets/Textures/Explore/cutPic/removeBtn.png
 - Assets/Textures/Icon/weaponIcon.png
 - Assets/Textures/Explore/explore_bottomPanel.png
-- Assets/Textures/mana_icon.png
 - Assets/Textures/Skills/skillAddBtn.png
 - Assets/Textures/Icon/armerIcon.png
 - Assets/Textures/Explore/cardButton.png
@@ -121,7 +118,6 @@ Assets:
 - Assets/Textures/Explore/explore_minXiangStone.png
 - Assets/Textures/Frame/frame.png
 - Assets/Textures/Frame/skillPointFrame.png
-- Assets/Textures/six.png
 - Assets/Textures/Icon/skillIcon.png
 - Assets/Textures/processBar&Switch/wordProcessBar.png
 - Assets/Textures/Button/exploreButton.png

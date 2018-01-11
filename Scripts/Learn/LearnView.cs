@@ -137,6 +137,16 @@ namespace WordJourney
 
 		public void SetUpLearnViewWithLearnExam(Examination exam){
 
+			IEnumerator waitShowRightAnswerFinishCoroutine = WaitShowRightAnswerFinish (delegate {
+				MySetUpLearnViewWithLearnExam(exam);	
+			});
+
+			StartCoroutine (waitShowRightAnswerFinishCoroutine);
+
+		}
+
+		private void MySetUpLearnViewWithLearnExam(Examination exam){
+
 			explainationText.enabled = false;
 
 			questionText.text = exam.question.spell;
@@ -177,6 +187,15 @@ namespace WordJourney
 		}
 
 		public void SetUpLearnViewWithFinalExam(Examination exam,Examination.ExaminationType examType){
+
+			IEnumerator waitShowRightAnswerFinishCoroutine = WaitShowRightAnswerFinish (delegate {
+				MySetUpLearnViewWithFinalExam(exam,examType);	
+			});
+
+			StartCoroutine (waitShowRightAnswerFinishCoroutine);
+		}
+
+		private void MySetUpLearnViewWithFinalExam(Examination exam,Examination.ExaminationType examType){
 
 			totalTurnCount++;
 
@@ -225,7 +244,7 @@ namespace WordJourney
 				phoneticSymbolText.enabled = false;
 
 				for (int i = 0; i < choices.Length; i++) {
-					
+
 					Transform choice = choices [i];
 
 					Button choiceButton = choices [i].Find("ChoiceButton").GetComponent<Button>();
@@ -252,6 +271,7 @@ namespace WordJourney
 			}
 
 			ShowContainers (false, false, true,true);
+
 		}
 
 		public void ShowContainers(bool graspCondition,bool wordsLearnOperation,bool answers,bool energySlider){
@@ -297,7 +317,7 @@ namespace WordJourney
 
 		private IEnumerator StopForAWhileAndEnterNextExam(Examination nextExam){
 			yield return new WaitForSeconds (2f);
-			SetUpLearnViewWithFinalExam (nextExam, nextExam.GetCurrentExamType ());
+//			SetUpLearnViewWithFinalExam (nextExam, nextExam.GetCurrentExamType ());
 			isShowRightAnswerFinished = true;
 			EnableInteractivity ();
 		}
@@ -314,19 +334,21 @@ namespace WordJourney
 		}
 
 		public void ShowFinishLearningHUD(int harvestCount,int correctWordCount){
-			IEnumerator waitShowRightAnswerFinishRoroutine = WaitShowRightAnswerFinish (harvestCount, correctWordCount);
+			IEnumerator waitShowRightAnswerFinishRoroutine = WaitShowRightAnswerFinish (delegate {
+				learningResultHUD.gameObject.SetActive (true);
+				cystalHarvestInFinishHUD.text = harvestCount.ToString ();
+				correctPercentageInFinishHUD.text = string.Format ("{0}%", (int)(correctWordCount * 100 / totalTurnCount ));
+			});
 			StartCoroutine (waitShowRightAnswerFinishRoroutine);
 		}
 
-		private IEnumerator WaitShowRightAnswerFinish(int harvestCount,int correctWordCount){
+		private IEnumerator WaitShowRightAnswerFinish(CallBack callBack){
 
 			yield return new WaitUntil (() => isShowRightAnswerFinished);
 
-			learningResultHUD.gameObject.SetActive (true);
-			cystalHarvestInFinishHUD.text = harvestCount.ToString ();
-			correctPercentageInFinishHUD.text = string.Format ("{0}%", (int)(correctWordCount * 100 / totalTurnCount ));
-
-
+			if (callBack != null) {
+				callBack ();
+			}
 		}
 				
 
@@ -360,6 +382,8 @@ namespace WordJourney
 			
 			HideQuitQueryHUD ();
 			HideFinishLearningQuitHUD ();
+
+			GetComponent<Canvas> ().enabled = false;
 		}
 
 	}

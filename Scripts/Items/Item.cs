@@ -206,6 +206,7 @@ namespace WordJourney{
 		public string itemDescription;
 		public string spriteName;
 		public ItemType itemType;
+		public int price;
 
 		public float healthGain;//血量增益
 		public float manaGain;//魔法增益

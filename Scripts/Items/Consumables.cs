@@ -53,7 +53,7 @@ namespace WordJourney
 
 			this.itemInfosForProduce = itemModel.itemInfosForProduce;
 
-
+			this.price = itemModel.price;
 		}
 
 		public Consumables (Consumables cons,int count){
@@ -72,7 +72,7 @@ namespace WordJourney
 			this.attachedSkillInfos = cons.attachedSkillInfos;
 			this.itemInfosForProduce = cons.itemInfosForProduce;
 
-
+			this.price = cons.price;
 
 
 		}

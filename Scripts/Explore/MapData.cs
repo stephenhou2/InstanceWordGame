@@ -50,9 +50,9 @@ namespace WordJourney{
 	public class Layer
 	{
 		public string name;
-		public Tile[] tileDatas;
+		public List<Tile> tileDatas;
 
-		public Layer(string name,Tile[] tileDatas){
+		public Layer(string name,List<Tile> tileDatas){
 			this.name = name;
 			this.tileDatas = tileDatas;
 		}
@@ -79,14 +79,16 @@ namespace WordJourney{
 		Boss,
 		Monster,
 		FireTrap,
+		Billboard,
 		Hole,
+		Plant,
 		MovableBox,
-		LauncherUp,
-		LauncherDown,
 		LauncherLeft,
 		LauncherRight,
-		Plant,
-		PressSwitch
+		LauncherUp,
+		LauncherDown,
+		PressSwitch,
+		UndestroyableObstacle
 	}
 
 	public enum AttachedItemType{
@@ -95,14 +97,21 @@ namespace WordJourney{
 		PickAxe,
 		Floor,
 		Medicine,
-		Sickle
+		Sickle,
+		Water,
+		Soil,
+		Torch,
+		Tree,
+		Switch,
+		Scroll,
+		Random
 	}
 
 	[System.Serializable]
 	public class Tile{
 		
 		public Vector2 position;
-		// 如果是附加信息层，则该数字代表对应的附加信息,使用（attachedInfoType）进行强制转换
+		// 如果是附加信息层和附加物品层，则该数字代表对应的附加信息,使用（attachedInfoType）进行强制转换
 		public int tileIndex;
 		public bool walkable;
 

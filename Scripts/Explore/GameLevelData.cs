@@ -7,6 +7,17 @@ using System.Data;
 
 namespace WordJourney
 {
+	[System.Serializable]
+	public struct MonsterInfo{
+		public int monsterId;
+		public int monsterCount;
+
+		public MonsterInfo(int monsterId,int monsterCount){
+			this.monsterId = monsterId;
+			this.monsterCount = monsterCount;
+		}
+	}
+
 	
 	[System.Serializable]
 	public class GameLevelData {
@@ -17,24 +28,20 @@ namespace WordJourney
 		// 所在章节名称(5关一个章节)
 		public string chapterName;
 
-		// 关卡中的所有怪物id
-		public int[] monsterIds;
+		// 关卡中的所有怪物信息
+		public MonsterInfo[] monsterInfos;
 
-		// 关卡中出现的所有可以开出的物品id
-		public int[] itemIds;
+		// 瓦罐中一定能开出来的物品id数组
+		public int[] mustAppearItemIdsInUnlockedBox;
 
-		// 关卡中所有可能出现的装备配方对应的装备／技能id
-		public int[] formulaIds;
+		// 瓦罐中可能会开出来的物品id数组
+		public int[] possiblyAppearItemIdsInUnlockedBox;
 
-		// 每个itemId对应的物品是否只能由宝箱开出来
-		public bool[] itemLockInfoArray;
+		// 宝箱中可能会开出来的物品id数组
+		public int[] possiblyAppearItemIdsInLockedBox;
 
-		// 关卡中所有npc的id
-		public int[] npcIds;
-
-		// 关卡中所有宝箱的数量
-		public int lockedTreasureBoxCount;
-
+		// 商人处卖的商品信息组
+//		public List<GoodsGroup> goodsGroups;
 
 		// 关卡中怪物相对与prefab的提升比例
 		public float monsterScaler;
@@ -42,22 +49,27 @@ namespace WordJourney
 		// 关卡中boss的id（-1代表本关不出现boss）
 		public int bossId;
 
-		// 关卡中出现的所有可以直接开出的物品id对应的物品
-		public List<Item> normalItems = new List<Item>();
 
-		// 关卡中出现的所有宝箱开出的物品id对应的物品
-		public List<Item> lockedItems = new List<Item> ();
 
-		// 关卡中所有npc的id对应的npc
-		public List<NPC> npcs = new List<NPC>();
+		// 关卡的瓦罐一定会出现的物品组
+		public List<Item> mustAppearItemsInUnlockedBox = new List<Item>();
 
-		// 关卡中的所有怪物id对应的怪物
+		// 关卡的瓦罐中可能会出现的物品组
+		public List<Item> possiblyAppearItemsInUnlockedBox = new List<Item> ();
+
+		// 关卡的宝箱中可能会出现的物品组
+		public List<Item> possiblyAppearItemsInLockedBox = new List<Item> ();
+
+//		// 关卡中所有npc的id对应的npc
+//		public List<NPC> npcs = new List<NPC>();
+
+		// 关卡中的所有怪物
 		public List<Transform> monsters = new List<Transform>();
 
 
 		public void LoadAllData(){
 			LoadAllItemsData ();
-			LoadNPCsData ();
+			LoadNPCData ();
 			LoadMonsters ();
 		}
 
@@ -66,57 +78,17 @@ namespace WordJourney
 		/// </summary>
 		private void LoadAllItemsData(){
 
-			for(int i = 0;i<itemIds.Length;i++) {
-
-				int itemId = itemIds [i];
-				bool locked = itemLockInfoArray [i];
-
-				Item item = null;
-
-				//如果是材料（1000<=材料id<2000)
-				if (itemId >= 1000 && itemId < 2000) {
-
-//					Material material = GameManager.Instance.gameDataCenter.allMaterials.Find (delegate(Material obj) {
-//						return obj.itemId == itemId;
-//					});
-//
-//					item = new Material (material, 1);
-
-				} else {
-
-					ItemModel itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-						return obj.itemId == itemId;
-					});
-
-					switch (itemModel.itemType) {
-					case ItemType.Equipment:
-						item = new Equipment (itemModel,1);
-						break;
-					case ItemType.Consumables:
-						item = new Consumables (itemModel, 1);
-						break;
-					}
-						
-				}
-
-				if (item != null && !locked) {
-					normalItems.Add (item);
-				} else if (item != null && locked) {
-					lockedItems.Add (item);
-				} else {
-					Debug.LogError ("item null when load level info");
-				}
+			for (int i = 0; i < mustAppearItemIdsInUnlockedBox.Length; i++) {
+				Item item = Item.NewItemWith(mustAppearItemIdsInUnlockedBox [i],1);
+				mustAppearItemsInUnlockedBox.Add (item);
 			}
-
-			for (int i = 0; i < formulaIds.Length; i++) {
-
-				UnlockScroll unlockScroll = new UnlockScroll (formulaIds [i]);
-
-				if (unlockScroll != null) {
-					lockedItems.Add (unlockScroll);
-				} else {
-					Debug.LogError ("unlockScroll null when load level info");
-				}
+			for (int i = 0; i < possiblyAppearItemIdsInUnlockedBox.Length; i++) {
+				Item item = Item.NewItemWith (possiblyAppearItemIdsInUnlockedBox [i], 1);
+				possiblyAppearItemsInUnlockedBox.Add (item);
+			}
+			for (int i = 0; i < possiblyAppearItemIdsInLockedBox.Length; i++) {
+				Item item = Item.NewItemWith (possiblyAppearItemIdsInLockedBox [i], 1);
+				possiblyAppearItemsInLockedBox.Add (item);
 			}
 		
 		}
@@ -126,16 +98,20 @@ namespace WordJourney
 		/// </summary>
 		private void LoadMonsters(){
 
-			for (int i = 0; i < monsterIds.Length; i++) {
+			for (int i = 0; i < monsterInfos.Length; i++) {
+
+				MonsterInfo info = monsterInfos [i];
 
 				Transform monster = GameManager.Instance.gameDataCenter.allMonsters.Find (delegate(Transform obj) {
-					return obj.GetComponent<Monster>().monsterId == monsterIds [i];
+					return obj.GetComponent<Monster>().monsterId == info.monsterId;
 				});
-					
-				if (monster != null) {
-					monsters.Add (monster);
-				} else {
+
+				if (monster == null) {
 					Debug.LogError ("monster null when load level info");
+				}
+
+				for (int j = 0; j < info.monsterCount; j++) {
+					monsters.Add (monster);
 				}
 			}
 		}
@@ -143,20 +119,20 @@ namespace WordJourney
 		/// <summary>
 		/// 加载所有本关卡npc
 		/// </summary>
-		private void LoadNPCsData(){
+		private void LoadNPCData(){
 
-			for (int i = 0; i < npcIds.Length; i++) {
-				
-				NPC npc = GameManager.Instance.gameDataCenter.allNpcs.Find (delegate(NPC obj) {
-					return obj.npcId == npcIds[i];
-				});
-
-				if (npc != null) {
-					npcs.Add (npc);
-				} else {
-					Debug.LogError ("npc null when load level info");
-				}
-			}
+//			for (int i = 0; i < npcIds.Length; i++) {
+//				
+//				NPC npc = GameManager.Instance.gameDataCenter.allNpcs.Find (delegate(NPC obj) {
+//					return obj.npcId == npcIds[i];
+//				});
+//
+//				if (npc != null) {
+//					npcs.Add (npc);
+//				} else {
+//					Debug.LogError ("npc null when load level info");
+//				}
+//			}
 		}
 			
 

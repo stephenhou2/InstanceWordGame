@@ -9,6 +9,7 @@ namespace WordJourney
 
 	public class CraftingRecipesHUD : MonoBehaviour {
 
+		public Transform craftingItemAndRecipesContainer;
 		public Image craftingItemIcon;
 		public Text craftingItemName;
 		public Text craftingItemDescription;
@@ -26,6 +27,9 @@ namespace WordJourney
 		public Button craftButton;
 
 		[HideInInspector]public CraftingRecipes craftingRecipes;
+
+		private float zoomInDuration = 0.2f;
+		private IEnumerator zoomInCoroutine;
 
 
 		public void InitCraftingRecipesHUD(bool quitWhenClickBackground,CallBack quitCallBack,CallBack craftCallBack){
@@ -66,10 +70,13 @@ namespace WordJourney
 
 			horizontalLine.rectTransform.sizeDelta = new Vector2(middleLineWidth,3);
 
+			craftingItemAndRecipesContainer.localScale = new Vector3 (0.1f, 0.1f, 1);
+
 			gameObject.SetActive (true);
 
+			zoomInCoroutine = CraftingRecipesHUDZoomIn ();
 
-
+			StartCoroutine (zoomInCoroutine);
 		}
 
 		private float GetMiddleLineWidth(int itemCount){
@@ -135,6 +142,33 @@ namespace WordJourney
 
 		}
 
+		private IEnumerator CraftingRecipesHUDZoomIn(){
+
+			float scale = craftingItemAndRecipesContainer.transform.localScale.x;
+
+			float zoomInSpeed = (1 - scale) / zoomInDuration;
+
+			float lastFrameRealTime = Time.realtimeSinceStartup;
+
+			while (scale < 1) {
+
+				yield return null;
+
+				scale += zoomInSpeed * (Time.realtimeSinceStartup - lastFrameRealTime);
+
+				lastFrameRealTime = Time.realtimeSinceStartup;
+
+				craftingItemAndRecipesContainer.transform.localScale = new Vector3 (scale, scale, 1);
+
+			}
+
+			craftingItemAndRecipesContainer.transform.localScale = Vector3.one;
+
+		}
+
+
+
+
 		public void OnBackgroundClick(){
 			if (quitWhenClickBackground) {
 				QuitCraftingRecipesHUD ();
@@ -146,6 +180,10 @@ namespace WordJourney
 
 			if (quitCallBack != null) {
 				quitCallBack ();
+			}
+
+			if (zoomInCoroutine != null) {
+				StopCoroutine (zoomInCoroutine);
 			}
 
 			gameObject.SetActive (false);

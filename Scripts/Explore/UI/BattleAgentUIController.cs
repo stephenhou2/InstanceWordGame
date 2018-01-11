@@ -34,23 +34,14 @@ namespace WordJourney
 		public FightTextManager fightTextManager;
 
 		public Transform statusTintContainer;
-		protected Transform statusTintModel;
+		public Transform statusTintModel;
 		protected InstancePool statusTintPool;
 
 
-
-		protected void Start(){
-
-			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
-//			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
-
-			fightTextPool = InstancePool.GetOrCreateInstancePool ("FightTextPool",poolContainerOfExploreCanvas.name);
-
-			fightTextPool.transform.SetParent (poolContainerOfExploreCanvas);
-//			fightTextModel.SetParent (modelContainerOfExploreScene);
-
+		public void InitExploreAgentView(){
+			statusTintPool = InstancePool.GetOrCreateInstancePool ("StatusTintPool", CommonData.poolContainerName);
+			fightTextPool = InstancePool.GetOrCreateInstancePool ("FightTextPool",CommonData.poolContainerName);
 			fightTextManager.InitFightTextManager (fightTextPool, fightTextModel, fightTextContainer);
-
 		}
 
 		public abstract void UpdateAgentStatusPlane ();

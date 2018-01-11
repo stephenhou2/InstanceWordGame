@@ -8,15 +8,16 @@ namespace WordJourney
 	using System.Data;
 
 
-
 	public class LearnViewController : MonoBehaviour {
-
-
 
 		// 单词学习view
 		public LearnView learnView;
 
+		// 是否从学习过程开始
 		public bool beginWithLearn;
+
+		// 背错的单词是否加到队列尾部继续学习
+		private bool addToTrailIfWrong;
 
 		// 一次学习的单词数量（单个水晶学习单词数量）
 		private int singleLearnWordsCount;
@@ -51,7 +52,6 @@ namespace WordJourney
 		 * 带【】的数字表示当前使用的是背诵过几次的单词
 		 * 上例中假设一共有8个单词，则是以4组为循环基数，以2次为背诵次数循环基数
 		 */ 
-
 
 
 		// 当前应该学习的单词组的学习次数
@@ -114,10 +114,7 @@ namespace WordJourney
 		// 是否自动发音
 		private bool autoPronounce;
 
-		private bool addToTrailIfWrong;
 
-
-		private char characterAsReward;
 
 		void Awake(){
 			singleLearnWordsCount = 9;
@@ -475,7 +472,7 @@ namespace WordJourney
 
 				currentExamination.RemoveCurrentExamType ();
 
-				// 如果当前单词测试的中译英和英译中都已经完成，则从测试列表中删除该测试
+				// 如果当前单词测试的所有测试类型都已经完成（根据设置，测试类型有 英译中，英译中+中译英）都已经完成，则从测试列表中删除该测试
 				bool currentExamFinished = currentExamination.CheckCurrentExamFinished();
 				if (currentExamFinished) {
 					currentExamination.question.learnedTimes++;
@@ -488,7 +485,7 @@ namespace WordJourney
 				}
 					
 			} else {
-				// 如果选择错误，则将该单词的测试移至测试列表的尾部
+				// 如果选择错误
 				Debug.Log ("选择错误");
 
 				// 单词的背错次数+1
@@ -503,8 +500,7 @@ namespace WordJourney
 					finalExaminationsList.Add (exam);
 					coinGain--;
 				}
-
-
+					
 				learnView.ShowRightAnswerAndEnterNextExam (exam.correctAnswerIndex ,currentExamination);
 			}
 
@@ -587,7 +583,9 @@ namespace WordJourney
 			if (em != null) {
 				GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
 				if (finishLearning) {
-					em.GetComponent<ExploreManager> ().ChangeCrystalStatus ();
+					ExploreManager exploreManager = em.GetComponent<ExploreManager> ();
+					exploreManager.ChangeCrystalStatus ();
+					exploreManager.expUICtr.UpdatePlayerStatusBar ();
 				}
 			} else {
 				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {

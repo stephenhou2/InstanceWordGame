@@ -39,8 +39,8 @@ namespace WordJourney
 
 		public ItemModel.ItemInfoForProduce[] itemInfosForProduce;
 
-		public int maxDurability;//装备最大耐久度
-		public int durability;//装备实际耐久度
+//		public int maxDurability;//装备最大耐久度
+//		public int durability;//装备实际耐久度
 
 
 		//装备是否已佩戴
@@ -77,9 +77,11 @@ namespace WordJourney
 			this.attachedSkillInfos = equipment.attachedSkillInfos;
 			this.itemInfosForProduce = equipment.itemInfosForProduce;
 
-			#warning 这里耐久度现都设为100;
-			this.maxDurability = 100;
-			this.durability = 100;
+			this.price = equipment.price;
+
+//			#warning 这里耐久度现都设为100;
+//			this.maxDurability = 100;
+//			this.durability = 100;
 		}
 
 		/// <summary>
@@ -105,9 +107,11 @@ namespace WordJourney
 			this.attachedSkillInfos = itemModel.attachedSkillInfos;
 			this.itemInfosForProduce = itemModel.itemInfosForProduce;
 
-			#warning 这里耐久度现都设为100;
-			this.maxDurability = 100;
-			this.durability = 100;
+			this.price = itemModel.price;
+
+//			#warning 这里耐久度现都设为100;
+//			this.maxDurability = 100;
+//			this.durability = 100;
 
 			if (fuseStone != null) {
 				this.itemName = string.Format ("{0}{1}", fuseStone.itemName.Replace ("之石", "的"), itemName);
@@ -397,15 +401,7 @@ namespace WordJourney
 //
 //		}
 
-		/// <summary>
-		/// Fixs the equipment.
-		/// </summary>
-		public void FixEquipment(){
-			durability += CommonData.fixDurability;
-			if (durability > maxDurability) {
-				durability = maxDurability;
-			}
-		}
+
 
 
 

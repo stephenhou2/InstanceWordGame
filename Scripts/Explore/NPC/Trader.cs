@@ -7,46 +7,60 @@ namespace WordJourney
 
 	[System.Serializable]
 	public class Trader : NPC {
-
 		// 商人售卖的商品列表
 		public List<GoodsGroup> goodsGroupList = new List<GoodsGroup>();
 
+		public List<Item> itemsAsGoodsOfCurrentLevel = new List<Item> ();
+
+		public void InitGoodsGroupOfLevel(int level){
+
+			GoodsGroup gg = goodsGroupList.Find (delegate(GoodsGroup obj) {
+				return obj.accordLevel == level;
+			});
+
+			for (int i = 0; i < gg.goodsList.Count; i++) {
+
+				Goods goods = gg.goodsList [i];
+
+				Item itemAsGoods = goods.GetRandomPossibleGoods ();
+
+				itemsAsGoodsOfCurrentLevel.Add (itemAsGoods);
+
+			}
+
+		}
+
+		public void ClearTraderGoods(){
+			itemsAsGoodsOfCurrentLevel.Clear ();
+		}
+
 	}
 
 	[System.Serializable]
-	public class GoodsGroup{
+	public struct GoodsGroup{
 
-		public List<Goods> goodsList = new List<Goods> ();
-
-		// 商品对应的关卡
+		public List<Goods> goodsList;
 		public int accordLevel;
 
+		public GoodsGroup(List<Goods> goodsList,int accordLevel){
+			this.goodsList = goodsList;
+			this.accordLevel = accordLevel;
+		}
 	}
-
 
 	[System.Serializable]
-	public class Goods{
-
-		// 商品对应物品的id
-		public int[] goodsIds;
-		// 商品的价格
-		public int goodsPrice{
-			get {
-				return itemAsGoods.price;
-			}
+	public struct Goods{
+		public int[] possibleItemIdsAsGoods;
+		public Goods(int[] ids){
+			this.possibleItemIdsAsGoods = ids;
 		}
 
-		private Item myItemAsGoods;
-		public Item itemAsGoods{
-			get{
-				if (myItemAsGoods == null) {
-					int randomIndex = Random.Range (0, goodsIds.Length);
-					int goodsIdAsItem = goodsIds [randomIndex];
-					myItemAsGoods = Item.NewItemWith (randomIndex, 1);
-				}
-				return myItemAsGoods;
-			}
+		public Item GetRandomPossibleGoods(){
+			int randomIndex = Random.Range (0, possibleItemIdsAsGoods.Length);
+			int goodsIdAsItem = possibleItemIdsAsGoods [randomIndex];
+			return Item.NewItemWith (goodsIdAsItem, 1);
 		}
 
 	}
+		
 }

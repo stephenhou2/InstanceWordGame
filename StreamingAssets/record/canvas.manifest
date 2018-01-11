@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 556940883
+CRC: 2623763735
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: da6e26112c3e4993be945d9480437c03
+    Hash: 6bdd9b2be695580a351e53a47422bf6d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 7760d43167f481c7633095ef9e5780be
+    Hash: 7a8e62b091415e042e1b78c9ee142f8a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -55,6 +55,5 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/Record/RecordCanvas.prefab
-- Assets/Prefabs/Record/WordModel.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons

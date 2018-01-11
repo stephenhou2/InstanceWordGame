@@ -12,6 +12,9 @@ namespace WordJourney
 
 		public List<MyGameLevelData> gameLevelDatas = new List<MyGameLevelData>();
 
+		// 商人处卖的商品信息组
+		private List<GoodsGroup> allGoodsGroup = new List<GoodsGroup>();
+
 		public void LoadGameDatas(){
 			
 			string gameDataSource = DataHandler.LoadDataString ("/Users/houlianghong/Desktop/MyGameData/GameLevelData.csv");
@@ -19,9 +22,23 @@ namespace WordJourney
 			string[] gameLevelDataStrings = gameDataSource.Split (new string[]{ "\n" },System.StringSplitOptions.RemoveEmptyEntries);
 
 			for(int i = 1;i<gameLevelDataStrings.Length;i++){
-				MyGameLevelData gameLevelData = new MyGameLevelData (gameLevelDataStrings [i]);
+				MyGameLevelData gameLevelData = new MyGameLevelData (gameLevelDataStrings [i],i-1,allGoodsGroup);
 				gameLevelDatas.Add (gameLevelData);
 			}
+
+			SaveGoodsInfoOfTrader ();
+
+		}
+
+		private void SaveGoodsInfoOfTrader(){
+
+			string traderDataPath = Path.Combine (CommonData.originDataPath, "NPCs/Trader_TraderMan.json");
+
+			Trader trader = DataHandler.LoadDataToSingleModelWithPath<Trader> (traderDataPath);
+
+			trader.goodsGroupList = allGoodsGroup;
+
+			DataHandler.SaveInstanceDataToFile <Trader> (trader, traderDataPath);
 
 		}
 
@@ -51,20 +68,19 @@ namespace WordJourney
 		// 所在章节名称(5关一个章节)
 		public string chapterName;
 
-		// 关卡中的所有怪物id
-		public int[] monsterIds;
+		// 关卡中的所有怪物信息
+		public MonsterInfo[] monsterInfos;
 
-		// 关卡中出现的所有可以开出的物品id
-		public int[] itemIds;
+		// 瓦罐中一定能开出来的物品id数组
+		public int[] mustAppearItemIdsInUnlockedBox;
 
-		// 关卡中所有可能出现的装备配方对应的装备／技能id
-		public int[] formulaIds;
+		// 瓦罐中可能会开出来的物品id数组
+		public int[] possiblyAppearItemIdsInUnlockedBox;
 
-		// 每个itemId对应的物品是否只能由宝箱开出来
-		public bool[] itemLockInfoArray;
+		// 宝箱中可能会开出来的物品id数组
+		public int[] possiblyAppearItemIdsInLockedBox;
 
-		// 关卡中所有npc的id
-		public int[] npcIds;
+
 
 		// 关卡中怪物相对与prefab的提升比例
 		public float monsterScaler;
@@ -72,7 +88,8 @@ namespace WordJourney
 		// 关卡中boss的id（-1代表本关不出现boss）
 		public int bossId;
 
-		public MyGameLevelData(string dataString){
+
+		public MyGameLevelData(string dataString,int currenLevel,List<GoodsGroup> allGoodsGroup){
 
 			dataString = dataString.Replace ("\r", "");
 
@@ -80,16 +97,57 @@ namespace WordJourney
 
 			gameLevelIndex = Convert.ToInt16 (dataStrings [0]);
 			chapterName = dataStrings [1];
-			monsterIds = InitIntArrayWithString (dataStrings [2]);
-			itemIds = InitIntArrayWithString (dataStrings [3]);
-			formulaIds = InitIntArrayWithString (dataStrings [4]);
-			itemLockInfoArray = InitBoolArrayWithString (dataStrings [5]);
-			npcIds = InitIntArrayWithString (dataStrings [6]);
 
-			monsterScaler = Convert.ToSingle (dataStrings [7]);
-			bossId = Convert.ToInt16 (dataStrings [8]);
+			monsterInfos = InitMonsterInfoWith (dataStrings [2], dataStrings [3]);
+
+			mustAppearItemIdsInUnlockedBox = InitIntArrayWithString (dataStrings [4]);
+
+			possiblyAppearItemIdsInUnlockedBox = InitIntArrayWithString (dataStrings [5]);
+
+			possiblyAppearItemIdsInLockedBox = InitIntArrayWithString (dataStrings [6]);
+
+			GoodsGroup goodsGroups = InitGoodsGroupArrayWith (currenLevel,dataStrings [7], dataStrings [8], dataStrings [9], dataStrings [10], dataStrings [11]);
+
+			allGoodsGroup.Add (goodsGroups);
+
+			monsterScaler = Convert.ToSingle (dataStrings [12]);
+
+			bossId = FromStringToInt (dataStrings [13]);
+
+		}
 
 
+
+		private MonsterInfo[] InitMonsterInfoWith(string monsterIdsString,string monsterCountsString){
+			
+			int[] monsterIds = InitIntArrayWithString (monsterIdsString);
+			int[] monsterCounts = InitIntArrayWithString (monsterCountsString);
+
+			monsterInfos = new MonsterInfo[monsterIds.Length];
+			for (int i = 0; i < monsterInfos.Length; i++) {
+				monsterInfos [i] = new MonsterInfo (monsterIds [i], monsterCounts [i]);
+			}
+
+			return monsterInfos;
+
+		}
+
+		private GoodsGroup InitGoodsGroupArrayWith(int currentLevel,params string[] goodsStrings){
+
+			List<Goods> goodsList = new List<Goods> ();
+
+			for (int i = 0; i < goodsStrings.Length; i++) {
+
+				string goodsString = goodsStrings [i];
+
+				Goods goods = new Goods (InitIntArrayWithString (goodsString));
+
+				goodsList.Add (goods);
+			}
+
+			GoodsGroup gg = new GoodsGroup (goodsList, currentLevel);
+
+			return gg;
 		}
 
 		private bool[] InitBoolArrayWithString(string dataString){
@@ -113,10 +171,19 @@ namespace WordJourney
 			return idArray;
 		}
 
-		private Count InitCountWithString(string dataString){
-			string[] countStrings = dataString.Split (new char[]{ '_' }, System.StringSplitOptions.RemoveEmptyEntries);
-			return new Count (Convert.ToInt16(countStrings [0]), Convert.ToInt16(countStrings [1]));
+		private int FromStringToInt(string str){
+			
+			if (str == "") {
+				return -1;
+			}
+
+			return Convert.ToInt16 (str);
 		}
+
+//		private Count InitCountWithString(string dataString){
+//			string[] countStrings = dataString.Split (new char[]{ '_' }, System.StringSplitOptions.RemoveEmptyEntries);
+//			return new Count (Convert.ToInt16(countStrings [0]), Convert.ToInt16(countStrings [1]));
+//		}
 
 	}
 

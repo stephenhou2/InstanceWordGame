@@ -139,7 +139,7 @@ namespace WordJourney
 							}
 
 						}
-						newLayers[j] = new Layer (layer.name, tileDatas.ToArray()); 
+						newLayers[j] = new Layer (layer.name, tileDatas); 
 						break;
 					case "AttachedInfoLayer":
 						firstGid = oriMapData.attachedInfoFirstGid;
@@ -156,7 +156,7 @@ namespace WordJourney
 							}
 
 						}
-						attachedInfoLayer = new Layer (layer.name, tileDatas.ToArray ()); 
+						attachedInfoLayer = new Layer (layer.name, tileDatas); 
 						newLayers [j] = attachedInfoLayer; 
 						break;
 					case "AttachedItemLayer":
@@ -173,7 +173,7 @@ namespace WordJourney
 							}
 
 						}
-						attachedItemLayer = new Layer (layer.name, tileDatas.ToArray ()); 
+						attachedItemLayer = new Layer (layer.name, tileDatas); 
 						newLayers [j] = attachedItemLayer;
 						break;
 					default:
@@ -182,7 +182,7 @@ namespace WordJourney
 					}
 				}
 
-				for (int k = 0; k < attachedInfoLayer.tileDatas.Length; k++) {
+				for (int k = 0; k < attachedInfoLayer.tileDatas.Count; k++) {
 
 					Tile attachedInfoTile = attachedInfoLayer.tileDatas [k];
 
@@ -190,19 +190,25 @@ namespace WordJourney
 						(AttachedInfoType)(attachedInfoTile.tileIndex) == AttachedInfoType.Pot ||
 						(AttachedInfoType)(attachedInfoTile.tileIndex) == AttachedInfoType.TreasureBox) {
 
-						bool attachedInfoDataCorrect = false;
+						bool attachedInfoDataExist = false;
 
-						for (int m = 0; m < attachedItemLayer.tileDatas.Length; m++) {
+						for (int m = 0; m < attachedItemLayer.tileDatas.Count; m++) {
 
 							if (attachedItemLayer.tileDatas [m].position == attachedInfoTile.position) {
-								attachedInfoDataCorrect = true;
+								attachedInfoDataExist = true;
 								break;
 							}
 
+
+
 						}
 
-						if (!attachedInfoDataCorrect) {
-							Debug.LogError (string.Format ("地图{0}上箱子内部没有对应物品---pos:[{1},{2}]",fi.Name, attachedInfoTile.position.x, attachedInfoTile.position.y));
+						if (!attachedInfoDataExist) {
+
+							Tile tile = new Tile (attachedInfoTile.position, (int)AttachedItemType.Random, true);
+
+							attachedItemLayer.tileDatas.Add (tile);
+//							Debug.LogError (string.Format ("地图{0}上箱子内部没有对应物品---pos:[{1},{2}]",fi.Name, attachedInfoTile.position.x, attachedInfoTile.position.y));
 						}
 
 					}

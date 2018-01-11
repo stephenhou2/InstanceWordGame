@@ -9,6 +9,7 @@ namespace WordJourney
 
 	public class UnlockScrollDetailHUD : MonoBehaviour {
 
+		public Transform unlockScrollContainer;
 		public Image unlockedItemIcon;
 		public Text unlockedItemName;
 		public Text statusText;
@@ -23,6 +24,9 @@ namespace WordJourney
 		public Button resolveButton;
 
 		[HideInInspector]public UnlockScroll unlockScroll;
+
+		private float zoomInDuration = 0.2f;
+		private IEnumerator zoomInCoroutine;
 
 		/// <summary>
 		/// quitWhenClickBackground 表示点击背景空白处是否可以退出物品详细页
@@ -75,7 +79,37 @@ namespace WordJourney
 			unlockButton.gameObject.SetActive (!hasScrollUnlocked);
 			resolveButton.gameObject.SetActive (hasScrollUnlocked);
 
+			unlockScrollContainer.localScale = new Vector3 (0.1f, 0.1f, 1);
+
 			gameObject.SetActive (true);
+
+			zoomInCoroutine = UnlockScrollHUDZoomIn ();
+
+			StartCoroutine (zoomInCoroutine);
+
+		}
+
+		private IEnumerator UnlockScrollHUDZoomIn(){
+
+			float scale = unlockScrollContainer.transform.localScale.x;
+
+			float zoomInSpeed = (1 - scale) / zoomInDuration;
+
+			float lastFrameRealTime = Time.realtimeSinceStartup;
+
+			while (scale < 1) {
+
+				yield return null;
+
+				scale += zoomInSpeed * (Time.realtimeSinceStartup - lastFrameRealTime);
+
+				lastFrameRealTime = Time.realtimeSinceStartup;
+
+				unlockScrollContainer.transform.localScale = new Vector3 (scale, scale, 1);
+
+			}
+
+			unlockScrollContainer.transform.localScale = Vector3.one;
 
 		}
 
@@ -112,6 +146,10 @@ namespace WordJourney
 
 			unlockButton.gameObject.SetActive (false);
 			resolveButton.gameObject.SetActive (false);
+
+			if (zoomInCoroutine != null) {
+				StopCoroutine (zoomInCoroutine);
+			}
 
 			gameObject.SetActive (false);
 

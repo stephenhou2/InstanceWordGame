@@ -30,7 +30,8 @@ namespace WordJourney
 		{
 //			gameObject.SetActive (true);
 //			bc2d.enabled = true;
-			mapItemAnimator.enabled = true;
+//			mapItemAnimator.enabled = true;
+			bc2d.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
 		}
@@ -77,7 +78,7 @@ namespace WordJourney
 
 			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
 			if (walkableAfterChangeStatus) {
-				GetComponent<BoxCollider2D> ().enabled = false;
+				bc2d.enabled = false;
 			}
 
 			AnimEnd ();

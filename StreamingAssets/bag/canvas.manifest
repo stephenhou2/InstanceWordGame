@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2335496098
+CRC: 4003247607
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 84b9cd5b5959a3238cd533927315b77d
+    Hash: 66e444e8577c9c890d51e6e69ed3eb5d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 34abf848917925ef68ad1395e0eada79
+    Hash: 667385f8f6a322d315c1f59faad45150
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -79,6 +79,4 @@ Assets:
 - Assets/Prefabs/Bag/BagCanvas.prefab
 Dependencies:
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/material/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/skills/icons

@@ -18,34 +18,14 @@ namespace WordJourney
 		public Transform chapterSelectHUD;
 		public Transform chaptersContainer;
 
-		private Transform chapterButtonModel;
+		public Transform chapterButtonModel;
 		private InstancePool chapterButtonPool;
-
-		public Button learnButton;
-
-		public Text timerText;
-
-		private int learnInterval = 60;
 
 		public float chapterSelectPlaneZoomInDuration = 0.2f;
 
 		public void SetUpHomeView(){
-
-			Transform poolContainerOfHomeCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfHomeCanvas");
-			Transform modelContainerOfHomeCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfHomeCanvas");
-
-
-			if (poolContainerOfHomeCanvas.childCount == 0) {
-				chapterButtonPool = InstancePool.GetOrCreateInstancePool ("ChapterButtonPool", poolContainerOfHomeCanvas.name);
-			}
-
-			if (modelContainerOfHomeCanvas.childCount == 0) {
-				chapterButtonModel = TransformManager.FindTransform ("ChapterButtonModel");
-				chapterButtonModel.SetParent (modelContainerOfHomeCanvas);
-			}
-
-			learnButton.interactable = true;
-			timerText.text = learnInterval.ToString ();
+			
+			chapterButtonPool = InstancePool.GetOrCreateInstancePool ("ChapterButtonPool", CommonData.poolContainerName);
 
 			GetComponent<Canvas> ().enabled = true;
 
@@ -58,37 +38,6 @@ namespace WordJourney
 			maskImage.gameObject.SetActive (false);
 		}
 			
-
-		public void StartLearnCountDown(){
-			learnButton.interactable = false;
-			StartCoroutine ("LearnCountDown");
-		}
-
-		private IEnumerator LearnCountDown(){
-
-			int timer = learnInterval;
-
-			while (timer > 0) {
-
-				yield return new WaitForSeconds (1f);
-
-				timer++;
-
-				timerText.text = timer.ToString ();
-
-			}
-
-			timerText.text = learnInterval.ToString ();
-			learnButton.interactable = true;
-
-
-
-		}
-
-
-
-
-
 
 		public void SetUpChapterSelectPlane(){
 

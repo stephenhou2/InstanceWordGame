@@ -7,10 +7,10 @@ namespace WordJourney
 {
 	using UnityEngine.UI;
 
-	public class NPCUIController : MonoBehaviour {
+	public class NPCUIController: MonoBehaviour {
 
 		/**********  dialogPlane UI *************/
-		public Transform npcPlane;
+//		public Transform npcPlane;
 		public Transform choiceContainer;
 		public Image npcIcon;
 		public Text dialogText;
@@ -28,35 +28,38 @@ namespace WordJourney
 
 		public Transform tradePlane;
 		public Transform goodsContainer;
-		public Transform itemDetailsContainer;
+//		public Transform itemDetailsContainer;
 
 
 		private NPC currentEnteredNpc;
-		private int currentLevel;
 //		private Goods currentSelectGoods;
 
 		private InstancePool choiceButtonPool;
-		private Transform choiceButtonModel;
-		private Transform goodsModel;
+		public Transform choiceButtonModel;
+
 		private InstancePool goodsPool;
-
-		public Transform itemDetailHUDInTrade;
-		public Image itemIconBackgroundInDetail;
-		public Image itemIconInDetail;
-		public Text itemNameInDetail;
-		public Text itemDescriptionInDetail;
-		public Button buyButtonInDetail;
+		public Transform goodsModel;
 
 
-		public void SetupNpcPlane(NPC npc,int currentLevel,InstancePool choiceButtonPool,Transform choiceButtonModel,InstancePool goodsPool,Transform goodsModel){
+		public ItemDetailHUD itemDetail;
+		public TintHUD tintHUD;
+
+		private int currentLevelIndex;
+		private Item currentSelectedItem;
+
+		public void InitNPCHUD(int currentLevelIndex){
+
+			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
+			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
+
+			this.currentLevelIndex = currentLevelIndex;
+
+		}
+
+
+		public void SetUpNpcPlane(NPC npc){
 
 			this.currentEnteredNpc = npc;
-			this.currentLevel = currentLevel;
-			this.choiceButtonPool = choiceButtonPool;
-			this.choiceButtonModel = choiceButtonModel;
-			this.goodsPool = goodsPool;
-			this.goodsModel = goodsModel;
-
 
 			dialogText.text = npc.greetingDialog;
 
@@ -71,7 +74,7 @@ namespace WordJourney
 
 			AddFunctionChoices ();
 
-			npcPlane.gameObject.SetActive (true);
+			gameObject.SetActive (true);
 
 		}
 
@@ -88,13 +91,13 @@ namespace WordJourney
 					AddTradeFunction ();
 					break;
 				case NPCAttachedFunctionType.SkillPromotion:
-				//					attachedFunctionText.text = "技能提升";
+//					attachedFunctionText.text = "技能提升";
 					break;
 				case NPCAttachedFunctionType.PropertyPromotion:
-				//					attachedFunctionText.text = "属性提升";
+//					attachedFunctionText.text = "属性提升";
 					break;
 				case NPCAttachedFunctionType.Task:
-				//					attachedFunctionText.text = "任务";
+//					attachedFunctionText.text = "任务";
 					break;
 
 				}
@@ -122,14 +125,14 @@ namespace WordJourney
 				DialogGroup dg = null;
 
 				for (int i = 0; i < currentEnteredNpc.chatDialogGroups.Count; i++) {
-					if (currentEnteredNpc.chatDialogGroups [i].accordGameLevel == currentLevel) {
+					if (currentEnteredNpc.chatDialogGroups [i].accordGameLevel == currentLevelIndex) {
 						dg = currentEnteredNpc.chatDialogGroups [i];
 					}
 
 				}
 
 				if (dg == null) {
-					Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevel, currentEnteredNpc.npcName));
+					Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevelIndex, currentEnteredNpc.npcName));
 				}
 
 				currentDialogGroup = dg;
@@ -180,7 +183,8 @@ namespace WordJourney
 					Item rewardItem = Item.NewItemWith (dialog.rewardIds [i], dialog.rewardCounts [i]);
 					Player.mainPlayer.AddItem (rewardItem);
 					dialog.finishRewarding = true;
-					#warning 提示获得物品的界面逻辑没有做
+					string tint = string.Format ("获得 {0} x{1}", rewardItem.itemName, rewardItem.itemCount);
+					tintHUD.SetUpTintHUD (tint);
 				}
 			}
 
@@ -236,8 +240,9 @@ namespace WordJourney
 			choiceButton.onClick.AddListener (SetUpTradePlane);
 		}
 
-		public void SetUpTradePlane(){
 
+
+		public void SetUpTradePlane(){
 
 			Trader trader = currentEnteredNpc as Trader;
 
@@ -247,16 +252,14 @@ namespace WordJourney
 
 			goodsPool.AddChildInstancesToPool (goodsContainer);
 
-			GoodsGroup gg = trader.goodsGroupList.Find(delegate(GoodsGroup obj){
-				return obj.accordLevel == currentLevel;
-			});
+			List<Item> itemsAsGoods = trader.itemsAsGoodsOfCurrentLevel;
 
-			for (int i = 0; i < gg.goodsList.Count; i++) {
+			for (int i = 0; i < itemsAsGoods.Count; i++) {
 
-				Goods goods = gg.goodsList [i];
+				Item itemAsGoods = itemsAsGoods [i];
 
 				Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == goods.itemAsGoods.spriteName;
+					return obj.name == itemAsGoods.spriteName;
 				});
 
 				Transform goodsDisplay = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
@@ -266,13 +269,13 @@ namespace WordJourney
 
 				goodsIcon.sprite = goodsSprite;
 
-				goodsPrice.text = goods.goodsPrice.ToString();
+				goodsPrice.text = itemAsGoods.price.ToString();
 
 				goodsSelection.onClick.RemoveAllListeners ();
 
 				goodsSelection.onClick.AddListener (delegate {
-//					currentSelectGoods = goods;
-					SetUpItemDetailsInTrade(goods,goodsSprite);
+					currentSelectedItem = itemAsGoods;
+					SetUpItemDetailsInTrade(itemAsGoods);
 				});
 
 			}
@@ -280,51 +283,56 @@ namespace WordJourney
 
 		}
 
-		private void SetUpItemDetailsInTrade(Goods goods,Sprite goodsSprite){
+		private void SetUpItemDetailsInTrade(Item item){
 
-			itemIconInDetail.sprite = goodsSprite;
-			itemIconInDetail.enabled = true;
-			itemIconBackgroundInDetail.enabled = true;
-			itemNameInDetail.text = goods.itemAsGoods.itemName;
-			itemDescriptionInDetail.text = goods.itemAsGoods.itemDescription;
-
-			buyButtonInDetail.gameObject.SetActive (goods.itemAsGoods != null);
-
-			if (goods.itemAsGoods != null) {
-				buyButtonInDetail.onClick.RemoveAllListeners ();
-				buyButtonInDetail.onClick.AddListener (delegate {
-					bool buySuccess = PlayerBuyGoods(goods);
-					if(!buySuccess){
-						GetComponent<ExploreUICotroller>().SetUpTintHUD("金币不足");
-					}else{
-						GetComponent<BattlePlayerUIController>().UpdateAgentStatusPlane();
-						itemDetailHUDInTrade.gameObject.SetActive(false);
-						SetUpTradePlane();
-					}
-				});
-			}
-
-			itemDetailHUDInTrade.gameObject.SetActive (true);
+			itemDetail.SetUpItemDetailHUD (item);
 
 		}
 
-		private bool PlayerBuyGoods(Goods goods){
+		public void OnBuyButtonClick(){
+
+			bool buySuccess = PlayerBuyGoods (currentSelectedItem);
+
+			string tint = "";
+
+			if (!buySuccess) {
+				tint = "水晶不足";
+				tintHUD.SetUpTintHUD (tint);
+				return;
+			}
+
+			switch (currentSelectedItem.itemType) {
+			case ItemType.UnlockScroll:
+				tint = string.Format ("获得 解锁卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
+				break;
+			case ItemType.CraftingRecipes:
+				tint = string.Format ("获得 合成卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
+				break;
+			default:
+				tint = string.Format ("获得 {0} x1", currentSelectedItem.itemName);
+				break;
+			}
+
+			tintHUD.SetUpTintHUD (tint);
+
+			QuitTradePlane ();
+
+			SetUpTradePlane ();
+		}
+
+		private bool PlayerBuyGoods(Item itemAsGoods){
 
 			Player player = Player.mainPlayer;
 
-			if (player.totalCoins < goods.goodsPrice) {
+			if (player.totalCoins < itemAsGoods.price) {
 				return false;
 			}
 
-			player.totalCoins -= goods.goodsPrice;
+			player.totalCoins -= itemAsGoods.price;
 
-			player.AddItem (goods.itemAsGoods);
+			player.AddItem (itemAsGoods);
 
-			GoodsGroup gg = (currentEnteredNpc as Trader).goodsGroupList.Find (delegate(GoodsGroup obj) {
-				return obj.accordLevel == currentLevel;
-			});
-
-			gg.goodsList.Remove (goods);
+			(currentEnteredNpc as Trader).itemsAsGoodsOfCurrentLevel.Remove (itemAsGoods);
 
 			return true;
 		}
@@ -337,33 +345,32 @@ namespace WordJourney
 			Text attachedFunctionText = choiceButton.GetComponentInChildren<Text> ();
 			attachedFunctionText.text = "离开";
 			choiceButton.onClick.RemoveAllListeners ();
-			choiceButton.onClick.AddListener (QuitNpcPlane);
+			choiceButton.onClick.AddListener (QuitNPCPlane);
 
 		}
 
-		private void QuitNpcPlane(){
-
+		private void QuitNPCPlane(){
+			
 			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+
+			QuitTradePlane ();
 
 			npcIcon.GetComponent<Image> ().enabled = false;
 
 			dialogText.text = string.Empty;
 
-			npcPlane.gameObject.SetActive (false);
+			gameObject.SetActive (false);
 
 		}
 
 		public void QuitTradePlane(){
 
-			itemIconInDetail.sprite = null;
-			itemIconInDetail.enabled = false;
-			itemIconBackgroundInDetail.enabled = false;
-			itemNameInDetail.text = string.Empty;
-			itemDescriptionInDetail.text = string.Empty;
+			itemDetail.QuitItemDetailHUD ();
 
 			tradePlane.gameObject.SetActive (false);
 
 		}
+			
 		
 	}
 }
