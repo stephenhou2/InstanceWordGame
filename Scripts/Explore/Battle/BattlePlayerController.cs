@@ -488,6 +488,7 @@ namespace WordJourney
 
 			playerSide.transform.localPosition = Vector3.zero;
 
+
 			Vector3 targetPos = pathPosList [0];
 
 			// 玩家角色位置和原来的怪物位置之间间距大于0.5（玩家是横向进入战斗的），则播放跑的动画到指定位置

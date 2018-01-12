@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3323545398
+CRC: 492907829
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 297441b8d7507ad1a2d54df5f93c3ef4
+    Hash: 5e861a28fe4fe313968646bc7212b520
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1d216c0cd4888b8b7751e5e6b160d9d4
+    Hash: b983925acda8b18e71d1d5cd4fd5fff4
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -32,8 +32,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 1a64e5b0e436d4bed9780211ae245f7b, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: d92da682ba53f4e5bb0e96f945b42b58, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 6f46fce80bb83409ea50f974a4700dfd, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: b7609e5a17e6e4337818965107391bec, type: 3}
@@ -46,11 +44,7 @@ ClassTypes:
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- "Assets/Prefabs/Explore/Monsters/\u5357\u74DC\u7CBE\u7075.prefab"
-- "Assets/Prefabs/Explore/Monsters/\u94C1\u5934\u6D77\u9F9F.prefab"
 - Assets/Prefabs/Explore/Monsters/Pumpkin.prefab
-- "Assets/Prefabs/Explore/Monsters/\u9752\u86C7.prefab"
-- Assets/Prefabs/Explore/Monsters/Wolf.prefab
 - Assets/Prefabs/Explore/Monsters/FireFox.prefab
 - Assets/Prefabs/Explore/Monsters/LitttleFox.prefab
 Dependencies: []

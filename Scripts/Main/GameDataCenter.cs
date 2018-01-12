@@ -31,8 +31,6 @@ namespace WordJourney
 		private GameSettings mGameSettings;
 		private LearningInfo mLearnInfo;
 		private List<GameLevelData> mGameLevelDatas = new List<GameLevelData>();
-		private List<Material> mAllMaterials = new List<Material> ();
-		private List<Sprite> mAllMaterialSprites = new List<Sprite> ();
 		private List<ItemModel> mAllItemModels = new List<ItemModel> ();
 		private List<Sprite> mAllItemSprites = new List<Sprite>();
 		private List<Sprite> mAllMapSprites = new List<Sprite> ();
@@ -434,7 +432,9 @@ namespace WordJourney
 			if(inLoadingDataTypes.Contains(GameDataType.Monsters)){
 				return;
 			}
+
 			inLoadingDataTypes.Add (GameDataType.Monsters);
+
 			Transform monsterModelsContainer = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/MonsterModelsContainer");
 
 			monsterModelsContainer.position = new Vector3 (0, 0, -100);
@@ -453,7 +453,9 @@ namespace WordJourney
 
 					mAllMonsters.Add(monster.transform);
 				};
+
 				dataReadyDic [GameDataType.Monsters] = true;
+
 				inLoadingDataTypes.Remove(GameDataType.Monsters);
 			});
 		}

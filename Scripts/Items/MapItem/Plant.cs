@@ -13,9 +13,7 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive(true);
-//			bc2d.enabled = true;
-//			attachedBlink.enabled = true;
+			bc2d.enabled = true;
 			mapItemRenderer.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 				return obj.name == attachedItem.spriteName;
 			});
@@ -29,6 +27,8 @@ namespace WordJourney
 //			TransformManager.FindTransform ("ExploreManager").GetComponent<MapGenerator> ().AddMapItemInPool (this.transform);
 
 			gameObject.SetActive (false);
+
+			bc2d.enabled = false;
 
 			pool.AddInstanceToPool (this.gameObject);
 		}

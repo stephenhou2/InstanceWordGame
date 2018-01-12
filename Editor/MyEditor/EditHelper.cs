@@ -29,6 +29,7 @@ namespace WordJourney
 		[MenuItem("EditHelper/TempHelper")]
 		public static void TempHelper(){
 
+
 		}
 
 		[MenuItem("EditHelper/GeneratePlayerJson")]

@@ -104,7 +104,7 @@ namespace WordJourney
 
 			GameManager.Instance.soundManager.PlayExploreBackgroundMusic ();
 
-//			levelData.LoadAllData ();
+			levelData.LoadAllData ();
 
 			currentLevelIndex = levelData.gameLevelIndex;
 
@@ -253,6 +253,10 @@ namespace WordJourney
 			case ItemType.CraftingRecipes:
 				expUICtr.SetUpCraftingRecipesHUD (reward);
 				break;
+			case ItemType.CharacterFragment:
+				tint = string.Format ("获得<color=green>{0}</color>", reward.itemName);
+				expUICtr.SetUpTintHUD (tint);
+				break;
 
 			}
 
@@ -293,14 +297,14 @@ namespace WordJourney
 			battleMonsterCtr.SetUpPropertyCalculator ();
 
 			// 初始化人物被动技能
-			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedEquipmentSkills.Count; i++) {
-				Skill skill = (battlePlayerCtr.agent as Player).attachedEquipmentSkills [i];
+			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedTriggeredSkills.Count; i++) {
+				Skill skill = (battlePlayerCtr.agent as Player).attachedTriggeredSkills [i];
 				skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
 			}
 
 			// 初始化怪物被动技能
-			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedEquipmentSkills.Count; i++) {
-				Skill skill = (battleMonsterCtr.agent as Monster).attachedEquipmentSkills [i];
+			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedTriggeredSkills.Count; i++) {
+				Skill skill = (battleMonsterCtr.agent as Monster).attachedTriggeredSkills [i];
 				skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 			}
 

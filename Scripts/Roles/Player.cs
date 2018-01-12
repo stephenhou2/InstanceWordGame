@@ -74,7 +74,7 @@ namespace WordJourney
 			}
 
 			this.agentName = playerData.agentName;
-			this.agentIconName = playerData.agentIconName;
+//			this.agentIconName = playerData.agentIconName;
 			this.agentLevel = playerData.agentLevel;
 			this.isActive = false;
 
@@ -110,7 +110,7 @@ namespace WordJourney
 			this.totalCoins = playerData.totalCoins;
 			this.experience = playerData.experience;
 
-			this.attachedEquipmentSkills.Clear ();
+			this.attachedTriggeredSkills.Clear ();
 			this.attachedConsumablesSkills.Clear ();
 
 			ResetBattleAgentProperties (false);
@@ -127,7 +127,7 @@ namespace WordJourney
 
 						equipment.attachedSkills.Add (attachedSkill);
 
-						attachedEquipmentSkills.Add (attachedSkill);
+						attachedTriggeredSkills.Add (attachedSkill);
 					}
 				}
 
@@ -183,7 +183,7 @@ namespace WordJourney
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
 				TriggeredSkill attachedSkill = equipment.attachedSkills [i];
-				attachedEquipmentSkills.Remove (attachedSkill);
+				attachedTriggeredSkills.Remove (attachedSkill);
 				equipment.attachedSkills.RemoveAt (i);
 				Destroy (attachedSkill.gameObject);
 			}
@@ -220,7 +220,7 @@ namespace WordJourney
 			for (int i = 0; i < equipment.attachedSkillInfos.Length; i++) {
 				TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i],triggeredSkillsContainer);
 				equipment.attachedSkills.Add (attachedSkill);
-				attachedEquipmentSkills.Add (attachedSkill);
+				attachedTriggeredSkills.Add (attachedSkill);
 				attachedSkill.transform.SetParent (triggeredSkillsContainer);
 			}
 
@@ -746,7 +746,7 @@ namespace WordJourney
 		public PlayerData(Player player){
 
 			this.agentName = player.agentName;
-			this.agentIconName = player.agentIconName;
+//			this.agentIconName = player.agentIconName;
 			this.agentLevel = player.agentLevel;
 			this.isActive = player.isActive;
 

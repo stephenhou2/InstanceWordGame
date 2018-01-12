@@ -33,9 +33,7 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive (true);
-//			bc2d.enabled = true;
-//			mapItemAnimator.enabled = true;
+			bc2d.enabled = true;
 			SetUpLauncher ();
 			SetSortingOrder (-(int)transform.position.y);
 			bulletPool = InstancePool.GetOrCreateInstancePool ("BulletPool", CommonData.poolContainerName);
@@ -44,8 +42,7 @@ namespace WordJourney
 
 		public override void AddToPool (InstancePool pool)
 		{
-//			bc2d.enabled = false;
-//			mapItemAnimator.enabled = false;
+			bc2d.enabled = false;
 			gameObject.SetActive(false);
 			pool.AddInstanceToPool (this.gameObject);
 		}

@@ -28,7 +28,7 @@ namespace WordJourney
 	public abstract class Agent : MonoBehaviour {
 
 		public string agentName;
-		public string agentIconName;
+//		public string agentIconName;
 
 		public bool isActive;
 
@@ -59,9 +59,9 @@ namespace WordJourney
 		public int originalDodge;//基础闪避
 		public int originalCrit;//基础暴击
 		public int originalHit;//基础命中
-		public float originalPhysicalHurtScaler;//基础物理伤害系数
-		public float originalMagicalHurtScaler;//基础魔法伤害系数
-		public float originalCritHurtScaler;//基础暴击系数
+		public float originalPhysicalHurtScaler = 1f;//基础物理伤害系数
+		public float originalMagicalHurtScaler = 1f;//基础魔法伤害系数
+		public float originalCritHurtScaler = 1.5f;//基础暴击系数
 		//*****人物基础信息(无装备，无状态加成时的人物属性)********//
 
 		//********人物只考虑装备加成的属性信息*********//
@@ -82,16 +82,16 @@ namespace WordJourney
 
 
 		//********人物最终的实际属性信息*********//
-		public int mMaxHealth;//实际最大血量
-		public int mHealth;//实际生命
-		public int mMana;//实际法强
-		public int mAttack;//实际攻击力
-		public int mAttackSpeed;//实际攻速
-		public int mArmor;//实际护甲
-		public int mMagicResist;//实际抗性
-		public int mDodge;//实际闪避
-		public int mCrit;//实际暴击
-		public int mHit;//实际命中
+		private int mMaxHealth;//实际最大血量
+		private int mHealth;//实际生命
+		private int mMana;//实际法强
+		private int mAttack;//实际攻击力
+		private int mAttackSpeed;//实际攻速
+		private int mArmor;//实际护甲
+		private int mMagicResist;//实际抗性
+		private int mDodge;//实际闪避
+		private int mCrit;//实际暴击
+		private int mHit;//实际命中
 		//********人物最终的实际属性信息*********//
 
 
@@ -229,7 +229,7 @@ namespace WordJourney
 
 
 
-		public List<TriggeredSkill> attachedEquipmentSkills = new List<TriggeredSkill>();
+		public List<TriggeredSkill> attachedTriggeredSkills = new List<TriggeredSkill>();
 		public List<ConsumablesSkill> attachedConsumablesSkills = new List<ConsumablesSkill> ();
 
 		public List<string> allStatus = new List<string> ();
@@ -270,6 +270,8 @@ namespace WordJourney
 			isActive = true; // 角色初始化后默认可以行动
 
 			mHealth = maxHealth;
+
+			ResetBattleAgentProperties (true);
 
 //			mMana = maxMana;
 

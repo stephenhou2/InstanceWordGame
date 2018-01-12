@@ -22,15 +22,14 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive (true);
-//			bc2d.enabled = true;
+			bc2d.enabled = true;
 			SetSortingOrder (1);
 		}
 
 		public override void AddToPool (InstancePool pool)
 		{
 			gameObject.SetActive (false);
-//			bc2d.enabled = false;
+			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

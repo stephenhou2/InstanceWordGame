@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	
+	using DragonBones;
+	using Transform = UnityEngine.Transform;
 		
 	public class BattleMonsterController : BattleAgentController {
 
@@ -30,10 +31,17 @@ namespace WordJourney
 
 		}
 
-//		public void SetAlive(){
-//			PlayRoleAnim ("wait", 0, null);
-//			SetSortingOrder (-(int)transform.position.y);
-//		}
+		public void KillRoleAnim(){
+			armatureCom.animation.Stop ();
+		}
+
+		public void SetAlive(){
+//			UnityFactory.factory.
+			boxCollider.enabled = true;
+			PlayRoleAnim ("wait", 0, null);
+			SetSortingOrder (-(int)transform.position.y);
+		}
+
 
 		/// <summary>
 		/// 初始化碰到的怪物
@@ -284,9 +292,9 @@ namespace WordJourney
 
 		public void AddToPool(InstancePool pool){
 
+
 			boxCollider.enabled = false;
 			gameObject.SetActive (false);
-			PlayRoleAnim ("", -1, null);
 			pool.AddInstanceToPool (this.gameObject);
 
 		}

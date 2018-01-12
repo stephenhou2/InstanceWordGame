@@ -27,7 +27,8 @@ namespace WordJourney
 		LauncherTowardsRight,
 		Plant,
 		PressSwitch,
-		Crystal
+		Crystal,
+		MapNPC
 	}
 
 	public abstract class MapItem : MonoBehaviour {

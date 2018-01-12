@@ -14,6 +14,8 @@ namespace WordJourney
 
 		public void InitGoodsGroupOfLevel(int level){
 
+			itemsAsGoodsOfCurrentLevel.Clear ();
+
 			GoodsGroup gg = goodsGroupList.Find (delegate(GoodsGroup obj) {
 				return obj.accordLevel == level;
 			});

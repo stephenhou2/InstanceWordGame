@@ -16,15 +16,11 @@ namespace WordJourney
 		[HideInInspector]public int columns; 										
 		[HideInInspector]public int rows;								
 
-		// 地图物品生成器
-//		private MapItemGenerator mapItemGenerator;
 
 		// 地图信息（用于绘制地图）
 		private MapData mapInfo;
 //		private TileInfo tileInfo;
 
-		// 外墙模型
-//		public Transform wallModel;
 		// 地板模型
 		public Transform floorModel;
 		// 地图上npc模型
@@ -34,9 +30,6 @@ namespace WordJourney
 
 		// 地图上掉落的物品模型
 		public Transform rewardItemModel;
-
-		// 地图上的工作台
-//		public Transform workBench;
 
 		public Transform crystalModel;
 
@@ -50,18 +43,15 @@ namespace WordJourney
 		public Transform monstersContainer;
 		public Transform skillEffectsContainer;
 		public Transform rewardsContainer;
-		public Transform crystalsContainer;
 		public Transform otherAnimContainer;
 		public Transform consumablesValidPosTintContainer;
 
 		// 所有的缓存池
 		private InstancePool floorPool;
-		private InstancePool npcPool;
 		private InstancePool mapItemPool;
 		private InstancePool monsterPool;
 		private InstancePool skillEffectPool;
 		private InstancePool rewardItemPool;
-		private InstancePool crystalPool;
 		private InstancePool otherAnimPool;
 		private InstancePool consumablesValidPosTintPool;
 
@@ -73,8 +63,6 @@ namespace WordJourney
 		private GameLevelData levelData;
 
 		public UnityEngine.Material spriteMaterial; 
-
-//		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
 
 		public int[,] mapWalkableInfoArray;
 
@@ -141,7 +129,11 @@ namespace WordJourney
 		// 植物模型
 		public Plant plantModel;
 
+		// 压力开关模型
 		public PressSwitch pressSwitchModel;
+
+
+		private Vector3 transportPositionInMap;
 
 
 		private List<Trap> allTrapsInMap = new List<Trap> ();
@@ -160,6 +152,8 @@ namespace WordJourney
 
 		private Consumables currentUsingConsumables;
 
+
+
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (GameLevelData levelData)
 		{
@@ -169,12 +163,10 @@ namespace WordJourney
 
 			if (poolContainerOfExploreScene.childCount == 0) {
 				floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool",poolContainerOfExploreScene.name);
-				npcPool = InstancePool.GetOrCreateInstancePool ("NPCPool",poolContainerOfExploreScene.name);
 				mapItemPool = InstancePool.GetOrCreateInstancePool ("MapItemPool",poolContainerOfExploreScene.name);
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
 				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
 				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
-				crystalPool = InstancePool.GetOrCreateInstancePool ("CrystalPool", poolContainerOfExploreScene.name);
 				otherAnimPool = InstancePool.GetOrCreateInstancePool ("OtherAnimPool", poolContainerOfExploreScene.name);
 				consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
 			}
@@ -182,8 +174,6 @@ namespace WordJourney
 			AllMapInstancesToPool ();
 
 			this.levelData = levelData;
-
-			levelData.LoadAllData ();
 
 			mapInfo = MapData.GetMapDataOfLevel(levelData.gameLevelIndex);
 
@@ -205,11 +195,19 @@ namespace WordJourney
 
 			SetUpPlayer ();
 
+			ShowTransport ();
+
 			ClearPools ();
 
 
 		}
 
+
+		private void ShowTransport(){
+
+			DirectlyShowSleepingTilesAtPosition (transportPositionInMap);
+
+		}
 
 //		private void SetupAllAnimatorControllers(){
 //
@@ -335,55 +333,54 @@ namespace WordJourney
 
 				if (attachedItemTile.position == position) {
 					type = (AttachedItemType)(attachedItemTile.tileIndex);
-				}
+			
+					switch (type) {
+					case AttachedItemType.Medicine:
+						attachedItem = Item.NewItemWith (100, 1);
+						break;
+					case AttachedItemType.PickAxe:
+						attachedItem = Item.NewItemWith (101, 1);
+						break;
+					case AttachedItemType.Saw:
+						attachedItem = Item.NewItemWith (102, 1);
+						break;
+					case AttachedItemType.Sickle:
+						attachedItem = Item.NewItemWith (103, 1);
+						break;
+					case AttachedItemType.Torch:
+						attachedItem = Item.NewItemWith (104, 1);
+						break;
+					case AttachedItemType.Soil:
+						attachedItem = Item.NewItemWith (105, 1);
+						break;
+					case AttachedItemType.Water:
+						attachedItem = Item.NewItemWith (106, 1);
+						break;
+					case AttachedItemType.Floor:
+						attachedItem = Item.NewItemWith (107, 1);
+						break;
+					case AttachedItemType.Key:
+						attachedItem = Item.NewItemWith (108, 1);
+						break;
+					case AttachedItemType.Tree:
+						int randomPlantId = Random.Range (109, 120);
+						attachedItem = Item.NewItemWith (randomPlantId, 1);
+						break;
+					case AttachedItemType.Switch:
+						attachedItem = Item.NewItemWith (110, 1);
+						break;
+					case AttachedItemType.Scroll:
+						attachedItem = Item.NewItemWith (111, 1);
+						break;
+					case AttachedItemType.Random:
+						attachedItem = GetRandomItemFromType (attachedInfoType);
+						break;
+					}
 
-				switch (type) {
-				case AttachedItemType.Medicine:
-					attachedItem = Item.NewItemWith (100, 1);
-					break;
-				case AttachedItemType.PickAxe:
-					attachedItem = Item.NewItemWith (101, 1);
-					break;
-				case AttachedItemType.Saw:
-					attachedItem = Item.NewItemWith (102, 1);
-					break;
-				case AttachedItemType.Sickle:
-					attachedItem = Item.NewItemWith (103, 1);
-					break;
-				case AttachedItemType.Torch:
-					attachedItem = Item.NewItemWith (104, 1);
-					break;
-				case AttachedItemType.Soil:
-					attachedItem = Item.NewItemWith (105, 1);
-					break;
-				case AttachedItemType.Water:
-					attachedItem = Item.NewItemWith (106, 1);
-					break;
-				case AttachedItemType.Floor:
-					attachedItem = Item.NewItemWith (107, 1);
-					break;
-				case AttachedItemType.Key:
-					attachedItem = Item.NewItemWith (108, 1);
-					break;
-				case AttachedItemType.Tree:
-					int randomPlantId = Random.Range (109, 120);
-					attachedItem = Item.NewItemWith (randomPlantId, 1);
-					break;
-				case AttachedItemType.Switch:
-					attachedItem = Item.NewItemWith (110, 1);
-					break;
-				case AttachedItemType.Scroll:
-					attachedItem = Item.NewItemWith (111, 1);
-					break;
-				case AttachedItemType.Random:
-					attachedItem = GetRandomItemFromType (attachedInfoType);
-					break;
+					return attachedItem;
 				}
-
 			}
-
 			return attachedItem;
-
 		}
 
 		private Item GetRandomItemFromType(AttachedInfoType attachedInfoType){
@@ -438,22 +435,16 @@ namespace WordJourney
 						return obj.npcId == 0;
 					});
 					(trader as Trader).InitGoodsGroupOfLevel (levelData.gameLevelIndex);
-					SetUpNPC (trader, pos);
+					MapNPC mapTrader = GenerateMapItem (MapItemType.MapNPC, pos, null) as MapNPC;
+					mapTrader.npc = trader;
 					break;
 				case AttachedInfoType.NPC:
-//					GenerateMapItem (MapItemType.Billboard, pos, null);
-					#warning npc点作为告示牌
-//					GenerateMapItem(MapItemType.MovableBox,pos,null);
-					#warning 这里先把nPC的位置用来测试发射器
-//					GenerateMapItem (MapItemType.LauncherTowardsRight, pos, null);
-					#warning 这里先把npc位置用来测试植物
-//					int itemCount = Random.Range (1, 4);
-//					Item testPlant = Item.NewItemWith (113, itemCount);
-//					GenerateMapItem (MapItemType.Plant, pos, testPlant);
-					#warning 测试传送阵
-//					GenerateMapItem (MapItemType.Transport, pos, null);
-					#warning 测试压力开关
-					GenerateMapItem (MapItemType.PressSwitch, pos, null);
+					#warning 这里没有其他npc，暂时都初始化为商人
+					NPC npc = GameManager.Instance.gameDataCenter.allNpcs.Find (delegate(NPC obj) {
+						return obj.npcId == 0;
+					});
+					MapNPC mapNpc = GenerateMapItem (MapItemType.MapNPC, pos, null) as MapNPC;
+					mapNpc.npc = npc;
 					break;
 				case AttachedInfoType.Transport:
 					GenerateMapItem (MapItemType.Transport, pos, null);
@@ -477,22 +468,14 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.Stone, pos, null);
 					break;
 				case AttachedInfoType.Tree:
-					
-//					GenerateMapItem (MapItemType.Tree, pos, null);
-					#warning 这里先把树的位置用来测试坑洞
-//					Hole hole = GenerateMapItem (MapItemType.Hole, pos, null) as Hole;
-//					allHolesInMap.Add (hole);
-					#warning 先用树的位置测试可移动箱子
-					GenerateMapItem (MapItemType.MovableBox, pos, null);
+					GenerateMapItem (MapItemType.Tree, pos, null);
 					break;
 				case AttachedInfoType.Switch:
 					GenerateMapItem (MapItemType.Switch, pos, null);
 					break;
 				case AttachedInfoType.TrapOn:
-					#warning 这里暂时先用普通陷阱位置测试火焰陷阱
-					GenerateMapItem (MapItemType.FireTrap, pos, null);
-//					Trap trapOn = GenerateMapItem (MapItemType.NormalTrapOn, pos, null) as Trap;
-//					allTrapsInMap.Add (trapOn);
+					Trap trapOn = GenerateMapItem (MapItemType.NormalTrapOn, pos, null) as Trap;
+					allTrapsInMap.Add (trapOn);
 					break;
 				case AttachedInfoType.TrapOff:
 					Trap trapOff = GenerateMapItem (MapItemType.NormalTrapOff, pos, null) as Trap;
@@ -506,10 +489,7 @@ namespace WordJourney
 					SetUpMonster (pos);
 					break;
 				case AttachedInfoType.Boss://boss点暂时先做地图物品测试点
-//					SetUpBoss (pos);
-					#warning boss点作为可移动地板的潜在移动点
-					allMovableFloorsPositions.Add (pos);
-					mapWalkableInfoArray [(int)pos.x, (int)pos.y] = -1;
+					SetUpBoss (pos);
 					break;
 				case AttachedInfoType.FireTrap:
 					GenerateMapItem (MapItemType.FireTrap, pos, null);
@@ -586,6 +566,7 @@ namespace WordJourney
 			case MapItemType.Transport:
 				mapItem = mapItemPool.GetInstanceWithName<Transport> (transportModel.name, transportModel.gameObject, mapItemsContainer);
 				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 0;
+				transportPositionInMap = position;
 				break;
 			case MapItemType.NormalTrapOff:
 				mapItem = mapItemPool.GetInstanceWithName<NormalTrap> (trapModel.name, trapModel.gameObject, mapItemsContainer);
@@ -660,15 +641,17 @@ namespace WordJourney
 				mapItem = mapItemPool.GetInstanceWithName<Crystal> (crystalModel.name, crystalModel.gameObject, mapItemsContainer);
 				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 				break;
+			case MapItemType.MapNPC:
+				mapItem = mapItemPool.GetInstanceWithName<MapNPC> (mapNpcModel.name, mapNpcModel.gameObject, mapItemsContainer);
+				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
+				break;
 			}
 
 			mapItem.mapItemType = mapItemType;
 
-			mapItem.transform.position = new Vector3 (position.x, position.y, -100f);
+			mapItem.transform.position = new Vector3 (position.x, position.y, 0);
 
 			mapItem.gameObject.SetActive (false);
-
-//			mapItem.SetSortingOrder (-(int)position.y);
 
 			allSleepingOtherItems.Add (mapItem.transform);
 
@@ -724,7 +707,9 @@ namespace WordJourney
 				Tile tile = floorLayer.tileDatas [i];
 
 				Transform floor = floorPool.GetInstance<Transform> (floorModel.gameObject, floorsContainer);
-				floor.position = new Vector3 (tile.position.x, tile.position.y, -100f);
+//				floor.position = new Vector3 (tile.position.x, tile.position.y, -100f);
+				floor.position = new Vector3 (tile.position.x, tile.position.y, 0);
+				floor.gameObject.SetActive (false);
 				if (tile.walkable) {
 					originalMapWalkableInfoArray [(int)tile.position.x, (int)tile.position.y] = 1;
 				}
@@ -784,11 +769,15 @@ namespace WordJourney
 
 //			floor.GetComponent<SpriteRenderer>().sortingLayerName = "Ground";
 
-			floor.transform.position = new Vector3 (position.x, position.y, 0);
+//			floor.transform.position = new Vector3 (position.x, position.y, 0);
 
-			mapWalkableInfoArray [(int)position.x, (int)position.y] = 1;
+			DirectlyShowSleepingTilesAtPosition (position);
 
-			allSleepingFloors.Remove (floor);
+//			floor.gameObject.SetActive (true);
+
+//			mapWalkableInfoArray [(int)position.x, (int)position.y] = 1;
+
+//			allSleepingFloors.Remove (floor);
 
 			ItemsAroundAutoIntoLifeWithBasePoint (position);
 
@@ -822,67 +811,11 @@ namespace WordJourney
 				Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 				bpCtr = player.GetComponent<BattlePlayerController> ();
 			}
-
-
-
+				
 			return bpCtr;
 
 		}
 
-
-
-		/// <summary>
-		/// 初始化制造台
-		/// </summary>
-		/// <param name="position">Position.</param>
-//		private void SetUpWorkBench(Vector2 position){
-//
-//			workBench.position = new Vector3 (position.x, position.y, -100f);
-//
-//			workBench.GetComponent<SpriteRenderer> ().sortingOrder = -(int)position.y;
-//
-//			originalMapWalkableInfoArray[(int)position.x,(int)position.y] = 0;
-//
-//			allSleepingOtherItems.Add (workBench);
-//
-//		}
-
-		/// <summary>
-		/// 初始化地图上的npc
-		/// </summary>
-		/// <param name="npc">Npc.</param>
-		/// <param name="position">Position.</param>
-		private void SetUpNPC(NPC npc, Vector3 position){
-
-			MapNPC mapNpc = npcPool.GetInstance<MapNPC> (mapNpcModel.gameObject, npcsContainer);
-
-			mapNpc.transform.position = new Vector3 (position.x, position.y, -100f);
-
-			SpriteRenderer npcSpriteRenderer = mapNpc.GetComponent<SpriteRenderer> ();
-
-			Sprite npcIcon = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
-				return obj.name == npc.spriteName;
-			});
-
-			npcSpriteRenderer.sprite = npcIcon;
-
-			npcSpriteRenderer.sortingOrder = -(int)position.y;
-
-			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
-
-			mapNpc.npc = npc;
-
-			mapNpc.name = npc.npcName;
-
-			mapNpc.GetComponent<BoxCollider2D> ().enabled = true;
-
-			allSleepingOtherItems.Add (mapNpc.transform);
-
-
-
-//			mapNpcs.Add (mapNpc);
-
-		}
 
 
 		/// <summary>
@@ -902,23 +835,19 @@ namespace WordJourney
 			// 使用上面拿到的怪物模型初始化一个新的怪物
 			Transform monster = monsterPool.GetInstanceWithName<Transform> (monsterModel.gameObject.name, monsterModel.gameObject, monstersContainer);
 
-//			monster.gameObject.SetActive (false);
-
 			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 
-			monster.position = position;
+//			BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
 
-			BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
+//			monster.position = new Vector3 (position.x, position.y, -100f);
 
-			bmCtr.SetSortingOrder (-(int)position.y);
+			monster.position = new Vector3 (position.x, position.y, 0);
 
-			bmCtr.PlayRoleAnim ("wait", 0, null);
+//			bmCtr.PlayRoleAnim ("wait", 0, null);
 
-			bmCtr.transform.position = new Vector3 (position.x, position.y, -100f);
+//			monster.gameObject.SetActive (false);
 
 			allSleepingMonsters.Add (monster);
-
-
 
 		}
 
@@ -988,7 +917,8 @@ namespace WordJourney
 			for (int i = 0; i < allSleepingFloors.Count; i++) {
 				Transform sleepingFloor = allSleepingFloors [i];
 				if(PositionSame(sleepingFloor.position,position)){
-					sleepingFloor.position = new Vector3(position.x,position.y,0);
+//					sleepingFloor.position = new Vector3(position.x,position.y,0);
+					sleepingFloor.gameObject.SetActive (true);
 					allSleepingFloors.RemoveAt (i);
 					break;
 				}
@@ -997,11 +927,11 @@ namespace WordJourney
 			for (int i = 0; i < allSleepingMonsters.Count; i++) {
 				Transform sleepingMonster = allSleepingMonsters [i];
 				if(PositionSame(sleepingMonster.position,position)){
-					sleepingMonster.position = new Vector3(position.x,position.y,0);
+//					sleepingMonster.position = new Vector3(position.x,position.y,0);
 					allSleepingMonsters.RemoveAt (i);
 					allAliveMonsters.Add (sleepingMonster);
-//					sleepingMonster.gameObject.SetActive (true);
-//					sleepingMonster.GetComponent<BattleMonsterController> ().SetAlive ();
+					sleepingMonster.gameObject.SetActive (true);
+					sleepingMonster.GetComponent<BattleMonsterController> ().SetAlive ();
 					break;
 				}
 			}
@@ -1009,7 +939,7 @@ namespace WordJourney
 			for (int i = 0; i < allSleepingOtherItems.Count; i++) {
 				Transform sleepingOther = allSleepingOtherItems [i];
 				if(PositionSame(sleepingOther.position,position)){
-					sleepingOther.position = new Vector3(position.x,position.y,0);
+//					sleepingOther.position = new Vector3(position.x,position.y,0);
 					allSleepingOtherItems.RemoveAt (i);
 					allAliveOtherItems.Add (sleepingOther);
 					sleepingOther.gameObject.SetActive (true);
@@ -1045,7 +975,7 @@ namespace WordJourney
 
 		private float ValidTilesAutoIntoLifeAtPoint(Vector3 position,float delay){
 
-			GetValidTiles (position);
+			InitValidTiles (position);
 
 			if (validSleepingTiles.Count == 0) {
 				return delay;
@@ -1110,6 +1040,8 @@ namespace WordJourney
 
 			yield return new WaitForSeconds (delay);
 
+			floor.gameObject.SetActive (true);
+
 			float timer = 0;
 
 			Vector3 floorTargetPosition = new Vector3 (floor.position.x, floor.position.y, 0);
@@ -1164,6 +1096,14 @@ namespace WordJourney
 			
 			other.gameObject.SetActive (true);
 
+			if (other.GetComponent<MapItem> () != null) {
+				other.GetComponent<MapItem> ().InitMapItem ();
+			}
+
+			if (other.GetComponent<BattleMonsterController> () != null) {
+				other.GetComponent<BattleMonsterController> ().SetAlive ();
+			}
+
 			Vector3 otherTargetPosition = new Vector3 (other.position.x, other.position.y, 0);
 
 			other.position = new Vector3 (otherTargetPosition.x, otherTargetPosition.y + otherOriginalPositionOffsetY, 0);
@@ -1186,10 +1126,6 @@ namespace WordJourney
 			int posX = (int)other.position.x;
 			int posY = (int)other.position.y;
 
-
-			if (other.GetComponent<MapItem> () != null) {
-				other.GetComponent<MapItem> ().InitMapItem ();
-			}
 
 			mapWalkableInfoArray [posX,posY] = originalMapWalkableInfoArray[posX,posY];
 	
@@ -1214,7 +1150,7 @@ namespace WordJourney
 
 		private List<SleepingTile> validSleepingTiles = new List<SleepingTile>();
 
-		private void GetValidTiles(Vector3 position){
+		private void InitValidTiles(Vector3 position){
 
 			validSleepingTiles.Clear ();
 
@@ -1796,10 +1732,10 @@ namespace WordJourney
 //			monsters = null;
 
 			Destroy (floorPool.gameObject);
-			Destroy (npcPool.gameObject);
+//			Destroy (npcPool.gameObject);
 			Destroy (mapItemPool.gameObject);
 			Destroy (monsterPool.gameObject);
-			Destroy (crystalPool.gameObject);
+//			Destropooly (crystalPool.gameObject);
 			Destroy (skillEffectPool.gameObject);
 			Destroy (rewardItemPool);
 			Destroy (otherAnimPool.gameObject);
@@ -1811,15 +1747,38 @@ namespace WordJourney
 		/// 将场景中的地板，npc，地图物品，怪物加入缓存池中
 		/// </summary>
 		private void AllMapInstancesToPool(){
-			floorPool.AddChildInstancesToPool (floorsContainer);
-			npcPool.AddChildInstancesToPool (npcsContainer);
-			mapItemPool.AddChildInstancesToPool (mapItemsContainer);
-			monsterPool.AddChildInstancesToPool (monstersContainer);
-			crystalPool.AddChildInstancesToPool (crystalsContainer);
+			
+			AddFloorsToPool ();
+
+			AddMapItemsToPool();
+
+			AddMonstersToPool();
+
 			skillEffectPool.AddChildInstancesToPool (skillEffectsContainer);
 			rewardItemPool.AddChildInstancesToPool (rewardsContainer);
 			otherAnimPool.AddChildInstancesToPool (otherAnimContainer);
 			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
+		}
+
+		private void AddMapItemsToPool(){
+			while(mapItemsContainer.childCount > 0){
+				mapItemsContainer.GetChild (0).GetComponent<MapItem> ().AddToPool (mapItemPool);
+			}
+		}
+
+		private void AddMonstersToPool(){
+			while(monstersContainer.childCount > 0){
+				monstersContainer.GetChild (0).GetComponent<BattleMonsterController> ().AddToPool (monsterPool);
+			}
+		}
+
+		private void AddFloorsToPool(){
+
+			while(floorsContainer.childCount > 0){
+				Transform floor = floorsContainer.GetChild (0);
+				floor.gameObject.SetActive (false);
+				floorPool.AddInstanceToPool(floor.gameObject);
+			}
 		}
 
 		/// <summary>
@@ -1827,10 +1786,8 @@ namespace WordJourney
 		/// </summary>
 		private void ClearPools(){
 			floorPool.ClearInstancePool ();
-			npcPool.ClearInstancePool ();
 			mapItemPool.ClearInstancePool ();
 			monsterPool.ClearInstancePool ();
-			crystalPool.ClearInstancePool ();
 		}
 
 

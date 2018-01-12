@@ -15,9 +15,7 @@ namespace WordJourney
 		/// </summary>
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive (true);
-//			bc2d.enabled = true;
-//			mapItemAnimator.enabled = true;
+			bc2d.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
 			bc2d.enabled = true;

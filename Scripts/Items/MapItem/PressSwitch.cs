@@ -70,9 +70,8 @@ namespace WordJourney
 
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive (true);
 			isPressOn = false;
-//			bc2d.enabled = true;
+			bc2d.enabled = true;
 			mapItemRenderer.sprite = switchOnSprite;
 			SetSortingOrder (1);
 		}
@@ -80,7 +79,7 @@ namespace WordJourney
 		public override void AddToPool (InstancePool pool)
 		{
 			gameObject.SetActive (false);
-//			bc2d.enabled = false;
+			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

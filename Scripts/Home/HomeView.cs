@@ -80,7 +80,7 @@ namespace WordJourney
 
 			float chapterSelectHUDZoomSpeed = (1 - chapterSelectHUDScale) / chapterSelectPlaneZoomInDuration;
 
-			Debug.Log (Time.time);
+//			Debug.Log (Time.time);
 
 			while (chapterSelectHUDScale < 1) {
 				float zoomInDelta = chapterSelectHUDZoomSpeed * Time.deltaTime;
@@ -89,7 +89,7 @@ namespace WordJourney
 				yield return null;
 			}
 
-			Debug.Log (Time.time);
+//			Debug.Log (Time.time);
 
 			chapterSelectHUD.localScale = Vector3.one;
 

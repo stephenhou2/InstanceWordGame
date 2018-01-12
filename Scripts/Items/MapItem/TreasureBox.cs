@@ -28,10 +28,8 @@ namespace WordJourney
 		/// </summary>
 		public override void InitMapItem ()
 		{
-//			gameObject.SetActive (true);
-//			bc2d.enabled = true;
-//			mapItemAnimator.enabled = true;
 			bc2d.enabled = true;
+//			Debug.Log ("init tb " + mapItemAnimator.GetBool ("Play"));
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
 		}
@@ -39,7 +37,7 @@ namespace WordJourney
 		public override void AddToPool (InstancePool pool)
 		{
 			gameObject.SetActive (false);
-//			bc2d.enabled = false;
+			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
 
@@ -68,6 +66,8 @@ namespace WordJourney
 
 			AnimatorStateInfo stateInfo = mapItemAnimator.GetCurrentAnimatorStateInfo (0);
 
+		
+
 			while (stateInfo.normalizedTime < 1) {
 
 				yield return null;
@@ -80,6 +80,8 @@ namespace WordJourney
 			if (walkableAfterChangeStatus) {
 				bc2d.enabled = false;
 			}
+
+//			Debug.Log ("anim end " + mapItemAnimator.GetBool ("Play"));
 
 			AnimEnd ();
 
