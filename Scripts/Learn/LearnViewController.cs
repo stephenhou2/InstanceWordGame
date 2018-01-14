@@ -81,7 +81,7 @@ namespace WordJourney
 		// 当前正在学习的单词（未掌握单词列表的首项）
 		private LearnWord currentLearningWord{
 			get{
-				if (ungraspedWordsList.Count > 0) {
+				if (beginWithLearn && ungraspedWordsList.Count > 0) {
 					return ungraspedWordsList [0];
 				} else if (currentExamination != null) {
 					return currentExamination.question;
@@ -132,6 +132,8 @@ namespace WordJourney
 		/// 初始化学习界面
 		/// </summary>
 		public void SetUpLearnView(){
+			Time.timeScale = 0;
+			SoundManager.Instance.PauseBgm ();
 			StartCoroutine ("SetUpViewAfterDataReady");
 		}
 
@@ -194,6 +196,8 @@ namespace WordJourney
 		/// 初始化本次要学习的单词数组
 		/// </summary>
 		private void InitWordsToLearn(){
+
+			ungraspedWordsList.Clear ();
 
 			mySql = MySQLiteHelper.Instance;
 
@@ -325,6 +329,7 @@ namespace WordJourney
 					Examination learnExam = new Examination (wordsArray [i], wordsArray, examType);  
 					learnExaminationsList.Add (learnExam); 
 				}
+					
 
 				learnView.SetUpLearnViewWithLearnExam (learnExaminationsList [0]);
 
@@ -464,6 +469,8 @@ namespace WordJourney
 			if (selectWord.wordId == currentExamination.question.wordId) {
 				Debug.Log ("选择正确");
 
+				SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_RightTint");
+
 				correctWordCount++;
 
 				coinGain++;
@@ -487,6 +494,8 @@ namespace WordJourney
 			} else {
 				// 如果选择错误
 				Debug.Log ("选择错误");
+
+				SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_WrongTint");
 
 				// 单词的背错次数+1
 				GetWordFromWordsToLearnArrayWith(currentExamination.question.wordId).ungraspTimes++;
@@ -541,9 +550,9 @@ namespace WordJourney
 				wordsToLearnArray [i] = null;
 			}
 
-			ungraspedWordsList.Clear ();
-
-			finalExaminationsList.Clear ();
+//			ungraspedWordsList.Clear ();
+//
+//			finalExaminationsList.Clear ();
 
 			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
@@ -555,6 +564,7 @@ namespace WordJourney
 			Player.mainPlayer.totalCoins += coinGain;
 
 			learnView.ShowFinishLearningHUD (coinGain,correctWordCount);
+
 
 		}
 
@@ -574,6 +584,12 @@ namespace WordJourney
 
 		public void QuitLearnView(bool finishLearning){
 
+			ungraspedWordsList.Clear ();
+
+			finalExaminationsList.Clear ();
+
+			Time.timeScale = 1f;
+
 			mySql.CloseConnection (CommonData.dataBaseName);
 
 			learnView.QuitLearnView ();
@@ -582,6 +598,7 @@ namespace WordJourney
 
 			if (em != null) {
 				GameManager.Instance.UIManager.HideCanvas ("LearnCanvas");
+				SoundManager.Instance.ResumeBgm ();
 				if (finishLearning) {
 					ExploreManager exploreManager = em.GetComponent<ExploreManager> ();
 					exploreManager.ChangeCrystalStatus ();

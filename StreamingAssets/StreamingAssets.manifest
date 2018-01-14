@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 1706729834
+CRC: 3373769749
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -18,34 +18,32 @@ AssetBundleManifest:
       Name: explore/monsters
       Dependencies: {}
     Info_5:
+      Name: learn/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_6:
+      Name: home/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_7:
+      Name: skills/skills
+      Dependencies: {}
+    Info_8:
+      Name: unlockeditems/canvas
+      Dependencies:
+        Dependency_0: ui/icons
+    Info_9:
       Name: explore/scene
       Dependencies:
         Dependency_0: ui/icons
         Dependency_1: item/icons
         Dependency_2: explore/mapicons
-    Info_6:
-      Name: learn/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_7:
-      Name: home/canvas
-      Dependencies:
-        Dependency_0: ui/icons
-    Info_8:
-      Name: skills/skills
-      Dependencies: {}
-    Info_9:
-      Name: record/canvas
-      Dependencies:
-        Dependency_0: ui/icons
     Info_10:
-      Name: bag/canvas
+      Name: spell/canvas
       Dependencies:
         Dependency_0: ui/icons
-        Dependency_1: item/icons
-        Dependency_2: skills/icons
     Info_11:
-      Name: spell/canvas
+      Name: record/canvas
       Dependencies:
         Dependency_0: ui/icons
     Info_12:
@@ -53,6 +51,8 @@ AssetBundleManifest:
       Dependencies:
         Dependency_0: ui/icons
     Info_13:
-      Name: unlockeditems/canvas
+      Name: bag/canvas
       Dependencies:
         Dependency_0: ui/icons
+        Dependency_1: item/icons
+        Dependency_2: skills/icons

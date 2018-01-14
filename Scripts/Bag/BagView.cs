@@ -74,7 +74,7 @@ namespace WordJourney
 			this.player = Player.mainPlayer;
 
 			Transform poolContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfBagCanvas");
-			Transform modelContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfBagCanvas");
+//			Transform modelContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfBagCanvas");
 
 			if (poolContainerOfBagCanvas.childCount == 0) {
 				//创建缓存池

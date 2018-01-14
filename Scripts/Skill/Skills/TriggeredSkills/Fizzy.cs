@@ -64,18 +64,20 @@ namespace WordJourney
 			
 		private IEnumerator FizzyForDuration(BattleAgentController affectedAgent){
 			yield return new WaitForSeconds (duration);
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill<TriggeredSkill> (this);
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			affectedAgent.Fight ();
 		}
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			StopCoroutine (fizzyCoroutine);
+			CancelSkillEffect ();
 		}
 
 		public override void CancelSkillEffect ()
 		{
-			StopCoroutine (fizzyCoroutine);
+			if (fizzyCoroutine != null) {
+				StopCoroutine (fizzyCoroutine);
+			}
 		}
 
 	}

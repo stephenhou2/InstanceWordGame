@@ -60,7 +60,35 @@ namespace WordJourney
 		public Item GetRandomPossibleGoods(){
 			int randomIndex = Random.Range (0, possibleItemIdsAsGoods.Length);
 			int goodsIdAsItem = possibleItemIdsAsGoods [randomIndex];
+			if (goodsIdAsItem == -2) {
+				goodsIdAsItem = GetRandomUnlockScrollId ();
+			} else if (goodsIdAsItem == -3) {
+				goodsIdAsItem = GetRandomCraftingRecipeId ();
+			}
 			return Item.NewItemWith (goodsIdAsItem, 1);
+		}
+
+		private int GetRandomUnlockScrollId(){
+
+			int randomUnlockScrollId = 0;
+
+			int type = Random.Range (0, 2);
+
+			switch (type) {
+			case 0:
+				randomUnlockScrollId = 200 + Random.Range (Equipment.minProducableEquipmentId, Equipment.maxProducableEquipmentId + 1);
+				break;
+			case 1:
+				randomUnlockScrollId = 200 + Random.Range (Consumables.minProducableConsumablesId, Consumables.maxProducableConsumablesId + 1);
+				break;
+			}
+
+			return randomUnlockScrollId;
+		}
+
+		private int GetRandomCraftingRecipeId(){
+			int randomCraftingRecipeId = 400 + Random.Range (Equipment.minCraftingEquipmentId, Equipment.maxCraftingEquipmentId + 1);
+			return randomCraftingRecipeId;
 		}
 
 	}

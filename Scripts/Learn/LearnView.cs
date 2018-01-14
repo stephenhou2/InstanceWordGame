@@ -119,13 +119,15 @@ namespace WordJourney
 
 		private IEnumerator ExplainationShowAndHideAnim(){
 
-			yield return new WaitForSeconds (2.5f);
+			yield return new WaitForSecondsRealtime (2.5f);
 
-			explainationText.DOColor (new Color (1, 1, 1, 0), explainationFadeOutDuration).OnComplete (delegate {
+			Tween colorTween = explainationText.DOColor (new Color (1, 1, 1, 0), explainationFadeOutDuration).OnComplete (delegate {
 				wordsLearnOperationButtonsContainer.gameObject.SetActive (true);
 				explainationText.enabled = false;
 				explainationText.color = new Color(1,1,1,1);
 			});
+
+			colorTween.SetUpdate (true);
 
 			EnableInteractivity ();
 		}
@@ -285,9 +287,10 @@ namespace WordJourney
 
 		public void ShowAccordAnswerOfCurrentSelectedChoice(){
 			DisableInteractivity ();
-			currentSelectChoice.Find ("AccordAnswer").DOLocalMoveY (55, 1.0f).OnComplete (delegate {
+			Tween accordAnswerMove = currentSelectChoice.Find ("AccordAnswer").DOLocalMoveY (55, 1.0f).OnComplete (delegate {
 				EnableInteractivity();
 			});
+			accordAnswerMove.SetUpdate (true);
 		}
 
 		public void ShowRightAnswerAndEnterNextExam(int correctAnswerIndex, Examination nextExam){
@@ -310,13 +313,14 @@ namespace WordJourney
 		}
 
 		private IEnumerator StopForAWhile(){
-			yield return new WaitForSeconds (2f);
+			yield return new WaitForSecondsRealtime (2f);
+
 			isShowRightAnswerFinished = true;
 			EnableInteractivity ();
 		}
 
 		private IEnumerator StopForAWhileAndEnterNextExam(Examination nextExam){
-			yield return new WaitForSeconds (2f);
+			yield return new WaitForSecondsRealtime (2f);
 //			SetUpLearnViewWithFinalExam (nextExam, nextExam.GetCurrentExamType ());
 			isShowRightAnswerFinished = true;
 			EnableInteractivity ();
@@ -326,7 +330,8 @@ namespace WordJourney
 		public void UpdateLearningProgress(int learnedCount, int totalCount,bool isAnim){
 			float fillAmount = (float)learnedCount / totalCount;
 			if (isAnim) {
-				learnProgressBar.DOFillAmount (fillAmount, 0.5f);
+				Tween progressBarUpdate = learnProgressBar.DOFillAmount (fillAmount, 0.5f);
+				progressBarUpdate.SetUpdate (true);
 			} else {
 				learnProgressBar.fillAmount = fillAmount;
 			}
@@ -371,11 +376,13 @@ namespace WordJourney
 			crystal.localPosition = new Vector3(0,500,0);
 			crystal.GetComponent<Image> ().enabled = true;
 
-			crystal.DOLocalMove (new Vector3 (-90, 600, 0), 0.5f).OnComplete (delegate {
+			Tween crystalMove = crystal.DOLocalMove (new Vector3 (-90, 600, 0), 0.5f).OnComplete (delegate {
 				crystal.GetComponent<Image> ().enabled = false;
 				crystalPool.AddInstanceToPool(crystal.gameObject);
 				crystalHarvestCount.text = totalCount.ToString ();
 			});
+
+			crystalMove.SetUpdate (true);
 		}
 
 		public void QuitLearnView(){

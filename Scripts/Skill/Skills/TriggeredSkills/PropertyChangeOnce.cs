@@ -126,7 +126,7 @@ namespace WordJourney
 		private IEnumerator ResetPropertyWhenTimeOut(BattleAgentController affectedAgent,PropertyType propertyType,float duration){
 			yield return new WaitForSeconds (duration);
 			affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent,propertyType, -skillSourceValue);
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill (this);
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			affectedAgent = null;
 
 		}
@@ -140,7 +140,7 @@ namespace WordJourney
 			if (ResetPropertyCoroutine != null) {
 				StopCoroutine (ResetPropertyCoroutine);
 			}
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill (this);
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 
 			if (propertyType == PropertyType.Health) {
 				return;
@@ -166,8 +166,8 @@ namespace WordJourney
 			}
 
 //			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -skillSourceValue);
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill (this);
+			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 
 		}
 

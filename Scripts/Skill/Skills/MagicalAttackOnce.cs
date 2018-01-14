@@ -47,8 +47,8 @@ namespace WordJourney
 			}
 
 			//原始魔法伤害值
-			self.propertyCalculator.magicalHurtToEnemy = skillSourceValue;
-//			Debug.LogFormat ("{0}魔法攻击造成{1}魔法伤害", self.agent.agentName, oriPhysicalHurt);
+			self.propertyCalculator.magicalHurtToEnemy += skillSourceValue;
+			Debug.LogFormat ("{0}魔法攻击造成{1}魔法伤害", self.agent.agentName, skillSourceValue);
 
 
 			// 执行己方攻击命中的回调

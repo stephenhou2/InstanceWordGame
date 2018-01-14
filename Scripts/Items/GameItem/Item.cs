@@ -112,7 +112,7 @@ namespace WordJourney{
 				itemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
 					return obj.itemId == itemId - 400;
 				});
-				newItem = new CraftingRecipes (itemModel);
+				newItem = new CraftingRecipe (itemModel);
 			}
 
 			return newItem;

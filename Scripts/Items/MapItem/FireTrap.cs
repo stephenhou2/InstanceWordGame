@@ -12,6 +12,8 @@ namespace WordJourney
 
 		private Vector3 agentOriPos;
 
+		public Animator mapItemAnimator;
+
 		private IEnumerator fireTriggeredCoroutine;
 
 		private IEnumerator lifeLoseCoroutine;
@@ -35,7 +37,6 @@ namespace WordJourney
 
 
 		public override void AddToPool(InstancePool pool){
-			gameObject.SetActive (false);
 			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
@@ -55,6 +56,7 @@ namespace WordJourney
 			isTrapOn = false;
 			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 1;
 			mapGenerator.AddMapItemInPool (this.transform);
+			
 		}
 
 		public override void OnTriggerEnter2D (Collider2D col)
@@ -69,7 +71,7 @@ namespace WordJourney
 
 			Debug.LogFormat ("oriPos:{0}----currentAgentPos:{1}", agentOriPos, col.transform.position);
 
-			GameManager.Instance.soundManager.PlayMapEffectClips(audioClipName);
+			SoundManager.Instance.PlayAudioClip("MapEffects/" + audioClipName);
 
 			BattleAgentController ba = col.GetComponent<BattleAgentController> ();
 

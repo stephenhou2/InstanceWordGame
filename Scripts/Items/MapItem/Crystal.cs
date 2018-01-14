@@ -9,9 +9,12 @@ namespace WordJourney
 
 		public bool isExausted;
 
+		public Animator mapItemAnimator;
+
 		public override void InitMapItem ()
 		{
 			isExausted = false;
+			bc2d.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
 		}
@@ -27,12 +30,8 @@ namespace WordJourney
 		}
 
 		public override void  AddToPool(InstancePool pool){
-
-			gameObject.SetActive (false);
 			bc2d.enabled = false;
-			isExausted = false;
 			pool.AddInstanceToPool (this.gameObject);
-
 		}
 
 	}

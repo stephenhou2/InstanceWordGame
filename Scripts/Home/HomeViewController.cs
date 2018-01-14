@@ -76,6 +76,8 @@ namespace WordJourney
 
 		public void OnExploreButtonClick(){
 
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
+
 			homeView.SetUpChapterSelectPlane ();
 
 		}
@@ -85,6 +87,8 @@ namespace WordJourney
 		}
 
 		public void SelectChapter(int chapterIndex){
+
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			
 			Player.mainPlayer.currentLevelIndex = 5 * chapterIndex;
 

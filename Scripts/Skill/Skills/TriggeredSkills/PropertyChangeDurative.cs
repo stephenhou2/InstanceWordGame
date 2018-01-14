@@ -97,8 +97,8 @@ namespace WordJourney
 			}
 
 //			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -skillSourceValue);
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill (this);
+			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			affectedAgent = null;
 
 		}
@@ -147,7 +147,7 @@ namespace WordJourney
 
 			}
 
-			ba.propertyCalculator.RemoveTriggeredSkill (this);
+			ba.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 		}
 
 		public override void CancelSkillEffect ()
@@ -156,8 +156,8 @@ namespace WordJourney
 				StopCoroutine (effectCoroutine);
 			}
 
-			affectedAgent.propertyCalculator.RemoveTriggeredSkill (this);
-			affectedAgent = null;
+			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
+//			affectedAgent = null;
 
 			if (propertyType == PropertyType.Health) {
 				return;

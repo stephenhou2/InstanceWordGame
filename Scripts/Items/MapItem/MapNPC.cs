@@ -17,7 +17,6 @@ namespace WordJourney{
 		public override void AddToPool (InstancePool pool)
 		{
 			bc2d.enabled = false;
-			this.gameObject.SetActive (false);
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

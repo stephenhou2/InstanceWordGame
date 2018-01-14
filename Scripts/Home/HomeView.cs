@@ -41,6 +41,8 @@ namespace WordJourney
 
 		public void SetUpChapterSelectPlane(){
 
+
+
 			int maxUnlockChapterIndex = Player.mainPlayer.maxUnlockLevelIndex / 5;
 
 			for (int i = 0; i < maxUnlockChapterIndex + 1; i++) {

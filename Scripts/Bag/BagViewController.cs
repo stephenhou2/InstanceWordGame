@@ -24,43 +24,43 @@ namespace WordJourney
 		void Awake(){
 
 			#warning forTest init some equipments for test
-			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
-				for (int i = 0; i < 3; i++) {
-
-//					Debug.Log (GameManager.Instance.gameDataCenter.allItemModels.Count);
-
-					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
-						return obj.itemId == i;
-					});
-
-					Equipment e = new Equipment (im,1);
-
-					Player.mainPlayer.AddItem (e);
-				}
-
-				for (int i = 100; i < 120; i++) {
-					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-						return obj.itemId == i;
-					});
-
-					Consumables c = new Consumables (im,1);
-
-					Player.mainPlayer.AddItem (c);
-				}
-			}
+//			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
+//				for (int i = 0; i < 3; i++) {
+//
+////					Debug.Log (GameManager.Instance.gameDataCenter.allItemModels.Count);
+//
+//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate (ItemModel obj) {
+//						return obj.itemId == i;
+//					});
+//
+//					Equipment e = new Equipment (im,1);
+//
+//					Player.mainPlayer.AddItem (e);
+//				}
+//
+//				for (int i = 100; i < 120; i++) {
+//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//						return obj.itemId == i;
+//					});
+//
+//					Consumables c = new Consumables (im,1);
+//
+//					Player.mainPlayer.AddItem (c);
+//				}
+//			}
 
 			#warning 测试解锁卷轴
-			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
-				for(int i = 0;i<5;i++){
-					Item unlockScroll = Item.NewItemWith (200 + i,1);
-					Player.mainPlayer.AddItem (unlockScroll);
-				}
-			}
-
-			Player.mainPlayer.AddItem (Item.NewItemWith (200, 1));
-
-			Player.mainPlayer.AddItem (Item.NewItemWith (430, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (459, 1));
+//			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
+//				for(int i = 0;i<5;i++){
+//					Item unlockScroll = Item.NewItemWith (200 + i,1);
+//					Player.mainPlayer.AddItem (unlockScroll);
+//				}
+//			}
+//
+//			Player.mainPlayer.AddItem (Item.NewItemWith (200, 1));
+//
+//			Player.mainPlayer.AddItem (Item.NewItemWith (430, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (459, 1));
 
 //			for (int i = 0; i < 114; i++) {
 //
@@ -113,7 +113,7 @@ namespace WordJourney
 
 		public void OnItemInBagClick(Item item){
 			currentSelectItem = item;
-			if (item is CraftingRecipes) {
+			if (item is CraftingRecipe) {
 				bagView.SetUpCraftRecipesDetailHUD (item);
 			} else {
 				bagView.SetUpItemDetailHUD (item);
@@ -181,11 +181,11 @@ namespace WordJourney
 			case "草药":
 			case "蓝莓":
 			case "菠菜":
-			case "香蕉":
-			case "菠萝":
+			case "胡萝卜":
+			case "樱桃":
 			case "南瓜":
-			case "葡萄":
-			case "柠檬":
+			case "蘑菇":
+			case "辣椒":
 				propertyChange = Player.mainPlayer.UseMedicines (consumables);
 				consumblesUsedInExploreScene = false;
 				bagView.SetUpPlayerStatusPlane (propertyChange);
@@ -201,6 +201,7 @@ namespace WordJourney
 			case "火把":
 			case "水":
 			case "地板":
+			case "土块":
 				consumblesUsedInExploreScene = true;
 				break;
 			}
@@ -288,10 +289,10 @@ namespace WordJourney
 
 		public void CraftCurrentSelectItem(){
 
-			CraftingRecipes craftRecipes = currentSelectItem as CraftingRecipes;
+			CraftingRecipe craftRecipe = currentSelectItem as CraftingRecipe;
 
 			ItemModel craftItemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == craftRecipes.craftItemId;
+				return obj.itemId == craftRecipe.craftItemId;
 			});
 
 			for (int i = 0; i < craftItemModel.itemInfosForProduce.Length; i++) {

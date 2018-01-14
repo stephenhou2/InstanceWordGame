@@ -26,7 +26,7 @@ namespace WordJourney
 
 		public Button craftButton;
 
-		[HideInInspector]public CraftingRecipes craftingRecipes;
+		[HideInInspector]public CraftingRecipe craftingRecipe;
 
 		private float zoomInDuration = 0.2f;
 		private IEnumerator zoomInCoroutine;
@@ -43,11 +43,15 @@ namespace WordJourney
 		}
 
 		public void SetUpCraftingRecipesHUD(Item item){
+
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
+
+			Time.timeScale = 0;
 			
-			craftingRecipes = item as CraftingRecipes;
+			craftingRecipe = item as CraftingRecipe;
 
 			ItemModel craftingItem = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == craftingRecipes.craftItemId;
+				return obj.itemId == craftingRecipe.craftItemId;
 			});
 
 			Sprite craftingItemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
@@ -187,6 +191,12 @@ namespace WordJourney
 			}
 
 			gameObject.SetActive (false);
+
+			if (TransformManager.FindTransform ("BagCanvas").GetComponent<Canvas> ().isActiveAndEnabled) {
+				return;
+			}
+
+			Time.timeScale = 1f;
 
 		}
 

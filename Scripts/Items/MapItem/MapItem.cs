@@ -35,8 +35,6 @@ namespace WordJourney
 
 		public string audioClipName;
 
-		protected Animator mapItemAnimator;
-
 		protected SpriteRenderer mapItemRenderer;
 
 		protected CallBack animEndCallBack;
@@ -47,14 +45,9 @@ namespace WordJourney
 
 		protected virtual void Awake(){
 
-			mapItemAnimator = GetComponent<Animator> ();
-
 			mapItemRenderer = GetComponent<SpriteRenderer> ();
 
 			bc2d = GetComponent<BoxCollider2D> ();
-
-//			InitMapItem ();
-
 		}
 
 		public abstract void InitMapItem ();

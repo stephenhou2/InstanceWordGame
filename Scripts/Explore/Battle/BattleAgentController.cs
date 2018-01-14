@@ -117,7 +117,7 @@ namespace WordJourney
 
 		}
 
-		public void SetSortingOrder(int order){
+		public virtual void SetSortingOrder(int order){
 			armatureCom.sortingOrder = order;
 		}
 
@@ -327,18 +327,14 @@ namespace WordJourney
 		/// <param name="animName">触发器名称</param>
 		public void SetEffectAnim(string triggerName){
 
-
-
 			if(triggerName != string.Empty){
 
 				Transform skillEffect = null;
 				Animator skillEffectAnim = null;
 
-
 				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
 
 				skillEffectAnim = skillEffect.GetComponent<Animator> ();
-
 
 				skillEffectAnim.SetTrigger (triggerName);
 
@@ -423,6 +419,21 @@ namespace WordJourney
 
 		public abstract void AgentDie ();
 
+		public void StopCoroutinesWhenFightEnd (){
+			
+			if (attackCoroutine != null) {
+				StopCoroutine (attackCoroutine);
+			}
+
+			if (waitRoleAnimEndCoroutine != null) {
+				StopCoroutine (waitRoleAnimEndCoroutine);
+			}
+
+			StopCoroutine ("PlayAgentShake");
+
+			modelActive.transform.localPosition = Vector3.zero;
+		}
+
 		public abstract void UpdateStatusPlane ();
 
 		public void ExcuteBeforeFightSkillCallBacks(BattleAgentController enemy){
@@ -496,7 +507,7 @@ namespace WordJourney
 
 
 		/// <summary>
-		/// 清除角色身上所有的非持续性效果状态
+		/// 清除角色身上所有的战斗回调和触发型技能效果
 		/// </summary>
 		public void ClearAllEffectStatesAndSkillCallBacks(){
 
@@ -507,7 +518,7 @@ namespace WordJourney
 			beHitTriggerExcutors.Clear ();
 			fightEndTriggerExcutors.Clear ();
 
-			propertyCalculator.ClearAllSkills<TriggeredSkill> ();
+			propertyCalculator.ClearSkillsOfType<TriggeredSkill> ();
 		}
 
 		/// <summary>
@@ -524,11 +535,7 @@ namespace WordJourney
 			cb ();
 		}
 
-		protected void MoveAgentToDieZone(){
 
-			transform.position = new Vector3 (0, 0, 100);
-
-		}
 
 	}
 }

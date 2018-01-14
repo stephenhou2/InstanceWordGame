@@ -30,7 +30,7 @@ namespace WordJourney
 
 		private IEnumerator TintHUDLatelyDisappear(){
 
-			yield return new WaitForSeconds (tintHUDShowDuration);
+			yield return new WaitForSecondsRealtime (tintHUDShowDuration);
 
 			gameObject.SetActive (false);
 		}

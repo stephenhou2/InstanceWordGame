@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 492907829
+CRC: 58867511
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 5e861a28fe4fe313968646bc7212b520
+    Hash: 8c5a986a34b1017b8343ee322efb507e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: b983925acda8b18e71d1d5cd4fd5fff4
+    Hash: 093c0bf9f35780faab89424dceac69ef
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -32,6 +32,10 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 1a64e5b0e436d4bed9780211ae245f7b, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: d92da682ba53f4e5bb0e96f945b42b58, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a27f6ab34bf614f0fac8c5aa11e8fc24, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 6f46fce80bb83409ea50f974a4700dfd, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: b7609e5a17e6e4337818965107391bec, type: 3}
@@ -41,10 +45,40 @@ ClassTypes:
   Script: {fileID: 11500000, guid: f825bb5ce93d6ab429dfa508444119b0, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: cdb2adfce6e55433d9ebd843d448bb0a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7fae620e8b72b412e9a9ff2edbf369be, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0f7abe8e3b1e0497daea0d713eb81d4b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5bea1def3cacb4818982c1a1432cf99a, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Explore/Monsters/Pumpkin.prefab
-- Assets/Prefabs/Explore/Monsters/FireFox.prefab
-- Assets/Prefabs/Explore/Monsters/LitttleFox.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/57_StrongCow.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/58_StrongWolf.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/15_RotateMouse.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/52_LittleDragon.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/03_Turtle.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/06_LittleFox.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/01_Pumpkin.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/56_FireFox.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/16_Mouth.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/51_NeedleMouse.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/14_LittleShark.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/59_Demon.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/50_SkeletonWarrior.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/54_NightCat.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/11_Zoombie.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/08_Spider.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/09_HornMushroom.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/05_StoneMan.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/17_DragonBird.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/07_RedMouse.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/55_Orc.prefab
+- Assets/Prefabs/Explore/NewMonsters/Boss/53_EyeGhost.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/12_Slurry.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/04_Bamboo.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/02_Snake.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/10_Monkey.prefab
+- Assets/Prefabs/Explore/NewMonsters/NormalMonster/13_BallBat.prefab
 Dependencies: []

@@ -102,7 +102,9 @@ namespace WordJourney
 				yield return null;
 			}
 
-			GameManager.Instance.soundManager.PlayExploreBackgroundMusic ();
+			if (!SoundManager.Instance.bgmAS.isPlaying) {
+				SoundManager.Instance.PlayBgmAudioClip ("BGM/Sneaking_Night");
+			}
 
 			levelData.LoadAllData ();
 
@@ -413,7 +415,7 @@ namespace WordJourney
 
 			TrapSwitch trapSwitch = switchTrans.GetComponent<TrapSwitch>();
 
-			GameManager.Instance.soundManager.PlayMapEffectClips (trapSwitch.audioClipName);
+			SoundManager.Instance.PlayAudioClip ("MapEffects/" + trapSwitch.audioClipName);
 
 			trapSwitch.ChangeSwitchStatus ();
 
@@ -433,7 +435,8 @@ namespace WordJourney
 			// 如果该宝箱不需要使用钥匙开启
 			if (tb.unlockItemName == "") {
 
-				GameManager.Instance.soundManager.PlayMapEffectClips (tb.audioClipName);
+				SoundManager.Instance.PlayAudioClip ("MapEffect/" + tb.audioClipName);
+			
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockTreasureBox (()=>{
@@ -460,7 +463,7 @@ namespace WordJourney
 			if (key != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (tb, key);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少钥匙");
+				expUICtr.SetUpTintHUD ("缺少打开箱子的工具");
 			}
 
 		}
@@ -528,6 +531,19 @@ namespace WordJourney
 		}
 
 		private void EnterPlant(Transform plantTransform){
+
+			Plant obstacle = plantTransform.GetComponent<Plant>();
+
+			Consumables tool = Player.mainPlayer.allConsumablesInBag.Find (delegate(Consumables obj) {
+				return obj.itemName == "镰刀";
+			});
+
+			if (tool != null) {
+				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
+			} else {
+				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具");
+			}
+
 			Debug.Log ("碰到了植物");
 		}
 
@@ -553,8 +569,12 @@ namespace WordJourney
 			battlePlayerCtr.RemoveTriggeredSkillEffectFromAgent ();
 			battleMonsterCtr.RemoveTriggeredSkillEffectFromAgent ();
 
+			Debug.Log (battlePlayerCtr.agent.health);
+
 			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
 			battleMonsterCtr.agent.ResetBattleAgentProperties (true);
+
+//			Debug.Log (battlePlayerCtr.agent.health);
 
 			FightEndCallBacks ();
 
@@ -564,7 +584,7 @@ namespace WordJourney
 
 			Transform trans = monsterTransArray [0];
 
-			Vector3 monsterPos = trans.position;
+			Vector3 monsterPos = trans.GetComponent<BattleMonsterController> ().originalPos;
 
 			// 0.1为位置偏差修正【如果怪物在（10，10）点，可能实际的位置数据为（10.023456，9.023455），故加上0.1作为偏差修正】
 			int X = Mathf.RoundToInt(monsterPos.x);
@@ -576,7 +596,13 @@ namespace WordJourney
 
 			player.experience += trans.GetComponent<Monster> ().rewardExperience;//更新玩家经验值
 
-			player.LevelUpIfExperienceEnough ();//判断是否升级
+			bool levelUp = player.LevelUpIfExperienceEnough ();//判断是否升级
+
+			if (levelUp) {
+				battlePlayerCtr.SetEffectAnim ("LevelUp");
+				SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
+				battlePlayerCtr.UpdateStatusPlane ();
+			}
 
 			int characterIndex = Random.Range (0, 26);
 
@@ -588,6 +614,12 @@ namespace WordJourney
 
 			ResetCamareAndContinueMove ();
 
+		}
+
+		private void PlayLevelUpAnim(){
+			battlePlayerCtr.SetEffectAnim ("LevelUp");
+			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateAgentStatusPlane ();
+			SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
 		}
 
 		private void BattlePlayerLose(){
@@ -658,6 +690,8 @@ namespace WordJourney
 
 		public void RefrestCurrentLevel(){
 
+			mapGenerator.PrepareToResetMap ();
+
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
@@ -676,7 +710,7 @@ namespace WordJourney
 
 			player.currentLevelIndex++;
 
-			if (player.currentLevelIndex >= 5) {
+			if (player.currentLevelIndex >= 50) {
 				Debug.Log ("通关");
 				return;
 			}
@@ -684,9 +718,13 @@ namespace WordJourney
 			if (player.currentLevelIndex > player.maxUnlockLevelIndex) {
 				player.maxUnlockLevelIndex = player.currentLevelIndex;
 			}
+
+			GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
 				
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
+
+
 
 			SetUpExploreView (levelData);
 
@@ -696,7 +734,7 @@ namespace WordJourney
 		public void QuitExploreScene(bool saveData){
 
 			if (saveData) {
-				GameManager.Instance.persistDataManager.SavePlayerData ();
+				GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
 			}
 
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();

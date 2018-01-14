@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace WordJourney
 {
+	public enum TreasureBoxType{
+		NormalTreasureBox,
+		LockedTreasureBox
+	}
+
 	public class TreasureBox: MapItem {
 
 		// 地图物品状态变化之后是否可以行走
@@ -15,13 +20,12 @@ namespace WordJourney
 		// 是否有锁
 		public bool locked;
 
-		// 奖励的物品数组
-//		public Item[] rewardItems;
+		public TreasureBoxType tbType;
 
 		// 奖励的物品
 		public Item rewardItem;
 
-
+		public Animator mapItemAnimator;
 
 		/// <summary>
 		/// 初始化箱子类道具
@@ -29,14 +33,22 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-//			Debug.Log ("init tb " + mapItemAnimator.GetBool ("Play"));
-			mapItemAnimator.SetBool ("Play",false);
-			SetSortingOrder (-(int)transform.position.y);
+			mapItemAnimator.gameObject.SetActive (false);
+			mapItemRenderer.enabled = true;
+			int sortingOrder = -(int)transform.position.y;
+			SetSortingOrder (sortingOrder);
+			SetAnimationSortingOrder (sortingOrder);
+			if (tbType == TreasureBoxType.LockedTreasureBox) {
+				locked = true; 
+			}
+		}
+
+		private void SetAnimationSortingOrder(int order){
+			mapItemAnimator.GetComponent<SpriteRenderer> ().sortingOrder = order;
 		}
 
 		public override void AddToPool (InstancePool pool)
 		{
-			gameObject.SetActive (false);
 			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
@@ -50,8 +62,14 @@ namespace WordJourney
 
 			animEndCallBack = cb;
 
+			SoundManager.Instance.PlayAudioClip ("MapEffects/" + audioClipName);
+
+			mapItemRenderer.enabled = false;
+
+			mapItemAnimator.gameObject.SetActive (true);
+
 			// 播放对应动画
-			mapItemAnimator.SetBool ("Play",true);
+			mapItemAnimator.SetTrigger ("Play");
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}
@@ -65,8 +83,6 @@ namespace WordJourney
 			yield return null;
 
 			AnimatorStateInfo stateInfo = mapItemAnimator.GetCurrentAnimatorStateInfo (0);
-
-		
 
 			while (stateInfo.normalizedTime < 1) {
 

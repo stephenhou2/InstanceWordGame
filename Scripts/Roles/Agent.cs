@@ -612,13 +612,13 @@ namespace WordJourney
 					maxHealthChangeScalerFromOther += change;
 				}
 				break;
-			case PropertyType.Health:
-				if (change < -1 || change > 1) {
-					healthChangeFromOther += (int)change;
-				} else {
-					healthChangeScalerFromOther += change;
-				}
-				break;
+//			case PropertyType.Health:
+//				if (change < -1 || change > 1) {
+//					healthChangeFromOther += (int)change;
+//				} else {
+//					healthChangeScalerFromOther += change;
+//				}
+//				break;
 			case PropertyType.Mana:
 				if (change < -1 || change > 1) {
 					manaChangeFromOther += (int)change;

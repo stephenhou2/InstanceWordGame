@@ -7,6 +7,7 @@ namespace WordJourney
 {
 	public class Transport : MapItem {
 
+		public Animator mapItemAnimator;
 
 		public override void InitMapItem ()
 		{
@@ -17,7 +18,6 @@ namespace WordJourney
 
 		public override void AddToPool(InstancePool pool){
 			bc2d.enabled = false;
-			gameObject.SetActive(false);
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

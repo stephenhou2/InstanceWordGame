@@ -24,7 +24,7 @@ namespace WordJourney
 			healthBar.value = monster.maxHealth;
 			healthText.text = string.Format ("{0}/{1}", monster.health, monster.maxHealth);
 
-			UpdateSkillStatusPlane (monster);
+//			UpdateSkillStatusPlane (monster);
 
 			monsterStatusPlane.gameObject.SetActive (true);
 		}

@@ -9,6 +9,8 @@ namespace WordJourney
 
 		public string destroyToolName;
 
+		public Animator mapItemAnimator;
+
 
 		/// <summary>
 		/// 初始化障碍物
@@ -16,13 +18,19 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
-			mapItemAnimator.SetBool ("Play",false);
-			SetSortingOrder (-(int)transform.position.y);
-			bc2d.enabled = true;
+			mapItemAnimator.gameObject.SetActive (false);
+			mapItemRenderer.enabled = true;
+			int sortingOrder = -(int)transform.position.y;
+			SetSortingOrder (sortingOrder);
+			SetAnimationSortingOrder (sortingOrder);
+		}
+
+		private void SetAnimationSortingOrder(int order){
+			mapItemAnimator.GetComponent<SpriteRenderer> ().sortingOrder = order;
 		}
 			
 		public override void AddToPool(InstancePool pool){
-			gameObject.SetActive (false);
+			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
 
@@ -37,8 +45,11 @@ namespace WordJourney
 			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
 			GetComponent<BoxCollider2D> ().enabled = false;
 
+			mapItemRenderer.enabled = false;
+
+			mapItemAnimator.gameObject.SetActive (true);
 			// 播放对应动画
-			mapItemAnimator.SetBool ("Play",true);
+			mapItemAnimator.SetTrigger ("Play");
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
 		}

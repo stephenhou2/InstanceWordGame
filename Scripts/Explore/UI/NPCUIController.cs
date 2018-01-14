@@ -41,11 +41,30 @@ namespace WordJourney
 		public Transform goodsModel;
 
 
-		public ItemDetailHUD itemDetail;
+//		public ItemDetailHUD itemDetail;
 		public TintHUD tintHUD;
 
 		private int currentLevelIndex;
 		private Item currentSelectedItem;
+
+
+
+		public Image itemIcon;
+		public Text itemName;
+		public Text itemType;
+		public Text itemDescription;
+		public Text itemProperty;
+
+
+		private BattlePlayerUIController mBpUICtr;
+		private BattlePlayerUIController bpUICtr{
+			get{
+				if (mBpUICtr == null) {
+					mBpUICtr = TransformManager.FindTransform ("ExploreCanvas").GetComponent<BattlePlayerUIController> ();
+				}
+				return mBpUICtr;
+			}
+		}
 
 		public void InitNPCHUD(int currentLevelIndex){
 
@@ -244,6 +263,10 @@ namespace WordJourney
 
 		public void SetUpTradePlane(){
 
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Trader");
+
+			ClearItemDetail ();
+
 			Trader trader = currentEnteredNpc as Trader;
 
 			currentEnteredNpc = trader;
@@ -280,16 +303,33 @@ namespace WordJourney
 
 			}
 
-
 		}
+
+
+
 
 		private void SetUpItemDetailsInTrade(Item item){
 
-			itemDetail.SetUpItemDetailHUD (item);
+			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == item.spriteName;
+			});
+
+			itemIcon.sprite = itemSprite;
+			itemIcon.enabled = itemSprite != null;
+
+			itemName.text = item.itemName;
+			itemType.text = item.GetItemTypeString ();
+			itemDescription.text = item.itemDescription;
+			itemProperty.text = item.itemDescription;
+
 
 		}
 
 		public void OnBuyButtonClick(){
+
+			if (currentSelectedItem == null) {
+				return;
+			}
 
 			bool buySuccess = PlayerBuyGoods (currentSelectedItem);
 
@@ -315,9 +355,26 @@ namespace WordJourney
 
 			tintHUD.SetUpTintHUD (tint);
 
-			QuitTradePlane ();
+			bpUICtr.UpdateItemButtonsAndStatusPlane ();
+
+			currentSelectedItem = null;
+
+			ClearItemDetail ();
+
+			if ((currentEnteredNpc as Trader).itemsAsGoodsOfCurrentLevel.Count == 0) {
+				QuitTradePlane ();
+				return;
+			}
 
 			SetUpTradePlane ();
+		}
+
+		private void ClearItemDetail(){
+			itemIcon.enabled = false;
+			itemName.text = "";
+			itemType.text = "";
+			itemDescription.text = "";
+			itemProperty.text = "";
 		}
 
 		private bool PlayerBuyGoods(Item itemAsGoods){
@@ -365,7 +422,7 @@ namespace WordJourney
 
 		public void QuitTradePlane(){
 
-			itemDetail.QuitItemDetailHUD ();
+//			itemDetail.QuitItemDetailHUD ();
 
 			tradePlane.gameObject.SetActive (false);
 

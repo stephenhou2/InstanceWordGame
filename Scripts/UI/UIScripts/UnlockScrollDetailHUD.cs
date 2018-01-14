@@ -41,6 +41,10 @@ namespace WordJourney
 
 		public void SetUpUnlockScrollDetailHUD(Item item){
 
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
+
+			Time.timeScale = 0;
+
 			UnlockScroll unlockScrollInBag = item as UnlockScroll;
 
 			this.unlockScroll = unlockScrollInBag;
@@ -152,6 +156,12 @@ namespace WordJourney
 			}
 
 			gameObject.SetActive (false);
+
+			if (TransformManager.FindTransform ("BagCanvas").GetComponent<Canvas> ().isActiveAndEnabled) {
+				return;
+			}
+
+			Time.timeScale = 1f;
 
 		}
 

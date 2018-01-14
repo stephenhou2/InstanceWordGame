@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2051925769
+CRC: 3642690745
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0781a90012e2b8a2daaa08ca01bcbe7b
+    Hash: 576f7dc34d96a866fb6001cb6a90feba
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a4c55d5915cf955757ab80b5a18c24b3
+    Hash: 7f307b1f8654c7177fbe54c3943d391c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -34,7 +34,7 @@ ClassTypes:
 - Class: 115
   Script: {instanceID: 0}
 Assets:
-- Assets/Prefabs/Skill/AttackOnce.prefab
+- Assets/Prefabs/Skill/ActiveSkill/PhysicalAttack.prefab
 - Assets/Prefabs/Skill/TriggeredSkill/ReflectHurt.prefab
 - Assets/Prefabs/Skill/TriggeredSkill/PropertyChangeDurative.prefab
 - Assets/Prefabs/Skill/ConsumablesSkill/ConsumablesPropertyChangeOnce.prefab

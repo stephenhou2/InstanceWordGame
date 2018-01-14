@@ -45,6 +45,18 @@ namespace WordJourney
 		private float circleAttackZoneSize;
 
 
+		private BattlePlayerController mBpCtr;
+		private BattlePlayerController bpCtr{
+			get{
+				if (mBpCtr == null) {
+					mBpCtr = Player.mainPlayer.transform.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
+				}
+
+				return mBpCtr;
+			}
+		}
+
+
 		public void StartRectAttackCheck(){
 			attackCheckType = AttackCheckType.Rect;
 			rectAttackCheckPlane.gameObject.SetActive (true);
@@ -52,6 +64,7 @@ namespace WordJourney
 			rectAttackCheck.localPosition = Vector3.zero;
 			rectAttackZoneSize = rectAttackZone.sizeDelta.x;
 			rectAttackZone.localPosition = new Vector3 (Random.Range (validZoneEdgeLeft, validZoneEdgeRight), 0, 0);
+			UpdateHealth ();
 			StartCoroutine ("RectAttackCheckMove");
 			StartCoroutine ("RectAttackZoneMove");
 
@@ -65,6 +78,7 @@ namespace WordJourney
 			circleAttackZoneSize = circleAttackZone.GetComponent<Image> ().fillAmount * 360;
 			float originalRotationOffset = Random.Range (circleAttackZoneSize -  90, 90);
 			circleAttackZone.localRotation = Quaternion.Euler(new Vector3(0,0,originalRotationOffset));
+			UpdateHealth ();
 			StartCoroutine ("CircleAttackCheckRotate");
 			StartCoroutine ("CircleAttackZoneRotate");
 		}
@@ -183,8 +197,12 @@ namespace WordJourney
 
 
 		public void RectAttackButtonClicked(){
+
+			if (!bpCtr.isAttackActionFinish) {
+				return;
+			}
+
 			if (RectCheckInAttackZone()) {
-				BattlePlayerController bpCtr = Player.mainPlayer.transform.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 				bpCtr.UseDefaultSkill ();
 			}
 		}
@@ -208,8 +226,12 @@ namespace WordJourney
 
 
 		public void CircleAttackButtonClicked(){
+			
+			if (!bpCtr.isAttackActionFinish) {
+				return;
+			}
+
 			if (CircleCheckInAttackZone()) {
-				BattlePlayerController bpCtr = Player.mainPlayer.transform.Find ("BattlePlayer").GetComponent<BattlePlayerController> ();
 				bpCtr.UseDefaultSkill ();
 			}
 		}

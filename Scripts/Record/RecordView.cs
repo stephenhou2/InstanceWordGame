@@ -44,18 +44,18 @@ namespace WordJourney
 			this.learnInfo = learnInfo;
 
 			Transform poolContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfRecordCanvas");
-			Transform modelContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfRecordCanvas");
+//			Transform modelContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfRecordCanvas");
 
 			if (poolContainerOfRecordCanvas.childCount == 0) {
 				// 创建缓存池
 				wordPool = InstancePool.GetOrCreateInstancePool ("WordItemPool",poolContainerOfRecordCanvas.name);
 			}
 
-			if (modelContainerOfRecordCanvas.childCount == 0) {
-				// 获得单词展示模型
-				wordModel = TransformManager.FindTransform ("WordModel");
-				wordModel.SetParent (modelContainerOfRecordCanvas);
-			}
+//			if (modelContainerOfRecordCanvas.childCount == 0) {
+//				// 获得单词展示模型
+//				wordModel = TransformManager.FindTransform ("WordModel");
+//				wordModel.SetParent (modelContainerOfRecordCanvas);
+//			}
 
 			SetUpGeneralLearningInfo ();
 

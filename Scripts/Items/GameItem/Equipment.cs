@@ -12,6 +12,12 @@ namespace WordJourney
 	[System.Serializable]
 	public class Equipment : Item {
 
+		public static int minProducableEquipmentId = 0;
+		public static int maxProducableEquipmentId = 29;
+
+		public static int minCraftingEquipmentId = 30;
+		public static int maxCraftingEquipmentId = 59;
+
 		public float healthGain;//生命增益
 		public float manaGain;//魔法增益
 		public float attackGain;//攻击力增益

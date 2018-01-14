@@ -23,7 +23,6 @@ namespace WordJourney
 
 		public override void AddToPool (InstancePool pool)
 		{
-			gameObject.SetActive (false);
 			bc2d.enabled = false;
 			pool.AddInstanceToPool (this.gameObject);
 		}
@@ -50,7 +49,7 @@ namespace WordJourney
 				return;
 			}
 
-			GameManager.Instance.soundManager.PlayMapEffectClips(audioClipName);
+			SoundManager.Instance.PlayAudioClip("MapEffects/" + audioClipName);
 
 			BattleAgentController ba = col.GetComponent<BattleAgentController> ();
 

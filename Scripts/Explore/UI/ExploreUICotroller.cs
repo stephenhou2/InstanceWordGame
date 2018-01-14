@@ -272,16 +272,16 @@ namespace WordJourney
 			}, false, true);
 		}
 
-		public void SetUpSpellView(){
-
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
-				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate(ItemModel obj){
-					return obj.itemId == 0;
-				});
-				TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForCreate (swordModel,null);
-			}, false, true);
-
-		}
+//		public void SetUpSpellView(){
+//
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
+//				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels.Find(delegate(ItemModel obj){
+//					return obj.itemId == 0;
+//				});
+//				TransformManager.FindTransform ("SpellCanvas").GetComponent<SpellViewController> ().SetUpSpellViewForCreate (swordModel,null);
+//			}, false, true);
+//
+//		}
 
 		public void OnPauseButtonClick(){
 			ShowPauseHUD ();
@@ -348,10 +348,10 @@ namespace WordJourney
 
 		private void CraftItemCallBack(){
 
-			CraftingRecipes craftingRecipes = craftingRecipesDetail.craftingRecipes;
+			CraftingRecipe craftingRecipe = craftingRecipesDetail.craftingRecipe;
 
 			ItemModel craftItemModel = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-				return obj.itemId == craftingRecipes.craftItemId;
+				return obj.itemId == craftingRecipe.craftItemId;
 			});
 
 			for (int i = 0; i < craftItemModel.itemInfosForProduce.Length; i++) {

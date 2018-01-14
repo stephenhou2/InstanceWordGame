@@ -446,6 +446,8 @@ namespace WordJourney
 		/// </summary>
 		public void QuitSpellView(){
 
+			Time.timeScale = 1f;
+
 			spellView.OnQuitSpellPlane ();
 
 			Transform exploreCanvas = TransformManager.FindTransform ("ExploreCanvas");

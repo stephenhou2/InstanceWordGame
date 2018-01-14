@@ -34,6 +34,8 @@ namespace WordJourney
 
 		public void SetUpItemDetailHUD(Item item){
 
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
+
 			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 				return obj.name == item.spriteName;
 			});

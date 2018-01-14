@@ -10,7 +10,13 @@ namespace WordJourney
 	public class BattleMonsterController : BattleAgentController {
 
 		// 怪物UI控制器
-		private BattleMonsterUIController bmUICtr;
+		private BattleMonsterUIController bmUICtr{
+			get{
+				Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
+
+				return canvas.GetComponent<BattleMonsterUIController> ();
+			}
+		}
 
 		// 玩家控制器
 		private BattlePlayerController bpCtr;
@@ -18,7 +24,7 @@ namespace WordJourney
 		// 玩家战斗胜利回调
 		private CallBack<Transform> playerWinCallBack;
 
-
+		public Vector3 originalPos;
 
 
 		protected override void Awake(){
@@ -40,6 +46,7 @@ namespace WordJourney
 			boxCollider.enabled = true;
 			PlayRoleAnim ("wait", 0, null);
 			SetSortingOrder (-(int)transform.position.y);
+			originalPos = transform.position;
 		}
 
 
@@ -48,17 +55,12 @@ namespace WordJourney
 		/// </summary>
 		public void InitMonster(Transform monsterTrans){
 
-			Transform canvas = TransformManager.FindTransform ("ExploreCanvas");
-
-			bmUICtr = canvas.GetComponent<BattleMonsterUIController> ();
-
 			Monster monster = agent as Monster;
 
 			bmUICtr.monster = monster;
 
 			// 初始化怪物状态栏
 			bmUICtr.SetUpMonsterStatusPlane (monster);
-
 
 		}
 			
@@ -123,14 +125,14 @@ namespace WordJourney
 				bpCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
 			}
 
-			GameManager.Instance.soundManager.PlaySkillEffectClips (currentSkill.sfxName);
+			SoundManager.Instance.PlayAudioClip ("Skill/" + currentSkill.sfxName);
 
 			currentSkill.AffectAgents(this,bpCtr);
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if(!FightEnd()){
 				currentSkill = InteligentAttackSkill ();
-				Debug.Log (currentSkill);
+//				Debug.Log (currentSkill);
 				attackCoroutine = InvokeAttack (currentSkill);
 				StartCoroutine (attackCoroutine);
 			}
@@ -233,50 +235,33 @@ namespace WordJourney
 			bmUICtr.UpdateAgentStatusPlane ();
 		}
 
+
 		/// <summary>
 		/// 怪物死亡
 		/// </summary>
 		override public void AgentDie(){
 
-			Debug.Log ("monsterDie");
+			StopCoroutinesWhenFightEnd ();
+
+			bpCtr.StopCoroutinesWhenFightEnd ();
 
 			this.armatureCom.animation.Stop ();
 
 			CancelInvoke ();
 
-			if (attackCoroutine != null) {
-				StopCoroutine (attackCoroutine);
-			}
-
-			if (waitRoleAnimEndCoroutine != null) {
-				StopCoroutine (waitRoleAnimEndCoroutine);
-			}
-				
-			if (bpCtr.attackCoroutine != null) {
-				StopCoroutine (bpCtr.attackCoroutine);
-			}
-				
-			if (bpCtr.waitRoleAnimEndCoroutine != null) {
-				StopCoroutine (bpCtr.waitRoleAnimEndCoroutine);
-			}
-				
 			boxCollider.enabled = false;
 
 			playerWinCallBack (new Transform[]{ transform });
-
-//			Debug.LogFormat ("怪物位置信息[{0},{1}]", transform.position.x, transform.position.y);
 
 			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
 
 			expUICtr.QuitFight ();
 
-//			CollectSkillEffectsToPool();
+			PlayRoleAnim ("die", 1, delegate {
+				exploreManager.GetComponent<MapGenerator>().AddMonsterToPool(this);
+			});
 
-			PlayRoleAnim ("die", 1, null);
 
-//			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
-
-			Invoke ("MoveAgentToDieZone", 0.5f);
 
 		}
 
@@ -291,7 +276,6 @@ namespace WordJourney
 		}
 
 		public void AddToPool(InstancePool pool){
-
 
 			boxCollider.enabled = false;
 			gameObject.SetActive (false);

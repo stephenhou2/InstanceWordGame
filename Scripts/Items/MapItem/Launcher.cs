@@ -13,6 +13,8 @@ namespace WordJourney
 
 		public float fireInterval;
 
+		public Animator mapItemAnimator;
+
 		private Vector2 range;
 
 		private MyTowards towards;
@@ -43,7 +45,6 @@ namespace WordJourney
 		public override void AddToPool (InstancePool pool)
 		{
 			bc2d.enabled = false;
-			gameObject.SetActive(false);
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

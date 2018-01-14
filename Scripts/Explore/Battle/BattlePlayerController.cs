@@ -63,6 +63,8 @@ namespace WordJourney
 
 		public bool isInFight;
 
+		public bool isAttackActionFinish;
+
 
 		protected override void Awake(){
 
@@ -71,6 +73,10 @@ namespace WordJourney
 			agent = GetComponentInParent<Player> ();
 
 			navHelper = GetComponent<NavigationHelper> ();
+
+			isInFight = false;
+
+			isAttackActionFinish = true;
 
 			base.Awake ();
 
@@ -91,6 +97,13 @@ namespace WordJourney
 
 		public void TempStoreDestinationAndDontMove(){
 			onlyStoreDestination = true;
+		}
+
+		public override void SetSortingOrder (int order)
+		{
+			playerForward.GetComponent<UnityArmatureComponent> ().sortingOrder = order;
+			playerBackWard.GetComponent<UnityArmatureComponent> ().sortingOrder = order;
+			playerSide.GetComponent<UnityArmatureComponent> ().sortingOrder = order;
 		}
 
 		public void MoveToStoredDestination(){
@@ -395,6 +408,7 @@ namespace WordJourney
 						StopWalkBeforeEvent ();
 						return;
 					case "plant":
+						StopWalkBeforeEvent ();
 						enterPlant (r2d.transform);
 						return;
 					case "pressswitch":
@@ -422,7 +436,7 @@ namespace WordJourney
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
 
-				GameManager.Instance.soundManager.PlayFootStepClips ();
+				SoundManager.Instance.PlayAudioClip ("MapEffects/footstep");
 
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
@@ -485,9 +499,6 @@ namespace WordJourney
 		public void PlayerMoveToEnemyPosAfterFight(){
 
 			PlayRoleAnim ("wait", 0, null);
-
-			playerSide.transform.localPosition = Vector3.zero;
-
 
 			Vector3 targetPos = pathPosList [0];
 
@@ -575,6 +586,8 @@ namespace WordJourney
 		/// <param name="skill">Skill.</param>
 		protected override void UseSkill (ActiveSkill skill)
 		{
+			isAttackActionFinish = false;
+
 			// 播放技能对应的角色动画，角色动画结束后播放攻击间隔动画
 			this.PlayRoleAnim (skill.selfRoleAnimName, 1, () => {
 				// 播放等待动画
@@ -597,11 +610,13 @@ namespace WordJourney
 			}
 
 			// 播放技能对应的音效
-			GameManager.Instance.soundManager.PlaySkillEffectClips(currentSkill.sfxName);
+			SoundManager.Instance.PlayAudioClip("Skill/" + currentSkill.sfxName);
 
 
 			// 技能效果影响玩家和怪物
 			currentSkill.AffectAgents(this,bmCtr);
+
+			isAttackActionFinish = true;
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
 			if (!FightEnd ()) {
@@ -736,23 +751,17 @@ namespace WordJourney
 
 		}
 
+
 		/// <summary>
 		/// 玩家死亡
 		/// </summary>
 		override public void AgentDie(){
 
-			StopAllCoroutines ();
+			StopCoroutinesWhenFightEnd ();
 
-			// 停止怪物的攻击
-			if (bmCtr.attackCoroutine != null) {
-				bmCtr.StopCoroutine (bmCtr.attackCoroutine);
-			}
+			bmCtr.StopCoroutinesWhenFightEnd ();
 
-			if (bmCtr.waitRoleAnimEndCoroutine != null) {
-				StopCoroutine (bmCtr.waitRoleAnimEndCoroutine);
-			}
-
-			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
+//			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
 				
 			PlayRoleAnim("die", 1, () => {
 

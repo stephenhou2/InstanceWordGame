@@ -14,7 +14,7 @@ namespace WordJourney
 		public void SavePersistDatas(){
 			SaveGameSettings ();
 			SaveLearnInfo ();
-			SavePlayerData ();
+			SaveCompletePlayerData ();
 		}
 
 		/// <summary>
@@ -40,14 +40,28 @@ namespace WordJourney
 		/// <summary>
 		/// Saves the player data.
 		/// </summary>
-		public void SavePlayerData(){
+		public void SaveCompletePlayerData(){
 			
-			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
+			string playerDataPath = Path.Combine (CommonData.persistDataPath, "PlayerData.json");
 
 			PlayerData playerData = new PlayerData (Player.mainPlayer);
 
 			DataHandler.SaveInstanceDataToFile<PlayerData> (playerData, playerDataPath);
 		}
+
+//		public void SavePlayerDataFromEnterNextLevel(){
+//
+//			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
+//
+//			PlayerData playerData = LoadPlayerData ();
+//
+//			playerData.currentLevelIndex = Player.mainPlayer.currentLevelIndex;
+//
+//			playerData.totalCoins = 
+//
+//			DataHandler.SaveInstanceDataToFile<PlayerData> (playerData, playerDataPath);
+//
+//		}
 
 		/// <summary>
 		/// 从本地加载玩家游戏数据

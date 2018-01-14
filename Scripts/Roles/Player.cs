@@ -61,7 +61,7 @@ namespace WordJourney
 //		public List<FuseStone> allFuseStonesInBag = new List<FuseStone>();
 //		public List<TaskItem> allTaskItemsInBag = new List<TaskItem>();
 		public List<UnlockScroll> allUnlockScrollsInBag = new List<UnlockScroll>();//所有背包中的解锁卷轴
-		public List<CraftingRecipes> allCraftingRecipesInBag = new List<CraftingRecipes>();//所有背包中的合成配方
+		public List<CraftingRecipe> allCraftingRecipesInBag = new List<CraftingRecipe>();//所有背包中的合成配方
 
 		public int maxUnlockLevelIndex;
 
@@ -170,6 +170,8 @@ namespace WordJourney
 		/// <param name="equipmentIndexInPanel">Equipment index in panel.</param>
 		public PropertyChange UnloadEquipment(Equipment equipment,int equipmentIndexInPanel){
 
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Equipment");
+
 			equipment.equiped = false;
 
 			Debug.LogFormat ("卸下装备{0}/{1}", equipmentIndexInPanel,allEquipedEquipments.Length);
@@ -194,6 +196,8 @@ namespace WordJourney
 
 			allEquipedEquipments [equipmentIndexInPanel] = emptyEquipment;
 
+
+
 //			equipmentDragControl.item = emptyEquipment;
 
 			return ResetBattleAgentProperties (false);
@@ -208,6 +212,8 @@ namespace WordJourney
 		/// <param name="equipment">Equipment.</param>
 		/// <param name="equipmentIndexInPanel">Equipment index in panel.</param>
 		public PropertyChange EquipEquipment(Equipment equipment,int equipmentIndexInPanel){
+
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Equipment");
 
 			equipment.equiped = true;
 
@@ -249,10 +255,10 @@ namespace WordJourney
 
 		}
 
+	
+		public bool LevelUpIfExperienceEnough(){
 
-
-			
-		public void LevelUpIfExperienceEnough(){
+			bool levelUp = false;
 
 			if (experience >= upgradeExprience) {
 		
@@ -268,11 +274,11 @@ namespace WordJourney
 				originalMaxHealth += 10;
 				originalMana += 5;
 
-//				skillPointsLeft++;
-
 				ResetBattleAgentProperties (true);//升级后更新玩家状态，玩家血量和魔法值回满
-			}
 
+				levelUp = true;
+			}
+			return levelUp;
 		}
 
 		/// <summary>
@@ -373,7 +379,7 @@ namespace WordJourney
 				break;
 			case ItemType.CraftingRecipes:
 				allItemsInBag.Add (item);
-				allCraftingRecipesInBag.Add (item as CraftingRecipes);
+				allCraftingRecipesInBag.Add (item as CraftingRecipe);
 				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
@@ -438,7 +444,7 @@ namespace WordJourney
 				break;
 			case ItemType.CraftingRecipes:
 				allItemsInBag.Remove (item);
-				allCraftingRecipesInBag.Remove (item as CraftingRecipes);
+				allCraftingRecipesInBag.Remove (item as CraftingRecipe);
 				break;
 			case ItemType.CharacterFragment:
 				CharacterFragment characterFragment = item as CharacterFragment;
@@ -457,6 +463,8 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>分解后获得的字母碎片</returns>
 		public List<char> ResolveItemAndGetCharacters(Item item,int resolveCount){
+
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Resolve");
 
 			// 分解后得到的字母碎片
 			List<char> charactersReturn = new List<char> ();
@@ -731,7 +739,7 @@ namespace WordJourney
 		public List<Consumables> allConsumablesInBag;//背包中所有消耗品信息
 		public List<Item> allItemsInBag;
 		public List<UnlockScroll> allUnlockScrollsInBag;
-		public List<CraftingRecipes> allCraftRecipesInBag;
+		public List<CraftingRecipe> allCraftRecipesInBag;
 //		public List<FuseStone> allFuseStonesInBag;//背包中所有融合石信息
 //		public List<TaskItem> allTaskItemsInBag;//背包中所有任务物品信息
 //		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片

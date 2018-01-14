@@ -106,11 +106,11 @@ namespace WordJourney
 		}
 
 		private IEnumerator LatelyHideCharacterTintHUD(int index){
-			yield return new WaitForSeconds (characterTintDuration);
+			yield return new WaitForSecondsRealtime (characterTintDuration);
 			Button characterButton = inputCharacterButtons [index];
-			if (characterButton.interactable) {
+//			if (characterButton.interactable) {
 				characterButton.transform.Find ("CharacterTint").gameObject.SetActive (false);
-			}
+//			}
 		}
 
 		public void UpdateCharactersPlane(){

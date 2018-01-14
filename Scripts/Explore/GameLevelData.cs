@@ -66,6 +66,13 @@ namespace WordJourney
 		// 关卡中的所有怪物
 		public List<Transform> monsters = new List<Transform>();
 
+		public Transform boss{
+			get{
+				return GameManager.Instance.gameDataCenter.allMonsters.Find (delegate(Transform obj) {
+					return obj.GetComponent<Monster>().monsterId == bossId;
+				});
+			}
+		}
 
 		public void LoadAllData(){
 			LoadAllItemsData ();
@@ -79,19 +86,68 @@ namespace WordJourney
 		private void LoadAllItemsData(){
 
 			for (int i = 0; i < mustAppearItemIdsInUnlockedBox.Length; i++) {
-				Item item = Item.NewItemWith(mustAppearItemIdsInUnlockedBox [i],1);
+				int itemId = InitItemIdWithOriginalData(mustAppearItemIdsInUnlockedBox [i]);
+				Item item = Item.NewItemWith(itemId,1);
 				mustAppearItemsInUnlockedBox.Add (item);
 			}
 			for (int i = 0; i < possiblyAppearItemIdsInUnlockedBox.Length; i++) {
-				Item item = Item.NewItemWith (possiblyAppearItemIdsInUnlockedBox [i], 1);
+				int itemId = InitItemIdWithOriginalData (possiblyAppearItemIdsInUnlockedBox [i]);
+				Item item = Item.NewItemWith (itemId, 1);
 				possiblyAppearItemsInUnlockedBox.Add (item);
 			}
 			for (int i = 0; i < possiblyAppearItemIdsInLockedBox.Length; i++) {
-				Item item = Item.NewItemWith (possiblyAppearItemIdsInLockedBox [i], 1);
+				int itemId = InitItemIdWithOriginalData (possiblyAppearItemIdsInLockedBox [i]);
+				Item item = Item.NewItemWith (itemId, 1);
 				possiblyAppearItemsInLockedBox.Add (item);
 			}
 		
 		}
+
+
+		public int InitItemIdWithOriginalData(int oriId){
+
+			int targetId = oriId;
+
+			switch (targetId) {
+			case -2:
+				targetId = GetRandomUnlockScrollId ();
+				break;
+			case -3:
+				targetId = GetRandomCraftingRecipeId ();
+				break;
+			default:
+				break;
+
+			}
+
+			return targetId;
+
+		}
+
+
+		private int GetRandomUnlockScrollId(){
+
+			int randomUnlockScrollId = 0;
+
+			int type = Random.Range (0, 2);
+
+			switch (type) {
+			case 0:
+				randomUnlockScrollId = 200 + Random.Range (Equipment.minProducableEquipmentId, Equipment.maxProducableEquipmentId + 1);
+				break;
+			case 1:
+				randomUnlockScrollId = 200 + Random.Range (Consumables.minProducableConsumablesId, Consumables.maxProducableConsumablesId + 1);
+				break;
+			}
+
+			return randomUnlockScrollId;
+		}
+
+		private int GetRandomCraftingRecipeId(){
+			int randomCraftingRecipeId = 400 + Random.Range (Equipment.minCraftingEquipmentId, Equipment.maxCraftingEquipmentId + 1);
+			return randomCraftingRecipeId;
+		}
+
 
 		/// <summary>
 		/// 加载所有本关卡怪物

@@ -26,6 +26,9 @@ namespace WordJourney
 //		public float magicHurtScalerGain;
 //		public float critHurtScalerGain;
 
+		public static int minProducableConsumablesId = 100;
+		public static int maxProducableConsumablesId = 119;
+
 
 		public SkillInfo[] attachedSkillInfos;
 

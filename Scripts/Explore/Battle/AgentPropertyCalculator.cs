@@ -95,39 +95,43 @@ namespace WordJourney
 		/// <param name="change">Change.</param>
 		public void InstantPropertyChange(BattleAgentController target,PropertyType propertyType,float change,bool fromTriggeredSkill = true){
 
-			string instantChange = string.Format ("即时性属性变化: 角色名称：{0}，类型：{1}，变化：{2}",
-				target.agent.agentName, propertyType,change);
-
-			Debug.Log (instantChange);
+//			string instantChange = string.Format ("即时性属性变化: 角色名称：{0}，类型：{1}，变化：{2}",
+//				target.agent.agentName, propertyType,change);
+//
+//			Debug.Log (instantChange);
 
 			if (change == 0) {
 				return;
 			}
 
-			AgentPropertyChange (propertyType, change, fromTriggeredSkill);
-
-			self.agent.ResetBattleAgentProperties (false);
-
-			target.UpdateFightStatus ();
-
-			target.UpdateStatusPlane ();
+			int healthChange = 0;
+			string tintText = "";
 
 			if (propertyType == PropertyType.Health) {
 				if (change > 0 && change <= 1) {
-					string gainText = string.Format ("<color=green>{0}</color>", (int)(change * maxHealth));
-					target.AddFightTextToQueue (gainText, SpecialAttackResult.Gain);
+					healthChange = (int)(target.agent.maxHealth * change);
+					tintText = string.Format ("<color=green>{0}</color>", healthChange.ToString ());
+					target.AddFightTextToQueue (tintText, SpecialAttackResult.Gain);
 				} else if (change > 1) {
-					string gainText = string.Format ("<color=green>{0}</color>", (int)change);
-					target.AddFightTextToQueue (gainText, SpecialAttackResult.Gain);
+					healthChange = (int)change;
+					tintText = string.Format ("<color=green>{0}</color>", healthChange.ToString ());
+					target.AddFightTextToQueue (tintText, SpecialAttackResult.Gain);
 				} else if (change < 0 && change > -1) {
-					string hurtText = string.Format ("<color=red>{0}</color>", (int)(-change * maxHealth));
-					target.AddFightTextToQueue (hurtText, SpecialAttackResult.None);
+					healthChange = (int)(target.agent.maxHealth * change);
+					tintText = string.Format ("<color=red>{0}</color>", (-healthChange).ToString ());
+					target.AddFightTextToQueue (tintText, SpecialAttackResult.None);
 				} else {
-					string hurtText = string.Format ("<color=red>{0}</color>", (int)(-change));
-					target.AddFightTextToQueue (hurtText, SpecialAttackResult.None);
+					healthChange = (int)change;
+					tintText = string.Format ("<color=red>{0}</color>", (-healthChange).ToString ());
+					target.AddFightTextToQueue (tintText, SpecialAttackResult.None);
 				}
+				target.agent.health += healthChange;
+			} else {
+				AgentPropertyChange (propertyType, change, fromTriggeredSkill);
+				target.agent.ResetPropertiesWithPropertyCalculator (this);
 			}
-			
+	
+			target.UpdateStatusPlane ();
 		}
 
 
@@ -150,9 +154,9 @@ namespace WordJourney
 
 			magicalHurtToEnemy = (int)(magicalHurtToEnemy * magicalHurtScaler / (1 + magicResistSeed * enemy.propertyCalculator.magicResist));
 
-//			string fightResult = string.Format ("战斗结果:角色名称：{0}，造成的物理伤害：{1}，造成的魔法伤害：{2},暴击系数：{3},原始物理伤害：{4},",
+//			string fightResult = string.Format ("普通攻击结果:角色名称：{0}，造成的物理伤害：{1}，造成的魔法伤害：{2},暴击系数：{3},原始物理伤害：{4},",
 //				self.agent.agentName, physicalHurtToEnemy, magicalHurtToEnemy,tempCritScaler,oriPhysicalHurtToEnemy);
-
+//
 //			Debug.Log (fightResult);	
 
 		}
@@ -200,7 +204,8 @@ namespace WordJourney
 			}
 		}
 
-		public void RemoveTriggeredSkill<T>(T skill){
+		public void RemoveAttachedSkill<T>(T skill){
+			
 			if (typeof(T) == typeof(TriggeredSkill) && triggeredSkills.Contains(skill as TriggeredSkill)) {
 				TriggeredSkill trigSkill = skill as TriggeredSkill;
 
@@ -263,11 +268,15 @@ namespace WordJourney
 			return sameStatusSkills;
 		}
 
-		public void ClearAllSkills<T>(){
+		public void ClearSkillsOfType<T>(){
 			if (typeof(T) == typeof(TriggeredSkill)) {
-				triggeredSkills.Clear ();
+				while (triggeredSkills.Count > 0) {
+					RemoveAttachedSkill<TriggeredSkill> (triggeredSkills [0]);
+				}
 			} else if (typeof(T) == typeof(ConsumablesSkill)) {
-				consumablesSkills.Clear ();
+				while (consumablesSkills.Count > 0) {
+					RemoveAttachedSkill<ConsumablesSkill> (consumablesSkills [0]);
+				}
 			}
 		}
 			
@@ -282,6 +291,10 @@ namespace WordJourney
 		/// <param name="propertyType">Property type.</param>
 		/// <param name="change">change.</param>
 		public void AgentPropertyChange(PropertyType propertyType,float change,bool fromTriggeredSkill = true){
+
+			if (propertyType == PropertyType.Health) {
+				return;
+			}
 
 			self.agent.AddPropertyChangeFromOther (propertyType, change);
 

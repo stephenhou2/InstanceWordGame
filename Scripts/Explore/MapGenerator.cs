@@ -578,7 +578,7 @@ namespace WordJourney
 				mapItem = mapItemPool.GetInstanceWithName<NormalTrap> (trapModel.name, trapModel.gameObject, mapItemsContainer);
 				(mapItem as NormalTrap).SetTrapOn ();
 				(mapItem as NormalTrap).mapItemType = MapItemType.NormalTrapOn;
-				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 1;
+				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 10;
 				break;
 			case MapItemType.Tree:
 				mapItem = mapItemPool.GetInstanceWithName<Obstacle> (treeModel.name, treeModel.gameObject, mapItemsContainer);
@@ -852,6 +852,14 @@ namespace WordJourney
 		}
 
 		private void SetUpBoss(Vector2 position){
+			
+			Transform boss = monsterPool.GetInstance<Transform> (levelData.boss.gameObject, monstersContainer);
+
+			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
+
+			boss.position = new Vector3 (position.x, position.y, 0);
+
+			allSleepingMonsters.Add (boss);
 
 		}
 
@@ -1295,7 +1303,7 @@ namespace WordJourney
 				targetMatch = CheckTargetMatchPlant (pos);
 				break;
 			case "土块":
-				
+				targetMatch = CheckTargetMatchClod (pos);
 				break;
 			case "开关":
 				targetMatch = CheckTargetMatchSwitch (pos);
@@ -1370,11 +1378,14 @@ namespace WordJourney
 				return true;
 			} else if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] == -1) {
 				return false;
-			} else if (GetAliveMonsterAt(targetPos) != null) {
-				return true;
+			} else {
+				Transform aliveMonster = GetAliveMonsterAt (targetPos);
+				if (aliveMonster == null) {
+					return false;
+				}
+				BattleMonsterController monster = aliveMonster.GetComponent<BattleMonsterController> ();
+				return monster != null && (monster.agent as Monster).monsterId < 50;
 			}
-
-			return false;
 		}
 
 		private bool CheckTargetMatchWater(Vector3 targetPos){
@@ -1415,13 +1426,24 @@ namespace WordJourney
 
 		}
 
+		private bool CheckTargetMatchClod(Vector3 targetPos){
+
+			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
+			if (mapItemTrans == null) {
+				return false;
+			}
+			MapItem mapItem = mapItemTrans.GetComponent<MapItem>();
+			return mapItem != null && mapItem.mapItemType == MapItemType.Hole;
+
+		}
+
 
 		public Transform GetAliveMonsterAt(Vector3 pos){
 
 			Transform aliveMonster = null;
 
 			for (int i = 0; i < allAliveMonsters.Count; i++) {
-				if(PositionSame(allAliveMonsters [i].position,pos)){
+				if(PositionSame(allAliveMonsters [i].position,pos) && allAliveMonsters [i].gameObject.activeInHierarchy){
 					aliveMonster = allAliveMonsters [i];
 					break;
 				}
@@ -1435,7 +1457,7 @@ namespace WordJourney
 			Transform aliveOtherItem = null;
 
 			for (int i = 0; i < allAliveOtherItems.Count; i++) {
-				if(PositionSame(allAliveOtherItems [i].position,pos)){
+				if(PositionSame(allAliveOtherItems [i].position,pos) && allAliveOtherItems [i].gameObject.activeInHierarchy){
 					aliveOtherItem = allAliveOtherItems [i];
 					break;
 				}
@@ -1502,6 +1524,7 @@ namespace WordJourney
 						tb.UnlockTreasureBox (delegate{
 							SetUpRewardInMap(tb.rewardItem,pos);
 						});
+
 						removeConsumablesFromBag = true;
 					}
 				}
@@ -1514,12 +1537,16 @@ namespace WordJourney
 					fireTrap.GetComponent<FireTrap> ().SetTrapOn ();
 					allAliveOtherItems.Add (fireTrap);
 					removeConsumablesFromBag = true;
-				} else  {
 					Transform aliveMonster = GetAliveMonsterAt (pos);
 					if (aliveMonster != null) {
 						BattleMonsterController monster = aliveMonster.GetComponent<BattleMonsterController> ();
-						monster.propertyCalculator.InstantPropertyChange (monster, PropertyType.Health, -monster.agent.maxHealth, false);
-						monster.AgentDie ();
+						monster.boxCollider.enabled = false;
+//						allAliveMonsters.Remove (monster.transform);
+//						string tintText = monster.agent.maxHealth.ToString ();
+//						monster.AddFightTextToQueue (tintText, SpecialAttackResult.None);
+						monster.PlayRoleAnim ("die", 1, delegate {
+							monster.AddToPool(monsterPool);
+						});
 					}
 				}
 				break;
@@ -1527,6 +1554,7 @@ namespace WordJourney
 				if (CheckTargetMatchWater(pos)) {
 					FireTrap fireTrap = GetAliveOtherItemAt (pos).GetComponent<FireTrap> ();
 					fireTrap.SetTrapOff ();
+//					allAliveOtherItems.Remove (fireTrap.transform);
 					mapWalkableInfoArray [posX, posY] = 1;
 					removeConsumablesFromBag = true;
 				}
@@ -1552,7 +1580,13 @@ namespace WordJourney
 				}
 				break;
 			case "土块":
-
+				if (CheckTargetMatchClod (pos)) {
+					Hole hole = mapItemPool.GetInstanceWithName<Hole> (trapSwitchModel.name, trapSwitchModel.gameObject, mapItemsContainer);
+					hole.AddToPool (mapItemPool);
+					mapWalkableInfoArray [posX, posY] = 1;
+//					allAliveOtherItems.Remove (hole.transform);
+					removeConsumablesFromBag = true;
+				}
 				break;
 
 			}
@@ -1732,13 +1766,17 @@ namespace WordJourney
 //			monsters = null;
 
 			Destroy (floorPool.gameObject);
-//			Destroy (npcPool.gameObject);
+
 			Destroy (mapItemPool.gameObject);
+
 			Destroy (monsterPool.gameObject);
-//			Destropooly (crystalPool.gameObject);
+
 			Destroy (skillEffectPool.gameObject);
+
 			Destroy (rewardItemPool);
+
 			Destroy (otherAnimPool.gameObject);
+
 			Destroy (consumablesValidPosTintPool.gameObject);
 		}
 
@@ -1760,10 +1798,24 @@ namespace WordJourney
 			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
 		}
 
+		private void AddSkillEffectToPool(){
+
+		}
+
+		private void AddRewardItemToPool(){
+
+		}
+
+		private void AddOtherAnimToPool(){
+
+		}
+
 		private void AddMapItemsToPool(){
+			Debug.Log (mapItemsContainer.childCount);
 			while(mapItemsContainer.childCount > 0){
 				mapItemsContainer.GetChild (0).GetComponent<MapItem> ().AddToPool (mapItemPool);
 			}
+			Debug.Log (mapItemsContainer.childCount);
 		}
 
 		private void AddMonstersToPool(){
@@ -1781,6 +1833,12 @@ namespace WordJourney
 			}
 		}
 
+		public void AddMonsterToPool(BattleMonsterController monster){
+			monster.boxCollider.enabled = false;
+			monster.gameObject.SetActive (false);
+			monster.AddToPool (monsterPool);
+		}
+
 		/// <summary>
 		/// 每关初始化完毕后清除缓存池中没有复用到的游戏体
 		/// </summary>
@@ -1790,6 +1848,14 @@ namespace WordJourney
 			monsterPool.ClearInstancePool ();
 		}
 
+
+		public void PrepareToResetMap(){
+
+			StopAllCoroutines ();
+
+			AllMapInstancesToPool ();
+
+		}
 
 	}
 		

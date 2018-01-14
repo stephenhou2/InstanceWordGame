@@ -6,132 +6,200 @@ using UnityEngine;
 namespace WordJourney
 {
 
-	public enum SoundDetailTypeName{
-		Steps,
-		Map,
-		Skill
-	}
 
 	public class SoundManager : MonoBehaviour {
 
-		public List<AudioClip> footStepAudioClips = new List<AudioClip>();
-		public List<AudioClip> skillEffectAudioClips = new List<AudioClip>();
-		public List<AudioClip> mapEffectAudioClips = new List<AudioClip> ();
-		public List<AudioClip> UIAudioClips = new List<AudioClip> ();
+//		public List<AudioClip> footStepAudioClips = new List<AudioClip>();
+//		public List<AudioClip> skillEffectAudioClips = new List<AudioClip>();
+//		public List<AudioClip> mapEffectAudioClips = new List<AudioClip> ();
+//		public List<AudioClip> UIAudioClips = new List<AudioClip> ();
 
-		public AudioClip exploreBackground;
+//		public AudioClip exploreBackground;
 
+		private static SoundManager mInstance;
+		public static SoundManager Instance{
+			get{
+				if (mInstance == null) {
+					mInstance = TransformManager.FindTransform ("SoundManager").GetComponent<SoundManager> ();
+				}
+				return mInstance;
+			}
+		}
 
+	
 		public AudioSource bgmAS;
-
-		public AudioSource effectAS;
-
-		public AudioSource footSoundAS;
 
 		public AudioSource pronunciationAS;
 
+		public List<AudioSource> audioSourceList = new List<AudioSource> ();
 
-		public float lowPitchRange = 0.95f;				
-		public float highPitchRange = 1.05f;
+		private Dictionary<string,int> audioClipInfoDic = new Dictionary<string, int> (); 
 
 
-		public void PlayExploreBackgroundMusic(){
-			bgmAS.clip = exploreBackground;
+
+
+		public void PlayBgmAudioClip(string bgmPath,bool isLoop = true,float volume = 1f){
+
+			string fullPath = "";
+
+			if (!bgmPath.StartsWith ("Audio/")) {
+				fullPath = "Audio/" + bgmPath;
+			}
+
+
+			AudioClip bgm = GetAudioClip (fullPath);
+
+			bgmAS.clip = bgm;
+
+			bgmAS.loop = isLoop;
+
+			bgmAS.volume = volume;
+
 			bgmAS.Play ();
+
 		}
 
-		public void PlayWordPronunciation(AudioClip pronunciation){
 
-			pronunciationAS.clip = pronunciation;
+
+
+		private AudioClip GetAudioClip(string path){
+
+			AudioClip audioClip = Resources.Load (path) as AudioClip;
+
+			return audioClip;
+
+		}
+
+
+		/// <summary>
+		/// 返回首个空闲状态中的音源，如果都在播放，则返回音源列表的首项
+		/// </summary>
+		/// <returns>The valid audio source index.</returns>
+		private int GetIdleAudioSourceIndex(){
+
+			int idleASIndex = 0;
+
+			for (int i = 0; i < audioSourceList.Count; i++) {
+				if (!audioSourceList [i].isPlaying) {
+					idleASIndex = i;
+					break;
+				}
+			}
+
+			return idleASIndex;
+
+		}
+
+		public void PlayPronuncitaion(AudioClip clip,bool isLoop = false,float volume = -1f){
+
+			pronunciationAS.clip = clip;
+
+			pronunciationAS.volume = volume == -1 ? GameManager.Instance.gameDataCenter.gameSettings.systemVolume : volume;
 
 			pronunciationAS.Play ();
 
 		}
 
-		public void PlaySkillEffectClips(string audioClipName){
+		/// <summary>
+		/// 播放指定名称的音乐
+		/// </summary>
+		/// <param name="clipName">音效路径名称，方法内已提前添加了“Audio/”,不需要再加“Audio/”</param>
+		/// <param name="isLoop">If set to <c>true</c> is loop.</param>
+		/// <param name="volume">音量设置为-1，则使用设置中的音量</param>
+		public void PlayAudioClip(string audioPath,bool isLoop = false,float volume = -1f){
+			
+			string fullPath = "";
 
-			AudioClip skillClip = skillEffectAudioClips.Find (delegate(AudioClip obj) {
-				return obj.name == audioClipName;
-			});
-
-
-			if (skillClip == null) {
-				Debug.LogError(string.Format("名字为{0}的音频文件不存在",audioClipName));
+			if (!audioPath.StartsWith ("Audio/")) {
+				fullPath = "Audio/" + audioPath;
 			}
 
-			effectAS.clip = skillClip;
-
-			effectAS.pitch = Random.Range (lowPitchRange, highPitchRange);
-
-			effectAS.Play ();
-
-		}
-
-		public void PlayFootStepClips(){
-
-			AudioClip footStepClip = RandomAudioClip (footStepAudioClips);
-
-			footSoundAS.clip = footStepClip;
-
-			footSoundAS.pitch = Random.Range (lowPitchRange, highPitchRange);
-
-			footSoundAS.Play ();
-
-		}
-
-		public void PlayMapEffectClips(string audioClipName){
-
-			AudioClip clip = mapEffectAudioClips.Find (delegate(AudioClip obj) {
-				return obj.name == audioClipName;
-			});
+			AudioClip clip = GetAudioClip (fullPath);
 
 			if (clip == null) {
-				Debug.LogError(string.Format("名字为{0}的音频文件不存在",audioClipName));
+				Debug.LogFormat ("未找到名为{0}的音乐", audioPath);
+				return;
 			}
 
-			effectAS.clip = clip;
+			int idleASIndex = GetIdleAudioSourceIndex ();
 
-			effectAS.pitch = Random.Range (lowPitchRange, highPitchRange);
+//			audioClipInfoDic.Add (clipName, idleASIndex);
 
-			effectAS.Play ();
+			AudioSource audioSource = audioSourceList [idleASIndex];
+
+			audioSource.clip = clip;
+
+			audioSource.volume = volume == -1 ? GameManager.Instance.gameDataCenter.gameSettings.systemVolume : volume;
+
+			audioSource.Play ();
 
 
 		}
 
-//		public void PlayEffectClips(List<AudioClip> clips,SoundDetailTypeName name,string soundDetailName = null){
+		public void PauseBgm(){
+
+			bgmAS.Pause ();
+
+		}
+
+		public void ResumeBgm(){
+			bgmAS.Play ();
+		}
+
+
+
+//		public void PlayExploreBackgroundMusic(){
+//			bgmAS.clip = exploreBackground;
+//			bgmAS.Play ();
+//		}
 //
-//			string detailType = string.Empty;
+//		public void PlayWordPronunciation(AudioClip pronunciation){
 //
-//			switch (name) {
-//			case SoundDetailTypeName.Steps:
-//				detailType = "steps";
-//				break;
-//			case SoundDetailTypeName.Map:
-//				detailType = "map";
-//				break;
-//			case SoundDetailTypeName.Skill:
-//				detailType = "skill";
-//				break;
-//			}
+//			pronunciationAS.clip = pronunciation;
 //
-//			AudioClip clip = null;
+//			pronunciationAS.Play ();
 //
-//			List<AudioClip> detailClips = GameManager.Instance.gameDataCenter.allExploreAudioClips.FindAll (delegate(AudioClip obj) {
-//				return obj.name.Contains (detailType);
+//		}
+//
+//		public void PlaySkillEffectClips(string audioClipName){
+//
+//			AudioClip skillClip = skillEffectAudioClips.Find (delegate(AudioClip obj) {
+//				return obj.name == audioClipName;
 //			});
 //
-//			if (soundDetailName != null) {
-//				detailClips = detailClips.FindAll (delegate(AudioClip obj) {
-//					return obj.name.Contains(soundDetailName);
-//				});
+//
+//			if (skillClip == null) {
+//				Debug.LogError(string.Format("名字为{0}的音频文件不存在",audioClipName));
 //			}
 //
-//			clip = RandomAudioClip (detailClips);
+//			effectAS.clip = skillClip;
 //
+//			effectAS.pitch = Random.Range (lowPitchRange, highPitchRange);
+//
+//			effectAS.Play ();
+//
+//		}
+//
+//		public void PlayFootStepClips(){
+//
+//			AudioClip footStepClip = RandomAudioClip (footStepAudioClips);
+//
+//			footSoundAS.clip = footStepClip;
+//
+//			footSoundAS.pitch = Random.Range (lowPitchRange, highPitchRange);
+//
+//			footSoundAS.Play ();
+//
+//		}
+//
+//		public void PlayMapEffectClips(string audioClipName){
+//
+//			AudioClip clip = mapEffectAudioClips.Find (delegate(AudioClip obj) {
+//				return obj.name == audioClipName;
+//			});
 //
 //			if (clip == null) {
-//				Debug.LogError("未找到音频文件");
-//				return;
+//				Debug.LogError(string.Format("名字为{0}的音频文件不存在",audioClipName));
 //			}
 //
 //			effectAS.clip = clip;
@@ -140,23 +208,10 @@ namespace WordJourney
 //
 //			effectAS.Play ();
 //
+//
 //		}
 
 
-
-
-		private AudioClip RandomAudioClip(List<AudioClip> clips){
-
-			if (clips.Count == 0) {
-				Debug.Log ("clip not found");
-				return null;
-			}
-
-			int index = Random.Range (0, clips.Count);
-
-			return clips [index];
-
-		}
 			
 	}
 }

@@ -84,7 +84,7 @@ namespace WordJourney
 				waitDownloadFinishCoroutine = PlayPronunciationWhenFinishDownloading (pronunciationWWW);
 				StartCoroutine (waitDownloadFinishCoroutine);
 			} else {
-				GameManager.Instance.soundManager.PlayWordPronunciation (pro.pronunciation);
+				SoundManager.Instance.PlayPronuncitaion (pro.pronunciation,false,1f);
 			}
 
 		}
@@ -110,15 +110,12 @@ namespace WordJourney
 		/// <param name="www">Www.</param>
 		private IEnumerator PlayPronunciationWhenFinishDownloading(WWW www){
 
-			AudioSource pronunciationAS = GameManager.Instance.soundManager.pronunciationAS;
-
 			float timer = 0;
 
 			while (!www.isDone && timer < wwwTimeOutInterval) {
 				timer += Time.deltaTime;
 				yield return null;
 			}
-
 
 			if (www.isDone) {
 
@@ -128,9 +125,7 @@ namespace WordJourney
 
 				pronunciationCache.Add (pro);
 
-				pronunciationAS.clip = pronunciationClip;
-
-				pronunciationAS.Play ();
+				SoundManager.Instance.PlayPronuncitaion (pronunciationClip, false, 1f);
 			} else {
 				// 下载超时时不播放读音,并关闭下载任务
 				www.Dispose ();

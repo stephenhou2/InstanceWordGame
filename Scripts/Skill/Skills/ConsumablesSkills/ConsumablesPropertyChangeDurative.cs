@@ -75,7 +75,7 @@ namespace WordJourney
 
 			}
 
-			self.propertyCalculator.RemoveTriggeredSkill (this);
+			self.propertyCalculator.RemoveAttachedSkill<ConsumablesSkill> (this);
 			self = null;
 			Destroy (this.gameObject);
 		}
@@ -86,7 +86,7 @@ namespace WordJourney
 				StopCoroutine (effectCoroutine);
 			}
 
-			self.propertyCalculator.RemoveTriggeredSkill (this);
+			self.propertyCalculator.RemoveAttachedSkill<ConsumablesSkill> (this);
 			self = null;
 			Destroy (this.gameObject);
 

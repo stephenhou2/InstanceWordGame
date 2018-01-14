@@ -19,6 +19,8 @@ namespace WordJourney
 		private IEnumerator zoomInCoroutine;
 
 		public void SetUpCharactersHUD(){
+
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
 			
 			for (int i = 0; i < charactersCountArray.Length; i++) {
 				Text characterCount = charactersCountArray [i];

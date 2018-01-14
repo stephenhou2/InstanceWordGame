@@ -349,6 +349,13 @@ namespace WordJourney
 		}
 
 
+		public void OnProduceButtonClick(){
+			Time.timeScale = 0f;
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
+				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(null,null);
+			}, false, true);
+		}
+
 
 		/// <summary>
 		/// 退出所有消耗品显示栏
@@ -418,14 +425,13 @@ namespace WordJourney
 		/// <param name="mapItem">Map item.</param>
 		private void OnToolChoiceButtonClick(Consumables tool,MapItem mapItem){
 
-
 			QuitToolChoicePlane ();
 				
 			// 背包中的工具数量-1
 			player.RemoveItem (tool, 1);
 
 			// 播放对应的音效
-			GameManager.Instance.soundManager.PlayMapEffectClips(mapItem.audioClipName);
+			SoundManager.Instance.PlayAudioClip("MapEffects/" + mapItem.audioClipName);
 
 			Vector3 mapItemPos = mapItem.transform.position;
 			MapGenerator mapGenerator = TransformManager.FindTransform ("ExploreManager").GetComponent<MapGenerator> ();
@@ -443,7 +449,15 @@ namespace WordJourney
 				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
 				mapGenerator.SetUpRewardInMap (tb.rewardItem, mapItemPos);
 				break;
+			case MapItemType.Plant:
+				Plant plant = mapItem as Plant;
+				mapGenerator.AddMapItemInPool (mapItem.transform);
+				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
+				mapGenerator.SetUpRewardInMap (plant.attachedItem, mapItemPos);
+				break;
 			}
+
+			SetUpBottomConsumablesButtons ();
 
 		}
 

@@ -2,45 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using DragonBones;
 
-public class Test : MonoBehaviour {
+namespace WordJourney
+{
+	public class Test : MonoBehaviour {
 
+		public GameObject go;
+		public InstancePool pool{
+			get{
+				return InstancePool.GetOrCreateInstancePool ("Pool",null);
+			}
+		}
+		public Transform container;
 
+		public Animator animator;
 
-	public Animator anim;
+		public void Play(){
+			go.GetComponent<SpriteRenderer> ().enabled = false;
+			animator.gameObject.SetActive (true);
+			animator.SetTrigger ("Play");
+		}
 
-	public UnityArmatureComponent arm;
+		public void AddToPool(){
+			go.SetActive (false);
+			animator.gameObject.SetActive (false);
+			pool.AddInstanceToPool (go);
+		}
 
-	private GameObject myMonster;
+		public void Reset(){
+			go.SetActive (true);
+			go.GetComponent<SpriteRenderer> ().enabled = true;
+			go.transform.SetParent (container);
+		}
 
-	public void ChangeStatus(){
+		public void AddToPoolAndReset(){
+			AddToPool ();
+			Reset ();
+		}
 
-		anim.SetBool ("Play", true);
 	}
 
-	public void ChangeToOrig(){
-		anim.SetBool ("Play", false);
-	}
 
-	public void PlaySkill(){
-		arm.animation.Play ("skill", 1);
-	}
-
-	public void PlayWait(){
-		arm.animation.Play ("wait", 0);
-	}
-
-	public void LoadArm(){
-		GameObject monster = Resources.Load ("FireFox") as GameObject;
-		myMonster = Instantiate (monster);
-		myMonster.transform.position = Vector3.zero;
-		arm = myMonster.GetComponent<UnityArmatureComponent> ();
-
-	}
-
-	public void ActiveMonster(){
-		myMonster.SetActive (true);
-		arm.animation.Play ("wait", 0);
-	}
 }
