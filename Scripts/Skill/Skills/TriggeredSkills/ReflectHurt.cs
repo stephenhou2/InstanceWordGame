@@ -42,6 +42,7 @@ namespace WordJourney
 				int physicalHurtFromEnemy = skillTarget.propertyCalculator.physicalHurtToEnemy;
 				int hurtReflect = (int)(skillSourceValue * physicalHurtFromEnemy);
 				skillUser.propertyCalculator.hurtReflect = hurtReflect;
+				SetEffectAnims (triggerInfo, self, enemy);
 			}
 		}
 

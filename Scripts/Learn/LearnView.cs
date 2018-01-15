@@ -355,7 +355,8 @@ namespace WordJourney
 				callBack ();
 			}
 		}
-				
+			
+
 
 		public void ShowQuitQueryHUD(){
 			quitQueryHUD.gameObject.SetActive (true);

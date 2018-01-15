@@ -54,10 +54,12 @@ namespace WordJourney
 				} else {
 					affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
 				}
-
+					
 				affectedAgent.PlayRoleAnim ("stun", 0, null);
 
 				fizzyCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
+
+				SetEffectAnims (triggerInfo, self, enemy);
 			}
 
 		}

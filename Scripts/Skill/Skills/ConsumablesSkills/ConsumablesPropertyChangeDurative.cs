@@ -8,8 +8,6 @@ namespace WordJourney
 
 		private float propertyChange;// 记录己方属性变化值，战斗结束后重置
 
-
-
 		private IEnumerator effectCoroutine;
 
 //		private List<IEnumerator> effectCoroutines = new List<IEnumerator>();
@@ -23,6 +21,10 @@ namespace WordJourney
 
 		protected override void ExcuteConsumablesSkillLogic (BattleAgentController self)
 		{
+
+			if (selfEffectAnimName != string.Empty) {
+				self.SetEffectAnim (selfEffectAnimName, null);
+			}
 
 			// 如果没有状态名称，则默认不是触发状态，直接执行技能
 			if (statusName == "") {
@@ -76,7 +78,7 @@ namespace WordJourney
 			}
 
 			self.propertyCalculator.RemoveAttachedSkill<ConsumablesSkill> (this);
-			self = null;
+//			self = null;
 			Destroy (this.gameObject);
 		}
 

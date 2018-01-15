@@ -38,15 +38,16 @@ namespace WordJourney
 //					Player.mainPlayer.AddItem (e);
 //				}
 //
-//				for (int i = 100; i < 120; i++) {
-//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-//						return obj.itemId == i;
-//					});
-//
-//					Consumables c = new Consumables (im,1);
-//
-//					Player.mainPlayer.AddItem (c);
-//				}
+				for (int i = 100; i < 120; i++) {
+					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+						return obj.itemId == i;
+					});
+
+					Consumables c = new Consumables (im,1);
+
+					Player.mainPlayer.AddItem (c);
+
+				}
 //			}
 
 			#warning 测试解锁卷轴
@@ -90,6 +91,7 @@ namespace WordJourney
 		}
 
 		public void SetUpBagView(bool setVisible){
+			
 			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
 		}
 
@@ -112,6 +114,7 @@ namespace WordJourney
 		}
 
 		public void OnItemInBagClick(Item item){
+			Debug.Log (item.GetHashCode ());
 			currentSelectItem = item;
 			if (item is CraftingRecipe) {
 				bagView.SetUpCraftRecipesDetailHUD (item);
@@ -186,11 +189,19 @@ namespace WordJourney
 			case "南瓜":
 			case "蘑菇":
 			case "辣椒":
+				
 				propertyChange = Player.mainPlayer.UseMedicines (consumables);
-				consumblesUsedInExploreScene = false;
+
 				bagView.SetUpPlayerStatusPlane (propertyChange);
+
+				consumblesUsedInExploreScene = false;
 				break;  
 			case "卷轴":
+
+				Player.mainPlayer.RemoveItem (consumables, 1);
+
+				TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().QuitExploreScene (true);
+
 				consumblesUsedInExploreScene = false;
 				break;
 			case "锄头":
@@ -202,6 +213,7 @@ namespace WordJourney
 			case "水":
 			case "地板":
 			case "土块":
+			case "开关":
 				consumblesUsedInExploreScene = true;
 				break;
 			}

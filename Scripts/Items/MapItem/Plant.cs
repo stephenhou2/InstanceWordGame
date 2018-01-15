@@ -23,6 +23,8 @@ namespace WordJourney
 
 			bc2d.enabled = false;
 
+			gameObject.SetActive (false);
+
 			pool.AddInstanceToPool (this.gameObject);
 		}
 

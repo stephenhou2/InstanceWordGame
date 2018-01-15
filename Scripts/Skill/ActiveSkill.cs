@@ -11,6 +11,15 @@ namespace WordJourney
 
 		public float probability;
 
+		public void SetEffectAnims(BattleAgentController self,BattleAgentController enemy){
+			if (selfEffectAnimName != string.Empty) {
+				self.SetEffectAnim (selfEffectAnimName, null);
+			}
+			if (enemyEffectAnimName != string.Empty) {
+				enemy.SetEffectAnim (enemyEffectAnimName, null);
+			}
+		}
+
 	}
 
 

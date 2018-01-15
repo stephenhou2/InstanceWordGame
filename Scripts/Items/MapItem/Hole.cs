@@ -47,7 +47,9 @@ namespace WordJourney
 
 			Vector3 walkablePositionAround = mapGenerator.GetARandomWalkablePositionAround (otherHolePosition);
 
-			mapGenerator.PlayMapOtherAnim ("HoleFog", this.transform.position);
+			bp.SetEffectAnim ("HoleFog");
+
+//			mapGenerator.PlayMapOtherAnim ("HoleFog", this.transform.position);
 
 
 			if(randomOtherHole.transform.position.z != 0){
@@ -76,7 +78,9 @@ namespace WordJourney
 
 			yield return new WaitUntil(()=> mapWalkableInfo[(int)walkablePositionAround.x,(int)walkablePositionAround.y] == 1);
 
-			mapGenerator.PlayMapOtherAnim("HoleFog",targetHole.transform.position);
+			bp.SetEffectAnim ("HoleFog");
+
+//			mapGenerator.PlayMapOtherAnim("HoleFog",targetHole.transform.position);
 
 			Debug.LogFormat ("around items come to life,time:{0}", Time.realtimeSinceStartup);
 

@@ -12,7 +12,7 @@ namespace WordJourney
 	public class LearningInfo {
 
 		// 完成过多少次单词学习过程
-		public int totalLearnTimeCount;
+//		public int totalLearnTimeCount;
 
 		// 当前单词类型下所有单词的数量
 		public int totalWordCount{
@@ -44,7 +44,7 @@ namespace WordJourney
 
 
 
-		private string GetCurrentLearningWordsTabelName(){
+		public string GetCurrentLearningWordsTabelName(){
 
 			string tableName = string.Empty;
 

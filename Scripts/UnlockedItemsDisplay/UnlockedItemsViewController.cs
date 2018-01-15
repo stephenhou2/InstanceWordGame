@@ -12,7 +12,7 @@ namespace WordJourney
 		[HideInInspector]public ItemModel itemToCreate;
 
 		public void SetUpUnlockedItemsView(){
-
+//			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			IEnumerator coroutine = SetUpViewAfterDataReady ();
 			StartCoroutine (coroutine);
 

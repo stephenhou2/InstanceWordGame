@@ -9,7 +9,7 @@ namespace WordJourney
 	public class PropertyChangeDurative : TriggeredSkill {
 
 
-		public SkillEffectTarget effectTarget;
+//		public SkillEffectTarget effectTarget;
 
 		public PropertyType propertyType;
 
@@ -86,21 +86,26 @@ namespace WordJourney
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
+			
+
 			if (effectCoroutine != null) {
 				StopCoroutine (effectCoroutine);
 				effectCoroutine = null;
 			}
 
+
+
 			// 如果状态变化是攻击，攻速，护甲，抗性，闪避，暴击，魔法，在状态结束后将属性重置为初始值
 			if (propertyType == PropertyType.Health) {
+				affectedAgent = null;
 				return;
 			}
 
 //			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
 			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
-			affectedAgent = null;
 
+			affectedAgent = null;
 		}
 
 		protected override void ExcuteTriggeredSkillLogic(TriggerInfo triggerInfo,BattleAgentController self, BattleAgentController enemy){
@@ -109,6 +114,8 @@ namespace WordJourney
 			if (!isEffective (triggeredProbability)) {
 				return;
 			}
+
+			SetEffectAnims (triggerInfo, self, enemy);
 
 			// 如果没有状态名称，则默认不是触发状态，直接执行技能
 			if (statusName == "") {
@@ -150,6 +157,7 @@ namespace WordJourney
 			ba.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 		}
 
+
 		public override void CancelSkillEffect ()
 		{
 			if (effectCoroutine != null) {
@@ -157,12 +165,12 @@ namespace WordJourney
 			}
 
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
-//			affectedAgent = null;
 
 			if (propertyType == PropertyType.Health) {
 				return;
 			}
 			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+
 
 		}
 

@@ -26,7 +26,7 @@ namespace WordJourney
 		// 地图上npc模型
 		public Transform mapNpcModel;
 
-		public Transform skillEffectModel;
+		public Transform effectModel;
 
 		// 地图上掉落的物品模型
 		public Transform rewardItemModel;
@@ -41,23 +41,20 @@ namespace WordJourney
 		public Transform mapItemsContainer;
 		public Transform npcsContainer;
 		public Transform monstersContainer;
-		public Transform skillEffectsContainer;
+		public Transform effectAnimContainer;
 		public Transform rewardsContainer;
-		public Transform otherAnimContainer;
 		public Transform consumablesValidPosTintContainer;
 
 		// 所有的缓存池
 		private InstancePool floorPool;
 		private InstancePool mapItemPool;
 		private InstancePool monsterPool;
-		private InstancePool skillEffectPool;
+		private InstancePool effectAnimPool;
 		private InstancePool rewardItemPool;
-		private InstancePool otherAnimPool;
 		private InstancePool consumablesValidPosTintPool;
 
 		public Transform destinationAnimation;
 
-		public Transform otherAnimationModel;
 
 		// 关卡数据
 		private GameLevelData levelData;
@@ -165,9 +162,8 @@ namespace WordJourney
 				floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool",poolContainerOfExploreScene.name);
 				mapItemPool = InstancePool.GetOrCreateInstancePool ("MapItemPool",poolContainerOfExploreScene.name);
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
-				skillEffectPool = InstancePool.GetOrCreateInstancePool ("SkillEffectPool",poolContainerOfExploreScene.name);
+				effectAnimPool = InstancePool.GetOrCreateInstancePool ("EffectAnimPool",poolContainerOfExploreScene.name);
 				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
-				otherAnimPool = InstancePool.GetOrCreateInstancePool ("OtherAnimPool", poolContainerOfExploreScene.name);
 				consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
 			}
 
@@ -513,9 +509,9 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.LauncherTowardsRight, pos, null);
 					break;
 				case AttachedInfoType.Plant:
-					int attachedPlantCount = Random.Range (1, 4);
-					Item attachedPlant = Item.NewItemWith (113, attachedPlantCount);
-					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
+//					int attachedPlantCount = Random.Range (1, 4);
+//					Item attachedPlant = Item.NewItemWith (113, attachedPlantCount);
+//					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
 					break;
 				case AttachedInfoType.PressSwitch:
 					GenerateMapItem (MapItemType.PressSwitch, pos, null);
@@ -853,7 +849,7 @@ namespace WordJourney
 
 		private void SetUpBoss(Vector2 position){
 			
-			Transform boss = monsterPool.GetInstance<Transform> (levelData.boss.gameObject, monstersContainer);
+			Transform boss = monsterPool.GetInstanceWithName<Transform> (levelData.boss.name, levelData.boss.gameObject, monstersContainer);
 
 			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 
@@ -1192,16 +1188,18 @@ namespace WordJourney
 			}
 		}
 
-		public Transform GetSkillEffect(Transform agentTrans){
-			Transform skillEffect = skillEffectPool.GetInstance<Transform> (skillEffectModel.gameObject, skillEffectsContainer);
-			skillEffect.position = agentTrans.position;
-			skillEffect.localScale = agentTrans.localScale;
-			skillEffect.rotation = Quaternion.identity;
-			return skillEffect;
+		public Transform GetEffectAnim(Transform agentTrans){
+			Transform effectAnim = effectAnimPool.GetInstance<Transform> (effectModel.gameObject, effectAnimContainer);
+			effectAnim.position = agentTrans.position;
+			effectAnim.localScale = agentTrans.localScale;
+			effectAnim.rotation = Quaternion.identity;
+			effectAnim.gameObject.SetActive (true);
+			return effectAnim;
 		}
 
-		public void AddSkillEffectToPool(Transform skillEffect){
-			skillEffectPool.AddInstanceToPool (skillEffect.gameObject);
+		public void AddEffectAnimToPool(Transform effectAnim){
+			effectAnim.gameObject.SetActive (false);
+			effectAnimPool.AddInstanceToPool (effectAnim.gameObject);
 		}
 			
 
@@ -1222,41 +1220,7 @@ namespace WordJourney
 
 
 		}
-
-		public void PlayMapOtherAnim(string triggerName,Vector3 targetPos){
-
-			Transform otherAnimation = otherAnimPool.GetInstance<Transform> (otherAnimationModel.gameObject, otherAnimContainer);
-
-			otherAnimation.position = targetPos;
-
-			Animator otherAnimator = otherAnimation.GetComponent<Animator> ();
-
-			otherAnimator.SetTrigger (triggerName);
-
-			IEnumerator coroutine = CollectOtherAnimToPoolWhenAnimEnd (otherAnimator, triggerName);
-
-			StartCoroutine (coroutine);
-
-		}
-
-		private IEnumerator CollectOtherAnimToPoolWhenAnimEnd(Animator anim,string trigger){
-
-			yield return null;
-
-			AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo (0);
-
-			while (info.normalizedTime < 1.0f) {
-				yield return null;
-				info = anim.GetCurrentAnimatorStateInfo (0);
-			}
-
-			otherAnimPool.AddInstanceToPool (anim.gameObject);
-
-//			anim.ResetTrigger (trigger);
-
-
-		}
-
+			
 
 		public void ShowConsumablesValidPointsTint(Consumables consumables){
 
@@ -1771,11 +1735,11 @@ namespace WordJourney
 
 			Destroy (monsterPool.gameObject);
 
-			Destroy (skillEffectPool.gameObject);
+			Destroy (effectAnimPool.gameObject);
 
 			Destroy (rewardItemPool);
 
-			Destroy (otherAnimPool.gameObject);
+//			Destroy (otherAnimPool.gameObject);
 
 			Destroy (consumablesValidPosTintPool.gameObject);
 		}
@@ -1792,30 +1756,27 @@ namespace WordJourney
 
 			AddMonstersToPool();
 
-			skillEffectPool.AddChildInstancesToPool (skillEffectsContainer);
+			effectAnimPool.AddChildInstancesToPool (effectAnimContainer);
 			rewardItemPool.AddChildInstancesToPool (rewardsContainer);
-			otherAnimPool.AddChildInstancesToPool (otherAnimContainer);
 			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
 		}
 
-		private void AddSkillEffectToPool(){
+		private void AddEffectAnimToPool(){
 
+			while (effectAnimContainer.childCount > 0) {
+				AddEffectAnimToPool (effectAnimContainer.GetChild (0));
+			}
 		}
 
 		private void AddRewardItemToPool(){
 
 		}
-
-		private void AddOtherAnimToPool(){
-
-		}
+			
 
 		private void AddMapItemsToPool(){
-			Debug.Log (mapItemsContainer.childCount);
 			while(mapItemsContainer.childCount > 0){
 				mapItemsContainer.GetChild (0).GetComponent<MapItem> ().AddToPool (mapItemPool);
 			}
-			Debug.Log (mapItemsContainer.childCount);
 		}
 
 		private void AddMonstersToPool(){

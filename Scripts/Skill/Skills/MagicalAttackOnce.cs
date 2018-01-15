@@ -50,6 +50,8 @@ namespace WordJourney
 			self.propertyCalculator.magicalHurtToEnemy += skillSourceValue;
 			Debug.LogFormat ("{0}魔法攻击造成{1}魔法伤害", self.agent.agentName, skillSourceValue);
 
+			SetEffectAnims (self, enemy);
+
 
 			// 执行己方攻击命中的回调
 			foreach (TriggeredSkillExcutor excutor in self.hitTriggerExcutors) {

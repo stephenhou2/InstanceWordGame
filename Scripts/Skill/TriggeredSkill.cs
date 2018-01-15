@@ -216,10 +216,12 @@ namespace WordJourney
 
 		}
 
+
+
 		protected void SetEffectAnims(TriggerInfo triggerInfo,BattleAgentController self,BattleAgentController enemy){
 
 			// 播放技能对应的己方（释放技能方）技能特效动画
-			switch(triggerInfo.triggerTarget){
+			switch(triggerInfo.triggerSource){
 			case SkillEffectTarget.Self://如果被动逻辑由自己执行
 				if (selfEffectAnimName != string.Empty) {
 					self.SetEffectAnim (selfEffectAnimName);

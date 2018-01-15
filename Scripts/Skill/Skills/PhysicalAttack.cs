@@ -59,6 +59,7 @@ namespace WordJourney
 			self.propertyCalculator.physicalHurtFromNomalAttack += oriPhysicalHurt;
 			Debug.LogFormat ("{0}普通攻击造成{1}物理伤害", self.agent.agentName, oriPhysicalHurt);
 
+			SetEffectAnims (self, enemy);
 
 			// 执行己方攻击命中的回调
 			foreach (TriggeredSkillExcutor excutor in self.hitTriggerExcutors) {

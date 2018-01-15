@@ -569,7 +569,7 @@ namespace WordJourney
 			battlePlayerCtr.RemoveTriggeredSkillEffectFromAgent ();
 			battleMonsterCtr.RemoveTriggeredSkillEffectFromAgent ();
 
-			Debug.Log (battlePlayerCtr.agent.health);
+//			Debug.Log (battlePlayerCtr.agent.health);
 
 			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
 			battleMonsterCtr.agent.ResetBattleAgentProperties (true);
@@ -596,13 +596,13 @@ namespace WordJourney
 
 			player.experience += trans.GetComponent<Monster> ().rewardExperience;//更新玩家经验值
 
-			bool levelUp = player.LevelUpIfExperienceEnough ();//判断是否升级
+			bool isLevelUp = player.LevelUpIfExperienceEnough ();//判断是否升级
 
-			if (levelUp) {
-				battlePlayerCtr.SetEffectAnim ("LevelUp");
-				SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
-				battlePlayerCtr.UpdateStatusPlane ();
+			if (isLevelUp) {
+				DisableInteractivity ();
+				StartCoroutine ("LatelyPlayRoleLevelUpAnim");
 			}
+
 
 			int characterIndex = Random.Range (0, 26);
 
@@ -612,7 +612,17 @@ namespace WordJourney
 
 			mapGenerator.SetUpRewardInMap (characterFragment, monsterPos);
 
-			ResetCamareAndContinueMove ();
+			ResetCamareAndContinueMove (!isLevelUp);
+
+		}
+
+		private IEnumerator LatelyPlayRoleLevelUpAnim(){
+
+			yield return new WaitUntil (() => battlePlayerCtr.isIdle);
+
+			battlePlayerCtr.SetEffectAnim ("LevelUp",EnableInteractivity);
+			SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
+			battlePlayerCtr.UpdateStatusPlane ();
 
 		}
 
@@ -652,17 +662,15 @@ namespace WordJourney
 		}
 
 
-		private void ResetCamareAndContinueMove(){
+		private void ResetCamareAndContinueMove(bool enableInterActivity){
 
-			StartCoroutine ("ResetCamera");
+			StartCoroutine ("ResetCamera",enableInterActivity);
 
 			battlePlayerCtr.PlayerMoveToEnemyPosAfterFight ();
-
-
 		}
 
 
-		private IEnumerator ResetCamera(){
+		private IEnumerator ResetCamera(bool enableInterActivity){
 
 			DisableInteractivity ();
 
@@ -683,8 +691,9 @@ namespace WordJourney
 				yield return null;
 
 			}
-
-			EnableInteractivity ();
+			if (enableInterActivity) {
+				EnableInteractivity ();
+			}
 
 		}
 
@@ -721,10 +730,7 @@ namespace WordJourney
 
 			GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
 				
-
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
-
-
 
 			SetUpExploreView (levelData);
 
@@ -732,6 +738,8 @@ namespace WordJourney
 
 
 		public void QuitExploreScene(bool saveData){
+
+			SoundManager.Instance.StopBgm ();
 
 			if (saveData) {
 				GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
@@ -758,6 +766,10 @@ namespace WordJourney
 			});
 
 			TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ().QuitExplore ();
+
+			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
+				TransformManager.FindTransform ("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
+			}, false, false);
 
 		}
 

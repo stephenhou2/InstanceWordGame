@@ -47,6 +47,8 @@ namespace WordJourney
 
 				skillUser.propertyCalculator.healthAbsorb += healthAbsorb;
 
+				SetEffectAnims (triggerInfo, self, enemy);
+
 			}
 
 		}

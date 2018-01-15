@@ -20,6 +20,7 @@ namespace WordJourney
 		/// 初始化学习记录界面
 		/// </summary>
 		public void SetUpRecordView(){
+//			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			StartCoroutine ("SetUpViewAfterDataReady");
 		}
 

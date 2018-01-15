@@ -492,7 +492,8 @@ namespace WordJourney
 			PlayRoleAnim ("wait", 0, null);
 			playerSide.transform.localScale = Vector3.one;
 		}
-			
+
+
 		/// <summary>
 		/// 战斗结束之后玩家移动到怪物原来的位置
 		/// </summary>
@@ -505,7 +506,6 @@ namespace WordJourney
 			// 玩家角色位置和原来的怪物位置之间间距大于0.5（玩家是横向进入战斗的），则播放跑的动画到指定位置
 			if (Mathf.Abs (targetPos.x - transform.position.x) > 0.5) {
 				MoveToNextPosition ();
-
 			} else {// 玩家角色位置和原来的怪物位置之间间距小于0.5（玩家是纵向进入战斗的），则角色直接移动到指定位置，不播动画
 
 				transform.position = targetPos;
@@ -655,6 +655,11 @@ namespace WordJourney
 
 		}
 			
+		public override void StopCoroutinesWhenFightEnd ()
+		{
+			base.StopCoroutinesWhenFightEnd ();
+			modelActive.transform.localPosition = Vector3.zero;
+		}
 
 
 		/// <summary>
@@ -667,47 +672,6 @@ namespace WordJourney
 		}
 
 
-//		private IEnumerator ConsumablesEffectOn(ConsumablesEffectState consumablesEffectState){
-//
-//			Player player = agent as Player;
-//
-//			Consumables consumables = consumablesEffectState.consumables;
-//
-//			int healthGain = (int)(consumables.healthGain * player.maxHealth / consumables.effectDuration);
-//			int manaGain = (int)(consumables.manaGain * player.maxMana / consumables.effectDuration);
-//
-//			player.attack = (int)(player.attack * (1 + consumables.attackGain));
-//			player.attackSpeed = (int)(player.attackSpeed * (1 + consumables.attackSpeedGain));
-//			player.armor = (int)(player.armor * (1 + consumables.armorGain));
-//			player.manaResist = (int)(player.manaResist * (1 + consumables.manaResistGain));
-//			player.dodge = (int)(player.dodge * (1 + consumables.dodgeGain));
-//			player.crit = (int)(player.crit * (1 + consumables.critGain));
-//
-//			player.physicalHurtScaler = 1 + consumables.physicalHurtScaler;
-//			player.magicalHurtScaler = 1 + consumables.magicHurtScaler;
-//
-//			bpUICtr.UpdatePlayerStatusPlane ();
-//
-//			while (consumablesEffectState.effectTime < consumables.effectDuration) {
-//				yield return new WaitForSeconds (1.0f);
-//				consumablesEffectState.effectTime++;
-//				player.health += healthGain;
-//				player.mana += manaGain;
-////				if (player.health >= player.maxHealth) {
-////					player.health = player.maxHealth;
-////				}
-////				if (player.mana >= player.maxMana) {
-////					player.mana = player.maxMana;
-////				}
-//
-//				bpUICtr.UpdatePlayerStatusPlane ();
-//			}
-//
-//			player.ResetBattleAgentProperties (false);
-//			player.physicalHurtScaler -= consumables.physicalHurtScaler;
-//			player.magicalHurtScaler -= consumables.magicHurtScaler;
-//
-//		}
 
 		/// <summary>
 		/// 清理引用

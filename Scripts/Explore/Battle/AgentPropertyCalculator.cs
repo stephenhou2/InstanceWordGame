@@ -126,6 +126,7 @@ namespace WordJourney
 					target.AddFightTextToQueue (tintText, SpecialAttackResult.None);
 				}
 				target.agent.health += healthChange;
+				target.propertyCalculator.health = target.agent.health;
 			} else {
 				AgentPropertyChange (propertyType, change, fromTriggeredSkill);
 				target.agent.ResetPropertiesWithPropertyCalculator (this);
@@ -223,7 +224,7 @@ namespace WordJourney
 
 				ConsumablesSkill consSkill = skill as ConsumablesSkill;
 
-				if (consSkill.statusName != "") {
+				if (consSkill.statusName == "") {
 					return;
 				}
 

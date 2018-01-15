@@ -325,14 +325,14 @@ namespace WordJourney
 		/// 设置角色特效动画，string 型触发器
 		/// </summary>
 		/// <param name="animName">触发器名称</param>
-		public void SetEffectAnim(string triggerName){
+		public void SetEffectAnim(string triggerName,CallBack cb = null){
 
 			if(triggerName != string.Empty){
 
 				Transform skillEffect = null;
 				Animator skillEffectAnim = null;
 
-				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetSkillEffect (transform);
+				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetEffectAnim (transform);
 
 				skillEffectAnim = skillEffect.GetComponent<Animator> ();
 
@@ -340,7 +340,7 @@ namespace WordJourney
 
 //				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
-				skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform);
+				skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
 
 				StartCoroutine (skillEffectReuseCoroutine);
 
@@ -353,7 +353,7 @@ namespace WordJourney
 		/// </summary>
 		/// <returns>The skill effect to pool after animation end.</returns>
 		/// <param name="effectInfo">Effect info.</param>
-		protected IEnumerator AddSkillEffectToPoolAfterAnimEnd(Transform skillEffectTrans){
+		protected IEnumerator AddSkillEffectToPoolAfterAnimEnd(Transform skillEffectTrans,CallBack cb){
 
 			yield return null;
 
@@ -361,13 +361,21 @@ namespace WordJourney
 
 			AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 
-			yield return new WaitForSeconds (stateInfo.length);
+			while (stateInfo.normalizedTime < 1) {
+				yield return null;
+				stateInfo = animator.GetCurrentAnimatorStateInfo (0);
+			}
+//			yield return new WaitForSeconds (stateInfo.length);
 
 			animator.SetTrigger ("Empty");
 
 			yield return null;
 
-			exploreManager.GetComponent<MapGenerator> ().AddSkillEffectToPool (animator.transform);
+			exploreManager.GetComponent<MapGenerator> ().AddEffectAnimToPool (animator.transform);
+
+			if (cb != null) {
+				cb ();
+			}
 
 //			skillEffectDic.Remove (effectInfo.triggerName);
 
@@ -419,7 +427,7 @@ namespace WordJourney
 
 		public abstract void AgentDie ();
 
-		public void StopCoroutinesWhenFightEnd (){
+		public virtual void StopCoroutinesWhenFightEnd (){
 			
 			if (attackCoroutine != null) {
 				StopCoroutine (attackCoroutine);
@@ -431,7 +439,7 @@ namespace WordJourney
 
 			StopCoroutine ("PlayAgentShake");
 
-			modelActive.transform.localPosition = Vector3.zero;
+//			modelActive.transform.localPosition = Vector3.zero;
 		}
 
 		public abstract void UpdateStatusPlane ();

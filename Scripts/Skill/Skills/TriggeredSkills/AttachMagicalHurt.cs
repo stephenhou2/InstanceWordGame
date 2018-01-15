@@ -39,6 +39,7 @@ namespace WordJourney
 				int mana = skillUser.propertyCalculator.mana;
 				int attachedMagicalHurt = (int)(skillSourceValue * mana);
 				skillUser.propertyCalculator.magicalHurtToEnemy += attachedMagicalHurt;
+				SetEffectAnims (triggerInfo, self, enemy);
 			}
 		}
 

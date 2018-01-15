@@ -391,7 +391,7 @@ namespace WordJourney
 		}
 			
 
-		public void RemoveItem(Item item,int resolveCount){
+		public void RemoveItem(Item item,int removeCount){
 
 			switch(item.itemType){
 			case ItemType.Equipment:
@@ -416,7 +416,9 @@ namespace WordJourney
 				Consumables consumablesInBag = allConsumablesInBag.Find (delegate(Consumables obj) {
 					return obj == item;	
 				});
-				consumablesInBag.itemCount -= resolveCount;
+
+				consumablesInBag.itemCount -= removeCount;
+
 				if (consumablesInBag.itemCount <= 0) {
 					allConsumablesInBag.Remove (consumablesInBag);
 					allItemsInBag.Remove (consumablesInBag);

@@ -25,12 +25,16 @@ namespace WordJourney
 
 		protected override void ExcuteConsumablesSkillLogic(BattleAgentController self){
 
+			if (selfEffectAnimName != string.Empty) {
+				self.SetEffectAnim (selfEffectAnimName, null);
+			}
+
 			// 如果没有状态名称，则默认不是触发状态，直接执行技能
 			if (statusName == "") {
 				Excute (self);
 				return;
 			}
-
+				
 			List<TriggeredSkill> sameStatusSkills = self.propertyCalculator.GetTriggeredSkillsWithSameStatus (statusName);
 
 			// 如果技能效果不可叠加，则被影响人身上原有的同种状态技能效果全部取消，并从战斗结算器中移除这些技能
@@ -57,11 +61,8 @@ namespace WordJourney
 				ResetPropertyCoroutine = ResetPropertyWhenTimeOut (self, propertyType, duration);
 				StartCoroutine (ResetPropertyCoroutine);
 			} else {
-				self = null;
 				Destroy (this.gameObject);
 			}
-
-
 
 		}
 			

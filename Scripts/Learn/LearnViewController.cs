@@ -22,11 +22,14 @@ namespace WordJourney
 		// 一次学习的单词数量（单个水晶学习单词数量）
 		private int singleLearnWordsCount;
 
+
+		//***********不再按照记忆曲线对已测试过的单词进行复习,以下代码注释掉**************//
+
 		// 背多少组循环一次
-		private int recycleGroupBase;
+//		private int recycleGroupBase;
 
 		// 背诵多少次进行一次大循环
-		private int recycleLearnTimeBase;
+//		private int recycleLearnTimeBase;
 
 		/*背诵总次数	 0		 1		 2		 3
 		 * 			【0】	【0】	【0】	【0】
@@ -53,9 +56,8 @@ namespace WordJourney
 		 * 上例中假设一共有8个单词，则是以4组为循环基数，以2次为背诵次数循环基数
 		 */ 
 
+		//***********不再按照记忆曲线对已测试过的单词进行复习,以上代码注释掉**************//
 
-		// 当前应该学习的单词组的学习次数
-		private int currentWordsLearnedTime;
 
 
 		// 本次所有需要记忆的单词数组
@@ -72,8 +74,12 @@ namespace WordJourney
 
 		private int coinGain;
 
+//		private bool hasFinishWholeCurrentTypeWords;
+
 
 		private MySQLiteHelper mySql;
+
+		private string currentWordsTableName;
 
 
 		private Examination.ExaminationType examType;
@@ -108,18 +114,16 @@ namespace WordJourney
 				}
 			}
 		}
-
-
-
+			
 		// 是否自动发音
 		private bool autoPronounce;
 
 
 
 		void Awake(){
-			singleLearnWordsCount = 9;
-			recycleGroupBase = 8;
-			recycleLearnTimeBase = 2;
+			singleLearnWordsCount = 10;
+//			recycleGroupBase = 8;
+//			recycleLearnTimeBase = 2;
 			wordsToLearnArray = new LearnWord[singleLearnWordsCount];
 			finalExaminationsList = new List<Examination> ();
 			learnExaminationsList = new List<Examination> ();
@@ -132,6 +136,8 @@ namespace WordJourney
 		/// 初始化学习界面
 		/// </summary>
 		public void SetUpLearnView(){
+//			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
+			currentWordsTableName = GameManager.Instance.gameDataCenter.learnInfo.GetCurrentLearningWordsTabelName();
 			Time.timeScale = 0;
 			SoundManager.Instance.PauseBgm ();
 			StartCoroutine ("SetUpViewAfterDataReady");
@@ -151,6 +157,7 @@ namespace WordJourney
 			}
 
 
+//			hasFinishWholeCurrentTypeWords = false;
 
 			// 查询是否允许自动发音
 			autoPronounce = GameManager.Instance.gameDataCenter.gameSettings.autoPronounce;
@@ -203,28 +210,45 @@ namespace WordJourney
 
 			mySql.GetConnectionWith (CommonData.dataBaseName);
 
-			int totalLearnTimeCount = GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount;
-
-			int totalWordsCount = mySql.GetItemCountOfTable (CommonData.CET4Table,null,true);
-
-			// 大循环的次数
-			int bigCycleCount = totalLearnTimeCount * singleLearnWordsCount / (totalWordsCount * recycleLearnTimeBase);
-
-			currentWordsLearnedTime = totalLearnTimeCount % (recycleLearnTimeBase * recycleGroupBase) / recycleGroupBase + recycleLearnTimeBase * bigCycleCount;
+//			int totalLearnTimeCount = GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount;
+//
+//			int totalWordsCount = mySql.GetItemCountOfTable (CommonData.CET4Table,null,true);
+//
+//			// 大循环的次数
+//			int bigCycleCount = totalLearnTimeCount * singleLearnWordsCount / (totalWordsCount * recycleLearnTimeBase);
+//
+//			currentWordsLearnedTime = totalLearnTimeCount % (recycleLearnTimeBase * recycleGroupBase) / recycleGroupBase + recycleLearnTimeBase * bigCycleCount;
 
 			mySql.BeginTransaction ();
 
 			// 边界条件
-			string condition = string.Format ("learnedTimes={0}",currentWordsLearnedTime);
+			string[] condition = new string[]{ "learnedTimes=0" };
 
-			IDataReader reader = mySql.ReadSpecificRowsOfTable (CommonData.CET4Table, null, new string[]{ condition }, true);
 
-			int flag = 0;
+			IDataReader reader = mySql.ReadSpecificRowsOfTable (currentWordsTableName, null, condition, true);
+
 
 			// 从数据库中读取当前要学习的单词
 			for(int i = 0;i<singleLearnWordsCount;i++){
 
 				reader.Read ();
+
+				if (reader == null) {
+
+					string[] colFields = new string[]{ "learnedTimes" };
+					string[] values = new string[]{ "0" };
+					string[] conditions = new string[]{"learnedTimes=1"};
+
+					mySql.UpdateValues (currentWordsTableName, colFields, values, conditions, true);
+
+					mySql.EndTransaction ();
+
+					mySql.CloseAllConnections ();
+
+					InitWordsToLearn ();
+
+					return;
+				}
 				
 				int wordId = reader.GetInt32 (0);
 
@@ -244,14 +268,13 @@ namespace WordJourney
 
 				Debug.LogFormat ("{0}---{1}次",word,learnedTimes);
 
-				wordsToLearnArray [flag] = word;
+				wordsToLearnArray [i] = word;
 
-				flag++;
 			}
 
 			mySql.EndTransaction ();
 
-
+			mySql.CloseAllConnections ();
 
 			// 当前要学习的单词全部加入到未掌握单词列表中，用户选择掌握或者学习过该单词后从未掌握单词列表中移除
 			for (int i = 0; i < wordsToLearnArray.Length; i++) {
@@ -521,8 +544,11 @@ namespace WordJourney
 					string condition = string.Format ("wordId={0}", word.wordId);
 					string newLearnedTime = (word.learnedTimes).ToString ();
 					string newUngraspTime = (word.ungraspTimes).ToString ();
+
+					mySql.GetConnectionWith (CommonData.dataBaseName);
+
 					// 更新数据库中当前背诵单词的背诵次数和背错次数
-					mySql.UpdateValues (CommonData.CET4Table, new string[]{ "learnedTimes", "ungraspTimes" }, new string[] {
+					mySql.UpdateValues (currentWordsTableName, new string[]{ "learnedTimes", "ungraspTimes" }, new string[] {
 						newLearnedTime,
 						newUngraspTime
 					}, new string[] {
@@ -556,8 +582,6 @@ namespace WordJourney
 
 			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
-			// 总背诵次数++
-			GameManager.Instance.gameDataCenter.learnInfo.totalLearnTimeCount++;
 			GameManager.Instance.persistDataManager.SaveLearnInfo ();
 
 
@@ -573,10 +597,13 @@ namespace WordJourney
 			learnView.ShowQuitQueryHUD ();
 		}
 
-		public void CancelQuit(){
+		public void OnCancelQuitButtonClick(){
 			learnView.HideQuitQueryHUD ();
 		}
 			
+
+
+
 
 		public void DestroyInstances(){
 			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", null,null);

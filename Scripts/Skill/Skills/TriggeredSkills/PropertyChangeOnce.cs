@@ -80,6 +80,8 @@ namespace WordJourney
 				return;
 			}
 
+			SetEffectAnims (triggerInfo, self, enemy);
+
 			// 如果没有状态名称，则默认不是触发状态，直接执行技能
 			if (statusName == "") {
 				Excute ();
@@ -147,7 +149,6 @@ namespace WordJourney
 			}
 
 			affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent ,propertyType, -skillSourceValue);
-			affectedAgent = null;
 
 		}
 
@@ -156,18 +157,27 @@ namespace WordJourney
 		/// </summary>
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
+			
+
+
 			if (ResetPropertyCoroutine != null) {
 				StopCoroutine (ResetPropertyCoroutine);
 				ResetPropertyCoroutine = null;
 			}
 
+
+
 			if (propertyType == PropertyType.Health) {
+				affectedAgent = null;
 				return;
 			}
+
 
 //			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
 			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
+
+			affectedAgent = null;
 
 		}
 

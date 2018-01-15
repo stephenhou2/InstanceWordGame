@@ -137,16 +137,16 @@ namespace WordJourney
 		}
 
 		public void PauseBgm(){
-
 			bgmAS.Pause ();
-
 		}
 
 		public void ResumeBgm(){
 			bgmAS.Play ();
 		}
 
-
+		public void StopBgm(){
+			bgmAS.Stop ();
+		}
 
 //		public void PlayExploreBackgroundMusic(){
 //			bgmAS.clip = exploreBackground;

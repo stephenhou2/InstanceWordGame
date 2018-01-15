@@ -31,6 +31,8 @@ namespace WordJourney
 
 			homeView.SetUpHomeView ();
 
+			Time.timeScale = 1f;
+
 			Debug.Log (Player.mainPlayer.allEquipedEquipments [0]);
 
 //			for (int i = 0; i < GameManager.Instance.gameDataCenter.allItemModels.Count; i++) {
@@ -94,12 +96,33 @@ namespace WordJourney
 
 			homeView.ShowMaskImage ();
 
-			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
+//			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
+//
+//			QuitHomeView();
 
-			QuitHomeView();
+//			GameManager.Instance.UIManager.UnloadAllCanvasInSceneExcept(new string[]{"BagCanvas"});
+//
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", () => {
+//
+//				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetUpExploreView(levelData);
+//
+//			},true,false);
+
+			StartCoroutine ("LoadExploreData");
+
 
 			#warning 下面这个代码是使用场景管理器方式加载探索界面
 //			SceneManager.LoadSceneAsync ("ExploreScene", LoadSceneMode.Single);
+
+		}
+
+		private IEnumerator LoadExploreData(){
+
+			yield return null;
+
+			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
+
+			QuitHomeView();
 
 			GameManager.Instance.UIManager.UnloadAllCanvasInSceneExcept(new string[]{"BagCanvas"});
 
@@ -109,30 +132,10 @@ namespace WordJourney
 
 			},true,false);
 
-//			StartCoroutine ("LoadExploreData");
-
 		}
 
-//		private IEnumerator LoadExploreData(){
-//
-//			yield return null;
-//
-//			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
-//
-//			QuitHomeView();
-//
-//			GameManager.Instance.UIManager.UnloadAllCanvasInSceneExcept(new string[]{"BagCanvas"});
-//
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", () => {
-//
-//				TransformManager.FindTransform("ExploreManager").GetComponent<ExploreManager> ().SetupExploreView(levelData);
-//
-//			},true,false);
-//
-//		}
-
 		public void OnRecordButtonClick(){
-
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.recordCanvasBundleName, "RecordCanvas", () => {
 				TransformManager.FindTransform("RecordCanvas").GetComponent<RecordViewController> ().SetUpRecordView();
 				homeView.OnQuitHomeView();
@@ -140,7 +143,7 @@ namespace WordJourney
 		}
 
 		public void OnLearnButtonClick(){
-
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", () => {
 				TransformManager.FindTransform("LearnCanvas").GetComponent<LearnViewController>().SetUpLearnView();
 				homeView.OnQuitHomeView();
@@ -150,6 +153,7 @@ namespace WordJourney
 			
 
 		public void OnBagButtonClick(){
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
 				TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController> ().SetUpBagView (true);
 				homeView.OnQuitHomeView();
@@ -157,6 +161,7 @@ namespace WordJourney
 		}
 
 		public void OnSettingButtonClick(){
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", () => {
 				TransformManager.FindTransform("SettingCanvas").GetComponent<SettingViewController> ().SetUpSettingView ();
 				homeView.OnQuitHomeView();
@@ -164,7 +169,7 @@ namespace WordJourney
 		}
 
 		public void OnSpellButtonClick(){
-
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", () => {
 //				ItemModel swordModel = GameManager.Instance.gameDataCenter.allItemModels[0];
 				TransformManager.FindTransform("SpellCanvas").GetComponent<SpellViewController>().SetUpSpellViewForCreate(null,null);
@@ -174,6 +179,7 @@ namespace WordJourney
 
 
 		public void OnUnlockedItemsButtonClick(){
+			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
 				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
 				homeView.OnQuitHomeView();
