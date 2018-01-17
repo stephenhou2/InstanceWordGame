@@ -35,7 +35,7 @@ namespace WordJourney
 			this.spriteName = "sword";
 			this.itemId = 3101;
 			this.successGain = spell.Length * 3;
-			this.itemDescription = string.Format("提升{0}%物品制造成功率",spell.Length * 3);
+			this.itemGeneralDescription = string.Format("提升{0}%物品制造成功率",spell.Length * 3);
 			this.itemCount = 1;
 
 

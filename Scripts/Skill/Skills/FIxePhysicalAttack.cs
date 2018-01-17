@@ -11,8 +11,10 @@ namespace WordJourney
 
 
 		protected override void ExcuteNoneTriggeredSkillLogic(BattleAgentController self, BattleAgentController enemy){
+
 			// 执行攻击触发事件回调
-			foreach (TriggeredSkillExcutor excutor in self.attackTriggerExcutors) {
+			for(int i = 0;i < self.attackTriggerExcutors.Count; i++) {
+				TriggeredSkillExcutor excutor = self.attackTriggerExcutors[i];
 				switch (excutor.effectTarget) {
 				case SkillEffectTarget.Self:
 					excutor.triggeredCallback (self, enemy);
@@ -24,7 +26,8 @@ namespace WordJourney
 			}
 
 			// 敌方执行被攻击触发事件回调
-			foreach (TriggeredSkillExcutor excutor in enemy.beAttackedTriggerExcutors) {
+			for(int i = 0; i<enemy.beAttackedTriggerExcutors.Count; i++) {
+				TriggeredSkillExcutor excutor = enemy.beAttackedTriggerExcutors[i];
 				switch (excutor.effectTarget) {
 				case SkillEffectTarget.Self:
 					excutor.triggeredCallback (enemy, self);
@@ -53,7 +56,8 @@ namespace WordJourney
 
 
 			// 执行己方攻击命中的回调
-			foreach (TriggeredSkillExcutor excutor in self.hitTriggerExcutors) {
+			for(int i = 0;i<self.hitTriggerExcutors.Count;i++) {
+				TriggeredSkillExcutor excutor = self.hitTriggerExcutors[i];
 				switch (excutor.effectTarget) {
 				case SkillEffectTarget.Self:
 					excutor.triggeredCallback (enemy, self);
@@ -65,7 +69,8 @@ namespace WordJourney
 			}
 
 			// 执行敌方被击中的回调
-			foreach (TriggeredSkillExcutor excutor in enemy.beHitTriggerExcutors) {
+			for(int i = 0;i < enemy.beHitTriggerExcutors.Count; i++) {
+				TriggeredSkillExcutor excutor = enemy.beHitTriggerExcutors[i];
 				switch (excutor.effectTarget) {
 				case SkillEffectTarget.Self:
 					excutor.triggeredCallback (enemy, self);

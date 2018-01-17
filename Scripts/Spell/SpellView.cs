@@ -57,6 +57,7 @@ namespace WordJourney
 			ClearEnteredCharactersPlane ();
 
 			itemDetail.InitItemDetailHUD (false, null);
+			charactersInBag.InitCharactersInBagHUD ();
 
 			InitCharacterButtons ();
 
@@ -194,9 +195,9 @@ namespace WordJourney
 //		}
 
 
-		public void SetUpTintHUD(string tint){
+		public void SetUpTintHUD(string tint,Sprite sprite){
 
-			tintHUD.SetUpTintHUD (tint);
+			tintHUD.SetUpTintHUD (tint,sprite);
 
 		}
 

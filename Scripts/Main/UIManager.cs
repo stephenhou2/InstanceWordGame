@@ -151,11 +151,11 @@ namespace WordJourney
 			GameObject.Destroy (canvas.gameObject);
 
 			if (poolContainerName != null) {
-				TransformManager.DestroyTransfromWithName (modelContainerName, TransformRoot.InstanceContainer);
+				TransformManager.DestroyTransfromWithName (poolContainerName, TransformRoot.InstanceContainer);
 			}
 
 			if (modelContainerName != null) {
-				TransformManager.DestroyTransfromWithName (poolContainerName, TransformRoot.PoolContainer);
+				TransformManager.DestroyTransfromWithName (modelContainerName, TransformRoot.PoolContainer);
 			}
 
 			ResourceManager.Instance.UnloadAssetBunlde (bundleName);

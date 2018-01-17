@@ -52,7 +52,7 @@ namespace WordJourney
 
 		private void Excute(BattleAgentController self){
 
-			self.propertyCalculator.AgentPropertyChange (propertyType, skillSourceValue,false);
+			self.propertyCalculator.InstantPropertyChange (self, propertyType, skillSourceValue,false);
 
 			propertyChange += skillSourceValue;
 

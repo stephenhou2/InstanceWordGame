@@ -19,13 +19,19 @@ namespace WordJourney
 
 		public override void AddToPool(InstancePool pool){
 
-			attachedItem = null;
+//			attachedItem = null;
 
 			bc2d.enabled = false;
 
 			gameObject.SetActive (false);
 
 			pool.AddInstanceToPool (this.gameObject);
+		}
+
+		public static Item GenerateRandomReward(){
+			int rewardCount = Random.Range (1, 4);
+			int rewardItemId = Random.Range (113, 120);
+			return Item.NewItemWith (rewardItemId, rewardCount);
 		}
 
 	}

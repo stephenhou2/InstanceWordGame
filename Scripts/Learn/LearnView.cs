@@ -209,6 +209,8 @@ namespace WordJourney
 
 				questionText.fontSize = 100;
 
+				phoneticSymbolText.text = exam.question.phoneticSymbol;
+
 				phoneticSymbolText.enabled = true;
 
 				for (int i = 0; i < choices.Length; i++) {

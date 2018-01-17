@@ -8,11 +8,19 @@ using System.Data;
 namespace WordJourney
 {
 	
-	[System.Serializable]
-	public class LearningInfo {
+//	[System.Serializable]
+	public class LearningInfo:Singleton<LearningInfo> {
 
 		// 完成过多少次单词学习过程
 //		public int totalLearnTimeCount;
+
+		/// <summary>
+		/// 空构造函数
+		/// </summary>
+		private LearningInfo()
+		{
+			
+		}
 
 		// 当前单词类型下所有单词的数量
 		public int totalWordCount{

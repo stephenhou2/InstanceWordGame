@@ -21,7 +21,8 @@ namespace WordJourney{
 	public abstract class Item {
 
 		public string itemName;
-		public string itemDescription;
+		public string itemGeneralDescription;
+		public string itemPropertyDescription;
 		public string spriteName;
 		public string itemNameInEnglish;
 		public int itemId;
@@ -128,7 +129,8 @@ namespace WordJourney{
 
 			itemId = itemModel.itemId;
 			itemName = itemModel.itemName;
-			itemDescription = itemModel.itemDescription;
+			itemGeneralDescription = itemModel.itemGeneralDescription;
+			itemPropertyDescription = itemModel.itemPropertyDescription;
 			spriteName = itemModel.spriteName;
 			itemType = itemModel.itemType;
 			itemNameInEnglish = itemModel.itemNameInEnglish;
@@ -149,7 +151,6 @@ namespace WordJourney{
 				ItemModel itemModel = allItemModels [i];
 
 				if (itemModel.itemType == ItemType.Equipment) {
-					#warning 这里耐久度都设为0
 					Equipment equipment = new Equipment (itemModel,1);
 					allEquipment.Add (equipment);
 				}
@@ -176,7 +177,7 @@ namespace WordJourney{
 
 		public override string ToString ()
 		{
-			return string.Format ("[Item]:" + itemName + "[\nItemDesc]:" + itemDescription);
+			return string.Format ("[Item]:" + itemName + "[\nItemDesc]:" + itemGeneralDescription);
 		}
 
 	}
@@ -203,7 +204,8 @@ namespace WordJourney{
 		public int itemId;
 		public string itemName;
 		public string itemNameInEnglish;
-		public string itemDescription;
+		public string itemGeneralDescription;
+		public string itemPropertyDescription;
 		public string spriteName;
 		public ItemType itemType;
 		public int price;
@@ -231,10 +233,10 @@ namespace WordJourney{
 		public override string ToString ()
 		{
 			return string.Format ("[ItemModel]:\n itemId:{0},itemName:{1},itemNameInEnglish:{2},itemSpriteName:{3}" +
-				"itemDescription:{4},healthGain:{5},manaGain:{6},attackGain:{7},hitGain:{8},armorGain:{9},magicResistGain:{10}" +
+				"itemGeneralDescription:{4},healthGain:{5},manaGain:{6},attackGain:{7},hitGain:{8},armorGain:{9},magicResistGain:{10}" +
 				"dodgeGain:{11},critGain:{12},wholePropertyGain:{13},physicalHurtScalerGain:{14},magicalHurtScalerGain:{15},critHurtScalerGain:{16}," +
 				"attachedSkillInfosCount:{17},itemForProduceCount:{18}",
-				itemId,itemName,itemNameInEnglish,spriteName,itemDescription,healthGain,manaGain,attackGain,hitGain,armorGain,magicResistGain,
+				itemId,itemName,itemNameInEnglish,spriteName,itemGeneralDescription,healthGain,manaGain,attackGain,hitGain,armorGain,magicResistGain,
 				dodgeGain,critGain,wholePropertyGain,physicalHurtScalerGain,magicalHurtScalerGain,critHurtScalerGain,attachedSkillInfos.Length,itemInfosForProduce.Length);
 		}
 

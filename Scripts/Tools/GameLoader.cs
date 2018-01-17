@@ -13,9 +13,6 @@ namespace WordJourney
 //		private bool finishDataLoading = false;
 
 		void Awake(){
-
-
-
 			PersistDataAlways ();
 //			StartCoroutine ("PersistDataIfFirstLoad");
 		}

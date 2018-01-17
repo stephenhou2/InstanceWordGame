@@ -9,12 +9,16 @@ namespace WordJourney
 	public class TintHUD : MonoBehaviour {
 
 		public Text tintText;
+		public Image tintImage;
 		public float tintHUDShowDuration = 1f;
 		private IEnumerator tintHUDCoroutine;
 
-		public void SetUpTintHUD(string tint){
+		public void SetUpTintHUD(string tint,Sprite sprite){
 
 			tintText.text = tint;
+
+			tintImage.sprite = sprite;
+			tintImage.enabled = sprite != null;
 
 			gameObject.SetActive (true);
 

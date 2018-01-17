@@ -208,7 +208,7 @@ namespace WordJourney
 
 			if (!isValidWord) {
 				string tint = "拼写不正确或物品未解锁";
-				spellView.SetUpTintHUD (tint);
+				spellView.SetUpTintHUD (tint,null);
 				return;
 			}
 
@@ -425,7 +425,11 @@ namespace WordJourney
 
 			string tint = string.Format ("获得{0} x {1}", itemCreated.itemName, itemCreated.itemCount);
 
-			spellView.SetUpTintHUD (tint);
+			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == itemCreated.spriteName;
+			});
+
+			spellView.SetUpTintHUD (tint,itemSprite);
 
 			itemCreated = null;
 

@@ -78,7 +78,7 @@ namespace WordJourney
 				
 			statusText.text = hasScrollUnlocked ? "<color=green>已解锁</color>" : "<color=red>未解锁</color>";
 
-			unlockedItemDescription.text = itemModel.itemDescription;
+			unlockedItemDescription.text = itemModel.itemGeneralDescription;
 
 			unlockButton.gameObject.SetActive (!hasScrollUnlocked);
 			resolveButton.gameObject.SetActive (hasScrollUnlocked);

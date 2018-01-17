@@ -10,7 +10,11 @@ namespace WordJourney
 
 	public class CharactersInBagHUD : MonoBehaviour {
 
-		public Text[] charactersCountArray;
+		public Transform characterModel;
+
+		private InstancePool characterPool;
+
+		public Transform charactersDisplayContainer;
 
 		public Transform charactersContainer;
 
@@ -18,23 +22,41 @@ namespace WordJourney
 
 		private IEnumerator zoomInCoroutine;
 
+		public void InitCharactersInBagHUD(){
+			characterPool = InstancePool.GetOrCreateInstancePool ("CharacterPool", CommonData.poolContainerName);
+		}
+
 		public void SetUpCharactersHUD(){
 
 			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Paper");
+
+			characterPool.AddChildInstancesToPool (charactersContainer);
 			
-			for (int i = 0; i < charactersCountArray.Length; i++) {
-				Text characterCount = charactersCountArray [i];
-				int characterNum = Player.mainPlayer.charactersCount [i];
-				characterCount.text = characterNum > 0 ? characterNum.ToString () : "";
+			for (int i = 0; i < Player.mainPlayer.charactersCount.Length; i++) {
+				
+				int count = Player.mainPlayer.charactersCount [i];
+
+				if (count > 0) {
+					AddCharacterToPaper ((char)(i + CommonData.aInASCII), count);
+				}
+					
 			}
 
-			charactersContainer.transform.localScale = new Vector3 (0.1f, 0.1f, 1);
+			charactersDisplayContainer.transform.localScale = new Vector3 (0.1f, 0.1f, 1);
 
 			gameObject.SetActive (true);
 
 			zoomInCoroutine = CharactersHUDZoomIn ();
 
 			StartCoroutine (zoomInCoroutine);
+		}
+
+		private void AddCharacterToPaper(char character,int count){
+
+			Transform characterCell = characterPool.GetInstance<Transform> (characterModel.gameObject, charactersContainer);
+
+			characterCell.GetComponent<CharacterCell> ().SetUpCharacterCell (character, count);
+
 		}
 
 		public void QuitCharactersHUD(){
@@ -46,7 +68,7 @@ namespace WordJourney
 
 		private IEnumerator CharactersHUDZoomIn(){
 
-			float scale = charactersContainer.transform.localScale.x;
+			float scale = charactersDisplayContainer.transform.localScale.x;
 
 			float zoomInSpeed = (1 - scale) / zoomInDuration;
 
@@ -60,11 +82,11 @@ namespace WordJourney
 
 				lastFrameRealTime = Time.realtimeSinceStartup;
 
-				charactersContainer.transform.localScale = new Vector3 (scale, scale, 1);
+				charactersDisplayContainer.transform.localScale = new Vector3 (scale, scale, 1);
 
 			}
 
-			charactersContainer.transform.localScale = Vector3.one;
+			charactersDisplayContainer.transform.localScale = Vector3.one;
 
 		}
 

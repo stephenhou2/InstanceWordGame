@@ -137,7 +137,7 @@ namespace WordJourney
 		/// </summary>
 		public void SetUpLearnView(){
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-			currentWordsTableName = GameManager.Instance.gameDataCenter.learnInfo.GetCurrentLearningWordsTabelName();
+			currentWordsTableName = LearningInfo.Instance.GetCurrentLearningWordsTabelName();
 			Time.timeScale = 0;
 			SoundManager.Instance.PauseBgm ();
 			StartCoroutine ("SetUpViewAfterDataReady");
@@ -582,7 +582,7 @@ namespace WordJourney
 
 			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
-			GameManager.Instance.persistDataManager.SaveLearnInfo ();
+//			GameManager.Instance.persistDataManager.SaveLearnInfo ();
 
 
 			Player.mainPlayer.totalCoins += coinGain;

@@ -32,6 +32,8 @@ namespace WordJourney
 
 		private Transform crystalEntered;
 
+		private Transform monsterEntered;
+
 		[HideInInspector]public bool clickForConsumablesPos;
 
 		void Awake()
@@ -241,12 +243,19 @@ namespace WordJourney
 
 			switch (reward.itemType) {
 			case ItemType.Equipment:
-				string tint = string.Format ("获得 <color=green>{0}</color> x{1}", reward.itemName,reward.itemCount);
-				expUICtr.SetUpTintHUD (tint);
+				string tint = string.Format ("获得 <color=orange>{0}</color> x{1}", reward.itemName, reward.itemCount);
+				Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == reward.spriteName;
+				});
+				expUICtr.SetUpTintHUD (tint,itemSprite);
 				break;
 			case ItemType.Consumables:
-				tint = string.Format ("获得 <color=green>{0}</color>x{1}", reward.itemName, reward.itemCount);
-				expUICtr.SetUpTintHUD (tint);
+				itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == reward.spriteName;
+				});
+				tint = string.Format ("获得 <color=orange>{0}</color>x{1}", reward.itemName, reward.itemCount);
+
+				expUICtr.SetUpTintHUD (tint,itemSprite);
 				expUICtr.UpdateBottomBar ();
 				break;
 			case ItemType.UnlockScroll:
@@ -256,8 +265,8 @@ namespace WordJourney
 				expUICtr.SetUpCraftingRecipesHUD (reward);
 				break;
 			case ItemType.CharacterFragment:
-				tint = string.Format ("获得<color=green>{0}</color>", reward.itemName);
-				expUICtr.SetUpTintHUD (tint);
+				tint = string.Format ("获得字母碎片 <color=orange>{0}</color>", reward.itemName);
+				expUICtr.SetUpTintHUD (tint,null);
 				break;
 
 			}
@@ -270,6 +279,8 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="monsterTrans">Monster trans.</param>
 		public void EnterMonster(Transform monsterTrans){
+
+			monsterEntered = monsterTrans;
 
 			battlePlayerCtr.isInFight = true;
 
@@ -404,7 +415,7 @@ namespace WordJourney
 			if (tool != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具");
+				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具",null);
 			}
 
 		}
@@ -435,18 +446,15 @@ namespace WordJourney
 			// 如果该宝箱不需要使用钥匙开启
 			if (tb.unlockItemName == "") {
 
-				SoundManager.Instance.PlayAudioClip ("MapEffect/" + tb.audioClipName);
+//				SoundManager.Instance.PlayAudioClip ("MapEffect/" + tb.audioClipName);
 			
+				mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
+
+				tb.GetComponent<BoxCollider2D> ().enabled = false;
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockTreasureBox (()=>{
-
-					if (tb.walkableAfterChangeStatus) {
-						mapGenerator.mapWalkableInfoArray [(int)tb.transform.position.x, (int)tb.transform.position.y] = 1;
-					}
-
 					mapGenerator.SetUpRewardInMap(tb.rewardItem,tb.transform.position);
-//					expUICtr.SetUpRewardItemsPlane(tb.rewardItem);
 				});
 
 				return;
@@ -463,7 +471,7 @@ namespace WordJourney
 			if (key != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (tb, key);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少打开箱子的工具");
+				expUICtr.SetUpTintHUD ("缺少打开箱子的工具",null);
 			}
 
 		}
@@ -541,7 +549,7 @@ namespace WordJourney
 			if (tool != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具");
+				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具",null);
 			}
 
 			Debug.Log ("碰到了植物");
@@ -578,6 +586,8 @@ namespace WordJourney
 
 			FightEndCallBacks ();
 
+			mapGenerator.AddAllEffectAnimToPool ();
+
 			if (monsterTransArray.Length <= 0) {
 				return;
 			}
@@ -612,7 +622,7 @@ namespace WordJourney
 
 			mapGenerator.SetUpRewardInMap (characterFragment, monsterPos);
 
-			ResetCamareAndContinueMove (!isLevelUp);
+			ResetCamareAndContinueMove (!isLevelUp,battleMonsterCtr.originalPos);
 
 		}
 
@@ -647,7 +657,13 @@ namespace WordJourney
 			QuitExploreScene (false);
 		}
 
+
+
 		private void FightEndCallBacks(){
+
+			// 清理所有状态和技能回调
+			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
+			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
 
 			// 执行玩家角色战斗结束技能回调
 			battlePlayerCtr.ExcuteFightEndCallBacks(battleMonsterCtr);
@@ -655,18 +671,16 @@ namespace WordJourney
 			// 执行怪物角色战斗结束技能回调
 			battleMonsterCtr.ExcuteFightEndCallBacks(battlePlayerCtr);
 
-			// 清理所有状态和技能回调
-			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
-			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
+
 
 		}
 
 
-		private void ResetCamareAndContinueMove(bool enableInterActivity){
+		private void ResetCamareAndContinueMove(bool enableInterActivity,Vector3 oriMonsterPos){
 
 			StartCoroutine ("ResetCamera",enableInterActivity);
 
-			battlePlayerCtr.PlayerMoveToEnemyPosAfterFight ();
+			battlePlayerCtr.PlayerMoveToEnemyPosAfterFight (oriMonsterPos);
 		}
 
 
@@ -701,13 +715,27 @@ namespace WordJourney
 
 			mapGenerator.PrepareToResetMap ();
 
+//			int currentLevelIndex = Player.mainPlayer.currentLevelIndex;
+
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
+//			Player.mainPlayer.currentLevelIndex = currentLevelIndex;
+
 			int gameLevel = Player.mainPlayer.currentLevelIndex;
 
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [gameLevel];
+
+			battlePlayerCtr.ResetAgent ();
+
+			if (monsterEntered != null) {
+				monsterEntered.GetComponent<BattleMonsterController> ().ResetAgent ();
+				monsterEntered = null;
+			}
+
+
+			expUICtr.QuitFight ();
 
 			SetUpExploreView (levelData);
 		}
@@ -759,7 +787,7 @@ namespace WordJourney
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[] {
 				GameDataCenter.GameDataType.MapSprites,
-				GameDataCenter.GameDataType.Skills, 
+//				GameDataCenter.GameDataType.Skills, 
 				GameDataCenter.GameDataType.SkillSprites,
 				GameDataCenter.GameDataType.Monsters,
 				GameDataCenter.GameDataType.NPCs,

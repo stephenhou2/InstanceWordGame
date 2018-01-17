@@ -12,27 +12,42 @@ namespace WordJourney
 
 	public class HomeView : MonoBehaviour {
 
+
+		public Text wordTypeText;
+		public Text coinCount;
+
 		public Image maskImage;
 
 		public Transform chapterSelectPlane;
-		public Transform chapterSelectHUD;
 		public Transform chaptersContainer;
 
-		public Transform chapterButtonModel;
-		private InstancePool chapterButtonPool;
+		public Button[] chapterButtons;
+
 
 		public float chapterSelectPlaneZoomInDuration = 0.2f;
 
 		public void SetUpHomeView(){
-			
-			chapterButtonPool = InstancePool.GetOrCreateInstancePool ("ChapterButtonPool", CommonData.poolContainerName);
+
+			SetUpBasicInformation ();
 
 			GetComponent<Canvas> ().enabled = true;
 
 		}
+
+		private void SetUpBasicInformation(){
+
+			wordTypeText.text = GameManager.Instance.gameDataCenter.gameSettings.GetWordTypeString ();
+
+			coinCount.text = Player.mainPlayer.totalCoins.ToString ();
+
+		}
+
+
 		public void ShowMaskImage (){
 			maskImage.gameObject.SetActive (true);
 		}
+
+
 
 		private void HideMaskImage(){
 			maskImage.gameObject.SetActive (false);
@@ -41,31 +56,34 @@ namespace WordJourney
 
 		public void SetUpChapterSelectPlane(){
 
-
-
 			int maxUnlockChapterIndex = Player.mainPlayer.maxUnlockLevelIndex / 5;
 
-			for (int i = 0; i < maxUnlockChapterIndex + 1; i++) {
+			for (int i = 0; i < chapterButtons.Length; i++) {
 
-				int chapterLevelIndex = i;
+				Button chapterButton = chapterButtons [i];
 
-				Button chapterButton = chapterButtonPool.GetInstance<Button> (chapterButtonModel.gameObject, chaptersContainer);
+				Text chapterNameText = chapterButton.GetComponentInChildren<Text> ();
 
-				Image lockImage = chapterButton.transform.Find ("LockImage").GetComponent<Image> ();
+				if (i <= maxUnlockChapterIndex) {
+					
+					chapterButton.interactable = true;
 
-//				lockImage.enabled = 
+					string chapterName = GameManager.Instance.gameDataCenter.gameLevelDatas [5 * i].chapterName;
 
-				chapterButton.GetComponentInChildren<Text> ().text = GameManager.Instance.gameDataCenter.gameLevelDatas [5 * i].chapterName;
+					string chapterIndexInChinese = MyTool.NumberToChinese (i + 1);
 
-				chapterButton.onClick.RemoveAllListeners ();
+					string fullName = string.Format ("第{0}章  {1}", chapterIndexInChinese, chapterName);
 
-				chapterButton.onClick.AddListener (delegate {
-					GetComponent<HomeViewController>().SelectChapter(chapterLevelIndex);
-				});
+					chapterNameText.text = fullName;
+
+				} else {
+					chapterButton.interactable = false;
+					chapterNameText.text = "? ? ? ?";
+				}
 
 			}
 
-			chapterSelectHUD.localScale = new Vector3 (0.1f, 0.1f, 1);
+			chaptersContainer.localScale = new Vector3 (0.1f, 0.1f, 1);
 
 			chapterSelectPlane.gameObject.SetActive (true);
 
@@ -78,29 +96,26 @@ namespace WordJourney
 		private IEnumerator ChapterSelectHUDZoomIn(){
 			
 
-			float chapterSelectHUDScale = chapterSelectHUD.localScale.x;
+			float chapterSelectHUDScale = chaptersContainer.localScale.x;
 
 			float chapterSelectHUDZoomSpeed = (1 - chapterSelectHUDScale) / chapterSelectPlaneZoomInDuration;
 
 			while (chapterSelectHUDScale < 1) {
 				float zoomInDelta = chapterSelectHUDZoomSpeed * Time.deltaTime;
-				chapterSelectHUD.localScale += new Vector3 (zoomInDelta, zoomInDelta, 0);
+				chaptersContainer.localScale += new Vector3 (zoomInDelta, zoomInDelta, 0);
 				chapterSelectHUDScale += zoomInDelta;
 				yield return null;
 			}
 
-			chapterSelectHUD.localScale = Vector3.one;
+			chaptersContainer.localScale = Vector3.one;
 
 		}
 
 		public void QuitChapterSelectPlane(){
-			chapterButtonPool.AddChildInstancesToPool (chaptersContainer);
 			chapterSelectPlane.gameObject.SetActive (false);
 		}
 
 		public void OnQuitHomeView(){
-
-			chapterButtonPool.AddChildInstancesToPool (chaptersContainer);
 
 			chapterSelectPlane.gameObject.SetActive (false);
 

@@ -64,7 +64,8 @@ namespace WordJourney
 			// 初始化物品基础属性
 			this.itemId = cons.itemId;
 			this.itemName = cons.itemName;
-			this.itemDescription = cons.itemDescription;
+			this.itemGeneralDescription = cons.itemGeneralDescription;
+			this.itemPropertyDescription = cons.itemPropertyDescription;
 			this.spriteName = cons.spriteName;
 			this.itemType = cons.itemType;
 			this.itemNameInEnglish = cons.itemNameInEnglish;

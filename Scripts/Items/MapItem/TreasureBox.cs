@@ -94,6 +94,9 @@ namespace WordJourney
 
 			// 如果开启或破坏后是可以行走的，动画结束后将包围盒设置为not enabled
 			if (walkableAfterChangeStatus) {
+				// 瓦罐和木桶解锁之后在图层内层级下调一级低层级（防止人物在上面走的时候遮挡住人物）
+				int sortingOrder = mapItemRenderer.sortingOrder - 1;
+				SetSortingOrder (sortingOrder);
 				bc2d.enabled = false;
 			}
 

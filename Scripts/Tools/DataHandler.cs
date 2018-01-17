@@ -121,6 +121,10 @@ namespace WordJourney
 
 		}
 
+		public static bool FileExist(string filePath){
+			return File.Exists (filePath);
+		}
+
 
 		public static void  CopyDirectory(string sourcePath,string destPath,bool deleteOriDirectoryIfExist){
 

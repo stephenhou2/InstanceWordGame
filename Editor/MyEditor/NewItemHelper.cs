@@ -92,7 +92,7 @@ namespace WordJourney
 
 				string oriDescription = itemDataArray [4];
 
-				im.itemDescription = oriDescription.Replace ("+", ",");
+				im.itemGeneralDescription = oriDescription.Replace ("&", ",");
 
 				im.spriteName = itemDataArray [5];
 
@@ -120,10 +120,10 @@ namespace WordJourney
 
 				im.critHurtScalerGain = FromStringToSingle (itemDataArray [17]);
 
-				int attachedSkillColCount = dataLength - 25;
+				int attachedSkillColCount = dataLength - 26;
 
 				if (attachedSkillColCount % 13 != 0) {
-					string error = string.Format ("数据长度不正确,总数据长度{0}，装备属性数据长度{1}，附加技能数据长度{2}，配方数据长度{3},物品价格数据长度1", dataLength, 18, attachedSkillColCount, 6);
+					string error = string.Format ("数据长度不正确,总数据长度{0}，装备属性数据长度{1}，附加技能数据长度{2}，配方数据长度{3},物品价格数据长度1,物品属性描述长度1", dataLength, 18, attachedSkillColCount, 6);
 					Debug.LogError (error);
 					return;
 				}
@@ -170,7 +170,7 @@ namespace WordJourney
 //				List<int> itemIdsForProduce = new List<int> ();
 
 				for (int j = 6; j > 0; j--) {
-					int columnIndex = dataLength - 1 - j;
+					int columnIndex = dataLength - 2 - j;
 					if (j % 2 == 0) {
 						string itemName = itemDataArray [columnIndex];
 						if (itemName != "" && itemName != null) {
@@ -182,7 +182,11 @@ namespace WordJourney
 					}
 				}
 
-				im.price = FromStringToInt16 (itemDataArray [dataLength - 1]);
+				im.price = FromStringToInt16 (itemDataArray [dataLength - 2]);
+
+				im.itemPropertyDescription = itemDataArray [dataLength - 1];
+
+				im.itemPropertyDescription = im.itemPropertyDescription.Replace ("_", "\n").Replace("&",",");
 
 			}
 

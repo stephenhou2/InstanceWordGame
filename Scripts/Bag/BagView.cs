@@ -37,12 +37,11 @@ namespace WordJourney
 		public Transform bagItemModel;
 
 
-		private int maxPreloadCountOfItem;
+		private int singleBagItemVolume = 24;
+		private int currentBagIndex;
 
 		private Player player;
 
-
-		public Transform helpPlane;
 
 		private Sequence[] changeTintFromEqSequences = new Sequence[8];
 		private Sequence[] changeTintFromOtherSequences = new Sequence[8];
@@ -68,6 +67,8 @@ namespace WordJourney
 			itemDetail.InitItemDetailHUD (true, HideOperationButtons);
 			unlockScrollDetail.InitUnlockScrollDetailHUD (true, null, UnlockItemCallBack, ResolveScrollCallBack);
 			craftRecipesDetail.InitCraftingRecipesHUD (true, null, CraftItemCallBack);
+			charactersInBag.InitCharactersInBagHUD ();
+
 
 			//获取所有item的图片
 //			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
@@ -82,16 +83,14 @@ namespace WordJourney
 
 			}
 
-			// 背包中单类物品最大预加载数量
-			maxPreloadCountOfItem = 24;
-
 			Agent.PropertyChange propertyChange = player.ResetBattleAgentProperties (false);
 
 			SetUpPlayerStatusPlane (propertyChange);
 
 			SetUpEquipedEquipmentsPlane ();
 
-			SetUpItemsDiaplayPlane ();
+			// 默认初始化 背包一
+			SetUpBagItemsPlane (0);
 
 		}
 
@@ -255,30 +254,18 @@ namespace WordJourney
 
 				Transform equipedEquipmentButton = allEquipedEquipmentButtons[i];
 
-				Image itemIcon = equipedEquipmentButton.transform.Find ("ItemIcon").GetComponent<Image> ();
-
 				Equipment equipment = player.allEquipedEquipments [i];
 
+				bool equipmentSlotUnlocked = BuyRecord.Instance.equipmentSlotUnlockedArray [i];
+
+				equipedEquipmentButton.GetComponent<EquipedEquipmentCell> ().SetUpEquipedEquipmentCell (equipment,equipmentSlotUnlocked);
+
 				equipedEquipmentButton.GetComponent<ItemDragControl> ().item = equipment;
-
-				if (equipment.itemId < 0) {
-					itemIcon.enabled = false;
-					continue;
-				}
-
-				Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == equipment.spriteName;
-				});
-				itemIcon.sprite = s;
-				itemIcon.enabled = true;
 
 			}
 
 		}
-
-
 			
-
 
 		public void ShowQueryResolveHUD(){
 			queryResolveHUD.gameObject.SetActive (true);
@@ -291,47 +278,48 @@ namespace WordJourney
 		/// <summary>
 		/// 初始化背包物品界面
 		/// </summary>
-		public void SetUpItemsDiaplayPlane(){
+		public void SetUpBagItemsPlane(int bagIndex){
 
-			List<Item> items = player.allItemsInBag;
-
-			bagItemsPlane.GetComponent<ScrollRect> ().velocity = Vector2.zero;
-
-			bagItemsContainer.localPosition = Vector3.zero;
+			currentBagIndex = bagIndex;
 
 			bagItemsPool.AddChildInstancesToPool (bagItemsContainer);
 
-			int loadCount = items.Count <= maxPreloadCountOfItem ? items.Count : maxPreloadCountOfItem;
+			int minItemIndexOfCurrentBag = bagIndex * singleBagItemVolume;
 
-			for (int i = 0; i < loadCount; i++) {
-				AddBagItem (items[i]);
+			int maxItemIndexOfCurrentBag = (bagIndex + 1) * singleBagItemVolume - 1;
+
+			for (int i = minItemIndexOfCurrentBag; i <= maxItemIndexOfCurrentBag; i++) {
+				if (i >= player.allItemsInBag.Count) {
+					return;
+				}
+				AddBagItem (player.allItemsInBag[i]);
 			}
 				
-			if (loadCount < items.Count) {
-				
-				List<Item> myItems = new List<Item> ();
-
-				for (int i = 0; i < items.Count; i++) {
-					myItems.Add (items [i]);
-				}
-
-				IEnumerator coroutine = LoadItemDisplayButtonsAsync (myItems);
-
-				StartCoroutine (coroutine);
-			}	
+//			if (loadCount < items.Count) {
+//				
+//				List<Item> myItems = new List<Item> ();
+//
+//				for (int i = 0; i < items.Count; i++) {
+//					myItems.Add (items [i]);
+//				}
+//
+//				IEnumerator coroutine = LoadItemDisplayButtonsAsync (myItems);
+//
+//				StartCoroutine (coroutine);
+//			}	
 		}
 			
-		private IEnumerator LoadItemDisplayButtonsAsync(List<Item> items){
-
-			yield return null;
-
-			for (int i = maxPreloadCountOfItem; i < items.Count; i++) {
-
-				Item item = items [i] as Item;
-
-				AddBagItem (item);
-			}
-		}
+//		private IEnumerator LoadItemDisplayButtonsAsync(List<Item> items){
+//
+//			yield return null;
+//
+//			for (int i = maxPreloadCountOfItem; i < items.Count; i++) {
+//
+//				Item item = items [i] as Item;
+//
+//				AddBagItem (item);
+//			}
+//		}
 
 	
 
@@ -423,33 +411,7 @@ namespace WordJourney
 			ItemInBagDragControl dragItemScript = bagItem.GetComponent<ItemInBagDragControl> ();
 			dragItemScript.item = item;
 
-			Text itemName = bagItem.Find ("ItemName").GetComponent<Text> ();
-			Text extraInfo = bagItem.Find ("ExtraInfo").GetComponent<Text> ();
-			Image itemIcon = bagItem.Find ("ItemIcon").GetComponent<Image>();
-			Image newItemTintIcon = bagItem.Find ("NewItemTintIcon").GetComponent<Image> ();
-
-			itemIcon.enabled = false;
-			newItemTintIcon.enabled = false;
-
-			itemName.text = item.itemName;
-
-			if (item.itemType == ItemType.Consumables) {
-				extraInfo.text = item.itemCount.ToString ();
-			} else {
-				extraInfo.text = string.Empty;
-			}
-
-			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-				return obj.name == item.spriteName;
-			});
-				
-			itemIcon.sprite = itemSprite;
-
-			itemIcon.enabled = itemSprite != null;
-
-			// 如果是新物品，则显示新物品提示图片
-			newItemTintIcon.enabled = item.isNewItem;
-
+			bagItem.GetComponent<ItemInBagCell> ().SetUpIteminBagCell (item);
 
 		}
 
@@ -458,9 +420,9 @@ namespace WordJourney
 			UnlockScroll currentSelectedUnlockScroll= unlockScrollDetail.unlockScroll;
 			currentSelectedUnlockScroll.unlocked = true;
 			player.RemoveItem (currentSelectedUnlockScroll,1);
-			string tint = string.Format ("解锁拼写 <color=green>{0}</color>", currentSelectedUnlockScroll.itemName);
-			SetUpTintHUD (tint);
-			SetUpItemsDiaplayPlane ();
+			string tint = string.Format ("解锁拼写 <color=orange>{0}</color>", currentSelectedUnlockScroll.itemName);
+			SetUpTintHUD (tint,null);
+			SetUpBagItemsPlane (currentBagIndex);
 		}
 
 		private void ResolveScrollCallBack(){
@@ -484,15 +446,17 @@ namespace WordJourney
 
 			StringBuilder tint = new StringBuilder();
 
-			tint.Append ("分解获得字母碎片");
+			tint.Append ("获得字母碎片<color=orange>");
 
 			for (int i = 0; i < characters.Count; i++) {
 
-				tint.Append (characters [i]);
+				tint.Append (" " + characters [i]);
 
 			}
 
-			tintHUD.SetUpTintHUD (tint.ToString());
+			tint.Append ("</color>");
+
+			tintHUD.SetUpTintHUD (tint.ToString(),null);
 
 		}
 
@@ -531,8 +495,8 @@ namespace WordJourney
 			charactersInBag.QuitCharactersHUD ();
 		}
 
-		public void SetUpTintHUD(string tint){
-			tintHUD.SetUpTintHUD (tint);
+		public void SetUpTintHUD(string tint,Sprite sprite){
+			tintHUD.SetUpTintHUD (tint,sprite);
 		}
 			
 

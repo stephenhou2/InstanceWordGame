@@ -97,7 +97,7 @@ namespace WordJourney
 
 		public static LearnWord RandomWord(){
 
-			LearningInfo learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
+			LearningInfo learnInfo = LearningInfo.Instance;
 
 			int wordId = 0;
 

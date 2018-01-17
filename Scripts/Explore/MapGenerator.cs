@@ -509,9 +509,8 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.LauncherTowardsRight, pos, null);
 					break;
 				case AttachedInfoType.Plant:
-//					int attachedPlantCount = Random.Range (1, 4);
-//					Item attachedPlant = Item.NewItemWith (113, attachedPlantCount);
-//					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
+					Item attachedPlant = Plant.GenerateRandomReward ();
+					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
 					break;
 				case AttachedInfoType.PressSwitch:
 					GenerateMapItem (MapItemType.PressSwitch, pos, null);
@@ -568,7 +567,7 @@ namespace WordJourney
 				mapItem = mapItemPool.GetInstanceWithName<NormalTrap> (trapModel.name, trapModel.gameObject, mapItemsContainer);
 				(mapItem as NormalTrap).SetTrapOff ();
 				(mapItem as NormalTrap).mapItemType = MapItemType.NormalTrapOff;
-				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 1;
+				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 10;
 				break;
 			case MapItemType.NormalTrapOn:
 				mapItem = mapItemPool.GetInstanceWithName<NormalTrap> (trapModel.name, trapModel.gameObject, mapItemsContainer);
@@ -758,22 +757,7 @@ namespace WordJourney
 
 			bpCtr.SetSortingOrder (-(int)position.y);
 
-			Transform floor = allSleepingFloors.Find (delegate(Transform obj) {
-//				Debug.LogFormat("{0}----{1}",obj.position,position);
-				return PositionSame(obj.position,position);
-			});
-
-//			floor.GetComponent<SpriteRenderer>().sortingLayerName = "Ground";
-
-//			floor.transform.position = new Vector3 (position.x, position.y, 0);
-
 			DirectlyShowSleepingTilesAtPosition (position);
-
-//			floor.gameObject.SetActive (true);
-
-//			mapWalkableInfoArray [(int)position.x, (int)position.y] = 1;
-
-//			allSleepingFloors.Remove (floor);
 
 			ItemsAroundAutoIntoLifeWithBasePoint (position);
 
@@ -788,9 +772,9 @@ namespace WordJourney
 
 			Camera.main.transform.localPosition = new Vector3 (0, 0, -10);
 
-//			Camera.main.transform.Find ("Cover").gameObject.SetActive (true);
+			Camera.main.orthographicSize = 6.0f;
 
-
+			Camera.main.transform.Find ("Background").transform.localPosition = new Vector3 (0, 0, 5);
 
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("wait", 0, null);
@@ -1712,14 +1696,17 @@ namespace WordJourney
 
 			GetComponent<ExploreManager> ().ObtainReward (reward);
 
-			rewardTrans.gameObject.SetActive (false);
-
-			rewardItemPool.AddInstanceToPool (rewardTrans.gameObject);
+			AddRewardItemToPool (rewardTrans);
 
 		}
 
+		private void AddRewardItemToPool(Transform rewardItem){
+			rewardItem.gameObject.SetActive (false);
+			rewardItemPool.AddInstanceToPool (rewardItem.gameObject);
+		}
+
 		public void AddMapItemInPool(Transform mapItem){
-			mapItemPool.AddInstanceToPool (mapItem.gameObject);
+			mapItem.GetComponent<MapItem> ().AddToPool (mapItemPool);
 		}
 
 
@@ -1737,7 +1724,7 @@ namespace WordJourney
 
 			Destroy (effectAnimPool.gameObject);
 
-			Destroy (rewardItemPool);
+			Destroy (rewardItemPool.gameObject);
 
 //			Destroy (otherAnimPool.gameObject);
 
@@ -1750,42 +1737,45 @@ namespace WordJourney
 		/// </summary>
 		private void AllMapInstancesToPool(){
 			
-			AddFloorsToPool ();
+			AddAllFloorsToPool ();
 
-			AddMapItemsToPool();
+			AddAllMapItemsToPool();
 
-			AddMonstersToPool();
+			AddAllMonstersToPool();
 
-			effectAnimPool.AddChildInstancesToPool (effectAnimContainer);
-			rewardItemPool.AddChildInstancesToPool (rewardsContainer);
+			AddAllEffectAnimToPool ();
+
+			AddAllRewardItemToPool ();
+
 			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
 		}
 
-		private void AddEffectAnimToPool(){
-
+		public void AddAllEffectAnimToPool(){
 			while (effectAnimContainer.childCount > 0) {
 				AddEffectAnimToPool (effectAnimContainer.GetChild (0));
 			}
 		}
 
-		private void AddRewardItemToPool(){
-
+		public void AddAllRewardItemToPool(){
+			while (rewardsContainer.childCount > 0) {
+				AddRewardItemToPool (rewardsContainer.GetChild (0));
+			}
 		}
 			
 
-		private void AddMapItemsToPool(){
+		public void AddAllMapItemsToPool(){
 			while(mapItemsContainer.childCount > 0){
 				mapItemsContainer.GetChild (0).GetComponent<MapItem> ().AddToPool (mapItemPool);
 			}
 		}
 
-		private void AddMonstersToPool(){
+		public void AddAllMonstersToPool(){
 			while(monstersContainer.childCount > 0){
 				monstersContainer.GetChild (0).GetComponent<BattleMonsterController> ().AddToPool (monsterPool);
 			}
 		}
 
-		private void AddFloorsToPool(){
+		public void AddAllFloorsToPool(){
 
 			while(floorsContainer.childCount > 0){
 				Transform floor = floorsContainer.GetChild (0);

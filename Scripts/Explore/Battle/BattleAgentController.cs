@@ -66,14 +66,14 @@ namespace WordJourney
 		// 等待角色动画结束协程
 		public IEnumerator waitRoleAnimEndCoroutine;
 		// 等待技能动画结束协程
-		public IEnumerator skillEffectReuseCoroutine;
+		public List<IEnumerator> allSkillEffectReuseCoroutines = new List<IEnumerator>();
 
 		protected ActiveSkill currentSkill;
 
 
 		public List<ActiveSkill> activeSkills= new List<ActiveSkill>();
 
-
+		[HideInInspector]public bool isAttackActionFinish;
 
 		// 骨骼动画控制器
 		protected UnityArmatureComponent armatureCom{
@@ -203,6 +203,8 @@ namespace WordJourney
 
 		}
 
+		public abstract bool CheckFightEnd ();
+
 		public void PlayShakeAnim(){
 			#warning 受击动画逻辑上有冲突，暂时先不使用受击动画
 //			PlayRoleAnim ("hit", 1, null);
@@ -322,7 +324,7 @@ namespace WordJourney
 //		}
 
 		/// <summary>
-		/// 设置角色特效动画，string 型触发器
+		/// 设置角色特效动画，trigger 型触发器
 		/// </summary>
 		/// <param name="animName">触发器名称</param>
 		public void SetEffectAnim(string triggerName,CallBack cb = null){
@@ -338,9 +340,11 @@ namespace WordJourney
 
 				skillEffectAnim.SetTrigger (triggerName);
 
-//				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
+				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
-				skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
+				IEnumerator skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
+
+				allSkillEffectReuseCoroutines.Add (skillEffectReuseCoroutine);
 
 				StartCoroutine (skillEffectReuseCoroutine);
 
@@ -361,7 +365,10 @@ namespace WordJourney
 
 			AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 
+//			Debug.Log (stateInfo.IsName ("Empty") + "----------------------");
+
 			while (stateInfo.normalizedTime < 1) {
+//				Debug.Log (stateInfo.normalizedTime);
 				yield return null;
 				stateInfo = animator.GetCurrentAnimatorStateInfo (0);
 			}
@@ -381,7 +388,7 @@ namespace WordJourney
 
 //			animator.ResetTrigger (triggerName);
 
-//			Debug.LogFormat ("{0}回收技能特效{1}", agent.agentName, effectInfo.triggerName);
+			Debug.LogFormat ("{0}回收技能特效", agent.agentName);
 
 		}
 
@@ -425,6 +432,12 @@ namespace WordJourney
 
 		}
 
+		public void ResetAgent(){
+			StopCoroutinesWhenFightEnd ();
+			this.armatureCom.animation.Stop ();
+			CancelInvoke ();
+		}
+
 		public abstract void AgentDie ();
 
 		public virtual void StopCoroutinesWhenFightEnd (){
@@ -436,6 +449,15 @@ namespace WordJourney
 			if (waitRoleAnimEndCoroutine != null) {
 				StopCoroutine (waitRoleAnimEndCoroutine);
 			}
+
+			for (int i = 0; i < allSkillEffectReuseCoroutines.Count; i++) {
+				IEnumerator skillEffectReuseCoroutine = allSkillEffectReuseCoroutines [i];
+				if (skillEffectReuseCoroutine != null) {
+					StopCoroutine (skillEffectReuseCoroutine);
+				}
+			}
+
+			allSkillEffectReuseCoroutines.Clear ();
 
 			StopCoroutine ("PlayAgentShake");
 

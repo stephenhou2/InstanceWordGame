@@ -52,7 +52,7 @@ namespace WordJourney
 		public Image itemIcon;
 		public Text itemName;
 		public Text itemType;
-		public Text itemDescription;
+		public Text itemGeneralDescription;
 		public Text itemProperty;
 
 
@@ -203,7 +203,12 @@ namespace WordJourney
 					Player.mainPlayer.AddItem (rewardItem);
 					dialog.finishRewarding = true;
 					string tint = string.Format ("获得 {0} x{1}", rewardItem.itemName, rewardItem.itemCount);
-					tintHUD.SetUpTintHUD (tint);
+
+					Sprite rewardSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+						return obj.name == rewardItem.spriteName;
+					});
+
+					tintHUD.SetUpTintHUD (tint,rewardSprite);
 				}
 			}
 
@@ -319,8 +324,8 @@ namespace WordJourney
 
 			itemName.text = item.itemName;
 			itemType.text = item.GetItemTypeString ();
-			itemDescription.text = item.itemDescription;
-			itemProperty.text = item.itemDescription;
+			itemGeneralDescription.text = item.itemGeneralDescription;
+			itemProperty.text = item.itemGeneralDescription;
 
 
 		}
@@ -337,7 +342,7 @@ namespace WordJourney
 
 			if (!buySuccess) {
 				tint = "水晶不足";
-				tintHUD.SetUpTintHUD (tint);
+				tintHUD.SetUpTintHUD (tint,null);
 				return;
 			}
 
@@ -353,7 +358,11 @@ namespace WordJourney
 				break;
 			}
 
-			tintHUD.SetUpTintHUD (tint);
+			Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == currentSelectedItem.spriteName;
+			});
+
+			tintHUD.SetUpTintHUD (tint,goodsSprite);
 
 			bpUICtr.UpdateItemButtonsAndStatusPlane ();
 
@@ -373,7 +382,7 @@ namespace WordJourney
 			itemIcon.enabled = false;
 			itemName.text = "";
 			itemType.text = "";
-			itemDescription.text = "";
+			itemGeneralDescription.text = "";
 			itemProperty.text = "";
 		}
 

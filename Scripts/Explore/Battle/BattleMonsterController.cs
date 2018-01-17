@@ -84,8 +84,7 @@ namespace WordJourney
 			Invoke ("Fight", 0.5f);
 
 		}
-
-		#warning 后面这里要加入怪物战斗逻辑,现在默认一直使用普通攻击
+			
 		/// <summary>
 		/// 角色战斗逻辑
 		/// </summary>
@@ -130,7 +129,7 @@ namespace WordJourney
 			currentSkill.AffectAgents(this,bpCtr);
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if(!FightEnd()){
+			if(!CheckFightEnd()){
 				currentSkill = InteligentAttackSkill ();
 //				Debug.Log (currentSkill);
 				attackCoroutine = InvokeAttack (currentSkill);
@@ -218,7 +217,7 @@ namespace WordJourney
 		/// <summary>
 		/// 判断战斗是否结束
 		/// </summary>
-		private bool FightEnd(){
+		public override bool CheckFightEnd(){
 
 			if (bpCtr.agent.health <= 0) {
 				bpCtr.AgentDie ();
@@ -234,6 +233,8 @@ namespace WordJourney
 		public override void UpdateStatusPlane(){
 			bmUICtr.UpdateAgentStatusPlane ();
 		}
+
+
 
 
 		/// <summary>

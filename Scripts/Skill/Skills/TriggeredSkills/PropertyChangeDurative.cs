@@ -148,6 +148,8 @@ namespace WordJourney
 
 				propertyChange += skillSourceValue;
 
+				ba.CheckFightEnd ();
+
 				timer += 1f;
 
 				yield return new WaitForSeconds (1.0f);

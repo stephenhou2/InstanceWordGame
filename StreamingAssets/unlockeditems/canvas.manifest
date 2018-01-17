@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2446005428
+CRC: 3304176809
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 899f6d32196a6fb4945d05755389224e
+    Hash: d57078efaa1edd2265e688c2745b0a19
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6586415accd4d0b2e714a19d37360cdd
+    Hash: 787aaa03d45a0f22215ac289ce5a0d01
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -51,5 +51,4 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Prefabs/UnlockedItemDisplay/UnlockedItemsCanvas.prefab
-Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
+Dependencies: []

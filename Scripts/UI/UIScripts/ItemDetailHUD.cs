@@ -13,9 +13,16 @@ namespace WordJourney
 		public Transform itemDetailsContainer;
 		public Text itemName;
 		public Text itemType;
-		public Text itemDescription;
-		public Text itemProperties;
+		public Text itemGeneralDescription;
+		public Text itemPropertyDescription;
 		public Image itemIcon;
+
+		public Transform itemPropertyContainer;
+
+		private int HUDWidth = 930;
+		private int HUDHeightWithPropertyText = 1300;
+		private int HUDHeightWithoutPropertyText = 870;
+
 
 		private bool quitWhenClickBackground = true;
 		private CallBack quitCallBack;
@@ -48,9 +55,25 @@ namespace WordJourney
 
 			itemType.text = item.GetItemTypeString ();
 
-			itemProperties.text = item.itemDescription;
+			itemGeneralDescription.text = item.itemGeneralDescription;
 
-			itemDescription.text = item.itemDescription;
+			if (item.itemPropertyDescription != string.Empty) {
+
+				(itemDetailsContainer as RectTransform).sizeDelta = new Vector3 (HUDWidth, HUDHeightWithPropertyText);
+
+				itemPropertyContainer.gameObject.SetActive (true);
+
+				itemPropertyDescription.text = item.itemPropertyDescription;
+
+
+			} else {
+				
+				(itemDetailsContainer as RectTransform).sizeDelta = new Vector3 (HUDWidth, HUDHeightWithoutPropertyText);
+
+				itemPropertyContainer.gameObject.SetActive (false);
+
+			}
+
 
 			itemDetailsContainer.transform.localScale = new Vector3 (0.1f, 0.1f, 1);
 

@@ -43,6 +43,7 @@ namespace WordJourney
 		{
 			bc2d.enabled = true;
 			mapItemRenderer.sprite = switchOffSprite;
+			switchStatusChangeCount = 0;
 			SetSortingOrder (-(int)transform.position.y);
 		}
 

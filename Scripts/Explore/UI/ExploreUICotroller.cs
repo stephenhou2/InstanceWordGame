@@ -105,8 +105,8 @@ namespace WordJourney
 		}
 
 
-		public void SetUpTintHUD(string tint){
-			tintHUD.SetUpTintHUD (tint);
+		public void SetUpTintHUD(string tint,Sprite sprite){
+			tintHUD.SetUpTintHUD (tint,sprite);
 		}
 
 		/// <summary>
@@ -206,7 +206,7 @@ namespace WordJourney
 //			Text equipmentDescription = formulaDetailContainer.Find ("EquipmentDescription").GetComponent<Text> ();
 //
 //			equipmentName.text = equipment.itemName;
-//			equipmentDescription.text = equipment.itemDescription;
+//			equipmentDescription.text = equipment.itemGeneralDescription;
 //
 //			Sprite s = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 //				return obj.name == equipment.spriteName;
@@ -325,8 +325,8 @@ namespace WordJourney
 			UnlockScroll currentSelectedUnlockScroll= unlockScrollDetail.unlockScroll;
 			currentSelectedUnlockScroll.unlocked = true;
 			Player.mainPlayer.RemoveItem (currentSelectedUnlockScroll,1);
-			string tint = string.Format ("解锁拼写 <color=green>{0}</color>", currentSelectedUnlockScroll.itemName);
-			SetUpTintHUD (tint);
+			string tint = string.Format ("解锁拼写 <color=orange>{0}</color>", currentSelectedUnlockScroll.itemName);
+			SetUpTintHUD (tint,null);
 		}
 
 		private void ResolveScrollCallBack(){
@@ -337,13 +337,13 @@ namespace WordJourney
 
 			StringBuilder tint = new StringBuilder ();
 
-			tint.Append ("分解获得字母碎片");
+			tint.Append ("获得字母碎片");
 
 			for (int i = 0; i < charactersReturn.Count; i++) {
 				tint.Append (charactersReturn [i]);
 			}
 
-			tintHUD.SetUpTintHUD (tint.ToString());
+			tintHUD.SetUpTintHUD (tint.ToString(),null);
 		}
 
 		private void CraftItemCallBack(){
@@ -367,9 +367,13 @@ namespace WordJourney
 			Item craftedItem = Item.NewItemWith (craftItemModel,1);
 			Player.mainPlayer.AddItem (craftedItem);
 
-			string tint = string.Format ("获得 <color=green>{0}</color> x1", craftedItem.itemName);
+			string tint = string.Format ("获得 <color=orange>{0}</color> x1", craftedItem.itemName);
 
-			SetUpTintHUD (tint);
+			Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+				return obj.name == craftedItem.spriteName;
+			});
+
+			SetUpTintHUD (tint,itemSprite);
 
 		}
 

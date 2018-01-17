@@ -33,7 +33,7 @@ namespace WordJourney
 
 			Time.timeScale = 1f;
 
-			Debug.Log (Player.mainPlayer.allEquipedEquipments [0]);
+//			Debug.Log (Player.mainPlayer.allEquipedEquipments [0]);
 
 //			for (int i = 0; i < GameManager.Instance.gameDataCenter.allItemModels.Count; i++) {
 //				ItemModel im = GameManager.Instance.gameDataCenter.allItemModels [i];
@@ -45,12 +45,6 @@ namespace WordJourney
 		}
 
 
-		public void OnSaveButtonClick(){
-
-			GameManager.Instance.persistDataManager.SavePersistDatas ();
-
-
-		}
 
 //		private void SetUpCanvasWith(string bundleName,string canvasName,CallBack cb){
 //			
@@ -178,13 +172,13 @@ namespace WordJourney
 		}
 
 
-		public void OnUnlockedItemsButtonClick(){
-			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
-				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
-				homeView.OnQuitHomeView();
-			},false,true);
-		}
+//		public void OnUnlockedItemsButtonClick(){
+//			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
+//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
+//				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
+//				homeView.OnQuitHomeView();
+//			},false,true);
+//		}
 
 
 		private void QuitHomeView(){

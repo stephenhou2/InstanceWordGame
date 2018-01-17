@@ -115,7 +115,6 @@ namespace WordJourney{
 			Transform trans = FindTransform (transInHierarchy);
 
 			if (trans == null) {
-				Debug.Log ("游戏物体不存在，无法删除");
 				return;
 			}
 

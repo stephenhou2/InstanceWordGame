@@ -66,7 +66,8 @@ namespace WordJourney
 			// 初始化物品基本属性
 			itemId = equipment.itemId;
 			itemName = equipment.itemName;
-			itemDescription = equipment.itemDescription;
+			itemGeneralDescription = equipment.itemGeneralDescription;
+			itemPropertyDescription = equipment.itemPropertyDescription;
 			spriteName = equipment.spriteName;
 			itemType = equipment.itemType;
 			itemNameInEnglish = equipment.itemNameInEnglish;

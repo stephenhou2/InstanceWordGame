@@ -21,6 +21,8 @@ namespace WordJourney
 			}
 		}
 
+		public int equipmentIndexInPanel;
+
 		protected override void OnUserPointerEnter (PointerEventData eventData)
 		{
 
@@ -38,7 +40,9 @@ namespace WordJourney
 
 			dragControl.detectReceiver = true;
 
-			if (draggedItem.itemType == ItemType.Equipment) {
+			bool unlocked = BuyRecord.Instance.equipmentSlotUnlockedArray [equipmentIndexInPanel];
+
+			if (draggedItem.itemType == ItemType.Equipment && unlocked) {
 				tintImage.enabled = true;
 				tintImage.color = new Color (0f, 1f, 0f, 0.2f);
 			} else {
@@ -76,8 +80,10 @@ namespace WordJourney
 			// 获取拖拽中的物品
 			Item itemInBag = GetDraggedItem (eventData);
 
-			// 没有拖拽中的物品或者物品类型不是装备直接返回
-			if (itemInBag == null || itemInBag.itemType != ItemType.Equipment) {
+			bool unlocked = BuyRecord.Instance.equipmentSlotUnlockedArray [equipmentIndexInPanel];
+
+			// 没有拖拽中的物品或者该装备栏没有解锁或者物品类型不是装备H直接返回
+			if (itemInBag == null || !unlocked || itemInBag.itemType != ItemType.Equipment) {
 				SetDropResult (eventData, false);
 				tintImage.enabled = false;
 				return;
@@ -99,7 +105,7 @@ namespace WordJourney
 				// 装上背包中拖拽过来的装备标记为已装备
 				equipmentPrepareToLoad.equiped = true;
 
-				int unloadEquipmentIndex = GetEquipmentIndexInPanel (equipmentPrepareToUnload);
+				int unloadEquipmentIndex = equipmentIndexInPanel;
 
 				int loadEquipmentIndex = GetEquipmentIndexInPanel (equipmentPrepareToLoad);
 

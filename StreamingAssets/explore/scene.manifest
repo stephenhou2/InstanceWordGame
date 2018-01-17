@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 117115340
+CRC: 1166959745
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 4382b9d2290025b453866365a068f401
+    Hash: d18fd0c9a32b576fb534cedbb81c93d1
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 383910830d8377e88bbda58162d3d416
+    Hash: b63044fa6042b041fbd9c2015b885f95
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -135,6 +135,5 @@ Assets:
 - Assets/Prefabs/Explore/ExploreCanvas.prefab
 - Assets/Prefabs/Explore/ExploreManager.prefab
 Dependencies:
-- /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/ui/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/item/icons
 - /Users/houlianghong/Desktop/Unityfolder/TestOnSkills/Assets/StreamingAssets/explore/mapicons

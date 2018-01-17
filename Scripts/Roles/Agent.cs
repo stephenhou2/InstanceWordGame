@@ -30,7 +30,7 @@ namespace WordJourney
 		public string agentName;
 //		public string agentIconName;
 
-		public bool isActive;
+//		public bool isActive;
 
 		public int agentLevel;
 
@@ -239,10 +239,6 @@ namespace WordJourney
 			get{
 				if (mCharactersCount == null || mCharactersCount.Length == 0) {
 					mCharactersCount = new int[26];
-					#warning 这里测试用，暂时初始化每个字母初始有10个，后面去掉
-//					for(int i = 0;i<mCharactersCount.Length;i++){
-//						mCharactersCount[i] = 10;
-//					}
 				}
 				return mCharactersCount;
 			}
@@ -267,7 +263,7 @@ namespace WordJourney
 
 		public virtual void Awake(){
 
-			isActive = true; // 角色初始化后默认可以行动
+//			isActive = true; // 角色初始化后默认可以行动
 
 			mHealth = maxHealth;
 

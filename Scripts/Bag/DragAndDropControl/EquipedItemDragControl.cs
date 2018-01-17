@@ -14,7 +14,9 @@ namespace WordJourney
 
 		public Image itemImage;
 
-//		public Image tintImage;
+		public Image itemNameBackground;
+
+		public Text itemName;
 
 		public int equipmentIndexInPanel;
 
@@ -31,10 +33,10 @@ namespace WordJourney
 
 		protected override void OnUserShortClick (PointerEventData eventData)
 		{
-			if ((item as Equipment).itemId < 0) {
-				return;
-			}
-			bagView.GetComponent<BagViewController> ().OnItemInBagClick(item);
+//			if ((item as Equipment).itemId < 0) {
+//				return;
+//			}
+			bagView.GetComponent<BagViewController> ().OnItemInEquipmentPlaneClick(item,equipmentIndexInPanel);
 		}
 
 		protected override void OnUserLongPress (PointerEventData eventData)
@@ -71,6 +73,8 @@ namespace WordJourney
 
 			backgroundImage.enabled = true;
 			itemImage.enabled = false;
+			itemName.enabled = false;
+			itemNameBackground.enabled = false;
 		}
 
 		protected override void OnUserDrag (PointerEventData eventData)
@@ -112,6 +116,8 @@ namespace WordJourney
 			}
 
 			backgroundImage.enabled = true;
+			itemNameBackground.enabled = true;
+			itemName.enabled = true;
 			detectReceiver = false;
 		}
 

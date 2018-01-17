@@ -72,6 +72,10 @@ namespace WordJourney
 
 			}
 
+			// 障碍物清除之后在图层内层级下调一级低层级（防止人物在上面走的时候遮挡住人物）
+			int sortingOrder = mapItemRenderer.sortingOrder - 1;
+			SetSortingOrder (sortingOrder);
+
 			AnimEnd ();
 
 		}

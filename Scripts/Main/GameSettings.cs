@@ -27,6 +27,24 @@ namespace WordJourney{
 
 		public LearnMode learnMode;
 
+		public string GetWordTypeString(){
+
+			string wordTypeString = "";
+
+			switch (wordType) {
+			case WordType.CET4:
+				wordTypeString = "大学英语四级";
+				break;
+			case WordType.CET6:
+				wordTypeString = "大学英语六级";
+				break;
+			}
+
+			return wordTypeString;
+
+
+		}
+
 
 		public override string ToString ()
 		{

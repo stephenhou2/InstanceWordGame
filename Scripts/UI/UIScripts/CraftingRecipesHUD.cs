@@ -14,7 +14,8 @@ namespace WordJourney
 		public Text craftingItemName;
 		public Text craftingItemDescription;
 
-		public Image horizontalLine;
+		public Image line_2;
+		public Image line_3;
 
 		public Transform recipesItemModel;
 		private InstancePool recipesItemPool;
@@ -31,6 +32,7 @@ namespace WordJourney
 		private float zoomInDuration = 0.2f;
 		private IEnumerator zoomInCoroutine;
 
+		private int widthX = 520;
 
 		public void InitCraftingRecipesHUD(bool quitWhenClickBackground,CallBack quitCallBack,CallBack craftCallBack){
 
@@ -64,15 +66,19 @@ namespace WordJourney
 
 			craftingItemName.text = craftingItem.itemName;
 
-			craftingItemDescription.text = craftingItem.itemDescription;
+			craftingItemDescription.text = craftingItem.itemGeneralDescription;
 
 			ItemModel.ItemInfoForProduce[] itemInfosForProduce = craftingItem.itemInfosForProduce;
 
+			if (itemInfosForProduce.Length == 2) {
+				line_2.gameObject.SetActive (true);
+				line_3.gameObject.SetActive (false);
+			} else if (itemInfosForProduce.Length == 3) {
+				line_2.gameObject.SetActive (false);
+				line_3.gameObject.SetActive (true);
+			}
+
 			SetUpRecipesItems (itemInfosForProduce);
-
-			float middleLineWidth = GetMiddleLineWidth (itemInfosForProduce.Length);
-
-			horizontalLine.rectTransform.sizeDelta = new Vector2(middleLineWidth,3);
 
 			craftingItemAndRecipesContainer.localScale = new Vector3 (0.1f, 0.1f, 1);
 
@@ -83,19 +89,26 @@ namespace WordJourney
 			StartCoroutine (zoomInCoroutine);
 		}
 
-		private float GetMiddleLineWidth(int itemCount){
-
-			HorizontalLayoutGroup layout = recipesItemsContainer.GetComponent<HorizontalLayoutGroup> ();
-
-			float recipesItemWidth = recipesItemModel.GetComponent<RectTransform> ().rect.width;
-
-			return (itemCount - 1) * (layout.spacing + recipesItemWidth);
-
-		}
+//		private float GetMiddleLineWidth(int itemCount){
+//
+//			HorizontalLayoutGroup layout = recipesItemsContainer.GetComponent<HorizontalLayoutGroup> ();
+//
+//			float recipesItemWidth = recipesItemModel.GetComponent<RectTransform> ().rect.width;
+//
+//			return (itemCount - 1) * (layout.spacing + recipesItemWidth);
+//
+//		}
 
 		private void SetUpRecipesItems(ItemModel.ItemInfoForProduce[] itemInfosForProduce){
 
+//			int horizontalFix = itemInfosForProduce.Length % 2 == 0 ? spacingX : 0;
+
+
+			int spaceX = widthX / (itemInfosForProduce.Length > 1 ? itemInfosForProduce.Length - 1 : 1);
+
 			recipesItemPool.AddChildInstancesToPool(recipesItemsContainer);
+
+			bool canCraft = true;
 
 			for (int i = 0; i < itemInfosForProduce.Length; i++) {
 
@@ -107,9 +120,15 @@ namespace WordJourney
 
 				Transform recipesItem = recipesItemPool.GetInstance<Transform> (recipesItemModel.gameObject, recipesItemsContainer);
 
-				Image recipesItemIcon = recipesItem.Find ("RecipesItemIcon").GetComponent<Image> ();
-				Text recipesItemName = recipesItem.Find ("RecipesItemName").GetComponent<Text> ();
-				Text recipesItemEnoughText = recipesItem.Find ("RecipesItemEnoughText").GetComponent<Text> ();
+				int localPosX = i * spaceX;
+
+				recipesItem.localPosition = new Vector3 (localPosX, 0, 0);
+
+				Debug.Log (recipesItem.localPosition);
+
+				Image recipesItemIcon = recipesItem.Find ("ItemIcon").GetComponent<Image> ();
+				Text recipesItemName = recipesItem.Find ("ItemName").GetComponent<Text> ();
+				Text recipesItemEnoughText = recipesItem.Find ("ItemEnoughText").GetComponent<Text> ();
 
 				Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == item.spriteName;
@@ -136,13 +155,17 @@ namespace WordJourney
 
 				bool recipeItemEnough = itemInBagCount >= itemCountForProduce;
 
+				canCraft = canCraft && recipeItemEnough;
+
 				string color = recipeItemEnough ? "green" : "red";
 
 				recipesItemEnoughText.text = string.Format ("<color={0}>{1}/{2}</color>", color, itemInBagCount, itemCountForProduce);
 
-				craftButton.interactable = recipeItemEnough;
 
 			}
+
+			craftButton.interactable = canCraft;
+
 
 		}
 

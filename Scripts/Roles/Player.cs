@@ -76,7 +76,7 @@ namespace WordJourney
 			this.agentName = playerData.agentName;
 //			this.agentIconName = playerData.agentIconName;
 			this.agentLevel = playerData.agentLevel;
-			this.isActive = false;
+//			this.isActive = false;
 
 			this.originalMaxHealth = playerData.originalMaxHealth;
 			this.originalMana = playerData.originalMana;
@@ -105,33 +105,17 @@ namespace WordJourney
 
 
 			this.maxUnlockLevelIndex = playerData.maxUnlockLevelIndex;
-			this.currentLevelIndex = playerData.currentLevelIndex;
+//			this.currentLevelIndex = playerData.currentLevelIndex;
 
 			this.totalCoins = playerData.totalCoins;
 			this.experience = playerData.experience;
 
 			this.attachedTriggeredSkills.Clear ();
 			this.attachedConsumablesSkills.Clear ();
+			this.allStatus.Clear ();
 
 			ResetBattleAgentProperties (false);
 
-			for (int i = 0; i < playerData.allEquipedEquipments.Length; i++) {
-
-				Equipment equipment = playerData.allEquipedEquipments [i];
-
-				if (equipment.itemId > 0) {
-
-					for (int j = 0; j < equipment.attachedSkillInfos.Length; j++) {
-						
-						TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [j], triggeredSkillsContainer);
-
-						equipment.attachedSkills.Add (attachedSkill);
-
-						attachedTriggeredSkills.Add (attachedSkill);
-					}
-				}
-
-			}
 
 			allItemsInBag = new List<Item> ();
 
@@ -151,16 +135,46 @@ namespace WordJourney
 				allItemsInBag.Add(allCraftingRecipesInBag[i]);
 			}
 
-//			this.skillPointsLeft = playerData.skillPointsLeft;
+			StartCoroutine ("InitAllEquipmentSkills");
 
 		}
 
-//		public override void ResetBattleAgentProperties (bool toOriginalState = false)
-//		{
-//			PropertyChange changeByEquipment = base.ResetBattleAgentProperties (toOriginalState);
-//			ResetPropertiesByConsumablesEffectState ();
-//
-//		}
+		private IEnumerator InitAllEquipmentSkills(){
+
+			bool dataReady = false;
+
+			while (!dataReady) {
+
+				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+					GameDataCenter.GameDataType.Skills,
+				});
+
+				yield return null;
+			}
+
+			for (int i = 0; i < allEquipedEquipments.Length; i++) {
+
+				Equipment equipment = allEquipedEquipments [i];
+
+				if (equipment.itemId > 0) {
+
+					for (int j = 0; j < equipment.attachedSkillInfos.Length; j++) {
+
+						TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [j], triggeredSkillsContainer);
+
+						equipment.attachedSkills.Add (attachedSkill);
+
+//						Debug.LogFormat ("{0}-{1}", equipment.itemName, attachedSkill.name);
+
+						attachedTriggeredSkills.Add (attachedSkill);
+					}
+				}
+
+			}
+
+
+		}
+
 
 
 		/// <summary>
@@ -274,7 +288,7 @@ namespace WordJourney
 				originalMaxHealth += 10;
 				originalMana += 5;
 
-				ResetBattleAgentProperties (true);//升级后更新玩家状态，玩家血量和魔法值回满
+				ResetBattleAgentProperties (false);//升级后更新玩家状态，玩家血量和魔法值回满
 
 				levelUp = true;
 			}
@@ -471,11 +485,11 @@ namespace WordJourney
 			// 分解后得到的字母碎片
 			List<char> charactersReturn = new List<char> ();
 
-			// 每分解一个物品可以获得的字母碎片数量
-			int charactersReturnCount = 1;
-
 			// 物品英文名称转换为char数组
 			char[] charArray = item.itemNameInEnglish.ToCharArray ();
+
+			// 每分解一个物品可以获得的字母碎片数量(解锁卷轴返回对应单词的所有字母，其余物品返回单词中的一个字母）
+			int charactersReturnCount = item.itemType == ItemType.UnlockScroll ? charArray.Length : 1;
 
 			// char数组转换为可以进行增减操作的list
 			List<char> charList = new List<char> ();
@@ -747,7 +761,7 @@ namespace WordJourney
 //		public List<CharacterFragment> allCharacterFragmentsInBag;//背包中所有的字母碎片
 
 		public int maxUnlockLevelIndex;//最大解锁关卡序号
-		public int currentLevelIndex;//当前所在关卡序号
+//		public int currentLevelIndex;//当前所在关卡序号
 
 		public int experience;//人物经验值
 		public int totalCoins;//人物金币数量
@@ -758,7 +772,7 @@ namespace WordJourney
 			this.agentName = player.agentName;
 //			this.agentIconName = player.agentIconName;
 			this.agentLevel = player.agentLevel;
-			this.isActive = player.isActive;
+//			this.isActive = player.isActive;
 
 			this.originalMaxHealth = player.originalMaxHealth;
 			this.originalMaxMana = player.originalMana;
@@ -782,11 +796,19 @@ namespace WordJourney
 			this.allCraftRecipesInBag = player.allCraftingRecipesInBag;
 
 			this.maxUnlockLevelIndex = player.maxUnlockLevelIndex;
-			this.currentLevelIndex = player.currentLevelIndex;
+//			this.currentLevelIndex = player.currentLevelIndex;
 
 			this.totalCoins = player.totalCoins;
 			this.experience = player.experience;
 
+			ClearAllEquipmentAttachedSkills ();
+
+		}
+
+		private void ClearAllEquipmentAttachedSkills(){
+			for (int i = 0; i < allEquipedEquipments.Length; i++) {
+				allEquipedEquipments [i].attachedSkills.Clear ();
+			}
 		}
 
 	}

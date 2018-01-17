@@ -12,6 +12,8 @@ namespace WordJourney
 //		public float probability;
 
 		private Coroutine fizzyCoroutine;
+
+		private BattleAgentController affectedAgent;
 	
 
 		protected override void BeforeFightTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
@@ -45,7 +47,7 @@ namespace WordJourney
 
 				List<TriggeredSkill> fizzySkills = enemy.propertyCalculator.GetTriggeredSkillsWithSameStatus (statusName);
 
-				BattleAgentController affectedAgent = GetAffectedBattleAgent (triggerInfo, self, enemy);
+				affectedAgent = GetAffectedBattleAgent (triggerInfo, self, enemy);
 
 				if (fizzySkills.Count > 0) {
 					for (int i = 0; i < fizzySkills.Count; i++) {
@@ -54,8 +56,13 @@ namespace WordJourney
 				} else {
 					affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
 				}
-					
+
+
 				affectedAgent.PlayRoleAnim ("stun", 0, null);
+
+				if (affectedAgent is BattlePlayerController) {
+					(affectedAgent as BattlePlayerController).isAttackActionFinish = true;
+				}
 
 				fizzyCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
 
@@ -79,6 +86,7 @@ namespace WordJourney
 		{
 			if (fizzyCoroutine != null) {
 				StopCoroutine (fizzyCoroutine);
+				affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			}
 		}
 

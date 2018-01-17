@@ -11,7 +11,7 @@ namespace WordJourney
 		public enum GameDataType
 		{
 			GameSettings,
-			LearnInfo,
+//			LearnInfo,
 			GameLevelDatas,
 			ItemModels,
 			ItemSprites,
@@ -29,7 +29,7 @@ namespace WordJourney
 		}
 
 		private GameSettings mGameSettings;
-		private LearningInfo mLearnInfo;
+//		private LearningInfo mLearnInfo;
 		private List<GameLevelData> mGameLevelDatas = new List<GameLevelData>();
 		private List<ItemModel> mAllItemModels = new List<ItemModel> ();
 		private List<Sprite> mAllItemSprites = new List<Sprite>();
@@ -96,9 +96,9 @@ namespace WordJourney
 			case GameDataType.GameSettings:
 				LoadGameSettings ();
 				break;
-			case GameDataType.LearnInfo:
-				LoadLearnInfo ();
-				break;
+//			case GameDataType.LearnInfo:
+//				LoadLearnInfo ();
+//				break;
 			case GameDataType.GameLevelDatas:
 				LoadGameLevelDatas ();
 				break;
@@ -176,27 +176,27 @@ namespace WordJourney
 
 
 
-		public LearningInfo learnInfo{
-			get{
-				if (mLearnInfo == null) {
-					LoadLearnInfo ();
-				}
-				return mLearnInfo;
-			}
-		}
-
-		private void LoadLearnInfo(){
-			if(inLoadingDataTypes.Contains(GameDataType.LearnInfo)){
-				return;
-			}
-			inLoadingDataTypes.Add (GameDataType.LearnInfo);
-			mLearnInfo = GameManager.Instance.persistDataManager.LoadLearnInfo ();
-			if (mLearnInfo == null) {
-				mLearnInfo = new LearningInfo ();
-			}
-			dataReadyDic [GameDataType.LearnInfo] = true;
-			inLoadingDataTypes.Remove (GameDataType.LearnInfo);
-		}
+//		public LearningInfo learnInfo{
+//			get{
+//				if (mLearnInfo == null) {
+//					LoadLearnInfo ();
+//				}
+//				return mLearnInfo;
+//			}
+//		}
+//
+//		private void LoadLearnInfo(){
+//			if(inLoadingDataTypes.Contains(GameDataType.LearnInfo)){
+//				return;
+//			}
+//			inLoadingDataTypes.Add (GameDataType.LearnInfo);
+//			mLearnInfo = GameManager.Instance.persistDataManager.LoadLearnInfo ();
+//			if (mLearnInfo == null) {
+//				mLearnInfo = new LearningInfo ();
+//			}
+//			dataReadyDic [GameDataType.LearnInfo] = true;
+//			inLoadingDataTypes.Remove (GameDataType.LearnInfo);
+//		}
 
 
 		public List<GameLevelData> gameLevelDatas{
@@ -702,10 +702,10 @@ namespace WordJourney
 				mGameSettings = null;
 				dataReadyDic [GameDataType.GameSettings] = false;
 				break;
-			case GameDataType.LearnInfo:
-				mLearnInfo = null;
-				dataReadyDic [GameDataType.LearnInfo] = false;
-				break;
+//			case GameDataType.LearnInfo:
+//				mLearnInfo = null;
+//				dataReadyDic [GameDataType.LearnInfo] = false;
+//				break;
 			case GameDataType.GameLevelDatas:
 				mGameLevelDatas.Clear ();
 				dataReadyDic [GameDataType.GameLevelDatas] = false;

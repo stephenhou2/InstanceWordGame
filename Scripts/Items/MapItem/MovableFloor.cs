@@ -61,6 +61,10 @@ namespace WordJourney
 
 			Vector3 nearestMovableFloorPos = mapGenerator.FindNearestMovableFloor (this.transform.position);
 
+//			Vector3 moveVector = nearestMovableFloorPos - bp.transform.position;
+
+		
+
 			if (nearestMovableFloorPos == transform.position) {
 				return;
 			}
@@ -72,6 +76,8 @@ namespace WordJourney
 			IEnumerator floorMoveAnim = SmoothMoveToPos (this.transform.position,nearestMovableFloorPos, bp);
 
 			StartCoroutine (floorMoveAnim);
+
+
 
 		}
 
@@ -86,6 +92,8 @@ namespace WordJourney
 		private IEnumerator SmoothMoveToPos(Vector3 startPos, Vector3 endPos, BattlePlayerController bp){
 
 			yield return new WaitUntil (() => bp.isIdle);
+
+			Transform background = Camera.main.transform.Find ("Background");
 
 			int[,] realMapWalkableInfo = exploreManager.GetComponent<MapGenerator> ().mapWalkableInfoArray;
 
@@ -112,6 +120,7 @@ namespace WordJourney
 			float myMoveSpeedY = (endPos.y-startPos.y)/moveDuration;
 
 
+
 			float timer = 0;
 			bool endPosInit = false;
 
@@ -125,6 +134,8 @@ namespace WordJourney
 				this.transform.position += moveVector;
 				 
 				bp.transform.position += moveVector;
+
+				background.transform.position += 0.3f * moveVector;
 
 				// 走到一半时终点位置开始初始化（地板和物品，怪物出现）
 				if (timer / moveDuration > 0.5 && !endPosInit) {

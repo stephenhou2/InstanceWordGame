@@ -13,7 +13,7 @@ namespace WordJourney
 		/// </summary>
 		public void SavePersistDatas(){
 			SaveGameSettings ();
-			SaveLearnInfo ();
+//			SaveLearnInfo ();
 			SaveCompletePlayerData ();
 		}
 
@@ -30,12 +30,12 @@ namespace WordJourney
 		/// <summary>
 		/// Saves the learn info.
 		/// </summary>
-		public void SaveLearnInfo(){
-			
-			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
-
-			DataHandler.SaveInstanceDataToFile<LearningInfo> (GameManager.Instance.gameDataCenter.learnInfo, learnInfoPath);
-		}
+//		public void SaveLearnInfo(){
+//			
+//			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
+//
+//			DataHandler.SaveInstanceDataToFile<LearningInfo> (learnInfo, learnInfoPath);
+//		}
 
 		/// <summary>
 		/// Saves the player data.
@@ -86,14 +86,14 @@ namespace WordJourney
 
 
 		public GameSettings LoadGameSettings(){
-			string settingsPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "Settings.json");
+			string settingsPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "GameSettings.json");
 			return DataHandler.LoadDataToSingleModelWithPath<GameSettings> (settingsPath);
 		}
 
-		public LearningInfo LoadLearnInfo(){
-			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
-			return DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (learnInfoPath);
-		}
+//		public LearningInfo LoadLearnInfo(){
+//			string learnInfoPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "LearningInfo.json");
+//			return DataHandler.LoadDataToSingleModelWithPath<LearningInfo> (learnInfoPath);
+//		}
 
 
 		public void ResetPlayerDataToOriginal(){

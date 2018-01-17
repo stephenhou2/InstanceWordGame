@@ -127,6 +127,11 @@ namespace WordJourney
 				}
 				target.agent.health += healthChange;
 				target.propertyCalculator.health = target.agent.health;
+
+				if (target.agent.health <= 0) {
+					target.AgentDie ();
+				}
+
 			} else {
 				AgentPropertyChange (propertyType, change, fromTriggeredSkill);
 				target.agent.ResetPropertiesWithPropertyCalculator (this);
@@ -272,11 +277,13 @@ namespace WordJourney
 		public void ClearSkillsOfType<T>(){
 			if (typeof(T) == typeof(TriggeredSkill)) {
 				while (triggeredSkills.Count > 0) {
-					RemoveAttachedSkill<TriggeredSkill> (triggeredSkills [0]);
+					triggeredSkills [0].CancelSkillEffect ();
+//					RemoveAttachedSkill<TriggeredSkill> (triggeredSkills [0]);
 				}
 			} else if (typeof(T) == typeof(ConsumablesSkill)) {
 				while (consumablesSkills.Count > 0) {
-					RemoveAttachedSkill<ConsumablesSkill> (consumablesSkills [0]);
+					consumablesSkills [0].CancelSkillEffect (self);
+//					RemoveAttachedSkill<ConsumablesSkill> (consumablesSkills [0]);
 				}
 			}
 		}

@@ -13,7 +13,7 @@ namespace WordJourney
 			this.itemType = ItemType.CharacterFragment;
 			this.itemId = -1;
 			this.character = character;
-			itemName = string.Format ("字母碎片-{0}", character.ToString());
+			itemName = character.ToString();
 			itemNameInEnglish = character.ToString();
 			spriteName = string.Format ("character_{0}", character);
 			itemCount = count;

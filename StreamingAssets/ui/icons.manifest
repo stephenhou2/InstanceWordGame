@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1387315303
+CRC: 1497923471
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 20879931586599e833ce44f6057ea117
+    Hash: e9bf817cadacf8c4e03734ded6b2687e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 36c33a819640bead83b84b1645a12e6d
@@ -42,7 +42,6 @@ Assets:
 - Assets/Textures/Skills/seperatorSmall.png
 - Assets/Textures/Explore/cutPic/skillFrame.png
 - Assets/Textures/Frame/skillTreeLine.png
-- Assets/Textures/Explore/background.png
 - Assets/Textures/Background/topBar.png
 - Assets/Textures/Skills/skillFrame.png
 - Assets/Textures/Button/nameFrame.png
@@ -50,7 +49,6 @@ Assets:
 - Assets/Textures/Button/button.png
 - Assets/Textures/Explore/skillIcon.png
 - Assets/Textures/Frame/cardFrame.png
-- Assets/Textures/Background/background.png
 - Assets/Textures/Icon/healthLabel.png
 - Assets/Textures/Icon/soundOpen.png
 - Assets/Textures/Frame/skillAndGoodMask.png

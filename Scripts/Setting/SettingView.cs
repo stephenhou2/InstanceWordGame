@@ -9,10 +9,6 @@ namespace WordJourney{
 
 		public Slider volumeControl;
 
-		public Image pronounceOnImage;
-
-		public Image pronounceOffImage;
-
 
 		public ToggleGroup tg;
 
@@ -25,15 +21,16 @@ namespace WordJourney{
 		public Toggle daily;
 		public Toggle bussiness;
 
-		public Transform alertHUD;
+		public Transform queryChangeWordHUD;
+
+		public Image pronounceOnImage;
+		public Image pronounceOffImage;
 
 		public void SetUpSettingView(GameSettings settings){
 
 			volumeControl.value = settings.systemVolume;
 
-			pronounceOnImage.enabled = !settings.isPronunciationEnable;
-			pronounceOffImage.enabled = settings.isPronunciationEnable;
-
+			UpdatePronounceControl (settings.autoPronounce);
 
 			tg.SetAllTogglesOff ();
 
@@ -58,8 +55,13 @@ namespace WordJourney{
 
 		public void UpdatePronounceControl(bool enable){
 
-			pronounceOnImage.enabled = !enable;
-			pronounceOffImage.enabled = enable;
+			if (enable) {
+				pronounceOnImage.color = new Color (0, 0, 0, 0);
+				pronounceOffImage.color = Color.white;
+			} else {
+				pronounceOnImage.color = Color.white;
+					pronounceOffImage.color = new Color (0, 0, 0, 0);
+			}
 
 		}
 
@@ -77,11 +79,11 @@ namespace WordJourney{
 		}
 
 		public void ShowAlertHUD(){
-			alertHUD.gameObject.SetActive (true);
+			queryChangeWordHUD.gameObject.SetActive (true);
 		}
 
 		public void QuitAlertHUD(){
-			alertHUD.gameObject.SetActive (false);
+			queryChangeWordHUD.gameObject.SetActive (false);
 		}
 
 

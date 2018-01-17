@@ -22,7 +22,7 @@ namespace WordJourney{
 
 
 	//		sql.CreatTable (CommonData.itemsTable,
-	//			new string[] {"itemId","itemName","itemDescription","spriteName","itemType","itemNameInEnglish",
+	//			new string[] {"itemId","itemName","itemGeneralDescription","spriteName","itemType","itemNameInEnglish",
 	//				"attackGain","powerGain","magicGain","critGain","armorGain","manaResistGain",
 	//				"dodgeGain","healthGain","strengthGain"},
 	//			new string[] {"PRIMARY Key","UNIQUE NOT NULL","NOT NULL","NOT NULL","","UNIQUE","","","","","","","","",""},
@@ -152,47 +152,47 @@ namespace WordJourney{
 
 
 
-		private void ToLower(){
-			MySQLiteHelper sql = MySQLiteHelper.Instance;
-			sql.GetConnectionWith (CommonData.dataBaseName);
-
-			string tableName = "AllWordsTable";
-
-			int wordsCount = sql.GetItemCountOfTable (tableName,null,true);
-
-			for (int i = 0; i < 37336; i++) {
-
-				IDataReader reader = sql.ReadSpecificRowsOfTable (
-					"AllWordsData",
-					"Spell",
-					new string[]{ string.Format ("Id={0}", i) },
-					true);
-				reader.Read ();
-
-				string spell = reader.GetString (0);
-
-				string lowerSpell = spell.ToLower ();
-
-				if (lowerSpell == spell) {
-					continue;
-				}
-
-				lowerSpell = lowerSpell.Replace("'","''");
-
-				sql.UpdateValues ("AllWordsData", 
-					new string[]{ "Spell" },
-					new string[]{ string.Format("'{0}'",lowerSpell) },
-					new string[]{string.Format("Id = {0}",i)},
-					true);
-
-				reader.Close ();
-
-			}
-
-
-
-			sql.CloseConnection (CommonData.dataBaseName);
-		}
+//		private void ToLower(){
+//			MySQLiteHelper sql = MySQLiteHelper.Instance;
+//			sql.GetConnectionWith (CommonData.dataBaseName);
+//
+//			string tableName = "AllWordsTable";
+//
+//			int wordsCount = sql.GetItemCountOfTable (tableName,null,true);
+//
+//			for (int i = 0; i < 37336; i++) {
+//
+//				IDataReader reader = sql.ReadSpecificRowsOfTable (
+//					"AllWordsData",
+//					"Spell",
+//					new string[]{ string.Format ("Id={0}", i) },
+//					true);
+//				reader.Read ();
+//
+//				string spell = reader.GetString (0);
+//
+//				string lowerSpell = spell.ToLower ();
+//
+//				if (lowerSpell == spell) {
+//					continue;
+//				}
+//
+//				lowerSpell = lowerSpell.Replace("'","''");
+//
+//				sql.UpdateValues ("AllWordsData", 
+//					new string[]{ "Spell" },
+//					new string[]{ string.Format("'{0}'",lowerSpell) },
+//					new string[]{string.Format("Id = {0}",i)},
+//					true);
+//
+//				reader.Close ();
+//
+//			}
+//
+//
+//
+//			sql.CloseConnection (CommonData.dataBaseName);
+//		}
 
 		private void MoveData(){
 			MySQLiteHelper sql = MySQLiteHelper.Instance;

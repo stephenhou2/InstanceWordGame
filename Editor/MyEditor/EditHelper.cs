@@ -30,6 +30,8 @@ namespace WordJourney
 		public static void TempHelper(){
 
 
+
+
 		}
 
 		[MenuItem("EditHelper/GeneratePlayerJson")]
@@ -53,14 +55,7 @@ namespace WordJourney
 		}
 
 
-		[MenuItem("EditHelper/ItemHelper")]
-		public static void TransferItemAndMaterialData(){
 
-			ItemHandler ih = new ItemHandler ();
-			ih.LoadAllData ();
-			ih.SaveData ();
-		}
-			
 
 		// 将物品csv数据转化为json文件并存储直接使用这个方法
 		private static void ConvertItemToJson(){
@@ -95,7 +90,7 @@ namespace WordJourney
 
 				itemModel.itemId = System.Convert.ToInt32 (itemStr [0]);
 				itemModel.itemName = itemStr[1];
-				itemModel.itemDescription = itemStr[2];
+				itemModel.itemGeneralDescription = itemStr[2];
 				itemModel.spriteName = itemStr[3];
 				itemModel.itemType = (ItemType)System.Convert.ToInt16(itemStr[4]);
 				itemModel.itemNameInEnglish = itemStr[5];

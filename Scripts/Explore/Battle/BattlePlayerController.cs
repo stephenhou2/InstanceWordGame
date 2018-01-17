@@ -38,6 +38,8 @@ namespace WordJourney
 		// 当前的单步移动动画对象
 		private Tweener moveTweener;
 
+		private Tweener backgroundMoveTweener;
+
 		// 标记是否在单步移动中
 		private bool inSingleMoving;
 
@@ -63,7 +65,7 @@ namespace WordJourney
 
 		public bool isInFight;
 
-		public bool isAttackActionFinish;
+
 
 
 		protected override void Awake(){
@@ -215,14 +217,13 @@ namespace WordJourney
 
 			Transform background = Camera.main.transform.Find ("Background");
 
-			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.3f, moveVector.y * 0.2f, 0);
+			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.3f, moveVector.y * 0.3f, 0);
 
 //			Debug.LogFormat ("背景层移动目标位置[{0},{1}]", backgroundImageTargetPos.x, backgroundImageTargetPos.y);
 
-			Tweener backgroundMoveTweener = background.DOLocalMove(backgroundImageTargetPos,moveDuration);
+			backgroundMoveTweener = background.DOLocalMove(backgroundImageTargetPos,moveDuration);
 
 			backgroundMoveTweener.SetEase (Ease.Linear);
-
 
 		}
 
@@ -424,6 +425,7 @@ namespace WordJourney
 				// 走到了终点
 				if (ArriveEndPoint ()) {
 					moveTweener.Kill (true);
+					backgroundMoveTweener.Kill (true);
 					PlayRoleAnim ("wait", 0, null);
 					Debug.Log ("到达终点");
 				} else {
@@ -436,7 +438,7 @@ namespace WordJourney
 			// 如果还没有走到终点
 			if (!ArriveEndPoint ()) {
 
-				SoundManager.Instance.PlayAudioClip ("MapEffects/footstep");
+				SoundManager.Instance.PlayAudioClip ("Other/sfx_Footstep");
 
 				// 记录下一节点位置
 				singleMoveEndPos = nextPos;
@@ -449,6 +451,7 @@ namespace WordJourney
 
 			} else {
 				moveTweener.Kill (true);
+				backgroundMoveTweener.Kill (true);
 				PlayRoleAnim ("wait", 0, null);
 			}
 
@@ -465,6 +468,7 @@ namespace WordJourney
 		private void StopWalkBeforeEvent(){
 
 			moveTweener.Kill (false);
+			backgroundMoveTweener.Kill (false);
 
 			PlayRoleAnim ("wait", 0, null);
 
@@ -477,6 +481,7 @@ namespace WordJourney
 		public void StopMove(){
 			StopCoroutine ("MoveWithNewPath");
 			moveTweener.Kill (false);
+			backgroundMoveTweener.Kill (false);
 			inSingleMoving = false;
 			PlayRoleAnim ("wait", 0, null);
 		}
@@ -497,11 +502,11 @@ namespace WordJourney
 		/// <summary>
 		/// 战斗结束之后玩家移动到怪物原来的位置
 		/// </summary>
-		public void PlayerMoveToEnemyPosAfterFight(){
+		public void PlayerMoveToEnemyPosAfterFight(Vector3 oriMonsterPos){
 
 			PlayRoleAnim ("wait", 0, null);
 
-			Vector3 targetPos = pathPosList [0];
+			Vector3 targetPos = oriMonsterPos;
 
 			// 玩家角色位置和原来的怪物位置之间间距大于0.5（玩家是横向进入战斗的），则播放跑的动画到指定位置
 			if (Mathf.Abs (targetPos.x - transform.position.x) > 0.5) {
@@ -619,7 +624,7 @@ namespace WordJourney
 			isAttackActionFinish = true;
 
 			// 如果战斗没有结束，则默认在攻击间隔时间之后按照默认攻击方式进行攻击
-			if (!FightEnd ()) {
+			if (!CheckFightEnd ()) {
 				if (autoFight) {
 					currentSkill = InteligentAttackSkill ();
 					attackCoroutine = InvokeAttack (currentSkill);
@@ -637,7 +642,7 @@ namespace WordJourney
 		/// 判断本次战斗是否结束,如果怪物死亡则执行怪物死亡对应的方法
 		/// </summary>
 		/// <returns><c>true</c>, if end was fought, <c>false</c> otherwise.</returns>
-		private bool FightEnd(){
+		public override bool CheckFightEnd(){
 
 			if (bmCtr.agent.health <= 0) {
 				bmCtr.AgentDie ();
@@ -723,18 +728,28 @@ namespace WordJourney
 
 			StopCoroutinesWhenFightEnd ();
 
-			bmCtr.StopCoroutinesWhenFightEnd ();
-
-//			exploreManager.GetComponent<MapGenerator> ().PlayMapOtherAnim ("Death", transform.position);
+			// 如果是在战斗中死亡的
+			if (bmCtr != null) {
 				
+				bmCtr.StopCoroutinesWhenFightEnd ();
+
+				PlayRoleAnim("die", 1, () => {
+
+					playerLoseCallBack ();
+
+					gameObject.SetActive(false);
+
+				});
+
+				return;
+			}
+
+			// 如果不是在战斗中死亡的
 			PlayRoleAnim("die", 1, () => {
 
-				playerLoseCallBack ();
+//				gameObject.SetActive(false);
 
-//				CollectSkillEffectsToPool();
-
-				gameObject.SetActive(false);
-
+				exploreManager.GetComponent<ExploreManager>().QuitExploreScene(false);
 
 			});
 

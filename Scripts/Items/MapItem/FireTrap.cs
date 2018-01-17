@@ -51,6 +51,7 @@ namespace WordJourney
 			mapItemAnimator.SetBool ("Play",true);
 			bc2d.enabled = false;
 			isTrapOn = false;
+			bc2d.enabled = false;
 			mapGenerator.mapWalkableInfoArray [(int)transform.position.x, (int)transform.position.y] = 1;
 			mapGenerator.AddMapItemInPool (this.transform);
 			
@@ -60,9 +61,9 @@ namespace WordJourney
 		{
 //			triggered = !triggered;
 
-			if (!isTrapOn) {
-				return;
-			}
+//			if (!isTrapOn) {
+//				return;
+//			}
 
 		
 			SoundManager.Instance.PlayAudioClip("MapEffects/" + audioClipName);

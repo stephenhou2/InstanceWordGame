@@ -45,6 +45,13 @@ namespace WordJourney
 
 			Vector3 otherHolePosition = new Vector3(randomOtherHole.transform.position.x,randomOtherHole.transform.position.y,0);
 
+			Vector3 moveVector = otherHolePosition - bp.transform.position;
+
+			Transform background = Camera.main.transform.Find ("Background");
+
+			Vector3 backgroundImageTargetPos = background.localPosition + new Vector3 (moveVector.x * 0.3f, moveVector.y * 0.3f, 0);
+
+
 			Vector3 walkablePositionAround = mapGenerator.GetARandomWalkablePositionAround (otherHolePosition);
 
 			bp.SetEffectAnim ("HoleFog");
@@ -65,6 +72,9 @@ namespace WordJourney
 				StartCoroutine(WalkOutOfHoleCoroutine);
 
 			});
+
+			background.transform.DOMove (backgroundImageTargetPos, 1);
+
 
 
 

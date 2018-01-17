@@ -57,7 +57,6 @@ namespace WordJourney
 
 			settingChanged = true;
 
-
 		}
 			
 

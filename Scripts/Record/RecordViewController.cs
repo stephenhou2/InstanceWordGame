@@ -11,7 +11,7 @@ namespace WordJourney
 		public RecordView recordView;
 
 		// 单词学习信息
-		private LearningInfo learnInfo;
+//		private LearningInfo learnInfo;
 
 
 
@@ -20,30 +20,29 @@ namespace WordJourney
 		/// 初始化学习记录界面
 		/// </summary>
 		public void SetUpRecordView(){
+			recordView.SetUpRecordView (LearningInfo.Instance);
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-			StartCoroutine ("SetUpViewAfterDataReady");
+//			StartCoroutine ("SetUpViewAfterDataReady");
 		}
 
-		private IEnumerator SetUpViewAfterDataReady(){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.LearnInfo,
-				});
-
-				yield return null;
-
-			}
-
-			learnInfo = GameManager.Instance.gameDataCenter.learnInfo;
-
-			recordView.SetUpRecordView (learnInfo);
-
-
-		}
+//		private IEnumerator SetUpViewAfterDataReady(){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.LearnInfo,
+//				});
+//
+//				yield return null;
+//
+//			}
+//
+//			recordView.SetUpRecordView (LearningInfo.Instance);
+//
+//
+//		}
 			
 
 		public void OnLearnedWordButtonClick(){
@@ -75,9 +74,9 @@ namespace WordJourney
 
 			TransformManager.DestroyTransfromWithName ("PoolContainerOfRecordCanvas", TransformRoot.PoolContainer);
 
-			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
-				GameDataCenter.GameDataType.LearnInfo
-			});
+//			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
+//				GameDataCenter.GameDataType.LearnInfo
+//			});
 
 		}
 
@@ -86,7 +85,7 @@ namespace WordJourney
 		/// </summary>
 		public void DestroyInstances(){
 
-			learnInfo = null;
+//			learnInfo = null;
 
 			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.recordCanvasBundleName, "RecordCanvas","PoolContainerOfRecordCanvas","ModelContainerOfRecordCanvas");
 

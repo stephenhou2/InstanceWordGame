@@ -37,7 +37,8 @@ namespace WordJourney
 
 			this.itemId = itemModel.itemId + 400;
 
-			this.itemDescription = itemModel.itemDescription;
+			this.itemGeneralDescription = itemModel.itemGeneralDescription;
+			this.itemPropertyDescription = itemModel.itemPropertyDescription;
 
 			this.itemCount = 1;
 
