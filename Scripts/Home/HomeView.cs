@@ -23,16 +23,70 @@ namespace WordJourney
 
 		public Button[] chapterButtons;
 
+		public Image[] lights;
+
+		private float lightShiningLoopDuration = 5f;
 
 		public float chapterSelectPlaneZoomInDuration = 0.2f;
+
+
 
 		public void SetUpHomeView(){
 
 			SetUpBasicInformation ();
 
+			StartLightsShining ();
+
 			GetComponent<Canvas> ().enabled = true;
 
 		}
+
+		private void StartLightsShining(){
+			StartCoroutine ("LightsShining");
+		}
+
+		private void StopLightsShining(){
+			StopCoroutine ("LightsShining");
+		}
+
+		private IEnumerator LightsShining(){
+
+			float timer = 0;
+
+//			float alpha = 0.5f;
+//
+//			float alphaChangeSpeed = 0.5f / lightShiningLoopDuration;
+
+			float scale = 0.5f;
+
+			float scaleChangeSpeed = 0.5f / lightShiningLoopDuration;
+
+			while (true) {
+
+				scale += scaleChangeSpeed * Time.fixedDeltaTime;
+
+				for (int i = 0; i < lights.Length; i++) {
+
+					Image light = lights [i];
+
+					light.transform.localScale = new Vector3 (scale, scale, 1);
+
+				}
+
+				yield return null;
+
+				timer += Time.fixedDeltaTime;
+
+				if (timer >= lightShiningLoopDuration) {
+					timer = 0;
+					scaleChangeSpeed *= -1;
+				}
+
+			}
+
+		}
+
+
 
 		private void SetUpBasicInformation(){
 
@@ -116,6 +170,8 @@ namespace WordJourney
 		}
 
 		public void OnQuitHomeView(){
+
+			StopLightsShining ();
 
 			chapterSelectPlane.gameObject.SetActive (false);
 

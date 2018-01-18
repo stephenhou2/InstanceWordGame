@@ -35,13 +35,14 @@ namespace WordJourney
 		public ItemDetailHUD itemDetail;
 	
 
-
+		public Button characterTitle;
+		public Button unlockedItemTitle;
 
 
 		public void SetUpSpellViewWith(ItemModel itemModel){
 
 			if (itemModel == null) {
-				spellRequestText.text = "拼写任意物品";
+				spellRequestText.text = "请拼写正确的单词";
 			} else {
 
 				if (itemModel.itemNameInEnglish == "") {
@@ -173,7 +174,6 @@ namespace WordJourney
 			charactersInBag.QuitCharactersHUD ();
 		}
 			
-
 
 		public void QuitSpellCountHUD(){
 			createCountHUD.gameObject.SetActive (false);

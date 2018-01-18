@@ -100,25 +100,18 @@ namespace WordJourney
 		// 单词测试列表
 		private List<Examination> finalExaminationsList ;
 
-		private List<Examination> learnExaminationsList;
+//		private List<Examination> learnExaminationsList;
 
 		// 当前正在进行的单词测试（单词测试列表的首项）
 		private Examination currentExamination{
 			get{
-				if (learnExaminationsList.Count > 0) {
-					return learnExaminationsList [0];
-				} else if (finalExaminationsList.Count > 0) {
+				if (finalExaminationsList.Count > 0) {
 					return finalExaminationsList [0];
 				} else {
 					return null;
 				}
 			}
 		}
-			
-		// 是否自动发音
-		private bool autoPronounce;
-
-
 
 		void Awake(){
 			singleLearnWordsCount = 10;
@@ -126,7 +119,7 @@ namespace WordJourney
 //			recycleLearnTimeBase = 2;
 			wordsToLearnArray = new LearnWord[singleLearnWordsCount];
 			finalExaminationsList = new List<Examination> ();
-			learnExaminationsList = new List<Examination> ();
+//			learnExaminationsList = new List<Examination> ();
 			ungraspedWordsList = new List<LearnWord> ();
 			graspedWordsList = new List<LearnWord> ();
 
@@ -156,12 +149,6 @@ namespace WordJourney
 				yield return null;
 			}
 
-
-//			hasFinishWholeCurrentTypeWords = false;
-
-			// 查询是否允许自动发音
-			autoPronounce = GameManager.Instance.gameDataCenter.gameSettings.autoPronounce;
-
 			GameSettings.LearnMode learnMode = GameManager.Instance.gameDataCenter.gameSettings.learnMode;
 
 			switch (learnMode) {
@@ -188,16 +175,27 @@ namespace WordJourney
 
 			if (beginWithLearn) {
 				learnView.SetUpLearnViewWithWord (currentLearningWord);
-				if (autoPronounce) {
-					OnPronunciationButtonClick ();
-				}
 			} else {
 				GenerateFinalExams (examType);
 				learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0], examType);
 			}
 
-			GetComponent<Canvas> ().enabled = true;
+
 		}
+
+
+		public void ChangePronunciationEnability(){
+
+			bool enable = !GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
+
+			GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable = enable;
+
+			learnView.UpdatePronounceControl (enable);
+
+			GameManager.Instance.persistDataManager.SaveGameSettings ();
+
+		}
+
 
 		/// <summary>
 		/// 初始化本次要学习的单词数组
@@ -338,39 +336,11 @@ namespace WordJourney
 			ungraspedWordsList.RemoveAt (0);
 			graspedWordsList.Add (word);
 
-			// 如果已经有新的三个单词选择了已掌握
-			if (graspedWordsList.Count % 3 == 0) {
-				
-				LearnWord[] wordsArray = new LearnWord[3];
-
-				for (int i = 0; i < 3; i++) {
-					int graspedWordsCount = graspedWordsList.Count;
-					wordsArray[i] = graspedWordsList [graspedWordsCount - 3 + i];
-				}
-
-				for (int i = 0; i < 3; i++) {
-					Examination learnExam = new Examination (wordsArray [i], wordsArray, examType);  
-					learnExaminationsList.Add (learnExam); 
-				}
-					
-
-				learnView.SetUpLearnViewWithLearnExam (learnExaminationsList [0]);
-
-				return;
-
+			if (ungraspedWordsList.Count == 0) {
+				GenerateFinalExams (examType);
 			}
 
-			// 如果还有未掌握单词，则继续向用户查询后续单词的掌握情况
-			if (ungraspedWordsList.Count > 0) {
-				learnView.SetUpLearnViewWithWord (currentLearningWord);
-				if (autoPronounce) {
-					OnPronunciationButtonClick ();
-				}
-			}
-
-//			// 如果本次需要记忆的单词已全部掌握，则进入单词测试
-//			Examination.ExaminationType examType = currentExamination.GetCurrentExamType();
-//			learnView.SetUpLearnViewWithFinalExam (currentExamination,examType);
+			learnView.SetUpLearnViewWithFinalExam (finalExaminationsList [0],examType);
 
 		}
 
@@ -408,9 +378,6 @@ namespace WordJourney
 
 			learnView.SetUpLearnViewWithWord (currentLearningWord);
 
-			if (autoPronounce) {
-				OnPronunciationButtonClick ();
-			}
 
 		}
 
@@ -426,57 +393,7 @@ namespace WordJourney
 			return null;
 
 		}
-			
-		public void OnAnswerChoiceButtonOfLearnExamsClick(LearnWord selectWord){
 
-			// 如果选择正确，则将该单词的测试从测试列表中移除
-			if (selectWord.wordId == currentExamination.question.wordId) {
-				Debug.Log ("选择正确");
-
-				learnExaminationsList.RemoveAt (0);
-
-				// 本次学习测试还未完成
-				if (learnExaminationsList.Count > 0) {
-					learnView.SetUpLearnViewWithLearnExam (currentExamination);
-				}
-				// 整个学习过程结束，接下来应该进入最终测试环节
-				else if (learnExaminationsList.Count <= 0 && ungraspedWordsList.Count <= 0) {
-
-					// 随机字母
-//					char characterFragmentGain = (char)(Random.Range (0, 26) + CommonData.aInASCII);
-//
-//					characterAsReward = characterFragmentGain;
-
-//					learnView.ResetEnergySlider (characterAsReward);
-
-					// 更新单词能量条
-//					learnView.UpdateLearningProgress (wordEnergyCount,energyFullCount);
-
-					Examination.ExaminationType examType = currentExamination.GetCurrentExamType();
-					learnView.SetUpLearnViewWithFinalExam (currentExamination,examType);
-				}
-				// 本次学习测试结束，但是还有未学习的单词
-				else {
-					learnView.SetUpLearnViewWithWord (currentLearningWord);
-				}
-			} else {
-				// 如果选择错误,则显示错误选项的意思，并更新该单词的背错次数
-				Debug.Log ("选择错误");
-
-				Examination exam = currentExamination;
-
-//				learnExaminationsList.RemoveAt (0);
-//
-//				learnExaminationsList.Add (exam);
-
-				learnView.ShowAccordAnswerOfCurrentSelectedChoice ();
-
-				// 单词的背错次数+1
-				GetWordFromWordsToLearnArrayWith(exam.question.wordId).ungraspTimes++;
-
-			}
-
-		}
 			
 
 		/// <summary>
@@ -556,6 +473,8 @@ namespace WordJourney
 					}, true);
 				}
 
+				mySql.CloseConnection (CommonData.dataBaseName);
+
 				CurrentWordsLearningFinished ();
 			} else {
 				// 测试环节还没有结束，则初始化下一个单词的测试
@@ -617,7 +536,7 @@ namespace WordJourney
 
 			Time.timeScale = 1f;
 
-			mySql.CloseConnection (CommonData.dataBaseName);
+
 
 			learnView.QuitLearnView ();
 

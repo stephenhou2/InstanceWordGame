@@ -53,7 +53,6 @@ namespace WordJourney
 		public Text itemName;
 		public Text itemType;
 		public Text itemGeneralDescription;
-		public Text itemProperty;
 
 
 		private BattlePlayerUIController mBpUICtr;
@@ -136,33 +135,36 @@ namespace WordJourney
 			dialogChoiceButton.onClick.RemoveAllListeners ();
 
 			dialogChoiceButton.onClick.AddListener (delegate {
-
-				choiceButtonPool.AddChildInstancesToPool(choiceContainer);
-
-				currentDialogId = 0;
-
-				DialogGroup dg = null;
-
-				for (int i = 0; i < currentEnteredNpc.chatDialogGroups.Count; i++) {
-					if (currentEnteredNpc.chatDialogGroups [i].accordGameLevel == currentLevelIndex) {
-						dg = currentEnteredNpc.chatDialogGroups [i];
-					}
-
-				}
-
-				if (dg == null) {
-					Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevelIndex, currentEnteredNpc.npcName));
-				}
-
-				currentDialogGroup = dg;
-
-				SetUpDialogPlane (currentDialogGroup.dialogs [0]);
+				SetUpChatPlane();
 			});
 
 		}
 
+		public void SetUpChatPlane(){
 
-		private void SetUpDialogPlane(Dialog dialog){
+			currentDialogId = 0;
+
+			DialogGroup dg = null;
+
+			for (int i = 0; i < currentEnteredNpc.chatDialogGroups.Count; i++) {
+				if (currentEnteredNpc.chatDialogGroups [i].accordGameLevel == currentLevelIndex) {
+					dg = currentEnteredNpc.chatDialogGroups [i];
+				}
+
+			}
+
+			if (dg == null) {
+				Debug.LogError (string.Format ("第{0}关没有npc{1}", currentLevelIndex, currentEnteredNpc.npcName));
+			}
+
+			currentDialogGroup = dg;
+
+			SetUpDialogPlane (currentDialogGroup.dialogs [0]);
+
+		}
+
+
+		public void SetUpDialogPlane(Dialog dialog){
 
 			dialogText.text = dialog.dialog;
 
@@ -325,7 +327,6 @@ namespace WordJourney
 			itemName.text = item.itemName;
 			itemType.text = item.GetItemTypeString ();
 			itemGeneralDescription.text = item.itemGeneralDescription;
-			itemProperty.text = item.itemGeneralDescription;
 
 
 		}
@@ -383,7 +384,6 @@ namespace WordJourney
 			itemName.text = "";
 			itemType.text = "";
 			itemGeneralDescription.text = "";
-			itemProperty.text = "";
 		}
 
 		private bool PlayerBuyGoods(Item itemAsGoods){
@@ -415,7 +415,7 @@ namespace WordJourney
 
 		}
 
-		private void QuitNPCPlane(){
+		public void QuitNPCPlane(){
 			
 			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 

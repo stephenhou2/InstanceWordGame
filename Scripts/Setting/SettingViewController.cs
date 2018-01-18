@@ -49,7 +49,9 @@ namespace WordJourney
 
 		}
 
-		public void SetPronunciationEnable(bool enable){
+		public void ChangePronunciationEnability(){
+
+			bool enable = !GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
 
 			GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable = enable;
 

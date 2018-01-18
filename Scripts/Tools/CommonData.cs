@@ -87,7 +87,8 @@ namespace WordJourney{
 
 		public static char diamond = (char)6;
 
-
+		public static Vector3 selectedColor = new Vector3 (238f/255, 206f/255, 149f/255);
+		public static Vector3 deselectedColor = new Vector3 (63f/255, 31f/255, 0);
 
 
 

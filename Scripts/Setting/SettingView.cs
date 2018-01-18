@@ -12,7 +12,6 @@ namespace WordJourney{
 
 		public ToggleGroup tg;
 
-		public Transform settingViewContainer;
 		public Transform settingPlane;
 
 		public Transform wordsPlane;
@@ -30,7 +29,7 @@ namespace WordJourney{
 
 			volumeControl.value = settings.systemVolume;
 
-			UpdatePronounceControl (settings.autoPronounce);
+			UpdatePronounceControl (settings.isPronunciationEnable);
 
 			tg.SetAllTogglesOff ();
 
@@ -55,12 +54,12 @@ namespace WordJourney{
 
 		public void UpdatePronounceControl(bool enable){
 
-			if (enable) {
-				pronounceOnImage.color = new Color (0, 0, 0, 0);
-				pronounceOffImage.color = Color.white;
+			if (!enable) {
+				pronounceOnImage.gameObject.SetActive (false);
+				pronounceOffImage.gameObject.SetActive (true);
 			} else {
-				pronounceOnImage.color = Color.white;
-					pronounceOffImage.color = new Color (0, 0, 0, 0);
+				pronounceOnImage.gameObject.SetActive (true);
+				pronounceOffImage.gameObject.SetActive (false);
 			}
 
 		}

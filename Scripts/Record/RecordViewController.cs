@@ -10,16 +10,14 @@ namespace WordJourney
 
 		public RecordView recordView;
 
-		// 单词学习信息
-//		private LearningInfo learnInfo;
-
-
+		private int currentTabIndex;
 
 
 		/// <summary>
 		/// 初始化学习记录界面
 		/// </summary>
 		public void SetUpRecordView(){
+			currentTabIndex = 0;
 			recordView.SetUpRecordView (LearningInfo.Instance);
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 //			StartCoroutine ("SetUpViewAfterDataReady");
@@ -45,19 +43,22 @@ namespace WordJourney
 //		}
 			
 
-		public void OnLearnedWordButtonClick(){
-			recordView.SetUpAllLearnedWords ();
+		public void OnGeneralRecordButtonClick(){
+			if (currentTabIndex == 0) {
+				return;
+			}
+			currentTabIndex = 0;
+			recordView.SetUpGeneralLearningInfo ();
 		}
 
 
 		public void OnWrongWordsButtonClick(){
+			if (currentTabIndex == 1) {
+				return;
+			}
+			currentTabIndex = 1;
 			recordView.SetUpAllUngraspedWords ();
 		}
-
-		public void OnQuitWordsPlaneButtonClick(){
-			recordView.QuitWordsPlane ();
-		}
-			
 
 		/// <summary>
 		/// 退出学习记录界面

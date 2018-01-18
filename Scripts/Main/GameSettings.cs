@@ -17,7 +17,7 @@ namespace WordJourney{
 
 		public bool isPronunciationEnable = true;
 
-		public bool autoPronounce = true;
+//		public bool autoPronounce = true;
 
 		public bool isDownloadEnable = false;
 

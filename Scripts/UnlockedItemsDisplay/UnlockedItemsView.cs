@@ -17,17 +17,44 @@ namespace WordJourney
 
 		public ItemDetailHUD itemDetailHUD;
 
-//		private ItemModel itemToCreate;
+		public Button unlockEquipmentTitle;
+		public Button unlockConsumablesTitle;
+
+
+
 
 		public void InitUnlockedItemView(){
-//			this.itemToCreate = itemToCreate;
 			unlockedItemsPool = InstancePool.GetOrCreateInstancePool ("UnlockedItemPool", CommonData.poolContainerName);
 		}
 
 
 		public void SetUpUnlockedItemsView(UnlockScrollType unlockScrollType){
 
-//			QuitUnlockedItemDetailHUD ();
+			switch (unlockScrollType) {
+			case UnlockScrollType.Equipment:
+				unlockEquipmentTitle.Select ();
+				unlockEquipmentTitle.GetComponentInChildren<Text>().color = new Color (
+					CommonData.selectedColor.x, 
+					CommonData.selectedColor.y, 
+					CommonData.selectedColor.z);
+				unlockConsumablesTitle.GetComponentInChildren<Text>().color = new Color (
+					CommonData.deselectedColor.x,
+					CommonData. deselectedColor.y, 
+					CommonData.deselectedColor.z);
+				break;
+			case UnlockScrollType.Consumables:
+				unlockConsumablesTitle.Select ();
+				unlockConsumablesTitle.GetComponentInChildren<Text>().color = new Color (
+					CommonData.selectedColor.x, 
+					CommonData.selectedColor.y, 
+					CommonData.selectedColor.z);
+				unlockEquipmentTitle.GetComponentInChildren<Text>().color = new Color (
+					CommonData.deselectedColor.x, 
+					CommonData.deselectedColor.y, 
+					CommonData.deselectedColor.z);
+				break;
+			}
+
 			unlockedItemsPool.AddChildInstancesToPool(unlockedItemsContainer);
 
 			for (int i = 0; i < Player.mainPlayer.allUnlockScrollsInBag.Count; i++) {

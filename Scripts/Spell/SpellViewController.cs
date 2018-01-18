@@ -168,9 +168,19 @@ namespace WordJourney
 			spellView.QuitAllCharactersInBagPlane ();
 		}
 
+		/// <summary>
+		/// clear按钮点击响应
+		/// </summary>
+		public void Clear(){
+
+			ClearSpellInfos ();
+
+			EnterCharacter (null);
+
+		}
 
 		/// <summary>
-		///  delete按钮点击响应方法
+		///  backspace按钮点击响应方法
 		/// </summary>
 		public void Backspace(){
 
@@ -366,6 +376,8 @@ namespace WordJourney
 				charactersEnteredArray [i] = 0;
 
 			}
+
+			ClearUnsufficientCharacters ();
 
 			createCount = 1;
 

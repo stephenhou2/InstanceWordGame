@@ -9,11 +9,16 @@ namespace WordJourney
 {
 	public class RecordView : MonoBehaviour {
 
-		public Text wordType;
 
+		public Transform generalInfoPlane;
 		public Transform wordsPlane;
 
 
+		public Button recordTitle;
+		public Button wrongWordsTitle;
+
+
+		public Text wordType;
 
 		public Image completionImage;
 
@@ -22,11 +27,6 @@ namespace WordJourney
 		public Text learnedWordsCount;
 
 		public Text unGraspedWordsCount;
-
-		// 选项卡选中图片
-//		private Sprite typeBtnNormalSprite;
-//		// 选项卡未选中图片
-//		private Sprite typeBtnSelectedSprite;
 
 		// 单词cell模型
 		public Transform wordModel;
@@ -39,23 +39,22 @@ namespace WordJourney
 		private LearningInfo learnInfo;
 
 
+		/// <summary>
+		/// 初始化记录页面
+		/// </summary>
+		/// <param name="learnInfo">Learn info.</param>
+		/// <param name="tabIndex">选项卡序号 【0:基本信息 1:错误单词】.</param>
 		public void SetUpRecordView(LearningInfo learnInfo){
 
 			this.learnInfo = learnInfo;
 
 			Transform poolContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfRecordCanvas");
-//			Transform modelContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfRecordCanvas");
 
 			if (poolContainerOfRecordCanvas.childCount == 0) {
 				// 创建缓存池
 				wordPool = InstancePool.GetOrCreateInstancePool ("WordItemPool",poolContainerOfRecordCanvas.name);
 			}
 
-//			if (modelContainerOfRecordCanvas.childCount == 0) {
-//				// 获得单词展示模型
-//				wordModel = TransformManager.FindTransform ("WordModel");
-//				wordModel.SetParent (modelContainerOfRecordCanvas);
-//			}
 
 			SetUpGeneralLearningInfo ();
 
@@ -69,24 +68,7 @@ namespace WordJourney
 		/// <param name="learnInfo">Learn info.</param>
 		public void SetUpGeneralLearningInfo(){
 
-			wordsPlane.gameObject.SetActive (false);
-
-			string wordTypeStr = null;
-
-			switch (learnInfo.currentWordType) {
-			case WordType.CET4:
-				wordTypeStr = "四级核心词汇";
-				break;
-			case WordType.CET6:
-				wordTypeStr = "六级核心词汇";
-				break;
-			case WordType.Bussiness:
-				wordTypeStr = "商务英语词汇";
-				break;
-			case WordType.Daily:
-				wordTypeStr = "日常英语词汇";
-				break;
-			}
+			string wordTypeStr = GameManager.Instance.gameDataCenter.gameSettings.GetWordTypeString ();
 
 			wordType.text = wordTypeStr;
 
@@ -105,6 +87,20 @@ namespace WordJourney
 
 			unGraspedWordsCount.text = learnInfo.ungraspedWordCount.ToString ();
 
+			generalInfoPlane.gameObject.SetActive (true);
+			wordsPlane.gameObject.SetActive (false);
+
+			recordTitle.Select ();
+
+			recordTitle.GetComponentInChildren<Text>().color = new Color (
+				CommonData.selectedColor.x, 
+				CommonData.selectedColor.y, 
+				CommonData.selectedColor.z);
+			wrongWordsTitle.GetComponentInChildren<Text>().color = new Color (
+				CommonData.deselectedColor.x, 
+				CommonData.deselectedColor.y, 
+				CommonData.deselectedColor.z);
+
 			GetComponent<Canvas> ().enabled = true;
 
 		}
@@ -113,34 +109,33 @@ namespace WordJourney
 		/// 初始化已学习页
 		/// </summary>
 		/// <param name="learnInfo">Learn info.</param>
-		public void SetUpAllLearnedWords(){
-
-			wordsPlane.gameObject.SetActive (true);
-
-			List<LearnWord> allLearnedWords = learnInfo.GetAllLearnedWords ();
-
-			for (int i = 0; i < allLearnedWords.Count; i++) {
-
-				LearnWord word = allLearnedWords [i];
-
-				Transform wordItem = wordPool.GetInstance <Transform> (wordModel.gameObject, wordContainer);
-
-				wordItem.GetComponent<WordItemView> ().SetUpCellDetailView (word);
-
-			}
-
-		}
+//		public void SetUpAllLearnedWords(){
+//
+//			wordsPlane.gameObject.SetActive (true);
+//
+//			List<LearnWord> allLearnedWords = learnInfo.GetAllLearnedWords ();
+//
+//			for (int i = 0; i < allLearnedWords.Count; i++) {
+//
+//				LearnWord word = allLearnedWords [i];
+//
+//				Transform wordItem = wordPool.GetInstance <Transform> (wordModel.gameObject, wordContainer);
+//
+//				wordItem.GetComponent<WordItemView> ().SetUpCellDetailView (word);
+//
+//			}
+//
+//		}
 
 		/// <summary>
 		/// 初始化未学习页
 		/// </summary>
 		/// <param name="learnInfo">Learn info.</param>
 		public void SetUpAllUngraspedWords(){
-
-			wordsPlane.gameObject.SetActive (true);
-
+			
 			List<LearnWord> allUngraspedWords = learnInfo.GetAllUngraspedWords ();
-
+		
+			wordPool.AddChildInstancesToPool (wordContainer);
 
 			for (int i = 0; i < allUngraspedWords.Count; i++) {
 
@@ -151,17 +146,24 @@ namespace WordJourney
 				wordItem.GetComponent<WordItemView> ().SetUpCellDetailView (word);
 
 			}
+
+			generalInfoPlane.gameObject.SetActive (false);
+			wordsPlane.gameObject.SetActive (true);
+
+			wrongWordsTitle.Select ();
+
+			wrongWordsTitle.GetComponentInChildren<Text>().color = new Color (
+				CommonData.selectedColor.x, 
+				CommonData.selectedColor.y, 
+				CommonData.selectedColor.z);
+			recordTitle.GetComponentInChildren<Text>().color = new Color (
+				CommonData.deselectedColor.x, 
+				CommonData.deselectedColor.y, 
+				CommonData.deselectedColor.z);
+
+			GetComponent<Canvas> ().enabled = true;
 				
 		}
-
-		public void QuitWordsPlane(){
-
-			wordsPlane.gameObject.SetActive (false);
-
-			wordPool.AddChildInstancesToPool (wordContainer);
-
-		}
-
 
 
 		/// <summary>

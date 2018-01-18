@@ -147,9 +147,9 @@ namespace WordJourney
 
 				float formerRotation = circleAttackCheck.localRotation.eulerAngles.z;
 
-				if (formerRotation > 90 && formerRotation < 180) {
+				if (formerRotation > 75 && formerRotation < 180) {
 					direction = 1;
-				} else if (formerRotation < 270 && formerRotation > 180) {
+				} else if (formerRotation < 285 && formerRotation > 180) {
 					direction = -1;
 				}
 
@@ -171,9 +171,9 @@ namespace WordJourney
 
 				float formerRotation = circleAttackZone.localRotation.eulerAngles.z;
 
-				if (formerRotation > 90 && formerRotation < 180) {
+				if (formerRotation > 75 && formerRotation < 180) {
 					direction = 1;
-				} else if (formerRotation < 270 + circleAttackZoneSize && formerRotation > 180) {
+				} else if (formerRotation < 285 + circleAttackZoneSize && formerRotation > 180) {
 					direction = -1;
 				}
 
@@ -275,7 +275,7 @@ namespace WordJourney
 
 			switch (attackCheckType) {
 			case AttackCheckType.Circle:
-				healthInCircleAttackCheck.fillAmount = 0.5f * Player.mainPlayer.health / Player.mainPlayer.maxHealth;
+				healthInCircleAttackCheck.fillAmount = 0.417f * Player.mainPlayer.health / Player.mainPlayer.maxHealth;
 				break;
 			case AttackCheckType.Rect:
 				healthInRectAttackCheck.fillAmount = Player.mainPlayer.health / Player.mainPlayer.maxHealth;

@@ -29,7 +29,23 @@ namespace WordJourney
 		[MenuItem("EditHelper/TempHelper")]
 		public static void TempHelper(){
 
+			Transform charactersPlane = TransformManager.FindTransform ("CharactersPlane");
 
+			int AInASCII = (int)('A');
+
+			for (int i = 0; i < charactersPlane.childCount; i++) {
+
+				Transform child = charactersPlane.GetChild (i);
+
+				string character = ((char)(i + AInASCII)).ToString ();
+
+				child.Find ("Text").GetComponent<Text> ().text = character;
+
+				child.Find ("CharacterTint").Find("Text").GetComponent<Text>().text = character;
+
+				child.name = "CharacterButton_" + character;
+
+			}
 
 
 		}

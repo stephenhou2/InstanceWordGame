@@ -54,12 +54,12 @@ namespace WordJourney
 //			}
 
 			#warning 测试解锁卷轴
-//			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
-//				for(int i = 0;i<5;i++){
-//					Item unlockScroll = Item.NewItemWith (200 + i,1);
-//					Player.mainPlayer.AddItem (unlockScroll);
-//				}
-//			}
+			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
+				for(int i = 0;i<5;i++){
+					Item unlockScroll = Item.NewItemWith (200 + i,1);
+					Player.mainPlayer.AddItem (unlockScroll);
+				}
+			}
 
 //			for (int i = 40; i < 45; i++) {
 //				Item craftingRecipe = Item.NewItemWith (400 + i, 1);
