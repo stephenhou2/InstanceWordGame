@@ -49,19 +49,6 @@ namespace WordJourney
 			DataHandler.SaveInstanceDataToFile<PlayerData> (playerData, playerDataPath);
 		}
 
-//		public void SavePlayerDataFromEnterNextLevel(){
-//
-//			string playerDataPath = string.Format ("{0}/{1}", CommonData.persistDataPath, "PlayerData.json");
-//
-//			PlayerData playerData = LoadPlayerData ();
-//
-//			playerData.currentLevelIndex = Player.mainPlayer.currentLevelIndex;
-//
-//			playerData.totalCoins = 
-//
-//			DataHandler.SaveInstanceDataToFile<PlayerData> (playerData, playerDataPath);
-//
-//		}
 
 		/// <summary>
 		/// 从本地加载玩家游戏数据

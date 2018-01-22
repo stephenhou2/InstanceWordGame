@@ -41,7 +41,8 @@ namespace WordJourney
 				BattleAgentController skillTarget = skillUser.enemy;
 				int physicalHurtFromEnemy = skillTarget.propertyCalculator.physicalHurtToEnemy;
 				int hurtReflect = (int)(skillSourceValue * physicalHurtFromEnemy);
-				skillUser.propertyCalculator.hurtReflect = hurtReflect;
+				skillTarget.propertyCalculator.InstantPropertyChange (skillTarget,PropertyType.Health,-hurtReflect,true);
+//				skillUser.propertyCalculator.hurtReflect = hurtReflect;
 				SetEffectAnims (triggerInfo, self, enemy);
 			}
 		}

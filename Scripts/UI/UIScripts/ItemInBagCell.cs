@@ -23,7 +23,7 @@ namespace WordJourney
 
 			itemName.text = item.itemName;
 
-			if (!item.isNewItem && item.itemType == ItemType.Consumables) {
+			if (item.itemType == ItemType.Consumables) {
 				itemCount.text = item.itemCount.ToString ();
 				itemCount.enabled = true;
 			} else {
@@ -41,7 +41,6 @@ namespace WordJourney
 
 			// 如果是新物品，则显示新物品提示图片
 			newItemTintIcon.enabled = item.isNewItem;
-
 
 		}
 

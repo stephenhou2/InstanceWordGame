@@ -75,7 +75,7 @@ namespace WordJourney{
 		Switch,
 		TrapOff,
 		TrapOn,
-		MovableFloor,
+		MovableFloorStart,
 		Boss,
 		Monster,
 		FireTrap,
@@ -88,7 +88,8 @@ namespace WordJourney{
 		LauncherUp,
 		LauncherDown,
 		PressSwitch,
-		UndestroyableObstacle
+		Docoration,
+		MovableFloorEnd
 	}
 
 	public enum AttachedItemType{

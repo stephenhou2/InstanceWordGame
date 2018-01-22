@@ -14,7 +14,6 @@ namespace WordJourney{
 
 		public Transform settingPlane;
 
-		public Transform wordsPlane;
 		public Toggle cet4;
 		public Toggle cet6;
 		public Toggle daily;
@@ -27,9 +26,9 @@ namespace WordJourney{
 
 		public void SetUpSettingView(GameSettings settings){
 
-			volumeControl.value = settings.systemVolume;
+			volumeControl.value = (int)(settings.systemVolume * 100);
 
-			UpdatePronounceControl (settings.isPronunciationEnable);
+			UpdatePronounceControl (settings.isAutoPronounce);
 
 			tg.SetAllTogglesOff ();
 
@@ -65,17 +64,6 @@ namespace WordJourney{
 		}
 
 
-
-		public int GetCurrentWordType(int index){
-
-			Transform trans = wordsPlane.GetChild (index);
-
-			if (!trans.GetComponent<Toggle> ().isOn) {
-				return -1;
-			}
-
-			return index;
-		}
 
 		public void ShowAlertHUD(){
 			queryChangeWordHUD.gameObject.SetActive (true);

@@ -65,23 +65,23 @@ namespace WordJourney
 		public void SetUpSpellViewForCreate(ItemModel itemModel,CallBack cb){
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			itemToCreate = itemModel;
-			IEnumerator coroutine = SetUpViewAfterDataReady (itemModel,cb);
-			StartCoroutine (coroutine);
-		}
-
-
-		private IEnumerator SetUpViewAfterDataReady(ItemModel itemModel,CallBack cb){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.ItemModels,
-					GameDataCenter.GameDataType.ItemSprites
-				});
-				yield return null;
-			}
+//			IEnumerator coroutine = SetUpViewAfterDataReady (itemModel,cb);
+//			StartCoroutine (coroutine);
+//		}
+//
+//
+//		private IEnumerator SetUpViewAfterDataReady(ItemModel itemModel,CallBack cb){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.ItemModels,
+//					GameDataCenter.GameDataType.ItemSprites
+//				});
+//				yield return null;
+//			}
 
 			#warning 这里测试拼写，人物字母碎片全都初始化为10个，后面去掉
 //			for (int i = 0; i < 26; i++) {
@@ -236,6 +236,7 @@ namespace WordJourney
 			bool isValidWord = CheckEnteredWord ();
 
 			if (!isValidWord) {
+				spellView.SetUpTintHUD ("拼写不正确或物品未解锁",null);
 				return;
 			}
 				
@@ -485,7 +486,11 @@ namespace WordJourney
 		/// </summary>
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.spellCanvasBundleName, "SpellCanvas", null, null);
+			GameManager.Instance.UIManager.RemoveCanvasCache ("SpellCanvas");
+
+			Destroy (this.gameObject);
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.spellCanvasBundleName, true);
 
 		}
 

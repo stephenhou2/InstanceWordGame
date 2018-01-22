@@ -51,10 +51,11 @@ namespace WordJourney
 
 				if (fizzySkills.Count > 0) {
 					for (int i = 0; i < fizzySkills.Count; i++) {
-						fizzySkills [i].CancelSkillEffect ();
+						TriggeredSkill ts = fizzySkills [i];
+						ts.CancelSkillEffect (ts != this);
 					}
 				} else {
-					affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
+					affectedAgent.propertyCalculator.SkillTriggered<TriggeredSkill> (this);
 				}
 
 
@@ -79,15 +80,20 @@ namespace WordJourney
 
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			CancelSkillEffect ();
+			CancelSkillEffect (true);
 		}
 
-		public override void CancelSkillEffect ()
+		public override void CancelSkillEffect (bool removeSkill)
 		{
 			if (fizzyCoroutine != null) {
 				StopCoroutine (fizzyCoroutine);
+
+			}
+
+			if (affectedAgent != null && removeSkill) {
 				affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			}
+
 		}
 
 	}

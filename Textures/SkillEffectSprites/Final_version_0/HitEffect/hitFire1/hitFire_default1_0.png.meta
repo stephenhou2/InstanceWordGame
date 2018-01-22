@@ -1,9 +1,10 @@
 fileFormatVersion: 2
 guid: ae826a9bc2cff4570b2049ac715dffbd
-timeCreated: 1515767326
+timeCreated: 1516373780
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: hitFire_default1_0_0
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -42,7 +43,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -84,7 +85,20 @@ TextureImporter:
     overridden: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: hitFire_default1_0_0
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 36
+        width: 30
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
     outline: []
   spritePackingTag: Tex_Skill_HitFire_1
   userData: 

@@ -10,29 +10,9 @@ namespace WordJourney
 		// 开关控制的陷阱
 //		public Trap trap;
 
-		private Sprite m_SwitchOffSprite;
-		private Sprite switchOffSprite{
-			get{
-				if (m_SwitchOffSprite == null) {
-					m_SwitchOffSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-						return obj.name == "normal_switch_off";
-					});
-				}
-				return m_SwitchOffSprite;
-			}
-		}
+		public Sprite switchOffSprite;
 
-		private Sprite m_SwitchOnSprite;
-		private Sprite switchOnSprite{
-			get{
-				if (m_SwitchOnSprite == null) {
-					m_SwitchOnSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-						return obj.name == "normal_switch_on";
-					});
-				}
-				return m_SwitchOnSprite;
-			}
-		}
+		public Sprite switchOnSprite;
 
 		private int switchStatusChangeCount;
 

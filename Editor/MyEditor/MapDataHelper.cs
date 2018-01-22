@@ -152,7 +152,7 @@ namespace WordJourney
 							if (tileIndex >= 0) {
 								Tile tile = new Tile (new Vector2 (col, row), tileIndex, false);
 								tileDatas.Add (tile);
-								Debug.LogFormat ("mapName:{0},layerName:{1},index:{2},tileInfo:{3}",fi.Name,"attachedInfo",k,tile);
+//								Debug.LogFormat ("mapName:{0},layerName:{1},index:{2},tileInfo:{3}",fi.Name,"attachedInfo",k,tile);
 							}
 
 						}

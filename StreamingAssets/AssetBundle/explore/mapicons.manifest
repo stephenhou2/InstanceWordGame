@@ -1,0 +1,25 @@
+ManifestFileVersion: 0
+CRC: 1879556093
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 0bff646f50e9e0b595e325dd4ac2e58a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 36c33a819640bead83b84b1645a12e6d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/MapIcons/background_4.png
+- Assets/Textures/MapIcons/background_5.png
+- Assets/Textures/MapIcons/background_2.png
+- "Assets/Textures/MapAnimIcons/CG\u8292\u679C\u52A8\u753B\u7D20\u6750\u5E97 (208).png"
+- Assets/Textures/MapIcons/floor_tile.png
+- Assets/Textures/MapIcons/background_1.png
+- Assets/Textures/MapIcons/background_3.png
+- Assets/Textures/MapIcons/floor_rock.png
+Dependencies: []

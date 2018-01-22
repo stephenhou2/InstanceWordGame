@@ -28,7 +28,8 @@ namespace WordJourney
 		Plant,
 		PressSwitch,
 		Crystal,
-		MapNPC
+		MapNPC,
+		Docoration
 	}
 
 	public abstract class MapItem : MonoBehaviour {

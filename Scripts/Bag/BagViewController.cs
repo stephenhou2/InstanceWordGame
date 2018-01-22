@@ -26,9 +26,12 @@ namespace WordJourney
 
 		void Awake(){
 
+//			Player.mainPlayer.AddItem (Item.NewItemWith(8,1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
 			#warning 测试物品用
 //			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
-//				for (int i = 10; i < 50; i++) {
+//				for (int i = 0; i < 10; i++) {
 //
 ////					Debug.Log (GameManager.Instance.gameDataCenter.allItemModels.Count);
 //
@@ -36,10 +39,11 @@ namespace WordJourney
 //						return obj.itemId == i;
 //					});
 //
-//					Equipment e = new Equipment (im,1);
+//					Equipment e = new Equipment (im, 1);
 //
 //					Player.mainPlayer.AddItem (e);
 //				}
+//			}
 
 //				for (int i = 100; i < 120; i++) {
 //					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
@@ -51,16 +55,15 @@ namespace WordJourney
 //					Player.mainPlayer.AddItem (c);
 //
 //				}
+	
+//			#warning 测试解锁卷轴
+//			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
+//				for(int i = 0;i<5;i++){
+//					Item unlockScroll = Item.NewItemWith (200 + i,1);
+//					Player.mainPlayer.AddItem (unlockScroll);
+//				}
 //			}
-
-			#warning 测试解锁卷轴
-			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
-				for(int i = 0;i<5;i++){
-					Item unlockScroll = Item.NewItemWith (200 + i,1);
-					Player.mainPlayer.AddItem (unlockScroll);
-				}
-			}
-
+//
 //			for (int i = 40; i < 45; i++) {
 //				Item craftingRecipe = Item.NewItemWith (400 + i, 1);
 //
@@ -79,22 +82,22 @@ namespace WordJourney
 
 			currentBagIndex = 0;
 
-			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
-		}
-
-		private IEnumerator SetUpViewAfterDataReady(bool setVisible){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.ItemModels,
-					GameDataCenter.GameDataType.ItemSprites,
-					GameDataCenter.GameDataType.Skills
-				});
-				yield return null;
-			}
+//			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
+//		}
+//
+//		private IEnumerator SetUpViewAfterDataReady(bool setVisible){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.ItemModels,
+//					GameDataCenter.GameDataType.ItemSprites,
+//					GameDataCenter.GameDataType.Skills
+//				});
+//				yield return null;
+//			}
 
 			bagView.SetUpBagView (setVisible);
 
@@ -174,6 +177,8 @@ namespace WordJourney
 		/// 在物品详细信息页点击了使用按钮（消耗品）
 		/// </summary>
 		public void OnUseButtonClick(){
+
+			Debug.Log ("使用了" + currentSelectItem.itemName);
 
 			bool consumblesUsedInExploreScene = false;
 
@@ -387,7 +392,11 @@ namespace WordJourney
 		// 完全清理背包界面内存
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", "PoolContainerOfBagCanvas", "ModelContainerOfBagCanvas");
+			GameManager.Instance.UIManager.RemoveCanvasCache ("BagCanvas");
+
+			Destroy (this.gameObject);
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.bagCanvasBundleName,true);
 
 		}
 	}

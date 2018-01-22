@@ -40,7 +40,7 @@ namespace WordJourney
 			if (!canOverlay) {
 				for (int i = 0; i < sameStatusSkills.Count; i++) {
 					TriggeredSkill ts = sameStatusSkills [i];
-					ts.CancelSkillEffect ();
+					ts.CancelSkillEffect (ts != this);
 				}
 			}
 
@@ -55,7 +55,7 @@ namespace WordJourney
 			// 开启持续性状态的协程
 			StartCoroutine (effectCoroutine);
 
-			self.propertyCalculator.AddSkill<ConsumablesSkill> (this);
+			self.propertyCalculator.SkillTriggered<ConsumablesSkill> (this);
 
 		}
 

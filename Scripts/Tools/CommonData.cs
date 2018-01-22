@@ -13,27 +13,20 @@ namespace WordJourney{
 
 	public struct CommonData{
 
-
-
 		public static string originDataPath = Application.streamingAssetsPath + "/Data";
 		public static string persistDataPath = Application.persistentDataPath + "/Data";
 
+		public static string assetBundleRootName = "AssetBundle";
+
 		public static string effectsDataFilePath = persistDataPath + "/TestEffectString.txt";
 		public static string gameLevelDataFilePath = persistDataPath + "/GameLevelDatas.json";
-//		public static string itemsDataFilePath = persistDataPath + "/Items.json";
 		public static string itemsDataFilePath = persistDataPath + "/NewItemDatas.json";
 		public static string materialsDataFilePath = persistDataPath + "/Materials.json";
-		public static string npcsDataFilePath = persistDataPath + "/AllNpcsData.json";
+		public static string npcsDataFilePath = persistDataPath + "/NPCs";
 
 		public static string buyRecordFilePath = persistDataPath + "/BuyRecord.json";
 
-//		public static string mapDataFilePath = persistDataPath + "/NewMapJson.json";
 
-
-//		public static string mapTilesDataFilePath = persistDataPath + "/NewTileJson.json";
-
-//		public static string settingsFilePath = persistDataPath + "/Settings.json";
-//		public static string learningInfoFilePath = persistDataPath + "/LearningInfo.json";
 
 		public static string dataBaseName = "MyGameDB.db";
 
@@ -47,17 +40,11 @@ namespace WordJourney{
 		public static string poolContainerName = "PoolsContainer";
 
 
-//		public static string gameSettingsBundleName = "gameSettings";
-//		public static string learnInfoBundleName = "learnInfo";
-//		public static string allMaterialsBundleName = "allMaterials";
-//		public static string allItemModelsBundleName = "AllItemModels";
 
 
 		public static string homeCanvasBundleName = "home/canvas";
 		public static string recordCanvasBundleName = "record/canvas";
 		public static string unlockedItemsCanvasBundleName = "unlockeditems/canvas";
-//		public static string workBenchCanvasBundleName = "workbench/canvas";
-//		public static string skillCanvasBundleName = "skills/canvas";
 		public static string bagCanvasBundleName = "bag/canvas";
 		public static string settingCanvasBundleName = "setting/canvas";
 		public static string spellCanvasBundleName = "spell/canvas";
@@ -71,12 +58,12 @@ namespace WordJourney{
 		public static string allMapSpritesBundleName = "explore/mapicons";
 		public static string allSkillsBundleName = "skills/skills";
 		public static string allSkillSpritesBundleName = "skills/icons";
-		public static string allUISpritesBundleName = "ui/icons";
+		public static string allUISpritesBundleName = "ui/common";
 		public static string allMonstersBundleName = "explore/monsters";
-		public static string allFootStepAudioClipBundleName = "audio/foot_step";
-		public static string allMapEffectAudoClipBundleName = "audio/map_effect";
-		public static string allSkillEffectAudioClipBundleName = "audio/skill_effect";
-		public static string allUIAudioClipsBundleName = "audio/ui";
+
+
+		public static string skillsContainerName = CommonData.instanceContainerName + "/AllSkills";
+		public static string monstersContainerName = CommonData.instanceContainerName + "/AllMonsters";
 
 
 		public static int aInASCII = (int)('a');
@@ -90,7 +77,8 @@ namespace WordJourney{
 		public static Vector3 selectedColor = new Vector3 (238f/255, 206f/255, 149f/255);
 		public static Vector3 deselectedColor = new Vector3 (63f/255, 31f/255, 0);
 
-
+		public static string homeBgmName = "Castle";
+		public static string exploreBgmName = "Explore";
 
 	}
 

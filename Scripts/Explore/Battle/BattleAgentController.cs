@@ -11,11 +11,11 @@ namespace WordJourney
 	public delegate void SkillCallBack(BattleAgentController selfBaCtr,BattleAgentController enemyBaCtr);
 
 	public class TriggeredSkillExcutor{
-		public SkillEffectTarget effectTarget;
+		public SkillEffectTarget triggerSource;
 		public SkillCallBack triggeredCallback;
 
-		public TriggeredSkillExcutor(SkillEffectTarget target,SkillCallBack callBack){
-			this.effectTarget = target;
+		public TriggeredSkillExcutor(SkillEffectTarget source,SkillCallBack callBack){
+			this.triggerSource = source;
 			this.triggeredCallback = callBack;
 		}
 	}
@@ -263,6 +263,9 @@ namespace WordJourney
 		/// <param name="cb">动画完成回调.</param>
 		public void PlayRoleAnim (string animName, int playTimes, CallBack cb)
 		{
+//			if (armatureCom.animation.lastAnimationName == "die") {
+//				return;
+//			}
 
 			isIdle = animName == "wait";
 
@@ -509,7 +512,7 @@ namespace WordJourney
 			}
 		}
 
-		public void RemoveTriggeredSkillEffectFromAgent(){
+		public void RemoveTriggeredSkillEffect(){
 			agent.AddPropertyChangeFromOther (
 				-propertyCalculator.maxHealthChangeFromTriggeredSkill,
 				-propertyCalculator.hitChangeFromTriggeredSkill,

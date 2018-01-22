@@ -68,9 +68,13 @@ namespace WordJourney
 
 		public Transform boss{
 			get{
-				return GameManager.Instance.gameDataCenter.allMonsters.Find (delegate(Transform obj) {
-					return obj.GetComponent<Monster>().monsterId == bossId;
-				});
+				string monsterName = MyTool.GetMonsterName (bossId);
+
+				Transform boss = GameManager.Instance.gameDataCenter.LoadMonster (monsterName).transform;
+
+				return boss;
+
+
 			}
 		}
 
@@ -158,13 +162,9 @@ namespace WordJourney
 
 				MonsterInfo info = monsterInfos [i];
 
-				Transform monster = GameManager.Instance.gameDataCenter.allMonsters.Find (delegate(Transform obj) {
-					return obj.GetComponent<Monster>().monsterId == info.monsterId;
-				});
+				string monsterName = MyTool.GetMonsterName (info.monsterId);
 
-				if (monster == null) {
-					Debug.LogError ("monster null when load level info");
-				}
+				Transform monster = GameManager.Instance.gameDataCenter.LoadMonster (monsterName).transform;
 
 				for (int j = 0; j < info.monsterCount; j++) {
 					monsters.Add (monster);

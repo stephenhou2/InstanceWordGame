@@ -41,6 +41,7 @@ namespace WordJourney
 		public Transform goodsModel;
 
 
+
 //		public ItemDetailHUD itemDetail;
 		public TintHUD tintHUD;
 
@@ -48,7 +49,7 @@ namespace WordJourney
 		private Item currentSelectedItem;
 
 
-
+		public Transform itemDetailContainer;
 		public Image itemIcon;
 		public Text itemName;
 		public Text itemType;
@@ -90,7 +91,8 @@ namespace WordJourney
 				npcIcon.GetComponent<Image> ().enabled = true;
 			}
 
-			AddFunctionChoices ();
+			// 由于目前npc功能固定，暂时不调用添加npc功能的方法
+//			AddFunctionChoices ();
 
 			gameObject.SetActive (true);
 
@@ -125,6 +127,9 @@ namespace WordJourney
 		}
 
 
+		/// <summary>
+		/// 添加交谈功能（交谈功能目前是固有功能，暂时不调用）
+		/// </summary>
 		private void AddChatFunction(){
 
 			Button dialogChoiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
@@ -257,6 +262,10 @@ namespace WordJourney
 		}
 
 
+
+		/// <summary>
+		/// 添加交易功能（交易功能目前是固有功能，暂时不调用）
+		/// </summary>
 		private void AddTradeFunction(){
 			
 			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
@@ -288,31 +297,36 @@ namespace WordJourney
 
 				Item itemAsGoods = itemsAsGoods [i];
 
-				Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == itemAsGoods.spriteName;
-				});
 
-				Transform goodsDisplay = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
-				Image goodsIcon = goodsDisplay.Find ("GoodsIcon").GetComponent<Image> ();
-				Text goodsPrice = goodsDisplay.Find ("GoodsPrice").GetComponent<Text> ();
-				Button goodsSelection = goodsDisplay.GetComponent<Button> ();
+				Transform goodsCell = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
 
-				goodsIcon.sprite = goodsSprite;
+				goodsCell.GetComponent<GoodsCell> ().SetUpGoodsCell (itemAsGoods);
 
-				goodsPrice.text = itemAsGoods.price.ToString();
+				goodsCell.GetComponent<Button>().onClick.RemoveAllListeners ();
 
-				goodsSelection.onClick.RemoveAllListeners ();
+				int goodsIndex = i;
 
-				goodsSelection.onClick.AddListener (delegate {
+				goodsCell.GetComponent<Button>().onClick.AddListener (delegate {
 					currentSelectedItem = itemAsGoods;
 					SetUpItemDetailsInTrade(itemAsGoods);
+					UpdateGoodsSelection(goodsIndex);
 				});
 
 			}
 
 		}
 
+		private void UpdateGoodsSelection(int selectedGoodsIndex){
 
+			for (int i = 0; i < goodsContainer.childCount; i++) {
+
+				Transform goodsCell = goodsContainer.GetChild (i);
+
+				goodsCell.GetComponent<GoodsCell> ().SetSelection (i == selectedGoodsIndex);
+
+			}
+
+		}
 
 
 		private void SetUpItemDetailsInTrade(Item item){
@@ -328,7 +342,7 @@ namespace WordJourney
 			itemType.text = item.GetItemTypeString ();
 			itemGeneralDescription.text = item.itemGeneralDescription;
 
-
+			itemDetailContainer.gameObject.SetActive (true);
 		}
 
 		public void OnBuyButtonClick(){
@@ -380,6 +394,7 @@ namespace WordJourney
 		}
 
 		private void ClearItemDetail(){
+			itemDetailContainer.gameObject.SetActive (false);
 			itemIcon.enabled = false;
 			itemName.text = "";
 			itemType.text = "";
@@ -404,7 +419,9 @@ namespace WordJourney
 		}
 
 
-
+		/// <summary>
+		/// 添加退出功能（退出功能目前是固有功能，暂时不调用）
+		/// </summary>
 		private void AddQuitFunction(){
 
 			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
@@ -417,7 +434,7 @@ namespace WordJourney
 
 		public void QuitNPCPlane(){
 			
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			QuitTradePlane ();
 

@@ -18,21 +18,21 @@ namespace WordJourney
 
 		public void SetUpSettingView(){
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-			StartCoroutine ("SetUpViewAfterDataReady");
-
-		}
-
-		private IEnumerator SetUpViewAfterDataReady(){
-			
-			bool dataReady = false;
-
-			while (!dataReady) {
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.GameSettings
-				});
-				yield return null;
-			}
+//			StartCoroutine ("SetUpViewAfterDataReady");
+//
+//		}
+//
+//		private IEnumerator SetUpViewAfterDataReady(){
+//			
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.GameSettings
+//				});
+//				yield return null;
+//			}
 
 			GameSettings settings = GameManager.Instance.gameDataCenter.gameSettings;
 
@@ -43,7 +43,9 @@ namespace WordJourney
 
 		public void ChangeVolume(){
 
-			GameManager.Instance.gameDataCenter.gameSettings.systemVolume = (int)settingView.volumeControl.value;
+			GameManager.Instance.gameDataCenter.gameSettings.systemVolume = (float)settingView.volumeControl.value / 100;
+
+			GameManager.Instance.soundManager.UpdateVolume ();
 
 			settingChanged = true;
 
@@ -51,11 +53,11 @@ namespace WordJourney
 
 		public void ChangePronunciationEnability(){
 
-			bool enable = !GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
+			bool isAutoPronounce = !GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce;
 
-			GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable = enable;
+			GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce = isAutoPronounce;
 
-			settingView.UpdatePronounceControl (enable);
+			settingView.UpdatePronounceControl (isAutoPronounce);
 
 			settingChanged = true;
 
@@ -172,9 +174,11 @@ namespace WordJourney
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.settingCanvasBundleName, "SettingCanvas", null, null);
+			GameManager.Instance.UIManager.RemoveCanvasCache ("SettingCanvas");
 
+			Destroy (this.gameObject);
 
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.settingCanvasBundleName, true);
 
 		}
 

@@ -84,7 +84,7 @@ namespace WordJourney
 				waitDownloadFinishCoroutine = PlayPronunciationWhenFinishDownloading (pronunciationWWW);
 				StartCoroutine (waitDownloadFinishCoroutine);
 			} else {
-				SoundManager.Instance.PlayPronuncitaion (pro.pronunciation,false,1f);
+				SoundManager.Instance.PlayPronuncitaion (pro.pronunciation,false);
 			}
 
 		}
@@ -125,7 +125,7 @@ namespace WordJourney
 
 				pronunciationCache.Add (pro);
 
-				SoundManager.Instance.PlayPronuncitaion (pronunciationClip, false, 1f);
+				SoundManager.Instance.PlayPronuncitaion (pronunciationClip, false);
 			} else {
 				// 下载超时时不播放读音,并关闭下载任务
 				www.Dispose ();

@@ -51,7 +51,6 @@ namespace WordJourney
 
 			battlePlayerCtr.enterMonster = new ExploreEventHandler (EnterMonster);
 			battlePlayerCtr.enterNpc = new ExploreEventHandler (EnterNPC);
-//			battlePlayerCtr.enterWorkBench = new ExploreEventHandler (EnterWorkBench);
 			battlePlayerCtr.enterCrystal = new ExploreEventHandler (EnterCrystal);
 
 			battlePlayerCtr.enterTreasureBox = new ExploreEventHandler (EnterTreasureBox);
@@ -68,8 +67,6 @@ namespace WordJourney
 
 			expUICtr = exploreCanvas.GetComponent<ExploreUICotroller> ();
 
-
-
 //			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [Player.mainPlayer.currentLevelIndex];
 //
 //			SetUpExploreView (levelData);
@@ -79,33 +76,36 @@ namespace WordJourney
 		//Initializes the game for each level.
 		public void SetUpExploreView(GameLevelData levelData)
 		{
-			StartCoroutine ("SetUpExploreAfterDataReady",levelData);
+//			StartCoroutine ("SetUpExploreAfterDataReady",levelData);
+//
+//		}
+//
+//		private IEnumerator SetUpExploreAfterDataReady(GameLevelData levelData){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.GameLevelDatas,
+////					GameDataCenter.GameDataType.Monsters,
+//					GameDataCenter.GameDataType.NPCs,
+//					GameDataCenter.GameDataType.ItemModels,
+//					GameDataCenter.GameDataType.ItemSprites,
+//					GameDataCenter.GameDataType.MapSprites,
+//					GameDataCenter.GameDataType.Skills,
+//					GameDataCenter.GameDataType.SkillSprites,
+//				});
+//
+//				yield return null;
+//			}
 
-		}
 
-		private IEnumerator SetUpExploreAfterDataReady(GameLevelData levelData){
 
-			bool dataReady = false;
-
-			while (!dataReady) {
-
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.GameLevelDatas,
-					GameDataCenter.GameDataType.Monsters,
-					GameDataCenter.GameDataType.NPCs,
-					GameDataCenter.GameDataType.ItemModels,
-					GameDataCenter.GameDataType.ItemSprites,
-					GameDataCenter.GameDataType.MapSprites,
-					GameDataCenter.GameDataType.Skills,
-					GameDataCenter.GameDataType.SkillSprites,
-				});
-
-				yield return null;
-			}
-
-			if (!SoundManager.Instance.bgmAS.isPlaying) {
-				SoundManager.Instance.PlayBgmAudioClip ("BGM/Sneaking_Night");
+			if (!SoundManager.Instance.bgmAS.isPlaying 
+				|| SoundManager.Instance.bgmAS.clip.name != CommonData.exploreBgmName) {
+				SoundManager.Instance.PlayBgmAudioClip (CommonData.exploreBgmName);
 			}
 
 			levelData.LoadAllData ();
@@ -119,6 +119,10 @@ namespace WordJourney
 			expUICtr.SetUpExploreCanvas (levelData.gameLevelIndex,levelData.chapterName);
 
 			battlePlayerCtr.InitBattlePlayer ();
+
+			EnableInteractivity ();
+
+
 
 		}
 
@@ -140,18 +144,21 @@ namespace WordJourney
 
 			Vector3 clickPos = Vector3.zero;
 
-			if(Input.GetMouseButtonDown(0)){
+	
+			if(EventSystem.current.IsPointerOverGameObject()){
+				Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
 
-				if(EventSystem.current.IsPointerOverGameObject()){
-					Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
-					mapGenerator.ClickConsumablesPosAt (Vector3.zero);
+				if(clickForConsumablesPos){
+					mapGenerator.RemoveConsumablesTints ();
 					clickForConsumablesPos = false;
-					return;
 				}
 
-				clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
+				return;
 			}
+
+			clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+			UserClickAt(clickPos);
 
 #elif UNITY_ANDROID || UNITY_IOS
 
@@ -162,23 +169,27 @@ namespace WordJourney
 			Vector3 clickPos = Vector3.zero;
 
 
-			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began){
+			if (Input.GetTouch(0).phase == TouchPhase.Began){
 
 				if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)){
-					mapGenerator.ClickConsumablesPosAt (Vector3.zero);
-					clickForConsumablesPos = false;
+					
+					Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
+					
+					if(clickForConsumablesPos){
+						Debug.Log ("使用消耗品时在探索界面内点击在了ui上");
+						mapGenerator.RemoveConsumablesTints ();
+						clickForConsumablesPos = false;
+					}
 					return;
 				}
 				clickPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+
+				UserClickAt(clickPos);
 			}
 #endif
-			// 未检测到点击位置
-			//（初始设置点击位置在世界坐标原点，如果检测到点击点并初始化点击点之后，z一定会和camera的z保持一致，为－10，如果为0表示没有重设点击点）
-//			if (clickPos.z == 0) {
-//				return;
-//			}
+		}
 
-			Debug.Log ("点击在探索界面内");
+		private void UserClickAt(Vector3 clickPos){
 
 			int targetX = 0;
 			int targetY = 0;
@@ -225,7 +236,9 @@ namespace WordJourney
 			// 地图上点击位置生成提示动画
 			mapGenerator.PlayDestinationAnim(targetPos,arrivable);
 
+
 		}
+
 
 //		public List<Vector3> FindPath(Vector3 startPos,Vector3 endPos){
 //			navHelper.FindPath(startPos,endPos,
@@ -477,15 +490,11 @@ namespace WordJourney
 		}
 
 		private void EnterDoor(Transform doorTrans){
-			Debug.Log ("door");
+			expUICtr.SetUpTintHUD ("关闭的门", null);
 		}
 
 		private void EnterNPC(Transform mapNpcTrans){
-
-			Debug.Log ("碰到了npc");
-
 			expUICtr.EnterNPC (mapNpcTrans.GetComponent<MapNPC> ().npc, currentLevelIndex);
-
 		}
 
 //		private void EnterWorkBench(Transform workBench){
@@ -557,6 +566,8 @@ namespace WordJourney
 
 		public void ShowConsumablesValidPointTintAround(Consumables consumables){
 
+//			Debug.Log ("显示消耗品使用范围提示");
+
 			mapGenerator.ShowConsumablesValidPointsTint (consumables);
 
 		}
@@ -574,8 +585,8 @@ namespace WordJourney
 
 			battleMonsterCtr.enemy = null;
 
-			battlePlayerCtr.RemoveTriggeredSkillEffectFromAgent ();
-			battleMonsterCtr.RemoveTriggeredSkillEffectFromAgent ();
+			battlePlayerCtr.RemoveTriggeredSkillEffect ();
+			battleMonsterCtr.RemoveTriggeredSkillEffect ();
 
 //			Debug.Log (battlePlayerCtr.agent.health);
 
@@ -630,10 +641,7 @@ namespace WordJourney
 
 			yield return new WaitUntil (() => battlePlayerCtr.isIdle);
 
-			battlePlayerCtr.SetEffectAnim ("LevelUp",EnableInteractivity);
-			SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
-			battlePlayerCtr.UpdateStatusPlane ();
-
+			PlayLevelUpAnim ();
 		}
 
 		private void PlayLevelUpAnim(){
@@ -661,17 +669,15 @@ namespace WordJourney
 
 		private void FightEndCallBacks(){
 
-			// 清理所有状态和技能回调
-			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
-			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
-
 			// 执行玩家角色战斗结束技能回调
 			battlePlayerCtr.ExcuteFightEndCallBacks(battleMonsterCtr);
 
 			// 执行怪物角色战斗结束技能回调
 			battleMonsterCtr.ExcuteFightEndCallBacks(battlePlayerCtr);
 
-
+			// 清理所有状态和技能回调
+			battlePlayerCtr.ClearAllEffectStatesAndSkillCallBacks ();
+			battleMonsterCtr.ClearAllEffectStatesAndSkillCallBacks ();
 
 		}
 
@@ -777,6 +783,7 @@ namespace WordJourney
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
 
+			Camera.main.transform.Find ("Background").gameObject.SetActive (false);
 			Camera.main.transform.SetParent (null);
 
 			battlePlayerCtr.QuitExplore ();

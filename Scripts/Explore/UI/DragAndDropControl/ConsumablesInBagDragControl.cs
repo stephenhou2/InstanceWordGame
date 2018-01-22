@@ -11,7 +11,7 @@ namespace WordJourney
 
 		public Image itemImage;
 		public Image backgroundImage;
-		public Text itemName;
+//		public Text itemName;
 		public Image newItemTintIcon;
 
 		private BattlePlayerUIController mExplorePlayerUICtr;
@@ -76,7 +76,7 @@ namespace WordJourney
 
 			backgroundImage.enabled = false;
 			itemImage.enabled = false;
-			itemName.enabled = false;
+//			itemName.enabled = false;
 			newItemTintIcon.enabled = false;
 		}
 
@@ -119,7 +119,7 @@ namespace WordJourney
 		{
 			backgroundImage.enabled = true;
 			itemImage.enabled = true;
-			itemName.enabled = true;
+//			itemName.enabled = true;
 			newItemTintIcon.enabled = false;
 
 		}

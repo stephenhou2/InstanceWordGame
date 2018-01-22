@@ -17,16 +17,19 @@ namespace WordJourney
 		public Button recordTitle;
 		public Button wrongWordsTitle;
 
+		public Sprite normalSprite;
+		public Sprite selectedSprite;
+
 
 		public Text wordType;
 
 		public Image completionImage;
 
-		public Text completionPercentage;
+		public Text completionPercentageText;
 
-		public Text learnedWordsCount;
+		public Text learnedWordsCountText;
 
-		public Text unGraspedWordsCount;
+		public Text unGraspedWordsCountText;
 
 		// 单词cell模型
 		public Transform wordModel;
@@ -48,13 +51,8 @@ namespace WordJourney
 
 			this.learnInfo = learnInfo;
 
-			Transform poolContainerOfRecordCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfRecordCanvas");
-
-			if (poolContainerOfRecordCanvas.childCount == 0) {
-				// 创建缓存池
-				wordPool = InstancePool.GetOrCreateInstancePool ("WordItemPool",poolContainerOfRecordCanvas.name);
-			}
-
+			// 创建缓存池
+			wordPool = InstancePool.GetOrCreateInstancePool ("WordItemPool",CommonData.poolContainerName);
 
 			SetUpGeneralLearningInfo ();
 
@@ -74,28 +72,32 @@ namespace WordJourney
 
 			float percentage = 0;
 
-			if (learnInfo.totalWordCount != 0) {
-				percentage = learnInfo.learnedWordCount / learnInfo.totalWordCount;
+			int totalWordsCount = learnInfo.totalWordCount;
+			int learnedWordsCount = learnInfo.learnedWordCount;
+			int wrongWordsCount = learnInfo.ungraspedWordCount;
+
+			if (totalWordsCount != 0) {
+				percentage = learnedWordsCount / totalWordsCount;
 			}
 			 
 
 			completionImage.fillAmount = percentage;
 
-			completionPercentage.text = ((int)(percentage * 100)).ToString() + "%";
+			completionPercentageText.text = ((int)(percentage * 100)).ToString() + "%";
 
-			learnedWordsCount.text = learnInfo.learnedWordCount.ToString ();
+			learnedWordsCountText.text = learnedWordsCount.ToString ();
 
-			unGraspedWordsCount.text = learnInfo.ungraspedWordCount.ToString ();
+			unGraspedWordsCountText.text = wrongWordsCount.ToString ();
 
 			generalInfoPlane.gameObject.SetActive (true);
 			wordsPlane.gameObject.SetActive (false);
 
-			recordTitle.Select ();
-
+			recordTitle.GetComponent<Image> ().sprite = selectedSprite;
 			recordTitle.GetComponentInChildren<Text>().color = new Color (
 				CommonData.selectedColor.x, 
 				CommonData.selectedColor.y, 
 				CommonData.selectedColor.z);
+			wrongWordsTitle.GetComponent<Image> ().sprite = normalSprite;
 			wrongWordsTitle.GetComponentInChildren<Text>().color = new Color (
 				CommonData.deselectedColor.x, 
 				CommonData.deselectedColor.y, 
@@ -150,12 +152,12 @@ namespace WordJourney
 			generalInfoPlane.gameObject.SetActive (false);
 			wordsPlane.gameObject.SetActive (true);
 
-			wrongWordsTitle.Select ();
-
+			wrongWordsTitle.GetComponent<Image> ().sprite = selectedSprite;
 			wrongWordsTitle.GetComponentInChildren<Text>().color = new Color (
 				CommonData.selectedColor.x, 
 				CommonData.selectedColor.y, 
 				CommonData.selectedColor.z);
+			recordTitle.GetComponent<Image> ().sprite = normalSprite;
 			recordTitle.GetComponentInChildren<Text>().color = new Color (
 				CommonData.deselectedColor.x, 
 				CommonData.deselectedColor.y, 
@@ -171,16 +173,13 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="cb">Cb.</param>
 		public void OnQuitRecordPlane(){
-
-			wordModel = null;
-
-			wordPool = null;
-
+			ClearCache ();
 			GetComponent<Canvas> ().enabled = false;
-
 		}
 
-
+		private void ClearCache(){
+			Destroy (wordPool.gameObject);
+		}
 
 	}
 }

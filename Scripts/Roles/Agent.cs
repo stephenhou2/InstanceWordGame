@@ -82,16 +82,16 @@ namespace WordJourney
 
 
 		//********人物最终的实际属性信息*********//
-		private int mMaxHealth;//实际最大血量
-		private int mHealth;//实际生命
-		private int mMana;//实际法强
-		private int mAttack;//实际攻击力
-		private int mAttackSpeed;//实际攻速
-		private int mArmor;//实际护甲
-		private int mMagicResist;//实际抗性
-		private int mDodge;//实际闪避
-		private int mCrit;//实际暴击
-		private int mHit;//实际命中
+		public int mMaxHealth;//实际最大血量
+		public int mHealth;//实际生命
+		public int mMana;//实际法强
+		public int mAttack;//实际攻击力
+		public int mAttackSpeed;//实际攻速
+		public int mArmor;//实际护甲
+		public int mMagicResist;//实际抗性
+		public int mDodge;//实际闪避
+		public int mCrit;//实际暴击
+		public int mHit;//实际命中
 		//********人物最终的实际属性信息*********//
 
 
@@ -742,9 +742,7 @@ namespace WordJourney
 			this.physicalHurtChangeScalerFromOther += physicalHurtChangeScalerFromOther;
 			this.magicalHurtChangeScalerFromOther += magicalHurtChangeScalerFromOther;
 			this.critHurtChangeScalerFromOther += critHurtChangeScalerFromOther;
-				
-
-
+		
 		}
 
 

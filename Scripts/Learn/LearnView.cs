@@ -97,7 +97,7 @@ namespace WordJourney
 
 			wordTypeText.text = GameManager.Instance.gameDataCenter.gameSettings.GetWordTypeString ();
 
-			UpdatePronounceControl (GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable);
+			UpdatePronounceControl (GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce);
 
 		}
 
@@ -177,11 +177,16 @@ namespace WordJourney
 
 		public void SetUpLearnViewWithFinalExam(Examination exam,Examination.ExaminationType examType){
 
-
 			IEnumerator waitShowRightAnswerFinishCoroutine = WaitShowRightAnswerFinish (delegate {
+				
 				MySetUpLearnViewWithFinalExam(exam,examType);
 
 				GetComponent<Canvas> ().enabled = true;
+
+				if(GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce){
+					GameManager.Instance.pronounceManager.PronounceWord(exam.question);
+				}
+
 			});
 
 			StartCoroutine (waitShowRightAnswerFinishCoroutine);

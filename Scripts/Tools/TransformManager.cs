@@ -82,15 +82,15 @@ namespace WordJourney{
 			return mContainer;
 		}
 
-		public static void DestroyTransform(Transform trans){
-
-			try{
-				Destroy(trans.gameObject);
-			}catch(System.Exception e){
-				Debug.Log ("删除游戏物体失败" + e.ToString ());
-			}
-
-		}
+//		public static void DestroyTransform(Transform trans){
+//
+//			try{
+//				Destroy(trans.gameObject);
+//			}catch(System.Exception e){
+//				Debug.Log ("删除游戏物体失败" + e.ToString ());
+//			}
+//
+//		}
 
 
 

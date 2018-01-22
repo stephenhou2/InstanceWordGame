@@ -41,7 +41,7 @@ namespace WordJourney
 			if (!canOverlay) {
 				for (int i = 0; i < sameStatusSkills.Count; i++) {
 					TriggeredSkill ts = sameStatusSkills [i];
-					ts.CancelSkillEffect ();
+					ts.CancelSkillEffect (ts != this);
 				}
 			}
 
@@ -57,7 +57,7 @@ namespace WordJourney
 			propertyChange += skillSourceValue;
 
 			if (duration > 0) {
-				self.propertyCalculator.AddSkill<ConsumablesSkill> (this);
+				self.propertyCalculator.SkillTriggered<ConsumablesSkill> (this);
 				ResetPropertyCoroutine = ResetPropertyWhenTimeOut (self, propertyType, duration);
 				StartCoroutine (ResetPropertyCoroutine);
 			} else {

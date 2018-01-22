@@ -104,6 +104,7 @@ namespace WordJourney
 				PlayHurtTextAnim (fightText);
 				break;
 			case SpecialAttackResult.Gain:
+			case SpecialAttackResult.Status:
 				PlayGainTextAnim (fightText);
 				break;
 			}

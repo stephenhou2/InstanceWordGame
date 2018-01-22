@@ -31,6 +31,7 @@ namespace WordJourney
 		public float circleAttackZoneRotateSpeed;
 		public Image healthInCircleAttackCheck;
 
+		private float circleAttackZoneBaseFillAmout = 0.1f;
 	
 		private float validZoneEdgeLeft{
 			get{ return rectValidZone.rect.center.x - rectValidZone.rect.width / 2; }
@@ -75,7 +76,13 @@ namespace WordJourney
 			rectAttackCheckPlane.gameObject.SetActive (false);
 			circleAttackCheckPlane.gameObject.SetActive (true);
 			circleAttackCheck.localRotation = Quaternion.identity;
-			circleAttackZoneSize = circleAttackZone.GetComponent<Image> ().fillAmount * 360;
+
+			float circleAttackZonFillAmout = circleAttackZoneBaseFillAmout * (1 + 0.01333f * Player.mainPlayer.hit);
+
+			circleAttackZone.GetComponent<Image> ().fillAmount = circleAttackZonFillAmout;
+
+			circleAttackZoneSize = circleAttackZonFillAmout * 180;
+
 			float originalRotationOffset = Random.Range (circleAttackZoneSize -  90, 90);
 			circleAttackZone.localRotation = Quaternion.Euler(new Vector3(0,0,originalRotationOffset));
 			UpdateHealth ();
@@ -275,7 +282,7 @@ namespace WordJourney
 
 			switch (attackCheckType) {
 			case AttackCheckType.Circle:
-				healthInCircleAttackCheck.fillAmount = 0.417f * Player.mainPlayer.health / Player.mainPlayer.maxHealth;
+				healthInCircleAttackCheck.fillAmount = 0.8333f * Player.mainPlayer.health / Player.mainPlayer.maxHealth;
 				break;
 			case AttackCheckType.Rect:
 				healthInRectAttackCheck.fillAmount = Player.mainPlayer.health / Player.mainPlayer.maxHealth;

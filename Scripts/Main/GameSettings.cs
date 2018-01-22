@@ -15,13 +15,9 @@ namespace WordJourney{
 			Learn
 		}
 
-		public bool isPronunciationEnable = true;
+		public bool isAutoPronounce = false;
 
-//		public bool autoPronounce = true;
-
-		public bool isDownloadEnable = false;
-
-		public int systemVolume = 50;
+		public float systemVolume = 0.5f;
 
 		public WordType wordType = WordType.CET4;
 
@@ -48,7 +44,7 @@ namespace WordJourney{
 
 		public override string ToString ()
 		{
-			return string.Format ("[GameSettings]-isPronunciationEnable{0},isDownloadEnable{1},systemVolume{3},wordType{4}",isPronunciationEnable,isDownloadEnable,systemVolume,wordType);
+			return string.Format ("[GameSettings]-isAutoPronounce{0},systemVolume{3},wordType{4}",isAutoPronounce,systemVolume,wordType);
 		}
 
 

@@ -94,7 +94,7 @@ namespace WordJourney
 			if (!canOverlay) {
 				for (int i = 0; i < sameStatusSkills.Count; i++) {
 					TriggeredSkill ts = sameStatusSkills [i];
-					ts.CancelSkillEffect ();
+					ts.CancelSkillEffect (ts != this);
 				}
 			}
 
@@ -115,7 +115,7 @@ namespace WordJourney
 				ResetPropertyCoroutine = ResetPropertyWhenTimeOut (affectedAgent, propertyType, duration);
 				StartCoroutine (ResetPropertyCoroutine);
 			}
-			affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
+			affectedAgent.propertyCalculator.SkillTriggered<TriggeredSkill> (this);
 		}
 
 		/// <summary>
@@ -137,18 +137,20 @@ namespace WordJourney
 		/// 取消技能效果
 		/// </summary>
 		/// <returns><c>true</c> if this instance cancel skill effect; otherwise, <c>false</c>.</returns>
-		public override void CancelSkillEffect ()
+		public override void CancelSkillEffect (bool removeSkill)
 		{
 			if (ResetPropertyCoroutine != null) {
 				StopCoroutine (ResetPropertyCoroutine);
 			}
-			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 
-			if (propertyType == PropertyType.Health) {
-				return;
+			if (propertyType != PropertyType.Health) {
+				affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent, propertyType, -skillSourceValue);
 			}
 
-			affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent ,propertyType, -skillSourceValue);
+			if (affectedAgent != null && removeSkill) {
+				affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
+			}
+
 
 		}
 
@@ -157,23 +159,18 @@ namespace WordJourney
 		/// </summary>
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
-			
-
 
 			if (ResetPropertyCoroutine != null) {
 				StopCoroutine (ResetPropertyCoroutine);
 				ResetPropertyCoroutine = null;
 			}
-
-
-
+				
 			if (propertyType == PropertyType.Health) {
+				affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 				affectedAgent = null;
 				return;
 			}
-
-
-//			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
+				
 			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 

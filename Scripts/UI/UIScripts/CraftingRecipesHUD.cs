@@ -14,8 +14,7 @@ namespace WordJourney
 		public Text craftingItemName;
 		public Text craftingItemDescription;
 
-		public Image line_2;
-		public Image line_3;
+		public Image centralLine;
 
 		public Transform recipesItemModel;
 		private InstancePool recipesItemPool;
@@ -71,11 +70,9 @@ namespace WordJourney
 			ItemModel.ItemInfoForProduce[] itemInfosForProduce = craftingItem.itemInfosForProduce;
 
 			if (itemInfosForProduce.Length == 2) {
-				line_2.gameObject.SetActive (true);
-				line_3.gameObject.SetActive (false);
+				centralLine.gameObject.SetActive (false);
 			} else if (itemInfosForProduce.Length == 3) {
-				line_2.gameObject.SetActive (false);
-				line_3.gameObject.SetActive (true);
+				centralLine.gameObject.SetActive (true);
 			}
 
 			SetUpRecipesItems (itemInfosForProduce);

@@ -135,22 +135,22 @@ namespace WordJourney
 				allItemsInBag.Add(allCraftingRecipesInBag[i]);
 			}
 
-			StartCoroutine ("InitAllEquipmentSkills");
-
-		}
-
-		private IEnumerator InitAllEquipmentSkills(){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.Skills,
-				});
-
-				yield return null;
-			}
+//			StartCoroutine ("InitAllEquipmentSkills");
+//
+//		}
+//
+//		private IEnumerator InitAllEquipmentSkills(){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.Skills,
+//				});
+//
+//				yield return null;
+//			}
 
 			for (int i = 0; i < allEquipedEquipments.Length; i++) {
 
@@ -278,15 +278,15 @@ namespace WordJourney
 		
 				agentLevel++;
 
-				// 全属性+1，血量+10，魔法+5
+				// 全属性+1，血量+10
 				originalAttack += 1;
-				originalAttackSpeed += 1;
+				originalHit += 1;
 				originalArmor += 1;
 				originalMagicResist += 1;
 				originalDodge += 1;
 				originalCrit += 1;
 				originalMaxHealth += 10;
-				originalMana += 5;
+				originalMana += 1;
 
 				ResetBattleAgentProperties (false);//升级后更新玩家状态，玩家血量和魔法值回满
 

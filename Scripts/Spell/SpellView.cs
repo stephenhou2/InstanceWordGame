@@ -35,9 +35,6 @@ namespace WordJourney
 		public ItemDetailHUD itemDetail;
 	
 
-		public Button characterTitle;
-		public Button unlockedItemTitle;
-
 
 		public void SetUpSpellViewWith(ItemModel itemModel){
 
@@ -125,25 +122,12 @@ namespace WordJourney
 
 			createCountHUD.gameObject.SetActive (true);
 
-			if (minusBtn.GetComponent<Image> ().sprite == null 
-				|| plusBtn.GetComponent<Image>().sprite == null) 
-			{
-				Sprite arrowSprite = GameManager.Instance.gameDataCenter.allUISprites.Find (delegate(Sprite obj) {
-					return obj.name == "arrowIcon";
-				});
-
-				minusBtn.GetComponent<Image> ().sprite = arrowSprite;
-				plusBtn.GetComponent<Image> ().sprite = arrowSprite;
-			}
-
 			countSlider.minValue = minValue;
 			countSlider.maxValue = maxValue;
 
 			countSlider.value = minValue;
 
 			createCount.text = "制作1个";
-
-
 
 		}
 

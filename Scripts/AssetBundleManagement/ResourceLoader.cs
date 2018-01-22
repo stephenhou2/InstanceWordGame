@@ -163,6 +163,8 @@ namespace WordJourney
 
 			string url = GetBundleURL ();
 
+//			downloadWWW = WWW.LoadFromCacheOrDownload (url, 0);
+			 
 			downloadWWW = new WWW (url);
 
 			ResourceManager.Instance.AddWWWIntoCache (assetBundleName, downloadWWW);

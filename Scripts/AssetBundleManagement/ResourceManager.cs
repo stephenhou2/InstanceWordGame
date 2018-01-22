@@ -22,7 +22,7 @@ namespace WordJourney
 
 		private Dictionary<string,WWW> m_DownloadingWWWs = new Dictionary<string, WWW> ();
 
-		private Dictionary<string,MyLoadedAssetBundle> m_LoadedAssetBundles = new Dictionary<string, MyLoadedAssetBundle> ();
+		public Dictionary<string,MyLoadedAssetBundle> m_LoadedAssetBundles = new Dictionary<string, MyLoadedAssetBundle> ();
 
 		private Dictionary<string, string> m_DownloadingErrors = new Dictionary<string, string> ();
 
@@ -53,6 +53,10 @@ namespace WordJourney
 
 //			m_InProgressLoaders.Add (loader);
 
+			loader.SetFinishBundleLoadingCallBack (delegate {
+				UnloadAssetBunlde(loader.assetBundleName);	
+			});
+
 			loader.SetFinishAssetsLoadingCallBack (delegate {
 				callBack ();
 //				m_InProgressLoaders.Remove (loader);
@@ -67,6 +71,10 @@ namespace WordJourney
 
 			this.loadType = AssetBundleLoadType.AssetBundleSync;
 
+			loader.SetFinishBundleLoadingCallBack (delegate {
+				UnloadAssetBunlde (loader.assetBundleName);
+			});
+
 			loader.SetFinishAssetsLoadingCallBack (delegate {
 				callBack ();
 				Destroy(loader.gameObject);
@@ -77,7 +85,6 @@ namespace WordJourney
 			AssetBundle bundle = loader.LoadAssetsBundleFromFileSync ();
 
 			loader.LoadAssetsSync (bundle);
-
 
 
 		}
@@ -108,10 +115,23 @@ namespace WordJourney
 			for (int i = 0; i < dependencies.Length; i++) {
 				string dependencyBundleName = dependencies [i];
 
+				switch (loadType) {
+
+				case AssetBundleLoadType.AssetBundleSync:
+					break;
+				case AssetBundleLoadType.AssetBundleAsync:
+					if (!m_LoadedAssetBundles.ContainsKey (dependencyBundleName)) {
+						Debug.LogFormat ("load dependecy {0}", dependencyBundleName);
+						yield return loader.bundleRequest;
+					}
+					break;
+				case AssetBundleLoadType.WWW:
 					if (!m_LoadedAssetBundles.ContainsKey (dependencyBundleName)) {
 						Debug.LogFormat ("load dependecy {0}", dependencyBundleName);
 						yield return m_DownloadingWWWs[dependencyBundleName];
 					}
+					break;
+				}
 			}
 
 			AssetBundle bundle = GetAssetBundleCache (loader.assetBundleName);
@@ -120,10 +140,17 @@ namespace WordJourney
 			if (bundle != null) {
 				loader.LoadAssetsAsync (bundle);
 			} else {
-				loader.LoadAssetsBundleWithWWW ();
+
+
+
+				loader.LoadAssetsBundleFromFileAsync ();
+
+
+
+//				loader.LoadAssetsBundleWithWWW ();
 				// www 读取／下载完成后读取bundle数据
-				IEnumerator coroutine = LoadAssetsAfterWWWFinish (loader);
-				StartCoroutine (coroutine);
+//				IEnumerator coroutine = LoadAssetsAfterWWWFinish (loader);
+//				StartCoroutine (coroutine);
 			}
 		}
 
@@ -158,6 +185,7 @@ namespace WordJourney
 			}
 			MyLoadedAssetBundle myLoadedBundle = new MyLoadedAssetBundle (bundle);
 			m_LoadedAssetBundles.Add (bundleName, myLoadedBundle);
+			Debug.Log (bundleName + "引用计数+1:" +  (m_LoadedAssetBundles [bundleName].assetBundleRefCount).ToString());
 		}
 
 		/// <summary>
@@ -226,10 +254,15 @@ namespace WordJourney
 		public void UnloadAssetBunlde(string assetBundleName){
 
 			if (!m_LoadedAssetBundles.ContainsKey (assetBundleName)) {
-				Debug.LogError (string.Format ("缓存中没有名称为{0}的包体数据", assetBundleName));
+				return;
+//				Debug.LogError (string.Format ("缓存中没有名称为{0}的包体数据", assetBundleName));
 			}
 
+			Debug.Log (assetBundleName + "引用计数-1:" +  (m_LoadedAssetBundles [assetBundleName].assetBundleRefCount - 1).ToString());
+
 			if (--m_LoadedAssetBundles [assetBundleName].assetBundleRefCount == 0) {
+
+				Debug.Log (assetBundleName + "从内存中移除bundle");
 				m_LoadedAssetBundles [assetBundleName].assetBundle.Unload (false);
 				m_LoadedAssetBundles.Remove (assetBundleName);
 			}
@@ -251,6 +284,31 @@ namespace WordJourney
 				return null;
 			}
 			return m_DownloadingWWWs [bundleName];
+		}
+
+		public void SetUpManifestSync(){
+
+			string bundleName = "StreamingAssets";
+
+			ResourceLoader manifestLoader = ResourceLoader.CreateNewResourceLoader<AssetBundleManifest> (bundleName, "AssetBundleManifest");
+
+			AssetBundle manifestBundle = manifestLoader.LoadAssetsBundleFromFileSync ();
+
+			manifestLoader.LoadAssetsSync (manifestBundle);
+
+//			Debug.Log (manifestLoader.assets.Length);
+
+			for (int i = 0; i < manifestLoader.assets.Length; i++) {
+				Debug.Log (manifestLoader.assets [i].name + "-------------");
+			}
+
+			manifest = manifestLoader.assets [0] as AssetBundleManifest;
+
+			manifestReady = true;
+
+			Destroy(manifestLoader.gameObject);
+
+
 		}
 
 		public void SetUpManifest(){
@@ -283,6 +341,7 @@ namespace WordJourney
 				if (GetLoadedAssetBundle (dependency) == null) {
 					ResourceLoader dependencyBundleLoader = ResourceLoader.CreateNewResourceLoader<Object> (dependency);
 					dependencyBundleLoader.SetFinishBundleLoadingCallBack (delegate {
+						UnloadAssetBunlde(bundleName);
 						Destroy(dependencyBundleLoader.gameObject);
 					});
 					switch (loadType) {
@@ -345,11 +404,6 @@ namespace WordJourney
 			}
 
 		}
-
-
-
-
-
-
+			
 	}
 }

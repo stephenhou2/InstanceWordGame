@@ -21,7 +21,7 @@ namespace WordJourney
 
 					instance.gameDataCenter = new GameDataCenter ();
 
-					instance.UIManager = new UIManager ();
+//					instance.UIManager = new UIManager ();
 
 					instance.persistDataManager = new PersistDataManager ();
 

@@ -88,7 +88,11 @@ namespace WordJourney
 
 //			learnInfo = null;
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.recordCanvasBundleName, "RecordCanvas","PoolContainerOfRecordCanvas","ModelContainerOfRecordCanvas");
+			GameManager.Instance.UIManager.RemoveCanvasCache ("RecordCanvas");
+
+			Destroy (this.gameObject);
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.recordCanvasBundleName, true);
 
 		}
 

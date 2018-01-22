@@ -8,7 +8,7 @@ namespace WordJourney
 
 	public class MovableFloor : MapItem {
 
-		public float moveSpeedX;
+		public float moveSpeed;
 
 		private Transform mExploreManager;
 		private Transform exploreManager{
@@ -103,23 +103,19 @@ namespace WordJourney
 
 			bp.PlayRoleAnim ("wait", 0, null);
 
-			float myMoveSpeedX = 0;
+			float moveDuration = Mathf.Sqrt((endPos - startPos).sqrMagnitude) / moveSpeed;
 
 			// x轴方向的移动速度
 			if (endPos.x > startPos.x) {
-				myMoveSpeedX = moveSpeedX;
 				bp.TowardsRight ();
 			} else {
-				myMoveSpeedX = -moveSpeedX;
 				bp.TowardsLeft ();
 			}
 
-			float moveDuration = Mathf.Abs ((endPos.x - startPos.x) / moveSpeedX);
+			float myMoveSpeedX = (endPos.x - startPos.x) / moveDuration;
 
 			// y轴方向的移动速度
 			float myMoveSpeedY = (endPos.y-startPos.y)/moveDuration;
-
-
 
 			float timer = 0;
 			bool endPosInit = false;
@@ -135,7 +131,7 @@ namespace WordJourney
 				 
 				bp.transform.position += moveVector;
 
-				background.transform.position += 0.3f * moveVector;
+				background.transform.position -= 0.3f * moveVector;
 
 				// 走到一半时终点位置开始初始化（地板和物品，怪物出现）
 				if (timer / moveDuration > 0.5 && !endPosInit) {

@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 1397739513
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 20258635158dfe5ccb32453d185d5527
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 36c33a819640bead83b84b1645a12e6d
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Textures/UI/ui_big/ui_paper.png
+- Assets/Textures/UI/ui_common/ui_common.png
+- Assets/Textures/UI/ui_others/ui_others.png
+- Assets/Textures/UI/ui_big/ui_background2.png
+Dependencies: []

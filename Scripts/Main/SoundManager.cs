@@ -9,13 +9,6 @@ namespace WordJourney
 
 	public class SoundManager : MonoBehaviour {
 
-//		public List<AudioClip> footStepAudioClips = new List<AudioClip>();
-//		public List<AudioClip> skillEffectAudioClips = new List<AudioClip>();
-//		public List<AudioClip> mapEffectAudioClips = new List<AudioClip> ();
-//		public List<AudioClip> UIAudioClips = new List<AudioClip> ();
-
-//		public AudioClip exploreBackground;
-
 		private static SoundManager mInstance;
 		public static SoundManager Instance{
 			get{
@@ -35,15 +28,20 @@ namespace WordJourney
 
 		private Dictionary<string,int> audioClipInfoDic = new Dictionary<string, int> (); 
 
+		public void UpdateVolume(){
+			float newVolume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
+			bgmAS.volume = newVolume;
+			for (int i = 0; i < audioSourceList.Count; i++) {
+				audioSourceList [i].volume = newVolume;
+			}
+		}
 
-
-
-		public void PlayBgmAudioClip(string bgmPath,bool isLoop = true,float volume = 1f){
+		public void PlayBgmAudioClip(string bgmName,bool isLoop = true){
 
 			string fullPath = "";
 
-			if (!bgmPath.StartsWith ("Audio/")) {
-				fullPath = "Audio/" + bgmPath;
+			if (!bgmName.StartsWith ("Audio/BGM/")) {
+				fullPath = "Audio/BGM/" + bgmName;
 			}
 
 
@@ -53,7 +51,7 @@ namespace WordJourney
 
 			bgmAS.loop = isLoop;
 
-			bgmAS.volume = volume;
+			bgmAS.volume = GameManager.Instance.gameDataCenter.gameSettings.systemVolume;
 
 			bgmAS.Play ();
 
@@ -90,11 +88,11 @@ namespace WordJourney
 
 		}
 
-		public void PlayPronuncitaion(AudioClip clip,bool isLoop = false,float volume = -1f){
+		public void PlayPronuncitaion(AudioClip clip,bool isLoop = false){
 
 			pronunciationAS.clip = clip;
 
-			pronunciationAS.volume = volume == -1 ? GameManager.Instance.gameDataCenter.gameSettings.systemVolume : volume;
+			pronunciationAS.volume = 1f;
 
 			pronunciationAS.Play ();
 

@@ -129,6 +129,9 @@ namespace WordJourney
 		// 压力开关模型
 		public PressSwitch pressSwitchModel;
 
+		// 装饰用障碍物模型
+		public Docoration docorationModel;
+
 
 		private Vector3 transportPositionInMap;
 
@@ -477,8 +480,11 @@ namespace WordJourney
 					Trap trapOff = GenerateMapItem (MapItemType.NormalTrapOff, pos, null) as Trap;
 					allTrapsInMap.Add (trapOff);
 					break;
-				case AttachedInfoType.MovableFloor:
+				case AttachedInfoType.MovableFloorStart:
 					GenerateMapItem (MapItemType.MovableFloor, pos, null);
+					allMovableFloorsPositions.Add (pos);
+					break;
+				case AttachedInfoType.MovableFloorEnd:
 					allMovableFloorsPositions.Add (pos);
 					break;
 				case AttachedInfoType.Monster:
@@ -514,6 +520,9 @@ namespace WordJourney
 					break;
 				case AttachedInfoType.PressSwitch:
 					GenerateMapItem (MapItemType.PressSwitch, pos, null);
+					break;
+				case AttachedInfoType.Docoration:
+					GenerateMapItem (MapItemType.Docoration, pos, null);
 					break;
 				}
 
@@ -640,6 +649,10 @@ namespace WordJourney
 				mapItem = mapItemPool.GetInstanceWithName<MapNPC> (mapNpcModel.name, mapNpcModel.gameObject, mapItemsContainer);
 				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 				break;
+			case MapItemType.Docoration:
+				mapItem = mapItemPool.GetInstanceWithName<Docoration> (docorationModel.name, docorationModel.gameObject, mapItemsContainer);
+				originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
+				break;
 			}
 
 			mapItem.mapItemType = mapItemType;
@@ -695,7 +708,9 @@ namespace WordJourney
 				return obj.name == backgroundImageName;
 			});
 
-			Camera.main.transform.Find ("Background").GetComponent<SpriteRenderer> ().sprite = backgroundSprite;;
+			Transform background = Camera.main.transform.Find ("Background");
+			background.GetComponent<SpriteRenderer> ().sprite = backgroundSprite;
+			background.gameObject.SetActive (true);
 
 			// 创建地板
 			for (int i = 0; i < floorLayer.tileDatas.Count; i++) {
@@ -774,7 +789,10 @@ namespace WordJourney
 
 			Camera.main.orthographicSize = 6.0f;
 
-			Camera.main.transform.Find ("Background").transform.localPosition = new Vector3 (0, 0, 5);
+			Transform background = Camera.main.transform.Find ("Background");
+			background.transform.localPosition = new Vector3 (0, 0, 5);
+
+
 
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("wait", 0, null);
@@ -817,15 +835,7 @@ namespace WordJourney
 
 			originalMapWalkableInfoArray [(int)position.x, (int)position.y] = 0;
 
-//			BattleMonsterController bmCtr = monster.GetComponent<BattleMonsterController> ();
-
-//			monster.position = new Vector3 (position.x, position.y, -100f);
-
 			monster.position = new Vector3 (position.x, position.y, 0);
-
-//			bmCtr.PlayRoleAnim ("wait", 0, null);
-
-//			monster.gameObject.SetActive (false);
 
 			allSleepingMonsters.Add (monster);
 
@@ -1208,6 +1218,8 @@ namespace WordJourney
 
 		public void ShowConsumablesValidPointsTint(Consumables consumables){
 
+			Debug.Log ("显示消耗品可用位置提示");
+
 			Vector3 basePosition = GetBattlePlayer ().transform.position;
 
 			Vector3[] aroundPositions = GetPositionsAround (basePosition);
@@ -1415,9 +1427,13 @@ namespace WordJourney
 
 		}
 
+		public void RemoveConsumablesTints(){
+			AddConsumablesValidPosTintsToPool ();
+		}
+
 		public void ClickConsumablesPosAt(Vector3 pos){
 
-			AddConsumablesValidPosTintsToPool ();
+			RemoveConsumablesTints ();
 
 			if (!IsClickPosValid (pos)) {
 				return;
@@ -1616,7 +1632,7 @@ namespace WordJourney
 
 		public void SetUpRewardInMap(Item reward, Vector3 rewardPosition){
 
-			Debug.Log (reward.itemName);
+//			Debug.Log (reward.itemName);
 
 			Transform rewardTrans = rewardItemPool.GetInstance<Transform> (rewardItemModel.gameObject, rewardsContainer);
 

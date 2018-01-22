@@ -87,7 +87,7 @@ namespace WordJourney
 					break;
 				}
 
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beforeFightTriggerInfo.triggerTarget, BeforeFightTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beforeFightTriggerInfo.triggerSource, BeforeFightTriggerCallBack);
 
 				triggerSource.beforeFightTriggerExcutors.Add (excutor);
 			}
@@ -101,7 +101,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (attackTriggerInfo.triggerTarget, AttackTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (attackTriggerInfo.triggerSource, AttackTriggerCallBack);
 				triggerSource.attackTriggerExcutors.Add (excutor);
 			}
 
@@ -114,7 +114,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (hitTriggerInfo.triggerTarget, HitTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (hitTriggerInfo.triggerSource, HitTriggerCallBack);
 				triggerSource.hitTriggerExcutors.Add (excutor);
 			}
 
@@ -139,7 +139,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beAttackedTriggerInfo.triggerTarget, BeAttackedTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beAttackedTriggerInfo.triggerSource, BeAttackedTriggerCallBack);
 				triggerSource.beAttackedTriggerExcutors.Add (excutor);
 			}
 
@@ -152,11 +152,11 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beHitTriggerInfo.triggerTarget, BeHitTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beHitTriggerInfo.triggerSource, BeHitTriggerCallBack);
 				triggerSource.beHitTriggerExcutors.Add (excutor);
 			}
 				
-			TriggeredSkillExcutor FightEndExcutor = new TriggeredSkillExcutor (fightEndTriggerInfo.triggerTarget, FightEndTriggerCallBack);
+			TriggeredSkillExcutor FightEndExcutor = new TriggeredSkillExcutor (fightEndTriggerInfo.triggerSource, FightEndTriggerCallBack);
 
 
 			self.fightEndTriggerExcutors.Add (FightEndExcutor);
@@ -209,10 +209,9 @@ namespace WordJourney
 
 		/// <summary>
 		/// 强制取消技能效果
-		/// 【注意：取消技能效果的同时需要将技能从战斗结算器中删除】
 		/// </summary>
 		/// <returns><c>true</c> if this instance cancel skill effect; otherwise, <c>false</c>.</returns>
-		public virtual void CancelSkillEffect (){
+		public virtual void CancelSkillEffect (bool removeSkill){
 
 		}
 

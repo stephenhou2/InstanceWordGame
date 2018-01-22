@@ -9,7 +9,8 @@ namespace WordJourney
 		None,
 		Crit,
 		Miss,
-		Gain
+		Gain,
+		Status
 	}
 
 	public class AgentPropertyCalculator {
@@ -62,7 +63,7 @@ namespace WordJourney
 		public float critFixScaler;
 		public float dodgeFixScaler;
 
-		public int hurtReflect;
+//		public int hurtReflect;
 
 		public int maxHealthChangeFromTriggeredSkill;
 		public int hitChangeFromTriggeredSkill;
@@ -156,7 +157,7 @@ namespace WordJourney
 
 			int oriPhysicalHurtToEnemy = (int)(physicalHurtFromNomalAttack * physicalHurtScaler * tempCritScaler);
 
-			physicalHurtToEnemy = (int)(oriPhysicalHurtToEnemy / (1 + armorSeed * enemy.propertyCalculator.armor)) + enemy.propertyCalculator.hurtReflect;
+			physicalHurtToEnemy = (int)(oriPhysicalHurtToEnemy / (1 + armorSeed * enemy.propertyCalculator.armor));
 
 			magicalHurtToEnemy = (int)(magicalHurtToEnemy * magicalHurtScaler / (1 + magicResistSeed * enemy.propertyCalculator.magicResist));
 
@@ -177,14 +178,14 @@ namespace WordJourney
 			physicalHurtFromNomalAttack = 0;
 			physicalHurtToEnemy = 0;
 			magicalHurtToEnemy = 0;
-			hurtReflect = 0;
+//			hurtReflect = 0;
 			healthAbsorb = 0;
 		}
 
 		public List<TriggeredSkill> triggeredSkills = new List<TriggeredSkill>();
 		public List<ConsumablesSkill> consumablesSkills = new List<ConsumablesSkill> ();
 
-		public void AddSkill<T>(T skill){
+		public void SkillTriggered<T>(T skill){
 
 			if (typeof(T) == typeof(TriggeredSkill)) {
 				
@@ -193,9 +194,19 @@ namespace WordJourney
 				if (trigSkill.statusName == "") {
 					return;
 				}
-				triggeredSkills.Add (trigSkill);
 
-				self.agent.allStatus.Add (trigSkill.statusName);
+				if(!triggeredSkills.Contains(trigSkill)){
+					triggeredSkills.Add (trigSkill);
+				}
+
+				if (!self.agent.allStatus.Contains (trigSkill.statusName)) {
+					self.agent.allStatus.Add (trigSkill.statusName);
+				}
+
+				string statusTint = "";
+				if (MyTool.propertyChangeStrings.TryGetValue (trigSkill.statusName,out statusTint)) {
+					self.AddFightTextToQueue (statusTint,SpecialAttackResult.Status);
+				}
 
 				self.UpdateStatusPlane ();
 
@@ -204,8 +215,12 @@ namespace WordJourney
 				if (consSkill.statusName == "") {
 					return;
 				}
-				consumablesSkills.Add (consSkill);
-				self.agent.allStatus.Add (consSkill.statusName);
+				if (!consumablesSkills.Contains (consSkill)) {
+					consumablesSkills.Add (consSkill);
+				}
+				if (!self.agent.allStatus.Contains (consSkill.statusName)) {
+					self.agent.allStatus.Add (consSkill.statusName);
+				}
 				self.UpdateStatusPlane ();
 			}
 		}
@@ -219,9 +234,13 @@ namespace WordJourney
 					return;
 				}
 
-				triggeredSkills.Remove (trigSkill);
+				if (triggeredSkills.Contains (trigSkill)) {
+					triggeredSkills.Remove (trigSkill);
+				}
 
-				self.agent.allStatus.Remove (trigSkill.statusName);
+				if (self.agent.allStatus.Contains (trigSkill.statusName)) {
+					self.agent.allStatus.Remove (trigSkill.statusName);
+				}
 
 				self.UpdateStatusPlane ();
 
@@ -233,9 +252,13 @@ namespace WordJourney
 					return;
 				}
 
-				consumablesSkills.Remove (consSkill);
+				if (consumablesSkills.Contains (consSkill)) {
+					consumablesSkills.Remove (consSkill);
+				}
 
-				self.agent.allStatus.Remove (consSkill.statusName);
+				if (self.agent.allStatus.Contains (consSkill.statusName)) {
+					self.agent.allStatus.Remove (consSkill.statusName);
+				}
 
 				self.UpdateStatusPlane ();
 			}
@@ -277,13 +300,11 @@ namespace WordJourney
 		public void ClearSkillsOfType<T>(){
 			if (typeof(T) == typeof(TriggeredSkill)) {
 				while (triggeredSkills.Count > 0) {
-					triggeredSkills [0].CancelSkillEffect ();
-//					RemoveAttachedSkill<TriggeredSkill> (triggeredSkills [0]);
+					triggeredSkills [0].CancelSkillEffect (true);
 				}
 			} else if (typeof(T) == typeof(ConsumablesSkill)) {
 				while (consumablesSkills.Count > 0) {
 					consumablesSkills [0].CancelSkillEffect (self);
-//					RemoveAttachedSkill<ConsumablesSkill> (consumablesSkills [0]);
 				}
 			}
 		}

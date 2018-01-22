@@ -20,7 +20,8 @@ namespace WordJourney
 		public Button unlockEquipmentTitle;
 		public Button unlockConsumablesTitle;
 
-
+		public Sprite normalSprite;
+		public Sprite selectedSprite;
 
 
 		public void InitUnlockedItemView(){
@@ -32,22 +33,24 @@ namespace WordJourney
 
 			switch (unlockScrollType) {
 			case UnlockScrollType.Equipment:
-				unlockEquipmentTitle.Select ();
-				unlockEquipmentTitle.GetComponentInChildren<Text>().color = new Color (
+				unlockEquipmentTitle.GetComponent<Image> ().sprite = selectedSprite;
+				unlockEquipmentTitle.GetComponentInChildren<Text> ().color = new Color (
 					CommonData.selectedColor.x, 
 					CommonData.selectedColor.y, 
 					CommonData.selectedColor.z);
+				unlockConsumablesTitle.GetComponent<Image> ().sprite = normalSprite;
 				unlockConsumablesTitle.GetComponentInChildren<Text>().color = new Color (
 					CommonData.deselectedColor.x,
 					CommonData. deselectedColor.y, 
 					CommonData.deselectedColor.z);
 				break;
 			case UnlockScrollType.Consumables:
-				unlockConsumablesTitle.Select ();
-				unlockConsumablesTitle.GetComponentInChildren<Text>().color = new Color (
+				unlockConsumablesTitle.GetComponent<Image> ().sprite = selectedSprite;
+				unlockConsumablesTitle.GetComponentInChildren<Text> ().color = new Color (
 					CommonData.selectedColor.x, 
 					CommonData.selectedColor.y, 
 					CommonData.selectedColor.z);
+				unlockEquipmentTitle.GetComponent<Image> ().sprite = normalSprite;
 				unlockEquipmentTitle.GetComponentInChildren<Text>().color = new Color (
 					CommonData.deselectedColor.x, 
 					CommonData.deselectedColor.y, 

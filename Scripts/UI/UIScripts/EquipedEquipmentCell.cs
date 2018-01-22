@@ -28,11 +28,11 @@ namespace WordJourney
 			lockIcon.gameObject.SetActive (false);
 
 			if (equipment.itemId == -1) {
-				emptyIcon.gameObject.SetActive (true);
+//				emptyIcon.gameObject.SetActive (true);
 				itemContainer.gameObject.SetActive (false);
 
 			} else {
-				emptyIcon.gameObject.SetActive (false);
+//				emptyIcon.gameObject.SetActive (false);
 				itemContainer.gameObject.SetActive (true);
 				Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
 					return obj.name == equipment.spriteName;

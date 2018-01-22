@@ -87,22 +87,16 @@ namespace WordJourney
 		protected override void FightEndTriggerCallBack (BattleAgentController self, BattleAgentController enemy)
 		{
 			
-
 			if (effectCoroutine != null) {
 				StopCoroutine (effectCoroutine);
 				effectCoroutine = null;
 			}
 
-
-
-			// 如果状态变化是攻击，攻速，护甲，抗性，闪避，暴击，魔法，在状态结束后将属性重置为初始值
-			if (propertyType == PropertyType.Health) {
-				affectedAgent = null;
-				return;
+			if (propertyType != PropertyType.Health) {
+				// 如果状态变化是攻击，命中，最大生命，攻速，护甲，抗性，闪避，暴击，魔法，在状态结束后将属性重置为初始值
+				affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			}
 
-//			affectedAgent.propertyCalculator.AgentPropertySetToValue (propertyType, originalProperty);
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 
 			affectedAgent = null;
@@ -129,7 +123,7 @@ namespace WordJourney
 			if (!canOverlay) {
 				for (int i = 0; i < sameStatusSkills.Count; i++) {
 					TriggeredSkill ts = sameStatusSkills [i];
-					ts.CancelSkillEffect ();
+					ts.CancelSkillEffect (ts == this);
 				}
 			}
 
@@ -148,9 +142,11 @@ namespace WordJourney
 
 				propertyChange += skillSourceValue;
 
-				ba.CheckFightEnd ();
-
 				timer += 1f;
+
+				if (ba.CheckFightEnd ()) {
+					CancelSkillEffect (true);
+				}
 
 				yield return new WaitForSeconds (1.0f);
 
@@ -160,30 +156,45 @@ namespace WordJourney
 		}
 
 
-		public override void CancelSkillEffect ()
+		public override void CancelSkillEffect (bool removeSkill)
 		{
 			if (effectCoroutine != null) {
 				StopCoroutine (effectCoroutine);
 			}
 
-			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
-
-			if (propertyType == PropertyType.Health) {
-				return;
+			if (propertyType != PropertyType.Health) {
+				affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
 			}
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+
+			if (affectedAgent != null && removeSkill) {
+				affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
+			}
 
 
 		}
 
 		private void Excute(){
 
+			if (affectedAgent == null) {
+				Debug.Log ("affectedAgent null 1");
+				return;
+			}
+
 			// 创建持续性状态的执行协程
 			effectCoroutine = ExcuteAgentPropertyChange (affectedAgent);
 			// 开启持续性状态的协程
 			StartCoroutine (effectCoroutine);
 
-			affectedAgent.propertyCalculator.AddSkill<TriggeredSkill> (this);
+			if (affectedAgent == null) {
+				Debug.Log ("affectedAgent null 2");
+				return;
+			}
+
+			if (affectedAgent.propertyCalculator == null) {
+				Debug.Log ("property calculator null");
+			}
+
+			affectedAgent.propertyCalculator.SkillTriggered<TriggeredSkill> (this);
 
 		}
 

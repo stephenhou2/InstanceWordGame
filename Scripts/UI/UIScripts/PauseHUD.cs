@@ -19,6 +19,8 @@ namespace WordJourney
 
 		private QueryType queryType;
 
+		public Text query;
+
 
 		private bool quitWhenClickBackground = true;
 		private CallBack quitCallBack;
@@ -59,6 +61,8 @@ namespace WordJourney
 				refreshCallBack ();
 			}
 
+			query.text = "是否确认重新开始本关？";
+
 			queryContainer.gameObject.SetActive (true);
 
 //			QuitPauseHUD ();
@@ -73,6 +77,8 @@ namespace WordJourney
 			if (backHomeCallBack != null) {
 				backHomeCallBack ();
 			}
+
+			query.text = "本次探险进度将会丢失\n是否确认返回主界面？";
 
 			queryContainer.gameObject.SetActive (true);
 

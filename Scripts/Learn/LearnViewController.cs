@@ -133,21 +133,21 @@ namespace WordJourney
 			currentWordsTableName = LearningInfo.Instance.GetCurrentLearningWordsTabelName();
 			Time.timeScale = 0;
 			SoundManager.Instance.PauseBgm ();
-			StartCoroutine ("SetUpViewAfterDataReady");
-		}
-
-
-		private IEnumerator SetUpViewAfterDataReady(){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-				});
-				yield return null;
-			}
+//			StartCoroutine ("SetUpViewAfterDataReady");
+//		}
+//
+//
+//		private IEnumerator SetUpViewAfterDataReady(){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//				});
+//				yield return null;
+//			}
 
 			GameSettings.LearnMode learnMode = GameManager.Instance.gameDataCenter.gameSettings.learnMode;
 
@@ -184,13 +184,13 @@ namespace WordJourney
 		}
 
 
-		public void ChangePronunciationEnability(){
+		public void ChangeAutoPronunciationEnability(){
 
-			bool enable = !GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable;
+			bool isAutoPronounce = !GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce;
 
-			GameManager.Instance.gameDataCenter.gameSettings.isPronunciationEnable = enable;
+			GameManager.Instance.gameDataCenter.gameSettings.isAutoPronounce = isAutoPronounce;
 
-			learnView.UpdatePronounceControl (enable);
+			learnView.UpdatePronounceControl (isAutoPronounce);
 
 			GameManager.Instance.persistDataManager.SaveGameSettings ();
 
@@ -455,27 +455,7 @@ namespace WordJourney
 
 			// 单词测试环节结束
 			if (finalExaminationsList.Count <= 0) {
-
-				for (int i = 0; i < singleLearnWordsCount; i++) {
-					LearnWord word = wordsToLearnArray [i];
-					string condition = string.Format ("wordId={0}", word.wordId);
-					string newLearnedTime = (word.learnedTimes).ToString ();
-					string newUngraspTime = (word.ungraspTimes).ToString ();
-
-					mySql.GetConnectionWith (CommonData.dataBaseName);
-
-					// 更新数据库中当前背诵单词的背诵次数和背错次数
-					mySql.UpdateValues (currentWordsTableName, new string[]{ "learnedTimes", "ungraspTimes" }, new string[] {
-						newLearnedTime,
-						newUngraspTime
-					}, new string[] {
-						condition
-					}, true);
-				}
-
-				mySql.CloseConnection (CommonData.dataBaseName);
-
-				CurrentWordsLearningFinished ();
+				learnView.ShowFinishLearningHUD (coinGain,correctWordCount);
 			} else {
 				// 测试环节还没有结束，则初始化下一个单词的测试
 				Examination.ExaminationType examType = currentExamination.GetCurrentExamType ();
@@ -485,29 +465,58 @@ namespace WordJourney
 		}
 
 
+		private void UpdateDataBase(){
+
+			mySql.GetConnectionWith (CommonData.dataBaseName);
+
+			mySql.BeginTransaction ();
+
+			for (int i = 0; i < singleLearnWordsCount; i++) {
+				LearnWord word = wordsToLearnArray [i];
+				string condition = string.Format ("wordId={0}", word.wordId);
+				string newLearnedTime = (word.learnedTimes).ToString ();
+				string newUngraspTime = (word.ungraspTimes).ToString ();
+
+				// 更新数据库中当前背诵单词的背诵次数和背错次数
+				mySql.UpdateValues (currentWordsTableName, new string[]{ "learnedTimes", "ungraspTimes" }, new string[] {
+					newLearnedTime,
+					newUngraspTime
+				}, new string[] {
+					condition
+				}, true);
+			}
+
+			mySql.EndTransaction ();
+
+			mySql.CloseConnection (CommonData.dataBaseName);
+
+
+
+		}
+
 		/// <summary>
 		/// 当前需要学习的单词组内的单词已经全部学习完毕
 		/// </summary>
-		private void CurrentWordsLearningFinished(){
+		private void UpdatePlayerData(){
+
+			Player.mainPlayer.totalCoins += coinGain;
+
+			GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
+
+		}
+
+		private void ClearCache(){
+
+			ungraspedWordsList.Clear ();
+
+			finalExaminationsList.Clear ();
 
 			// 清理内存
 			for (int i = 0; i < singleLearnWordsCount; i++) {
 				wordsToLearnArray [i] = null;
 			}
 
-//			ungraspedWordsList.Clear ();
-//
-//			finalExaminationsList.Clear ();
-
 			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
-
-//			GameManager.Instance.persistDataManager.SaveLearnInfo ();
-
-
-			Player.mainPlayer.totalCoins += coinGain;
-
-			learnView.ShowFinishLearningHUD (coinGain,correctWordCount);
-
 
 		}
 
@@ -525,18 +534,21 @@ namespace WordJourney
 
 
 		public void DestroyInstances(){
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.learnCanvasBundleName, "LearnCanvas", null,null);
+			GameManager.Instance.UIManager.RemoveCanvasCache ("LearnCanvas");
+			Destroy (this.gameObject);
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.learnCanvasBundleName, true);
 		}
 
 		public void QuitLearnView(bool finishLearning){
 
-			ungraspedWordsList.Clear ();
-
-			finalExaminationsList.Clear ();
-
 			Time.timeScale = 1f;
 
+			if (finishLearning) {
+				UpdateDataBase ();
+				UpdatePlayerData ();
+			}
 
+			ClearCache ();
 
 			learnView.QuitLearnView ();
 

@@ -34,7 +34,6 @@ namespace WordJourney
 
 		public NPCUIController npcUIController;
 
-		public Text gameLevelText;
 		public Text gameLevelLocationText;
 
 //		private Dialog[] dialogs;
@@ -71,12 +70,9 @@ namespace WordJourney
 				}, true,true);
 					
 			}
-
-			int chapterIndex = gameLevelIndex / 5 + 1;
-			int levelIndex = gameLevelIndex % 5 + 1;
-
-			gameLevelText.text = string.Format ("第 {0} 层    第 {1} 关", chapterIndex, levelIndex);
-			gameLevelLocationText.text = gameLevelLocation;
+				
+			string gameLevelInCurrentLocation = MyTool.NumberToChinese(gameLevelIndex % 5 + 1);
+			gameLevelLocationText.text = string.Format("{0}  第 {1} 关",gameLevelLocation,gameLevelInCurrentLocation);
 
 			GetComponent<BattlePlayerUIController> ().InitExploreAgentView ();
 			GetComponent<BattlePlayerUIController> ().SetUpExplorePlayerView (Player.mainPlayer);
@@ -388,7 +384,7 @@ namespace WordJourney
 
 		public void QuitExplore(){
 
-			TransformManager.DestroyTransform(transform);
+//			TransformManager.DestroyTransform(transform);
 
 			DestroyInstances ();
 
@@ -407,8 +403,13 @@ namespace WordJourney
 
 
 
-		private void DestroyInstances(){
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.exploreSceneBundleName, "ExploreCanvas", "PoolContainerOfExploreScene", "ModelContainerOfExploreScene");
+		public void DestroyInstances(){
+			
+			GameManager.Instance.UIManager.RemoveCanvasCache ("ExploreCanvas");
+
+			Destroy (this.gameObject);
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.exploreSceneBundleName, true);
 		}
 
 

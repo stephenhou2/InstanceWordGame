@@ -12,26 +12,35 @@ namespace WordJourney
 		public HomeView homeView;
 
 		public void SetUpHomeView(){
-			StartCoroutine ("SetUpViewAfterDataReady");
-		}
-
-		private IEnumerator SetUpViewAfterDataReady(){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.Skills
-				});
-				yield return null;
-			}
+//			StartCoroutine ("SetUpViewAfterDataReady");
+//		}
+//
+//		private IEnumerator SetUpViewAfterDataReady(){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.Skills
+//				});
+//				yield return null;
+//			}
 
 //			Player.mainPlayer.allEquipedEquipments [0] = null;
 
 			homeView.SetUpHomeView ();
 
 			Time.timeScale = 1f;
+
+
+			if (!GameManager.Instance.soundManager.bgmAS.isPlaying 
+				|| GameManager.Instance.soundManager.bgmAS.clip.name != CommonData.homeBgmName) {
+				GameManager.Instance.soundManager.PlayBgmAudioClip (CommonData.homeBgmName, true);
+			}else {
+	
+
+			}
 
 //			Debug.Log (Player.mainPlayer.allEquipedEquipments [0]);
 
@@ -172,23 +181,18 @@ namespace WordJourney
 		}
 
 
-//		public void OnUnlockedItemsButtonClick(){
-//			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", () => {
-//				TransformManager.FindTransform("UnlockedItemsCanvas").GetComponent<UnlockedItemsViewController>().SetUpUnlockedItemsView();
-//				homeView.OnQuitHomeView();
-//			},false,true);
-//		}
-
 
 		private void QuitHomeView(){
 			homeView.OnQuitHomeView ();
-			DestroyInstances ();
 		}
 
 		public void DestroyInstances(){
 
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", "PoolContainerOfHomeCanvas","ModelContainerOfHomeCanvas");
+			GameManager.Instance.UIManager.RemoveCanvasCache ("HomeCanvas");
+
+			Destroy (this.gameObject);
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.homeCanvasBundleName, true);
 
 		}
 

@@ -42,11 +42,26 @@ namespace WordJourney
 		}
 
 		public void SetAlive(){
-//			UnityFactory.factory.
 			boxCollider.enabled = true;
 			PlayRoleAnim ("wait", 0, null);
 			SetSortingOrder (-(int)transform.position.y);
 			originalPos = transform.position;
+			RandomTowards ();
+		}
+
+		private void RandomTowards(){
+
+			int towardsIndex = Random.Range (0, 2);
+
+			switch (towardsIndex) {
+			case 0:
+				transform.localScale = new Vector3 (1, 1, 1);
+				break;
+			case 1:
+				transform.localScale = new Vector3 (-1, 1, 1);
+				break;
+			}
+
 		}
 
 
@@ -242,6 +257,10 @@ namespace WordJourney
 		/// </summary>
 		override public void AgentDie(){
 
+			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
+
+			expUICtr.QuitFight ();
+
 			StopCoroutinesWhenFightEnd ();
 
 			bpCtr.StopCoroutinesWhenFightEnd ();
@@ -254,9 +273,6 @@ namespace WordJourney
 
 			playerWinCallBack (new Transform[]{ transform });
 
-			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
-
-			expUICtr.QuitFight ();
 
 			PlayRoleAnim ("die", 1, delegate {
 				exploreManager.GetComponent<MapGenerator>().AddMonsterToPool(this);

@@ -86,7 +86,7 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline: []
-  spritePackingTag: Tex_HitEffect
+  spritePackingTag: Tex_MapItem_Launcher
   userData: 
   assetBundleName: 
   assetBundleVariant: 

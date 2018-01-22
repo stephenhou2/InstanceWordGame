@@ -15,7 +15,7 @@ namespace WordJourney
 			// 执行攻击触发事件回调
 			for(int i = 0;i < self.attackTriggerExcutors.Count; i++) {
 				TriggeredSkillExcutor excutor = self.attackTriggerExcutors[i];
-				switch (excutor.effectTarget) {
+				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
 					excutor.triggeredCallback (self, enemy);
 					break;
@@ -28,12 +28,12 @@ namespace WordJourney
 			// 敌方执行被攻击触发事件回调
 			for(int i = 0; i<enemy.beAttackedTriggerExcutors.Count; i++) {
 				TriggeredSkillExcutor excutor = enemy.beAttackedTriggerExcutors[i];
-				switch (excutor.effectTarget) {
+				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
-					excutor.triggeredCallback (enemy, self);
+					excutor.triggeredCallback (self, enemy);
 					break;
 				case SkillEffectTarget.Enemy:
-					excutor.triggeredCallback (self, enemy);
+					excutor.triggeredCallback (enemy, self);
 					break;
 				}
 			}
@@ -58,12 +58,12 @@ namespace WordJourney
 			// 执行己方攻击命中的回调
 			for(int i = 0;i<self.hitTriggerExcutors.Count;i++) {
 				TriggeredSkillExcutor excutor = self.hitTriggerExcutors[i];
-				switch (excutor.effectTarget) {
+				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
-					excutor.triggeredCallback (enemy, self);
+					excutor.triggeredCallback (self, enemy);
 					break;
 				case SkillEffectTarget.Enemy:
-					excutor.triggeredCallback (self, enemy);
+					excutor.triggeredCallback (enemy, self);
 					break;
 				}
 			}
@@ -71,12 +71,12 @@ namespace WordJourney
 			// 执行敌方被击中的回调
 			for(int i = 0;i < enemy.beHitTriggerExcutors.Count; i++) {
 				TriggeredSkillExcutor excutor = enemy.beHitTriggerExcutors[i];
-				switch (excutor.effectTarget) {
+				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
-					excutor.triggeredCallback (enemy, self);
+					excutor.triggeredCallback (self, enemy);
 					break;
 				case SkillEffectTarget.Enemy:
-					excutor.triggeredCallback (self, enemy);
+					excutor.triggeredCallback (enemy, self);
 					break;
 				}
 			}

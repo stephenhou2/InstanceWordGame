@@ -11,29 +11,31 @@ namespace WordJourney
 
 		[HideInInspector]public ItemModel itemToCreate;
 
+		private UnlockScrollType currentSelectedType;
+
 		public void SetUpUnlockedItemsView(){
 //			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
-			IEnumerator coroutine = SetUpViewAfterDataReady ();
-			StartCoroutine (coroutine);
-
-		}
-
-
-		private IEnumerator SetUpViewAfterDataReady(){
-
-			bool dataReady = false;
-
-			while (!dataReady) {
-				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-					GameDataCenter.GameDataType.UISprites,
-					GameDataCenter.GameDataType.ItemModels,
-					GameDataCenter.GameDataType.ItemSprites
-				});
-				yield return null;
-			}
-
+//			IEnumerator coroutine = SetUpViewAfterDataReady ();
+//			StartCoroutine (coroutine);
+//
+//		}
+//
+//
+//		private IEnumerator SetUpViewAfterDataReady(){
+//
+//			bool dataReady = false;
+//
+//			while (!dataReady) {
+//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
+//					GameDataCenter.GameDataType.UISprites,
+//					GameDataCenter.GameDataType.ItemModels,
+//					GameDataCenter.GameDataType.ItemSprites
+//				});
+//				yield return null;
+//			}
+			currentSelectedType = UnlockScrollType.Equipment;
 			unlockedItemsView.InitUnlockedItemView ();
-			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Equipment);
+			unlockedItemsView.SetUpUnlockedItemsView (currentSelectedType);
 
 		}
 
@@ -49,15 +51,25 @@ namespace WordJourney
 		}
 
 		public void OnUnlockedEqiupmentButtonClick(){
-			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Equipment);
+			if(currentSelectedType == UnlockScrollType.Equipment){
+				return;
+			}
+			currentSelectedType = UnlockScrollType.Equipment;
+			unlockedItemsView.SetUpUnlockedItemsView (currentSelectedType);
 		}
 
 		public void OnUnlockedConsumablesButtonClick(){
-			unlockedItemsView.SetUpUnlockedItemsView (UnlockScrollType.Consumables);
+			if(currentSelectedType == UnlockScrollType.Consumables){
+				return;
+			}
+			currentSelectedType = UnlockScrollType.Consumables;
+			unlockedItemsView.SetUpUnlockedItemsView (currentSelectedType);
 		}
 
 		public void DestroyInstances(){
-			GameManager.Instance.UIManager.DestroryCanvasWith (CommonData.unlockedItemsCanvasBundleName, "UnlockedItemsCanvas", null, null);
+			GameManager.Instance.UIManager.RemoveCanvasCache ("UnlockedItemsCanvas");
+			Destroy (this.gameObject);
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.unlockedItemsCanvasBundleName,true);
 		}
 
 		public void OnQuitButtonClick(){

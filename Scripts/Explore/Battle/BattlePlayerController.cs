@@ -374,26 +374,16 @@ namespace WordJourney
 						enterMovableBox (r2d.transform);
 						return;
 					case "obstacle":
-
 						StopWalkBeforeEvent ();
-
 						enterObstacle (r2d.transform);
-
 						return;
 					case "treasurebox":
-
 						StopWalkBeforeEvent ();
-
 						enterTreasureBox (r2d.transform);
-
 						return;
-
 					case "normalswitch":
-
 						StopWalkBeforeEvent ();
-
 						enterTrapSwitch (r2d.transform);
-
 						return;
 					case "normaltrap":
 						break;
@@ -414,6 +404,9 @@ namespace WordJourney
 						return;
 					case "pressswitch":
 						break;
+					case "docoration":
+						StopWalkBeforeEvent ();
+						return;
 					}
 
 				}
@@ -646,13 +639,10 @@ namespace WordJourney
 
 			if (bmCtr.agent.health <= 0) {
 				bmCtr.AgentDie ();
-				agent.ResetBattleAgentProperties (false);
 				isInFight = false;
 				return true;
 			} else if (agent.health <= 0) {
 				isInFight = false;
-				agent.ResetBattleAgentProperties (true);
-				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene (false);
 				return true;
 			}else {
 				return false;
@@ -664,6 +654,7 @@ namespace WordJourney
 		{
 			base.StopCoroutinesWhenFightEnd ();
 			modelActive.transform.localPosition = Vector3.zero;
+			isAttackActionFinish = true;
 		}
 
 
@@ -721,6 +712,7 @@ namespace WordJourney
 		}
 
 
+
 		/// <summary>
 		/// 玩家死亡
 		/// </summary>
@@ -733,12 +725,12 @@ namespace WordJourney
 				
 				bmCtr.StopCoroutinesWhenFightEnd ();
 
+				ActiveBattlePlayer (false, false, true);
+
+				exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
+
 				PlayRoleAnim("die", 1, () => {
-
 					playerLoseCallBack ();
-
-					gameObject.SetActive(false);
-
 				});
 
 				return;
@@ -746,13 +738,12 @@ namespace WordJourney
 
 			// 如果不是在战斗中死亡的
 			PlayRoleAnim("die", 1, () => {
-
-//				gameObject.SetActive(false);
+				
+				agent.ResetBattleAgentProperties(true);
 
 				exploreManager.GetComponent<ExploreManager>().QuitExploreScene(false);
 
 			});
-
 
 		}
 
