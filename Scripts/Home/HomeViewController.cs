@@ -96,6 +96,7 @@ namespace WordJourney
 			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Click");
 			
 			Player.mainPlayer.currentLevelIndex = 5 * chapterIndex;
+//			Player.mainPlayer.currentLevelIndex = 11;
 
 			homeView.ShowMaskImage ();
 

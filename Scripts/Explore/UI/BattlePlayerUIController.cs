@@ -128,8 +128,6 @@ namespace WordJourney
 
 			int totalConsumablesCount = player.allConsumablesInBag.Count;
 
-
-
 			for (int i = 0; i < equipedConsumablesButtons.Length; i++) {
 
 				Button equipedConsumablesButton = equipedConsumablesButtons [i];
@@ -269,6 +267,8 @@ namespace WordJourney
 				consumblesUsedInExploreScene = false;
 				break;  
 			case "卷轴":
+				player.RemoveItem (consumables, 1);
+				player.ResetBattleAgentProperties (true);
 				exploreManager.GetComponent<ExploreManager> ().QuitExploreScene (true);
 				consumblesUsedInExploreScene = false;
 				break;

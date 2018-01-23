@@ -8,6 +8,8 @@ namespace WordJourney
 
 	public class MovableFloor : MapItem {
 
+		public Vector3[] movePosPair = new Vector3[2];
+
 		public float moveSpeed;
 
 		private Transform mExploreManager;
@@ -59,25 +61,25 @@ namespace WordJourney
 
 			MapGenerator mapGenerator = exploreManager.GetComponent<MapGenerator> ();
 
-			Vector3 nearestMovableFloorPos = mapGenerator.FindNearestMovableFloor (this.transform.position);
+			Vector3 pairedPos = GetPairedPos ();
 
-//			Vector3 moveVector = nearestMovableFloorPos - bp.transform.position;
-
-		
-
-			if (nearestMovableFloorPos == transform.position) {
+			if (pairedPos == transform.position) {
 				return;
 			}
 
-			bp.singleMoveEndPos = nearestMovableFloorPos;
+			bp.singleMoveEndPos = pairedPos;
 			bp.TempStoreDestinationAndDontMove ();
 
 
-			IEnumerator floorMoveAnim = SmoothMoveToPos (this.transform.position,nearestMovableFloorPos, bp);
+			IEnumerator floorMoveAnim = SmoothMoveToPos (this.transform.position,pairedPos, bp);
 
 			StartCoroutine (floorMoveAnim);
 
+		}
 
+		private Vector3 GetPairedPos(){
+
+			return MyTool.ApproximatelySamePosition2D (transform.position, movePosPair [0]) ? movePosPair [1] : movePosPair [0];
 
 		}
 

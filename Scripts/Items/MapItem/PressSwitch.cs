@@ -33,16 +33,8 @@ namespace WordJourney
 			}
 		}
 
-		private Transform m_controlledDoor;
-		private Transform controlledDoor{
-			get{
-				if (m_controlledDoor == null) {
-					m_controlledDoor = exploreManager.GetComponent<MapGenerator> ().GetDoor();
-				}
-				return m_controlledDoor;
-			}
-			set{ m_controlledDoor = value; }
-		}
+//		private Transform m_controlledDoor;
+		public Door controlledDoor;
 
 		private Transform m_exploreManager;
 		private Transform exploreManager{
@@ -82,7 +74,7 @@ namespace WordJourney
 			pool.AddInstanceToPool (this.gameObject);
 		}
 
-		public void ResetPressSwitch(Transform door){
+		public void ResetPressSwitch(Door door){
 			mapItemRenderer.sprite = switchOffSprite;
 			controlledDoor = door;
 		}
@@ -92,16 +84,6 @@ namespace WordJourney
 			if (other.GetComponent<BattleAgentController> () == null && other.GetComponent<MovableBox>() == null) {
 				return;
 			}
-				
-//			isPressOn = true;
-//
-//			playerOriginalDestination = battlePlayer.moveDestination;
-//
-//			battlePlayer.StopMoveAtEndOfCurrentStep ();
-//
-//			exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
-//
-//			StartCoroutine ("ShowDoorPosAndChangeDoorStatus");
 
 			PressOnSwitch ();
 
@@ -112,101 +94,16 @@ namespace WordJourney
 			controlledDoor.GetComponent<Door> ().OpenTheDoor ();
 		}
 
-		private void PressOffSwich(){
+		private void PressOffSwitch(){
 			mapItemRenderer.sprite = switchOnSprite;
 			controlledDoor.GetComponent<Door> ().CloseTheDoor ();
 		}
 
 		void OnTriggerExit2D(Collider2D other){
 
-//			if (battlePlayer.isInFight) {
-//				StartCoroutine ("WaitFightEndAndExitPressSwitch");
-//			} else {
-//				ExitPressSwitch ();
-//			}
-			PressOffSwich();
+			PressOffSwitch();
 
 		}
-
-		private IEnumerator WaitFightEndAndExitPressSwitch(){
-			yield return new WaitUntil (() => !battlePlayer.isInFight);
-			ExitPressSwitch ();
-		}
-
-		private void ExitPressSwitch(){
-
-			playerOriginalDestination = battlePlayer.moveDestination;
-
-			isPressOn = false;
-
-			battlePlayer.StopMoveAtEndOfCurrentStep ();
-
-			exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
-
-			StartCoroutine ("ShowDoorPosAndChangeDoorStatus");
-		}
-
-		private IEnumerator ShowDoorPosAndChangeDoorStatus(){
-
-			if (isPressOn) {
-				mapItemRenderer.sprite = switchOffSprite;
-			}
-
-			yield return new WaitUntil (() => battlePlayer.isIdle);
-
-			if (!isPressOn) {
-				mapItemRenderer.sprite = switchOnSprite;
-			}
-
-			Camera mainCam = Camera.main;
-
-			float timer = 0;
-
-			float camSpeedX = (controlledDoor.position.x - mainCam.transform.position.x) / cameraMoveDuration;
-			float camSpeedY = (controlledDoor.position.y - mainCam.transform.position.y) / cameraMoveDuration;
-
-			while (timer < cameraMoveDuration) {
-
-				Vector3 camMoveVector = new Vector3 (camSpeedX * Time.deltaTime, camSpeedY * Time.deltaTime, 0);
-
-				mainCam.transform.position += camMoveVector;
-
-				timer += Time.deltaTime;
-
-				yield return null;
-			}
-
-			if (isPressOn) {
-				controlledDoor.GetComponent<Door> ().OpenTheDoor ();
-			} else {
-				controlledDoor.GetComponent<Door> ().CloseTheDoor ();
-			}
-
-			yield return new WaitForSeconds (0.5f);
-
-			timer = 0;
-
-			while (timer < cameraMoveDuration) {
-
-				Vector3 camMoveVector = new Vector3 (camSpeedX * Time.deltaTime, camSpeedY * Time.deltaTime, 0);
-
-				mainCam.transform.position -= camMoveVector;
-
-				timer += Time.deltaTime;
-
-				yield return null;
-			}
-
-			mainCam.transform.localPosition = new Vector3 (0, 0, -10);
-
-			exploreManager.GetComponent<ExploreManager> ().EnableInteractivity ();
-
-			int[,] mapWalkableInfoArray = exploreManager.GetComponent<MapGenerator> ().mapWalkableInfoArray;
-
-			battlePlayer.MoveToPosition (playerOriginalDestination, mapWalkableInfoArray);
-
-		}
-			
 
 	}
 }

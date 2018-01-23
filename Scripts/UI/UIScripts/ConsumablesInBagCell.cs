@@ -12,7 +12,7 @@ namespace WordJourney
 	public class ConsumablesInBagCell : MonoBehaviour {
 
 		public Image itemIcon;
-		public Image NewItemTintIcon;
+//		public Image NewItemTintIcon;
 		public Text itemCount;
 
 		public Button consumablesButton;
@@ -21,7 +21,7 @@ namespace WordJourney
 
 			if (consumables == null) {
 				itemIcon.enabled = false;
-				NewItemTintIcon.enabled = false;
+//				NewItemTintIcon.enabled = false;
 				itemCount.text = "";
 				consumablesButton.interactable = false;
 				return;
@@ -43,7 +43,7 @@ namespace WordJourney
 
 			itemIcon.enabled = itemSprite != null;
 
-			NewItemTintIcon.enabled = consumables.isNewItem;
+//			NewItemTintIcon.enabled = consumables.isNewItem;
 
 			itemCount.text = consumables.itemCount.ToString ();
 

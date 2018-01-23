@@ -172,7 +172,7 @@ namespace WordJourney
 		/// 退出整个单词记录几面
 		/// </summary>
 		/// <param name="cb">Cb.</param>
-		public void OnQuitRecordPlane(){
+		public void QuitRecordPlane(){
 			ClearCache ();
 			GetComponent<Canvas> ().enabled = false;
 		}

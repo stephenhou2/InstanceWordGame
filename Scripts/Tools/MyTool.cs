@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WordJourney
 {
-	public class MyTool {
+	public static class MyTool {
 
 		public static bool ApproximatelySamePosition2D(Vector3 pos1,Vector3 pos2){
 
@@ -18,6 +18,62 @@ namespace WordJourney
 			return pos1_x == pos2_x && pos1_y == pos2_y;
 
 		}
+
+
+		public static Vector3 FindNearestPos(Vector3 oriPos,List<Vector3> endPosList){
+
+			Vector3 nearestPos = oriPos;
+			float distance = float.MaxValue;
+
+			for (int i = 0; i < endPosList.Count; i++) {
+
+				Vector3 potentialPosition = endPosList [i];
+
+				if (potentialPosition == oriPos) {
+					continue;
+				}
+
+				float newDistance = Vector3.Magnitude (potentialPosition - oriPos);
+
+				if (newDistance < distance) {
+					nearestPos = potentialPosition;
+					distance = newDistance;
+				}
+
+			}
+
+			return nearestPos;
+
+		}
+
+
+		public static int FindNearestPosIndex(Vector3 oriPos,List<Vector3> endPosList){
+
+			int posIndex = 0;
+
+			float distance = float.MaxValue;
+
+			for (int i = 0; i < endPosList.Count; i++) {
+
+				Vector3 potentialPosition = endPosList [i];
+
+				if (potentialPosition == oriPos) {
+					continue;
+				}
+
+				float newDistance = Vector3.Magnitude (potentialPosition - oriPos);
+
+				if (newDistance < distance) {
+					posIndex = i;
+					distance = newDistance;
+				}
+
+			}
+
+			return posIndex;
+
+		}
+
 
 		private static string[] chineseNums = new string[] {"一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十"};
 

@@ -398,6 +398,10 @@ namespace WordJourney
 		/// <param name="btn">Button.</param>
 		public void AddBagItem(Item item){
 
+			if (bagItemsContainer.childCount >= singleBagItemVolume) {
+				return;
+			}
+
 			if (item is Equipment && (item as Equipment).equiped) {
 				return;
 			}
@@ -433,12 +437,25 @@ namespace WordJourney
 		public void RemoveItemInBag(Item item){
 
 			for (int i = 0; i < bagItemsContainer.childCount; i++) {
+				
 				Transform bagItem = bagItemsContainer.GetChild (i);
-				if (bagItem.GetComponent<ItemDragControl> ().item.itemId == item.itemId) {
+
+				if (bagItem.GetComponent<ItemDragControl> ().item == item) {
+					
 					bagItemsPool.AddInstanceToPool (bagItem.gameObject);
+
+					int minItemIndexOfCurrentBag = currentBagIndex * singleBagItemVolume;
+
+					if (minItemIndexOfCurrentBag + bagItemsContainer.childCount < player.allItemsInBag.Count) {
+						int maxItemIndexOfCurrentBag = (currentBagIndex + 1) * singleBagItemVolume - 1;
+						AddBagItem(player.allItemsInBag[maxItemIndexOfCurrentBag]);
+					}
+
 					return;
 				}
 			}
+
+
 
 		}
 

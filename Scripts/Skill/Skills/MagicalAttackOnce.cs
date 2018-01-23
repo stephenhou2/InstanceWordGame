@@ -32,10 +32,10 @@ namespace WordJourney
 				TriggeredSkillExcutor excutor = enemy.beAttackedTriggerExcutors[i];
 				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
-					excutor.triggeredCallback (self, enemy);
+					excutor.triggeredCallback (enemy, self);
 					break;
 				case SkillEffectTarget.Enemy:
-					excutor.triggeredCallback (enemy, self);
+					excutor.triggeredCallback (self, enemy);
 					break;
 				}
 			}
@@ -52,10 +52,8 @@ namespace WordJourney
 
 			//原始魔法伤害值
 			self.propertyCalculator.magicalHurtToEnemy += skillSourceValue;
-			Debug.LogFormat ("{0}魔法攻击造成{1}魔法伤害", self.agent.agentName, skillSourceValue);
 
 			SetEffectAnims (self, enemy);
-
 
 			// 执行己方攻击命中的回调
 			for(int i = 0;i<self.hitTriggerExcutors.Count;i++) {
@@ -69,25 +67,25 @@ namespace WordJourney
 					break;
 				}
 			}
+				
 
 			// 执行敌方被击中的回调
 			for(int i = 0;i < enemy.beHitTriggerExcutors.Count; i++) {
 				TriggeredSkillExcutor excutor = enemy.beHitTriggerExcutors[i];
 				switch (excutor.triggerSource) {
 				case SkillEffectTarget.Self:
-					excutor.triggeredCallback (self, enemy);
+					excutor.triggeredCallback (enemy, self);
 					break;
 				case SkillEffectTarget.Enemy:
-					excutor.triggeredCallback (enemy, self);
+					excutor.triggeredCallback (self, enemy);
 					break;
 				}
 			}
 
-			self.propertyCalculator.CalculateAttackHurt ();
-			enemy.propertyCalculator.CalculateAttackHurt ();
 
 			self.propertyCalculator.CalculateAgentHealth ();
 			enemy.propertyCalculator.CalculateAgentHealth ();
+
 
 			self.UpdateFightStatus ();
 			enemy.UpdateFightStatus ();

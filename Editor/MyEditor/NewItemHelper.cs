@@ -66,10 +66,6 @@ namespace WordJourney
 
 			for (int i = 2; i < seperateItemDataArray.Length; i++) {
 
-				if (i == 60) {
-					Debug.Log ("here");
-				}
-
 				string itemDataString = seperateItemDataArray [i].Replace("\r","");
 
 				string[] itemDataArray = itemDataString.Split (new char[]{ ',' }, StringSplitOptions.None);

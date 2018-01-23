@@ -40,9 +40,6 @@ namespace WordJourney
 		private InstancePool goodsPool;
 		public Transform goodsModel;
 
-
-
-//		public ItemDetailHUD itemDetail;
 		public TintHUD tintHUD;
 
 		private int currentLevelIndex;
@@ -433,12 +430,8 @@ namespace WordJourney
 		}
 
 		public void QuitNPCPlane(){
-			
-//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			QuitTradePlane ();
-
-			npcIcon.GetComponent<Image> ().enabled = false;
 
 			dialogText.text = string.Empty;
 
@@ -452,6 +445,10 @@ namespace WordJourney
 
 			tradePlane.gameObject.SetActive (false);
 
+		}
+
+		public void ClearNpcPlaneCache(){
+			Destroy (goodsPool.gameObject);
 		}
 			
 		

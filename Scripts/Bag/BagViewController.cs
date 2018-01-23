@@ -29,6 +29,18 @@ namespace WordJourney
 //			Player.mainPlayer.AddItem (Item.NewItemWith(8,1));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
+//			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
+//			Player.mainPlayer.AddItem(Item.NewItemWith(111,1));
+
+
+//			Player.mainPlayer.AddItem (Item.NewItemWith (448, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+
+
 			#warning 测试物品用
 //			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 //				for (int i = 0; i < 10; i++) {
@@ -45,16 +57,16 @@ namespace WordJourney
 //				}
 //			}
 
-//				for (int i = 100; i < 120; i++) {
-//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-//						return obj.itemId == i;
-//					});
-//
-//					Consumables c = new Consumables (im,1);
-//
-//					Player.mainPlayer.AddItem (c);
-//
-//				}
+				for (int i = 100; i < 120; i++) {
+					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+						return obj.itemId == i;
+					});
+
+					Consumables c = new Consumables (im,1);
+
+					Player.mainPlayer.AddItem (c);
+
+				}
 	
 //			#warning 测试解锁卷轴
 //			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
@@ -207,6 +219,8 @@ namespace WordJourney
 
 				Player.mainPlayer.RemoveItem (consumables, 1);
 
+				Player.mainPlayer.ResetBattleAgentProperties (true);
+
 				TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager> ().QuitExploreScene (true);
 
 				consumblesUsedInExploreScene = false;
@@ -232,6 +246,8 @@ namespace WordJourney
 				exploreManager.clickForConsumablesPos = true;
 				exploreManager.ShowConsumablesValidPointTintAround (consumables);
 			}
+
+			bagView.SetUpBagItemsPlane (currentBagIndex);
 
 		}
 
@@ -336,6 +352,8 @@ namespace WordJourney
 
 			Item craftedItem = Item.NewItemWith (craftItemModel,1);
 			Player.mainPlayer.AddItem (craftedItem);
+
+			Player.mainPlayer.RemoveItem (currentSelectItem,1);
 
 			string tint = string.Format ("获得 <color=orange>{0}</color> x1", craftedItem.itemName);
 

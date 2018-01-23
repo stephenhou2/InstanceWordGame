@@ -11,7 +11,7 @@ namespace WordJourney{
 
 		private static List<string[]> itemsProperties = new List<string[]> ();
 
-		[MenuItem("Assets/BuildItemsDataBase")]
+		[MenuItem("Assets/BuildCET4")]
 		public static void BuildItemsDataBase(){
 
 
@@ -56,7 +56,7 @@ namespace WordJourney{
 
 			sql.CreateTable (CommonData.CET4Table,
 				new string[]{ "wordId", "spell", "phoneticSymbol", "explaination", "example","learnedTimes","ungraspTimes" },
-				new string[]{ "PRIMARY KEY NOT NULL", "UNIQUE NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL" },
+				new string[]{ "PRIMARY KEY NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL", "NOT NULL" },
 				new string[]{ "INTEGER", "TEXT", "TEXT", "TEXT", "TEXT","INTEGER DEFAULT 0","INTEGER DEFAULT 0" });
 
 //			sql.CreateTable (CommonData.CET4Table,
@@ -88,7 +88,10 @@ namespace WordJourney{
 				string[] values = itemsProperties [i];
 
 				foreach (int j in stringTypeCols) {
-					values [j] = "'" + values[j] + "'";
+
+//					string sqliteStr = SqliteEscape (values [j]);
+					string sqliteStr = values [j];
+					values [j] = "'" + sqliteStr + "'";
 
 				}
 					 
@@ -105,32 +108,39 @@ namespace WordJourney{
 
 		private static void LoadCET4WordsData(){
 
-			string wordsPath = "/Users/houlianghong/Desktop/应用数据文件（原始）/单词/WordsCET4.csv";
+			string wordsPath = "/Users/houlianghong/Desktop/MyGameData/CET4.csv";
 
 			string wordsString = DataHandler.LoadDataString (wordsPath);
 
 			string[] wordsStrings = wordsString.Split (new string[]{ "\n" },System.StringSplitOptions.RemoveEmptyEntries);
 
-//			MySQLiteHelper sql = MySQLiteHelper.Instance;
-//
-//			sql.GetConnectionWith (CommonData.dataBaseName);
-
 			itemsProperties.Clear ();
 
-			for (int i = 0; i < wordsStrings.Length; i++) {
-				string[] wordDataArray = wordsStrings [i].Split (new char[]{ ' ' }, 3);
-				string wordId = i.ToString ();
-				string spell = wordDataArray[1];
-				string phoneticSymbol = "Test";
-				string explaination = wordDataArray [2];
-				string example = "Test";
-
-
+			for (int i = 1; i < wordsStrings.Length; i++) {
+				string[] wordDataArray = wordsStrings [i].Split (new char[]{ ',' });
+				string wordId = (i-1).ToString ();
+				string spell = wordDataArray[0].Replace("'","''");
+				string phoneticSymbol = wordDataArray [1].Replace ('+', ',').Replace ("'", "''");
+				string explaination = wordDataArray [2].Replace('+',',');
+				string example = "";
 
 				itemsProperties.Add (new string[]{ wordId, spell, phoneticSymbol, explaination, example, "0", "0"});
 			}
 
 
+		}
+
+		public static string SqliteEscape(string keyWord){
+			keyWord = keyWord.Replace("/", "//");
+			keyWord = keyWord.Replace("'", "''");
+			keyWord = keyWord.Replace("[", "/[");
+			keyWord = keyWord.Replace("]", "/]");
+			keyWord = keyWord.Replace("%", "/%");
+			keyWord = keyWord.Replace("&","/&");
+			keyWord = keyWord.Replace("_", "/_");
+			keyWord = keyWord.Replace("(", "/(");
+			keyWord = keyWord.Replace(")", "/)");
+			return keyWord;
 		}
 
 		// 从指定文件（txt／csv等文本文件）中读取数据 csv为从excel中导出的文本文件，导入unity之后需要选择结尾格式（mono里是这样的，在mono中打开csv文件后会有提示），否则在读取数据库时会报字段名不同的错误

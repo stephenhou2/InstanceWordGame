@@ -175,23 +175,14 @@ namespace WordJourney
 
 		private void Excute(){
 
-			if (affectedAgent == null) {
-				Debug.Log ("affectedAgent null 1");
-				return;
-			}
-
 			// 创建持续性状态的执行协程
 			effectCoroutine = ExcuteAgentPropertyChange (affectedAgent);
 			// 开启持续性状态的协程
 			StartCoroutine (effectCoroutine);
 
+			// 因为上面开启的协程内部可能会直接会导致角色死亡（伤害类持续性技能效果），死亡逻辑中有战斗结束回调，会把affectedAgent置为null，所有这里要做一次判断
 			if (affectedAgent == null) {
-				Debug.Log ("affectedAgent null 2");
 				return;
-			}
-
-			if (affectedAgent.propertyCalculator == null) {
-				Debug.Log ("property calculator null");
 			}
 
 			affectedAgent.propertyCalculator.SkillTriggered<TriggeredSkill> (this);

@@ -45,7 +45,9 @@ namespace WordJourney
 
 				int healthAbsorb = (int)(skillSourceValue * physicalHurt);
 
-				skillUser.propertyCalculator.healthAbsorb += healthAbsorb;
+				skillUser.propertyCalculator.InstantPropertyChange (skillUser, PropertyType.Health, healthAbsorb, true);
+
+//				skillUser.propertyCalculator.healthAbsorb += healthAbsorb;
 
 				SetEffectAnims (triggerInfo, self, enemy);
 

@@ -20,7 +20,6 @@ namespace WordJourney
 		// 事件回调
 		public ExploreEventHandler enterMonster;
 		public ExploreEventHandler enterNpc;
-//		public ExploreEventHandler enterWorkBench;
 		public ExploreEventHandler enterCrystal;
 		public ExploreEventHandler enterTreasureBox;
 		public ExploreEventHandler enterObstacle;
@@ -57,9 +56,6 @@ namespace WordJourney
 
 		// 当前碰到的怪物控制器
 		private BattleMonsterController bmCtr;
-
-		// 玩家战斗失败回调
-		private CallBack playerLoseCallBack;
 
 		private NavigationHelper navHelper;
 
@@ -298,20 +294,18 @@ namespace WordJourney
 				}
 
 				if(Mathf.RoundToInt(nextPos.y) == Mathf.RoundToInt(transform.position.y)){
-					if (nextPos.x > transform.position.x) {
-						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (1, 1, 1))) {
-							resetWalkAnim = true;
-						}
-						playerSide.transform.localScale = new Vector3 (1, 1, 1);
 
-					} else if (nextPos.x < transform.position.x) {
-						if (modelActive != playerSide || (modelActive == playerSide && playerSide.transform.localScale != new Vector3 (-1, 1, 1))) {
-							resetWalkAnim = true;
-						}
-
-						playerSide.transform.localScale = new Vector3 (-1, 1, 1);
+					if (modelActive != playerSide) {
+						resetWalkAnim = true;
+					}else if ((nextPos.x > transform.position.x && armatureCom.flipX == true) ||
+						(nextPos.x < transform.position.x && armatureCom.flipX == false)){
+						resetWalkAnim = true;
 					} 
+
 					ActiveBattlePlayer (false, false, true);
+
+					armatureCom.armature.flipX = nextPos.x < transform.position.x;
+
 				}
 
 				if (isIdle){
@@ -342,7 +336,11 @@ namespace WordJourney
 						if (modelActive != playerSide) {
 							ActiveBattlePlayer (false, false, true);
 						}
-						r2d.transform.localScale = new Vector3 (-modelActive.transform.localScale.x, 1, 1);
+						if (armatureCom.armature.flipX) {
+							r2d.transform.GetComponent<BattleMonsterController> ().TowardsRight ();
+						} else {
+							r2d.transform.GetComponent<BattleMonsterController> ().TowardsLeft ();
+						}
 						enterMonster (r2d.transform);
 						return;
 					case "npc":
@@ -482,13 +480,13 @@ namespace WordJourney
 		public override void TowardsLeft(){
 			ActiveBattlePlayer (false, false, true);
 			PlayRoleAnim ("wait", 0, null);
-			playerSide.transform.localScale = new Vector3 (-1, 1, 1);
+			armatureCom.armature.flipX = true;
 		}
 
 		public override void TowardsRight(){
 			ActiveBattlePlayer (false, false, true);
 			PlayRoleAnim ("wait", 0, null);
-			playerSide.transform.localScale = Vector3.one;
+			armatureCom.armature.flipX = false;
 		}
 
 
@@ -538,12 +536,9 @@ namespace WordJourney
 		/// Starts the fight.
 		/// </summary>
 		/// <param name="bmCtr">怪物控制器</param>
-		/// <param name="playerLoseCallBack"> 玩家战斗失败回调 </param>
-		public void StartFight(BattleMonsterController bmCtr,CallBack playerLoseCallBack){
+		public void StartFight(BattleMonsterController bmCtr){
 
 			this.bmCtr = bmCtr;
-
-			this.playerLoseCallBack = playerLoseCallBack;
 
 			// 初始化玩家战斗UI（技能界面）
 //			bpUICtr.SetUpPlayerSkillPlane (agent as Player);
@@ -694,7 +689,7 @@ namespace WordJourney
 //			trapTriggered = null;
 			bmCtr = null;
 
-			playerLoseCallBack = null;
+//			playerLoseCallBack = null;
 
 			bpUICtr = null;
 
@@ -727,10 +722,12 @@ namespace WordJourney
 
 				ActiveBattlePlayer (false, false, true);
 
-				exploreManager.GetComponent<ExploreManager> ().DisableInteractivity ();
+				ExploreManager em = exploreManager.GetComponent<ExploreManager> ();
+
+				em.DisableInteractivity ();
 
 				PlayRoleAnim("die", 1, () => {
-					playerLoseCallBack ();
+					em.BattlePlayerLose();
 				});
 
 				return;

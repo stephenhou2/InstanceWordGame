@@ -7,10 +7,9 @@ namespace WordJourney
 {
 	public class PhysicalAttack: ActiveSkill {
 
-//		private float critScaler = 1.0f;
-
 		private float dodgeSeed = 0.0035f; //计算闪避时的种子数
 
+		private float critSeed = 0.0035f; //计算暴击时的种子数
 
 
 		protected override void ExcuteNoneTriggeredSkillLogic(BattleAgentController self, BattleAgentController enemy){
@@ -50,24 +49,28 @@ namespace WordJourney
 			if(isEffective(dodgeProbability)){
 				enemy.propertyCalculator.specialAttackResult = SpecialAttackResult.Miss;
 				enemy.AddFightTextToQueue (string.Empty, SpecialAttackResult.Miss);
-//				tintTextType = TintTextType.Miss;
-//				enemy.PlayHurtTextAnim(string.Empty,tintTextType);
 				return;
 			}
 
 			//原始物理伤害值
-
 			int oriPhysicalHurt = self.propertyCalculator.attack;
-			self.propertyCalculator.physicalHurtFromNomalAttack += oriPhysicalHurt;
-			Debug.LogFormat ("{0}普通攻击造成{1}物理伤害", self.agent.agentName, oriPhysicalHurt);
+			int crit = self.propertyCalculator.crit;
+
+			float critProbability = critSeed * crit / (1 + critSeed * crit) - enemy.propertyCalculator.critFixScaler;
+
+			float tempCritScaler = 1.0f;
+
+			if (isEffective (critProbability)) {
+				enemy.propertyCalculator.specialAttackResult = SpecialAttackResult.Crit;
+				enemy.AddFightTextToQueue (string.Empty, SpecialAttackResult.Crit);
+				tempCritScaler = self.propertyCalculator.critHurtScaler;
+			}
+
+			self.propertyCalculator.physicalHurtToEnemy += (int)(oriPhysicalHurt * tempCritScaler);
 
 			SetEffectAnims (self, enemy);
 
-			self.propertyCalculator.CalculateAttackHurt ();
-			enemy.propertyCalculator.CalculateAttackHurt ();
 
-			self.propertyCalculator.CalculateAgentHealth ();
-			enemy.propertyCalculator.CalculateAgentHealth ();
 
 			// 执行己方攻击命中的回调
 			for(int i = 0;i<self.hitTriggerExcutors.Count;i++) {
@@ -81,6 +84,8 @@ namespace WordJourney
 					break;
 				}
 			}
+
+
 
 			// 执行敌方被击中的回调
 			for(int i = 0;i < enemy.beHitTriggerExcutors.Count; i++) {
@@ -96,7 +101,8 @@ namespace WordJourney
 			}
 
 
-		
+			self.propertyCalculator.CalculateAgentHealth ();
+			enemy.propertyCalculator.CalculateAgentHealth ();
 
 			self.UpdateFightStatus ();
 			enemy.UpdateFightStatus ();

@@ -60,10 +60,7 @@ namespace WordJourney
 
 
 				affectedAgent.PlayRoleAnim ("stun", 0, null);
-
-				if (affectedAgent is BattlePlayerController) {
-					(affectedAgent as BattlePlayerController).isAttackActionFinish = true;
-				}
+				affectedAgent.isAttackActionFinish = false;
 
 				fizzyCoroutine = StartCoroutine ("FizzyForDuration",affectedAgent);
 
@@ -74,6 +71,7 @@ namespace WordJourney
 			
 		private IEnumerator FizzyForDuration(BattleAgentController affectedAgent){
 			yield return new WaitForSeconds (duration);
+			affectedAgent.isAttackActionFinish = true;
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 			affectedAgent.Fight ();
 		}

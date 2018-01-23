@@ -15,8 +15,6 @@ namespace WordJourney
 
 	public class AgentPropertyCalculator {
 
-		private float critSeed = 0.0035f; //计算暴击时的种子数
-
 		private float armorSeed = 0.01f; //计算护甲抵消伤害的种子数
 
 		private float magicResistSeed = 0.01f; //计算魔抗抵消伤害的种子数
@@ -39,31 +37,19 @@ namespace WordJourney
 		public int crit;
 		public int hit;
 
-		public int physicalHurtFromNomalAttack;
+//		public int physicalHurtFromNomalAttack;
 
 		public float physicalHurtScaler;
 		public float magicalHurtScaler;
 
 		public float critHurtScaler;//暴击倍率
 
-
-
 		public int physicalHurtToEnemy;
 		public int magicalHurtToEnemy;
 
-//		public int totalPhysicalHurt;
-//		public int totalMagicalHurt;
-//		public int instantPhysicalHurtToEnemy;
-//		public int instantMagicalHurtToEnemy;
-
-		public int healthAbsorb;
-
-//		private int healthChange;
 
 		public float critFixScaler;
 		public float dodgeFixScaler;
-
-//		public int hurtReflect;
 
 		public int maxHealthChangeFromTriggeredSkill;
 		public int hitChangeFromTriggeredSkill;
@@ -109,7 +95,7 @@ namespace WordJourney
 			string tintText = "";
 
 			if (propertyType == PropertyType.Health) {
-				if (change > 0 && change <= 1) {
+				if (change > 0 && change < 1) {
 					healthChange = (int)(target.agent.maxHealth * change);
 					tintText = string.Format ("<color=green>{0}</color>", healthChange.ToString ());
 					target.AddFightTextToQueue (tintText, SpecialAttackResult.Gain);
@@ -126,6 +112,7 @@ namespace WordJourney
 					tintText = string.Format ("<color=red>{0}</color>", (-healthChange).ToString ());
 					target.AddFightTextToQueue (tintText, SpecialAttackResult.None);
 				}
+
 				target.agent.health += healthChange;
 				target.propertyCalculator.health = target.agent.health;
 
@@ -142,44 +129,22 @@ namespace WordJourney
 		}
 
 
-		public void CalculateAttackHurt(){
-
-			float critProbability = critSeed * crit / (1 + critSeed * crit) - enemy.propertyCalculator.critFixScaler;
-
-			float tempCritScaler = 1.0f;
-
-			if (isEffective (critProbability)) {
-				specialAttackResult = SpecialAttackResult.Crit;
-				tempCritScaler = critHurtScaler;
-			} else {
-				specialAttackResult = SpecialAttackResult.None;
-			}
-
-			int oriPhysicalHurtToEnemy = (int)(physicalHurtFromNomalAttack * physicalHurtScaler * tempCritScaler);
-
-			physicalHurtToEnemy = (int)(oriPhysicalHurtToEnemy / (1 + armorSeed * enemy.propertyCalculator.armor));
-
-			magicalHurtToEnemy = (int)(magicalHurtToEnemy * magicalHurtScaler / (1 + magicResistSeed * enemy.propertyCalculator.magicResist));
-
-//			string fightResult = string.Format ("普通攻击结果:角色名称：{0}，造成的物理伤害：{1}，造成的魔法伤害：{2},暴击系数：{3},原始物理伤害：{4},",
-//				self.agent.agentName, physicalHurtToEnemy, magicalHurtToEnemy,tempCritScaler,oriPhysicalHurtToEnemy);
-//
-//			Debug.Log (fightResult);	
-
-		}
-
 		public void CalculateAgentHealth(){
 
-			health += healthAbsorb - enemy.propertyCalculator.physicalHurtToEnemy - enemy.propertyCalculator.magicalHurtToEnemy;
+			int actualPhysicalHurt = (int)(enemy.propertyCalculator.physicalHurtToEnemy * enemy.propertyCalculator.physicalHurtScaler / (1 + armorSeed * armor));
+
+			int actualMagicalHurt= (int)(enemy.propertyCalculator.magicalHurtToEnemy * enemy.propertyCalculator.magicalHurtScaler / (1 + magicResistSeed * magicResist));
+
+			health -=  actualPhysicalHurt + actualMagicalHurt;
 
 		}
 
 		public void ResetAllHurt(){
-			physicalHurtFromNomalAttack = 0;
+//			physicalHurtFromNomalAttack = 0;
 			physicalHurtToEnemy = 0;
 			magicalHurtToEnemy = 0;
 //			hurtReflect = 0;
-			healthAbsorb = 0;
+//			healthAbsorb = 0;
 		}
 
 		public List<TriggeredSkill> triggeredSkills = new List<TriggeredSkill>();

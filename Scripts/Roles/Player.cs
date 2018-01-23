@@ -114,13 +114,15 @@ namespace WordJourney
 			this.attachedConsumablesSkills.Clear ();
 			this.allStatus.Clear ();
 
-			ResetBattleAgentProperties (false);
+			ResetBattleAgentProperties (true);
 
 
 			allItemsInBag = new List<Item> ();
 
 			for (int i = 0; i < allEquipmentsInBag.Count; i++) {
-				allItemsInBag.Add (allEquipmentsInBag [i]);
+				if (!allEquipmentsInBag [i].equiped) {
+					allItemsInBag.Add (allEquipmentsInBag [i]);
+				}
 			}
 
 			for (int i = 0; i < allConsumablesInBag.Count; i++) {
@@ -128,29 +130,18 @@ namespace WordJourney
 			}
 
 			for (int i = 0; i < allUnlockScrollsInBag.Count; i++) {
-				allItemsInBag.Add (allUnlockScrollsInBag [i]);
+				if (!allUnlockScrollsInBag [i].unlocked) {
+					allItemsInBag.Add (allUnlockScrollsInBag [i]);
+				}
 			}
 
 			for (int i = 0; i < allCraftingRecipesInBag.Count; i++) {
 				allItemsInBag.Add(allCraftingRecipesInBag[i]);
 			}
 
-//			StartCoroutine ("InitAllEquipmentSkills");
-//
-//		}
-//
-//		private IEnumerator InitAllEquipmentSkills(){
-//
-//			bool dataReady = false;
-//
-//			while (!dataReady) {
-//
-//				dataReady = GameManager.Instance.gameDataCenter.CheckDatasReady (new GameDataCenter.GameDataType[] {
-//					GameDataCenter.GameDataType.Skills,
-//				});
-//
-//				yield return null;
-//			}
+			for(int i = 0;i<triggeredSkillsContainer.childCount;i++) {
+				Destroy (triggeredSkillsContainer.GetChild (i).gameObject);
+			}
 
 			for (int i = 0; i < allEquipedEquipments.Length; i++) {
 
@@ -164,7 +155,7 @@ namespace WordJourney
 
 						equipment.attachedSkills.Add (attachedSkill);
 
-//						Debug.LogFormat ("{0}-{1}", equipment.itemName, attachedSkill.name);
+						Debug.LogFormat ("{0}-{1}", equipment.itemName, attachedSkill.name);
 
 						attachedTriggeredSkills.Add (attachedSkill);
 					}
@@ -194,7 +185,7 @@ namespace WordJourney
 				return new PropertyChange();
 			}
 
-			allItemsInBag.Remove (equipment);
+//			allItemsInBag.Remove (equipment);
 			allItemsInBag.Add (equipment);
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
@@ -209,8 +200,6 @@ namespace WordJourney
 			Equipment emptyEquipment = new Equipment ();
 
 			allEquipedEquipments [equipmentIndexInPanel] = emptyEquipment;
-
-
 
 //			equipmentDragControl.item = emptyEquipment;
 
@@ -244,7 +233,7 @@ namespace WordJourney
 				attachedSkill.transform.SetParent (triggeredSkillsContainer);
 			}
 
-//			allItemsInBag.Remove (equipment);
+			allItemsInBag.Remove (equipment);
 //			allEquipmentsInBag.Remove (equipment);
 
 			return ResetBattleAgentProperties (false);
@@ -439,24 +428,14 @@ namespace WordJourney
 //					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				}
 				break;
-//			case ItemType.FuseStone:
-//				allFuseStonesInBag.Remove (item as FuseStone);
-//				allItemsInBag.Remove (item);
-////				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
-//				break;
-//			case ItemType.Task:
-//				allTaskItemsInBag.Remove (item as TaskItem);
-//				allItemsInBag.Remove (item);
-////				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
-//				break;
 			case ItemType.UnlockScroll:
 				UnlockScroll unlockScroll = allUnlockScrollsInBag.Find (delegate(UnlockScroll obj) {
 					return obj == item;	
 				});
 				if (!unlockScroll.unlocked) {
 					allUnlockScrollsInBag.Remove (unlockScroll);
-					allItemsInBag.Remove (unlockScroll);
 				} 
+				allItemsInBag.Remove (unlockScroll);
 				break;
 			case ItemType.CraftingRecipes:
 				allItemsInBag.Remove (item);

@@ -12,7 +12,7 @@ namespace WordJourney
 		public Image itemImage;
 		public Image backgroundImage;
 //		public Text itemName;
-		public Image newItemTintIcon;
+//		public Image newItemTintIcon;
 
 		private BattlePlayerUIController mExplorePlayerUICtr;
 		private BattlePlayerUIController explorePlayerUICtr{
@@ -36,7 +36,7 @@ namespace WordJourney
 
 			item.isNewItem = false;
 
-			newItemTintIcon.enabled = false;
+//			newItemTintIcon.enabled = false;
 
 		}
 
@@ -77,7 +77,7 @@ namespace WordJourney
 			backgroundImage.enabled = false;
 			itemImage.enabled = false;
 //			itemName.enabled = false;
-			newItemTintIcon.enabled = false;
+//			newItemTintIcon.enabled = false;
 		}
 
 		protected override void OnUserDrag (PointerEventData eventData)
@@ -120,7 +120,7 @@ namespace WordJourney
 			backgroundImage.enabled = true;
 			itemImage.enabled = true;
 //			itemName.enabled = true;
-			newItemTintIcon.enabled = false;
+//			newItemTintIcon.enabled = false;
 
 		}
 

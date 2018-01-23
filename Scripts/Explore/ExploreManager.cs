@@ -408,8 +408,8 @@ namespace WordJourney
 			// 执行怪物角色战斗前技能回调
 			battleMonsterCtr.ExcuteBeforeFightSkillCallBacks(battlePlayerCtr);
 
-			battleMonsterCtr.StartFight (battlePlayerCtr,BattlePlayerWin);
-			battlePlayerCtr.StartFight (battleMonsterCtr,BattlePlayerLose);
+			battleMonsterCtr.StartFight (battlePlayerCtr);
+			battlePlayerCtr.StartFight (battleMonsterCtr);
 
 			expUICtr.ShowFightPlane ();
 			EnableInteractivity ();
@@ -568,9 +568,22 @@ namespace WordJourney
 
 //			Debug.Log ("显示消耗品使用范围提示");
 
+			if (battlePlayerCtr.pathPosList.Count > 0) {
+				battlePlayerCtr.StopMoveAtEndOfCurrentStep ();
+			}
+
+			StartCoroutine ("LatelyShowConsumablesValidTints",consumables);
+
+		}
+
+		private IEnumerator LatelyShowConsumablesValidTints(Consumables consumables){
+
+			yield return new WaitUntil (() => battlePlayerCtr.isIdle);
+
 			mapGenerator.ShowConsumablesValidPointsTint (consumables);
 
 		}
+
 
 		public void ChangeCrystalStatus(){
 			crystalEntered.GetComponent<Crystal> ().CrystalExausted ();
@@ -625,13 +638,27 @@ namespace WordJourney
 			}
 
 
-			int characterIndex = Random.Range (0, 26);
+			Item reward = null;
 
-			char character = (char)(characterIndex + CommonData.aInASCII);
+			// 怪物是普通怪
+			if (monsterTransArray [0].GetComponent<Monster> ().monsterId < 50) {
 
-			CharacterFragment characterFragment = new CharacterFragment (character, 1);
+				int characterIndex = Random.Range (0, 26);
 
-			mapGenerator.SetUpRewardInMap (characterFragment, monsterPos);
+				char character = (char)(characterIndex + CommonData.aInASCII);
+
+				reward = new CharacterFragment (character, 1);
+
+			} else {
+
+				int randomCraftingRecipesId = Random.Range (430, 460);
+
+				reward = Item.NewItemWith (randomCraftingRecipesId, 1);
+
+			}
+
+
+			mapGenerator.SetUpRewardInMap (reward, monsterPos);
 
 			ResetCamareAndContinueMove (!isLevelUp,battleMonsterCtr.originalPos);
 
@@ -642,15 +669,19 @@ namespace WordJourney
 			yield return new WaitUntil (() => battlePlayerCtr.isIdle);
 
 			PlayLevelUpAnim ();
+
+//			EnableInteractivity ();
 		}
 
 		private void PlayLevelUpAnim(){
-			battlePlayerCtr.SetEffectAnim ("LevelUp");
+			battlePlayerCtr.SetEffectAnim ("LevelUp",delegate {
+				EnableInteractivity();
+			});
 			expUICtr.GetComponent<BattlePlayerUIController> ().UpdateAgentStatusPlane ();
 			SoundManager.Instance.PlayAudioClip ("Other/sfx_LevelUp");
 		}
 
-		private void BattlePlayerLose(){
+		public void BattlePlayerLose(){
 
 			battlePlayerCtr.enemy = null;
 
@@ -721,13 +752,9 @@ namespace WordJourney
 
 			mapGenerator.PrepareToResetMap ();
 
-//			int currentLevelIndex = Player.mainPlayer.currentLevelIndex;
-
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);
-
-//			Player.mainPlayer.currentLevelIndex = currentLevelIndex;
 
 			int gameLevel = Player.mainPlayer.currentLevelIndex;
 
@@ -778,7 +805,7 @@ namespace WordJourney
 			if (saveData) {
 				GameManager.Instance.persistDataManager.SaveCompletePlayerData ();
 			}
-
+				
 			PlayerData playerData = GameManager.Instance.persistDataManager.LoadPlayerData ();
 
 			Player.mainPlayer.SetUpPlayerWithPlayerData (playerData);

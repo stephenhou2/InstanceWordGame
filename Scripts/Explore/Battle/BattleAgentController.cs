@@ -421,15 +421,11 @@ namespace WordJourney
 			if (enemy != null) {
 				if (enemy.propertyCalculator.physicalHurtToEnemy > 0) {
 					string physicalHurt = string.Format ("<color=red>{0}</color>", enemy.propertyCalculator.physicalHurtToEnemy.ToString ());
-					AddFightTextToQueue (physicalHurt, enemy.propertyCalculator.specialAttackResult);
+					AddFightTextToQueue (physicalHurt, SpecialAttackResult.None);
 				}
 				if (enemy.propertyCalculator.magicalHurtToEnemy > 0) {
 					string magicalHurt = string.Format ("<color=blue>{0}</color>", enemy.propertyCalculator.magicalHurtToEnemy.ToString ());
 					AddFightTextToQueue (magicalHurt, SpecialAttackResult.None);
-				}
-				if (propertyCalculator.healthAbsorb > 0) {
-					string healthGain = string.Format ("<color=green>{0}</color>", propertyCalculator.healthAbsorb.ToString ());
-					AddFightTextToQueue (healthGain, SpecialAttackResult.Gain);
 				}
 			}
 

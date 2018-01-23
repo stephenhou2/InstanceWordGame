@@ -311,6 +311,8 @@ namespace WordJourney
 				return;
 			}
 
+			Debug.LogFormat ("卸载assetbundle{0}---完全卸载：{1}", bundleName, unloadAllLoadedObjects);
+
 			bundleCacheDic [bundleName].Unload (unloadAllLoadedObjects);
 
 			bundleCacheDic.Remove (bundleName);

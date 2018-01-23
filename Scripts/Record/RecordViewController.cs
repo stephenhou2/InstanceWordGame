@@ -67,17 +67,11 @@ namespace WordJourney
 
 			GameManager.Instance.pronounceManager.ClearPronunciationCache ();
 
-			recordView.OnQuitRecordPlane ();
+			recordView.QuitRecordPlane ();
 
 			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController>().SetUpHomeView();
 			});
-
-			TransformManager.DestroyTransfromWithName ("PoolContainerOfRecordCanvas", TransformRoot.PoolContainer);
-
-//			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[]{ 
-//				GameDataCenter.GameDataType.LearnInfo
-//			});
 
 		}
 

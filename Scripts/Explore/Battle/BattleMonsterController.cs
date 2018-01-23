@@ -22,7 +22,7 @@ namespace WordJourney
 		private BattlePlayerController bpCtr;
 
 		// 玩家战斗胜利回调
-		private CallBack<Transform> playerWinCallBack;
+//		private CallBack<Transform> playerWinCallBack;
 
 		public Vector3 originalPos;
 
@@ -55,10 +55,10 @@ namespace WordJourney
 
 			switch (towardsIndex) {
 			case 0:
-				transform.localScale = new Vector3 (1, 1, 1);
+				armatureCom.armature.flipX = false;
 				break;
 			case 1:
-				transform.localScale = new Vector3 (-1, 1, 1);
+				armatureCom.armature.flipX = true;
 				break;
 			}
 
@@ -89,11 +89,9 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="bpCtr">Bp ctr.</param>
 		/// <param name="playerWinCallBack">Player window call back.</param>
-		public void StartFight(BattlePlayerController bpCtr,CallBack<Transform> playerWinCallBack){
+		public void StartFight(BattlePlayerController bpCtr){
 
 			this.bpCtr = bpCtr;
-
-			this.playerWinCallBack = playerWinCallBack;
 
 			// 怪物比玩家延迟0.5s进入战斗状态
 			Invoke ("Fight", 0.5f);
@@ -271,8 +269,7 @@ namespace WordJourney
 
 			boxCollider.enabled = false;
 
-			playerWinCallBack (new Transform[]{ transform });
-
+			exploreManager.GetComponent<ExploreManager>().BattlePlayerWin (new Transform[]{ transform });
 
 			PlayRoleAnim ("die", 1, delegate {
 				exploreManager.GetComponent<MapGenerator>().AddMonsterToPool(this);
@@ -284,12 +281,12 @@ namespace WordJourney
 
 		public override void TowardsLeft ()
 		{
-			modelActive.transform.localScale = new Vector3 (-1, 1, 1);
+			armatureCom.armature.flipX = true;
 		}
 
 		public override void TowardsRight ()
 		{
-			modelActive.transform.localScale = Vector3.one;
+			armatureCom.armature.flipX = false;
 		}
 
 		public void AddToPool(InstancePool pool){

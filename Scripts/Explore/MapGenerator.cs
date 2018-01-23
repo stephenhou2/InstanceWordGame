@@ -138,7 +138,7 @@ namespace WordJourney
 
 		private List<Trap> allTrapsInMap = new List<Trap> ();
 		private List<Hole> allHolesInMap = new List<Hole> ();
-		private List<Vector3> allMovableFloorsPositions = new List<Vector3> (); 
+//		private List<Vector3> allMovableFloorsPositions = new List<Vector3> (); 
 
 		private List<Vector3> totalValidPosGridList = new List<Vector3> ();
 		private List<Vector3> playerOriginalPosList = new List<Vector3> ();
@@ -208,41 +208,6 @@ namespace WordJourney
 
 		}
 
-//		private void SetupAllAnimatorControllers(){
-//
-//			treeModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "TreeAnimatorController";
-//			});
-//
-//			stoneModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "StoneAnimatorController";
-//			});
-//
-//			buckModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "BuckAnimatorController";
-//			});
-//			potModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "PotAnimatorController";
-//			});
-//			lockedTreasureBoxModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "TreasureBoxAnimatorController";
-//			});
-//			transportModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "OtherAnimatorController";
-//			});
-//			skillEffectModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "SkillEffectAnimatorController";
-//			});
-//			destinationAnimation.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "DestinationAnimatorController";
-//			});
-//			otherAnimationModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "OtherAnimatorController";
-//			});
-//			crystalModel.GetComponent<Animator> ().runtimeAnimatorController = GameManager.Instance.gameDataCenter.allAnimatorControllers.Find (delegate(RuntimeAnimatorController obj) {
-//				return obj.name == "CrystalAnimatorController";
-//			});
-//		}
 
 		private void ResetMap(){
 			
@@ -416,6 +381,12 @@ namespace WordJourney
 		/// </summary>
 		private void SetUpMapWithAttachedInfo(){
 
+//			List<Vector3> movableFloorOriList = new List<Vector3> ();
+			List<Vector3> allMovableFloorEndPos = new List<Vector3> ();
+			List<MovableFloor> allMovableFloorsInMap = new List<MovableFloor> ();
+			List<PressSwitch> allPressSwitchesInMap = new List<PressSwitch> ();
+			List<Door> allDoorsImMap = new List<Door> ();
+
 			for (int i = 0; i < attachedInfoLayer.tileDatas.Count; i++) {
 				Tile attachedInfoTile = attachedInfoLayer.tileDatas [i];
 				Vector2 pos = attachedInfoTile.position;
@@ -449,7 +420,8 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.Transport, pos, null);
 					break;
 				case AttachedInfoType.Door:
-					GenerateMapItem (MapItemType.Door, pos, null);
+					Door door = GenerateMapItem (MapItemType.Door, pos, null) as Door;
+					allDoorsImMap.Add (door);
 					break;
 				case AttachedInfoType.Buck:
 					Item attachedItem = GetAttachedItem (pos,attachedInfoType);
@@ -481,11 +453,11 @@ namespace WordJourney
 					allTrapsInMap.Add (trapOff);
 					break;
 				case AttachedInfoType.MovableFloorStart:
-					GenerateMapItem (MapItemType.MovableFloor, pos, null);
-					allMovableFloorsPositions.Add (pos);
+					MapItem movableFloor = GenerateMapItem (MapItemType.MovableFloor, pos, null);
+					allMovableFloorsInMap.Add (movableFloor as MovableFloor);
 					break;
 				case AttachedInfoType.MovableFloorEnd:
-					allMovableFloorsPositions.Add (pos);
+					allMovableFloorEndPos.Add (pos);
 					break;
 				case AttachedInfoType.Monster:
 					SetUpMonster (pos);
@@ -519,7 +491,8 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
 					break;
 				case AttachedInfoType.PressSwitch:
-					GenerateMapItem (MapItemType.PressSwitch, pos, null);
+					PressSwitch ps = GenerateMapItem (MapItemType.PressSwitch, pos, null) as PressSwitch;
+					allPressSwitchesInMap.Add (ps);
 					break;
 				case AttachedInfoType.Docoration:
 					GenerateMapItem (MapItemType.Docoration, pos, null);
@@ -527,8 +500,43 @@ namespace WordJourney
 				}
 
 			}
+
+			PairMovableFloorPositions (allMovableFloorsInMap, allMovableFloorEndPos);
+			PairAllPressSwitchAndDoorInMap (allPressSwitchesInMap, allDoorsImMap);
 		}
 
+		private void PairMovableFloorPositions(List<MovableFloor> movableFloors,List<Vector3> endPosList){
+
+			for (int i = 0; i < movableFloors.Count; i++) {
+
+				MovableFloor mf = movableFloors [i];
+
+				mf.movePosPair [0] = mf.transform.position;
+
+				mf.movePosPair [1] = MyTool.FindNearestPos (mf.transform.position,endPosList);
+
+				endPosList.Remove (mf.movePosPair [1]);
+
+			}
+
+		}
+
+		private void PairAllPressSwitchAndDoorInMap(List<PressSwitch> pressSwitchList,List<Door> doorList){
+
+			List<Vector3> doorPosList = new List<Vector3> ();
+			for (int i = 0; i < doorList.Count; i++) {
+				doorPosList.Add(doorList[i].transform.position);
+			}
+
+			for (int i = 0; i < pressSwitchList.Count; i++) {
+
+				int nearestDoorIndex = MyTool.FindNearestPosIndex (pressSwitchList [i].transform.position, doorPosList);
+
+				pressSwitchList [i].controlledDoor = doorList [nearestDoorIndex];
+
+			}
+
+		}
 
 
 		public MapItem GenerateMapItem(MapItemType mapItemType, Vector2 position, Item attachedItem = null){
@@ -768,7 +776,7 @@ namespace WordJourney
 
 			bpCtr = player.GetComponent<BattlePlayerController> ();
 
-			bpCtr.ActiveBattlePlayer (true, false, false);
+			bpCtr.ActiveBattlePlayer (true, true, true);
 
 			bpCtr.SetSortingOrder (-(int)position.y);
 
@@ -776,7 +784,9 @@ namespace WordJourney
 
 			ItemsAroundAutoIntoLifeWithBasePoint (position);
 
+			bpCtr.StopMove ();
 			bpCtr.singleMoveEndPos = position;
+			bpCtr.pathPosList.Clear ();
 
 			player.rotation = Quaternion.identity;
 
@@ -792,11 +802,18 @@ namespace WordJourney
 			Transform background = Camera.main.transform.Find ("Background");
 			background.transform.localPosition = new Vector3 (0, 0, 5);
 
-
-
+			bpCtr.ActiveBattlePlayer (true, false, false);
 			// 默认进入关卡后播放的角色动画
 			bpCtr.PlayRoleAnim ("wait", 0, null);
 
+//			StartCoroutine ("PlayerPlayWaitAnim");
+		}
+
+		private IEnumerator PlayerPlayWaitAnim(){
+			yield return null;
+			bpCtr.ActiveBattlePlayer (false, false, true);
+			// 默认进入关卡后播放的角色动画
+			bpCtr.PlayRoleAnim ("wait", 0, null);
 		}
 
 		/// <summary>
@@ -853,31 +870,7 @@ namespace WordJourney
 
 		}
 
-		public Vector3 FindNearestMovableFloor(Vector3 oriPosition){
 
-			Vector3 nearestMovableFloorPos = oriPosition;
-			float distance = float.MaxValue;
-
-			for (int i = 0; i < allMovableFloorsPositions.Count; i++) {
-
-				Vector3 potentialPosition = allMovableFloorsPositions [i];
-
-				if (potentialPosition == oriPosition) {
-					continue;
-				}
-
-				float newDistance = Vector3.Magnitude (oriPosition - potentialPosition);
-
-				if (newDistance < distance) {
-					nearestMovableFloorPos = potentialPosition;
-					distance = newDistance;
-				}
-
-			}
-
-			return nearestMovableFloorPos;
-
-		}
 
 		public Vector3 GetARandomWalkablePositionAround(Vector3 oriPosition){
 
@@ -1599,22 +1592,7 @@ namespace WordJourney
 		}
 
 
-		public Transform GetDoor(){
-			for (int i = 0; i < allAliveOtherItems.Count; i++) {
-				if (allAliveOtherItems [i].GetComponent<Door>() != null) {
-					return allAliveOtherItems [i];
-				}
-			}
-			for (int i = 0; i < allSleepingOtherItems.Count; i++) {
-				if (allSleepingOtherItems [i].GetComponent<Door> () != null) {
-					Transform door = allSleepingOtherItems [i];
-					DirectlyShowSleepingTilesAtPosition (door.position);
-					ItemsAroundAutoIntoLifeWithBasePoint (door.position);
-					return door;
-				}
-			}
-			return null;
-		}
+
 			
 
 		private class RewardInMap

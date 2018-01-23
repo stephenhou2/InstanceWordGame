@@ -91,9 +91,11 @@ namespace WordJourney
 
 		public void CancelPronounce(){
 
-			StopCoroutine (waitDownloadFinishCoroutine);
+			if (waitDownloadFinishCoroutine != null) {
+				StopCoroutine (waitDownloadFinishCoroutine);
+			}
 			
-			if (!pronunciationWWW.isDone) {
+			if (pronunciationWWW != null && !pronunciationWWW.isDone) {
 				pronunciationWWW.Dispose ();
 			}
 
