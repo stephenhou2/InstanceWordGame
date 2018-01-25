@@ -344,6 +344,8 @@ namespace WordJourney
 
 			Transform toolChoiceButton = Instantiate (toolChoiceButtonModel.gameObject).transform;
 			toolChoiceButton.SetParent (toolChoicesContaienr);
+			toolChoiceButton.localScale = Vector3.one;
+			toolChoiceButton.localRotation = Quaternion.identity;
 //			Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
 
 			Image toolIcon = toolChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
@@ -400,13 +402,13 @@ namespace WordJourney
 				TreasureBox tb = mapItem as TreasureBox;
 				tb.UnlockTreasureBox (null);
 				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
-				mapGenerator.SetUpRewardInMap (tb.rewardItem, mapItemPos);
+				mapGenerator.SetUpAwardInMap (tb.awardItem, mapItemPos);
 				break;
 			case MapItemType.Plant:
 				Plant plant = mapItem as Plant;
 				mapGenerator.AddMapItemInPool (mapItem.transform);
 				mapWalkableInfoArray [(int)mapItemPos.x, (int)mapItemPos.y] = 1;
-				mapGenerator.SetUpRewardInMap (plant.attachedItem, mapItemPos);
+				mapGenerator.SetUpAwardInMap (plant.attachedItem, mapItemPos);
 				break;
 			}
 
@@ -423,7 +425,7 @@ namespace WordJourney
 //			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
 
 			for (int i = 0; i < toolChoicesContaienr.childCount; i++) {
-				Destroy(toolChoicesContaienr.GetChild(i));
+				Destroy(toolChoicesContaienr.GetChild(i).gameObject);
 			}
 
 			toolChoicesPlane.gameObject.SetActive (false);

@@ -495,21 +495,11 @@ namespace WordJourney
 			int mDodgeWithEq = dodgeWithEquipment;
 			int mCritWithEq = critWithEquipment;
 
-			// 记录人物原来的真实属性
-//			int mMaxHealth = maxHealth;
-//			int mHit = hit;
-//			int mAttack = attack;
-//			int mMana = mana;
-//			int mAttackSpeed = attackSpeed;
-//			int mArmor = armor;
-//			int mMagicResist = magicResist;
-//			int mDodge = dodge;
-//			int mCrit = crit;
-
-
-			// 以人物基础属性为出发点重新开始计算
+			// 除了真实血量以外,以人物基础属性为出发点重新开始计算
 			maxHealthWithEquipment = originalMaxHealth;
-			healthWithEquipment = health;
+			if (mMaxHealthWithEq > 0) {
+				healthWithEquipment = originalMaxHealth * health / mMaxHealthWithEq;
+			}
 			manaWithEquipment = originalMana;
 			attackWithEquipment = originalAttack;
 			attackSpeedWithEquipment = originalAttackSpeed;

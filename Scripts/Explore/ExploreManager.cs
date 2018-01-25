@@ -252,33 +252,33 @@ namespace WordJourney
 			expUICtr.HideMask ();
 		}
 
-		public void ObtainReward(Item reward){
+		public void ObtainAward(Item award){
 
-			switch (reward.itemType) {
+			switch (award.itemType) {
 			case ItemType.Equipment:
-				string tint = string.Format ("获得 <color=orange>{0}</color> x{1}", reward.itemName, reward.itemCount);
+				string tint = string.Format ("获得 <color=orange>{0}</color> x{1}", award.itemName, award.itemCount);
 				Sprite itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == reward.spriteName;
+					return obj.name == award.spriteName;
 				});
 				expUICtr.SetUpTintHUD (tint,itemSprite);
 				break;
 			case ItemType.Consumables:
 				itemSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-					return obj.name == reward.spriteName;
+					return obj.name == award.spriteName;
 				});
-				tint = string.Format ("获得 <color=orange>{0}</color>x{1}", reward.itemName, reward.itemCount);
+				tint = string.Format ("获得 <color=orange>{0}</color>x{1}", award.itemName, award.itemCount);
 
 				expUICtr.SetUpTintHUD (tint,itemSprite);
 				expUICtr.UpdateBottomBar ();
 				break;
 			case ItemType.UnlockScroll:
-				expUICtr.SetUpUnlockScrollHUD (reward);
+				expUICtr.SetUpUnlockScrollHUD (award);
 				break;
 			case ItemType.CraftingRecipes:
-				expUICtr.SetUpCraftingRecipesHUD (reward);
+				expUICtr.SetUpCraftingRecipesHUD (award);
 				break;
 			case ItemType.CharacterFragment:
-				tint = string.Format ("获得字母碎片 <color=orange>{0}</color>", reward.itemName);
+				tint = string.Format ("获得字母碎片 <color=orange>{0}</color>", award.itemName);
 				expUICtr.SetUpTintHUD (tint,null);
 				break;
 
@@ -329,7 +329,13 @@ namespace WordJourney
 		}
 
 
-			
+		public void UpdatePlayerPropertyCalculator(){
+			battlePlayerCtr.SetUpPropertyCalculator ();
+		}
+
+		public void UpdatePlayerStatusPlane(){
+			expUICtr.UpdatePlayerStatusBar ();
+		}
 
 		public void UpdateTriggeredCallBacks(){
 
@@ -516,7 +522,7 @@ namespace WordJourney
 
 				// 如果该地图物品不需要使用特殊物品开启
 				tb.UnlockTreasureBox (()=>{
-					mapGenerator.SetUpRewardInMap(tb.rewardItem,tb.transform.position);
+					mapGenerator.SetUpAwardInMap(tb.awardItem,tb.transform.position);
 				});
 
 				return;
@@ -683,7 +689,7 @@ namespace WordJourney
 			}
 
 
-			Item reward = null;
+			Item award = null;
 
 			// 怪物是普通怪
 			if (monsterTransArray [0].GetComponent<Monster> ().monsterId < 50) {
@@ -692,18 +698,18 @@ namespace WordJourney
 
 				char character = (char)(characterIndex + CommonData.aInASCII);
 
-				reward = new CharacterFragment (character, 1);
+				award = new CharacterFragment (character, 1);
 
 			} else {
 
 				int randomCraftingRecipesId = Random.Range (450, 460);
 
-				reward = Item.NewItemWith (randomCraftingRecipesId, 1);
+				award = Item.NewItemWith (randomCraftingRecipesId, 1);
 
 			}
 
 
-			mapGenerator.SetUpRewardInMap (reward, monsterPos);
+			mapGenerator.SetUpAwardInMap (award, monsterPos);
 
 			ResetCamareAndContinueMove (battleMonsterCtr.originalPos);
 
@@ -787,11 +793,11 @@ namespace WordJourney
 
 				timer += Time.deltaTime;
 
-				Debug.LogFormat ("{0}--{1}", timer, c.orthographicSize);
-
 				yield return null;
 
 			}
+
+			c.orthographicSize = 6.0f;
 
 			EnableInteractivity ();
 

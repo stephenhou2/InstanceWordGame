@@ -24,8 +24,6 @@ namespace WordJourney
 
 				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
 
-				Destroy(this.gameObject);
-
 			});
 				
 		}

@@ -26,23 +26,23 @@ namespace WordJourney
 
 		void Awake(){
 
-			Player.mainPlayer.AddItem (Item.NewItemWith(8,1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
-			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
-			Player.mainPlayer.AddItem(Item.NewItemWith(111,1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith(8,2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
+//			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
+//			Player.mainPlayer.AddItem(Item.NewItemWith(111,2));
+//			Player.mainPlayer.AddItem(Item.NewItemWith(21,2));
 
+//			Player.mainPlayer.AddItem (Item.NewItemWith (448, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (4, 2));
 
-			Player.mainPlayer.AddItem (Item.NewItemWith (448, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
-			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (4, 1));
-
-			Player.mainPlayer.AddItem (Item.NewItemWith (50, 1));
-			Player.mainPlayer.AddItem (Item.NewItemWith (39, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (50, 2));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (39, 2));
 //			#warning 测试物品用
 ////			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 //				for (int i = 0; i < 10; i++) {
@@ -64,7 +64,7 @@ namespace WordJourney
 //						return obj.itemId == i;
 //					});
 //
-//					Consumables c = new Consumables (im,1);
+//					Consumables c = new Consumables (im,2);
 //
 //					Player.mainPlayer.AddItem (c);
 //
@@ -154,11 +154,11 @@ namespace WordJourney
 				Equipment equipment = Player.mainPlayer.allEquipedEquipments [i];
 
 				if (equipment.itemId < 0 && equipmentSlotUnlockedArray[i]) {
-					bagView.RemoveBagItem(currentSelectItem);
+					int oriItemIndexInBag = Player.mainPlayer.GetItemIndexInBag (currentSelectItem);
 					Agent.PropertyChange propertyChange = Player.mainPlayer.EquipEquipment (currentSelectItem as Equipment, i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-
+					bagView.RemoveBagItemAt (oriItemIndexInBag);
 					bagView.QuitItemDetailHUD ();
 					bagView.SetUpEquipedEquipmentsPlane ();
 					return;
@@ -383,10 +383,10 @@ namespace WordJourney
 
 	
 
-		public void RemoveItem(Item item){
-//			bagView.SetUpBagItemsPlane (currentBagIndex);
-			bagView.RemoveBagItem (item);
-		}
+//		public void RemoveItem(Item item){
+////			bagView.SetUpBagItemsPlane (currentBagIndex);
+//			bagView.RemoveBagItem (item);
+//		}
 
 
 

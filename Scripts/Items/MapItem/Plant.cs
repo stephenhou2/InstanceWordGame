@@ -28,10 +28,10 @@ namespace WordJourney
 			pool.AddInstanceToPool (this.gameObject);
 		}
 
-		public static Item GenerateRandomReward(){
-			int rewardCount = Random.Range (1, 4);
-			int rewardItemId = Random.Range (113, 120);
-			return Item.NewItemWith (rewardItemId, rewardCount);
+		public static Item GenerateRandomAward(){
+			int awardCount = Random.Range (1, 4);
+			int awardItemId = Random.Range (113, 120);
+			return Item.NewItemWith (awardItemId, awardCount);
 		}
 
 	}

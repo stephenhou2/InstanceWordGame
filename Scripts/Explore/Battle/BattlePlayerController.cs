@@ -450,6 +450,7 @@ namespace WordJourney
 		public void StopMoveAtEndOfCurrentStep(){
 			this.moveDestination = pathPosList [0];
 			pathPosList = new List<Vector3>{ moveDestination };
+			SetSortingOrder (-(int)transform.position.y);
 		}
 
 
@@ -464,6 +465,8 @@ namespace WordJourney
 
 			inSingleMoving = false;
 
+			SetSortingOrder (-(int)transform.position.y);
+
 		}
 
 		public void StopMove(){
@@ -472,6 +475,7 @@ namespace WordJourney
 			backgroundMoveTweener.Kill (false);
 			inSingleMoving = false;
 			PlayRoleAnim ("wait", 0, null);
+			SetSortingOrder (-(int)transform.position.y);
 		}
 
 		public override void TowardsLeft(){
@@ -591,15 +595,6 @@ namespace WordJourney
 
 		protected override void AgentExcuteHitEffect ()
 		{
-			// 播放技能对应的玩家技能特效动画
-			if (currentSkill.selfEffectAnimName != string.Empty) {
-				SetEffectAnim (currentSkill.selfEffectAnimName);
-			}
-
-			// 播放技能对应的怪物技能特效动画
-			if (currentSkill.enemyEffectAnimName != string.Empty) {
-				bmCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
-			}
 
 			// 播放技能对应的音效
 			SoundManager.Instance.PlayAudioClip("Skill/" + currentSkill.sfxName);

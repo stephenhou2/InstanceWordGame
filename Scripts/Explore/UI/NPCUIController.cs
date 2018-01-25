@@ -18,6 +18,7 @@ namespace WordJourney
 		public Button nextDialogButton;
 		/**********  dialogPlane UI *************/
 
+		public Transform mainNPCPlane;
 
 		private DialogGroup currentDialogGroup;
 
@@ -34,10 +35,10 @@ namespace WordJourney
 		private NPC currentEnteredNpc;
 //		private Goods currentSelectGoods;
 
-//		private InstancePool choiceButtonPool;
+		private InstancePool choiceButtonPool;
 		public Transform choiceButtonModel;
 
-//		private InstancePool goodsPool;
+		private InstancePool goodsPool;
 		public Transform goodsModel;
 
 		public TintHUD tintHUD;
@@ -65,8 +66,8 @@ namespace WordJourney
 
 		public void InitNPCHUD(int currentLevelIndex){
 
-//			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
-//			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
+			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
+			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
 
 			this.currentLevelIndex = currentLevelIndex;
 
@@ -146,6 +147,8 @@ namespace WordJourney
 
 		public void SetUpChatPlane(){
 
+			mainNPCPlane.gameObject.SetActive (false);
+
 			currentDialogId = 0;
 
 			DialogGroup dg = null;
@@ -172,7 +175,7 @@ namespace WordJourney
 
 			dialogText.text = dialog.dialog;
 
-//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			bool showNextButton = true;
 
@@ -260,8 +263,8 @@ namespace WordJourney
 			
 			dialogText.text = currentEnteredNpc.greetingDialog;
 			nextDialogButton.gameObject.SetActive (false);
-//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
-			AddFunctionChoices ();
+			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+			mainNPCPlane.gameObject.SetActive (true);
 		}
 
 
@@ -293,7 +296,7 @@ namespace WordJourney
 
 			tradePlane.gameObject.SetActive (true);
 
-//			goodsPool.AddChildInstancesToPool (goodsContainer);
+			goodsPool.AddChildInstancesToPool (goodsContainer);
 
 			List<Item> itemsAsGoods = trader.itemsAsGoodsOfCurrentLevel;
 
@@ -301,9 +304,9 @@ namespace WordJourney
 
 				Item itemAsGoods = itemsAsGoods [i];
 
-				Transform goodsCell = Instantiate (goodsModel.gameObject).transform;
-				goodsCell.SetParent (goodsContainer);
-//				Transform goodsCell = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
+//				Transform goodsCell = Instantiate (goodsModel.gameObject).transform;
+//				goodsCell.SetParent (goodsContainer);
+				Transform goodsCell = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
 
 				goodsCell.GetComponent<GoodsCell> ().SetUpGoodsCell (itemAsGoods);
 
@@ -451,14 +454,18 @@ namespace WordJourney
 		public void QuitTradePlane(){
 
 //			itemDetail.QuitItemDetailHUD ();
-
+//			for (int i = 0; i < goodsContainer.childCount; i++) {
+//				Destroy(goodsContainer.GetChild(i));
+//			}
+			goodsPool.AddChildInstancesToPool(goodsContainer);
 			tradePlane.gameObject.SetActive (false);
 
 		}
 
-//		public void ClearNpcPlaneCache(){
-//			Destroy (goodsPool.gameObject);
-//		}
+		public void ClearNpcPlaneCache(){
+			Destroy (goodsPool.gameObject);
+			Destroy (choiceContainer.gameObject);
+		}
 			
 		
 	}

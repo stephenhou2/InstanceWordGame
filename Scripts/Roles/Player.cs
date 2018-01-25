@@ -194,6 +194,11 @@ namespace WordJourney
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
 				TriggeredSkill attachedSkill = equipment.attachedSkills [i];
 				attachedTriggeredSkills.Remove (attachedSkill);
+				if (!(battleAgentCtr as BattlePlayerController).isInFight) {
+					equipment.attachedSkills.Remove (attachedSkill);
+					Destroy (attachedSkill.gameObject);
+					i--;
+				}
 			}
 				
 			Equipment emptyEquipment = new Equipment ();
@@ -204,7 +209,10 @@ namespace WordJourney
 
 			Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
 			if (exploreManager != null) {
-				exploreManager.GetComponent<ExploreManager>().UpdateTriggeredCallBacks ();
+				ExploreManager manager = exploreManager.GetComponent<ExploreManager> ();
+				manager.UpdatePlayerPropertyCalculator ();
+				manager.UpdateTriggeredCallBacks ();
+				manager.UpdatePlayerStatusPlane ();
 			}
 
 
@@ -222,6 +230,7 @@ namespace WordJourney
 						TriggeredSkill attachedSkill = equipment.attachedSkills [i];
 						equipment.attachedSkills.RemoveAt (i);
 						Destroy (attachedSkill.gameObject);
+						i--;
 					}
 				}
 			}
@@ -266,7 +275,10 @@ namespace WordJourney
 
 			Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
 			if (exploreManager != null) {
-				exploreManager.GetComponent<ExploreManager>().UpdateTriggeredCallBacks ();
+				ExploreManager manager = exploreManager.GetComponent<ExploreManager> ();
+				manager.UpdatePlayerPropertyCalculator ();
+				manager.UpdateTriggeredCallBacks ();
+				manager.UpdatePlayerStatusPlane ();
 			}
 
 			return pc;
@@ -542,7 +554,7 @@ namespace WordJourney
 			}
 
 			// 分解物品，背包中的字母碎片数量增加
-			for (int j = 0; j < item.itemCount; j++) {
+			for (int j = 0; j < resolveCount; j++) {
 
 				for (int i = 0; i < charactersReturnCount; i++) {
 

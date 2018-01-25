@@ -29,7 +29,7 @@ namespace WordJourney
 		public Transform effectModel;
 
 		// 地图上掉落的物品模型
-		public Transform rewardItemModel;
+		public Transform awardItemModel;
 
 		public Transform crystalModel;
 
@@ -42,7 +42,7 @@ namespace WordJourney
 		public Transform npcsContainer;
 		public Transform monstersContainer;
 		public Transform effectAnimContainer;
-		public Transform rewardsContainer;
+		public Transform awardsContainer;
 		public Transform consumablesValidPosTintContainer;
 
 		// 所有的缓存池
@@ -50,7 +50,7 @@ namespace WordJourney
 		private InstancePool mapItemPool;
 		private InstancePool monsterPool;
 		private InstancePool effectAnimPool;
-		private InstancePool rewardItemPool;
+		private InstancePool awardItemPool;
 		private InstancePool consumablesValidPosTintPool;
 
 		public Transform destinationAnimation;
@@ -69,7 +69,7 @@ namespace WordJourney
 		/// </summary>
 		public int[,] originalMapWalkableInfoArray;
 
-		public float rewardFlyDuration;
+		public float awardFlyDuration;
 
 		private BattlePlayerController bpCtr;
 
@@ -166,7 +166,7 @@ namespace WordJourney
 				mapItemPool = InstancePool.GetOrCreateInstancePool ("MapItemPool",poolContainerOfExploreScene.name);
 				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
 				effectAnimPool = InstancePool.GetOrCreateInstancePool ("EffectAnimPool",poolContainerOfExploreScene.name);
-				rewardItemPool = InstancePool.GetOrCreateInstancePool ("RewardItemPool", poolContainerOfExploreScene.name);
+				awardItemPool = InstancePool.GetOrCreateInstancePool ("AwardItemPool", poolContainerOfExploreScene.name);
 				consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
 			}
 
@@ -198,7 +198,7 @@ namespace WordJourney
 
 			ClearPools ();
 
-
+			destinationAnimation.gameObject.SetActive (true);
 		}
 
 
@@ -487,7 +487,7 @@ namespace WordJourney
 					GenerateMapItem (MapItemType.LauncherTowardsRight, pos, null);
 					break;
 				case AttachedInfoType.Plant:
-					Item attachedPlant = Plant.GenerateRandomReward ();
+					Item attachedPlant = Plant.GenerateRandomAward ();
 					GenerateMapItem (MapItemType.Plant, pos, attachedPlant);
 					break;
 				case AttachedInfoType.PressSwitch:
@@ -550,17 +550,17 @@ namespace WordJourney
 				break;
 			case MapItemType.TreasureBox:
 				mapItem = mapItemPool.GetInstanceWithName<TreasureBox> (lockedTreasureBoxModel.name, lockedTreasureBoxModel.gameObject, mapItemsContainer);
-				(mapItem as TreasureBox).rewardItem = attachedItem;
+				(mapItem as TreasureBox).awardItem = attachedItem;
 				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 0;
 				break;
 			case MapItemType.Buck:
 				mapItem = mapItemPool.GetInstanceWithName<TreasureBox> (buckModel.name, buckModel.gameObject, mapItemsContainer);
-				(mapItem as TreasureBox).rewardItem = attachedItem;
+				(mapItem as TreasureBox).awardItem = attachedItem;
 				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 0;
 				break;
 			case MapItemType.Pot:
 				mapItem = mapItemPool.GetInstanceWithName<TreasureBox> (potModel.name, potModel.gameObject, mapItemsContainer);
-				(mapItem as TreasureBox).rewardItem = attachedItem;
+				(mapItem as TreasureBox).awardItem = attachedItem;
 				originalMapWalkableInfoArray [(int)(position.x), (int)(position.y)] = 0;
 				break;
 			case MapItemType.MovableFloor:
@@ -1476,7 +1476,7 @@ namespace WordJourney
 			case "镰刀":
 				if (CheckTargetMatchSickle(pos)) {
 					Plant plant = GetAliveOtherItemAt (pos).GetComponent<Plant> ();
-					SetUpRewardInMap (plant.attachedItem, pos);
+					SetUpAwardInMap (plant.attachedItem, pos);
 					plant.AddToPool (mapItemPool);
 					mapWalkableInfoArray [posX, posY] = 1;
 					removeConsumablesFromBag = true;
@@ -1487,7 +1487,7 @@ namespace WordJourney
 					TreasureBox tb = GetAliveOtherItemAt (pos).GetComponent<TreasureBox> ();
 					if (tb.locked) {
 						tb.UnlockTreasureBox (delegate{
-							SetUpRewardInMap(tb.rewardItem,pos);
+							SetUpAwardInMap(tb.awardItem,pos);
 						});
 
 						removeConsumablesFromBag = true;
@@ -1603,108 +1603,115 @@ namespace WordJourney
 
 			
 
-		private class RewardInMap
+		private class AwardInMap
 		{
-			public Transform rewardTrans;
-			public Item reward;
+			public Transform awardTrans;
+			public Item award;
 
-			public RewardInMap(Transform rewardTrans,Item reward){
-				this.rewardTrans = rewardTrans;
-				this.reward = reward;
+			public AwardInMap(Transform awardTrans,Item award){
+				this.awardTrans = awardTrans;
+				this.award = award;
 			}
 
 
 		}
 
-		public void SetUpRewardInMap(Item reward, Vector3 rewardPosition){
+		public void SetUpAwardInMap(Item award, Vector3 awardPosition){
 
-//			Debug.Log (reward.itemName);
 
-			Transform rewardTrans = rewardItemPool.GetInstance<Transform> (rewardItemModel.gameObject, rewardsContainer);
+			Transform awardTrans = awardItemPool.GetInstance<Transform> (awardItemModel.gameObject, awardsContainer);
 
-			SpriteRenderer sr = rewardTrans.GetComponent<SpriteRenderer> ();
+			SpriteRenderer sr = awardTrans.GetComponent<SpriteRenderer> ();
 
 			sr.sprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-				return obj.name == reward.spriteName;
+				return obj.name == award.spriteName;
 			});
 				
-			rewardTrans.position = new Vector3 (rewardPosition.x, rewardPosition.y + 0.5f, rewardPosition.z);
+			awardTrans.position = new Vector3 (awardPosition.x, awardPosition.y + 1f, awardPosition.z);
 
-			sr.sortingOrder = -(int)rewardPosition.y;
+			sr.sortingOrder = -(int)awardPosition.y;
 
-			rewardTrans.gameObject.SetActive (true);
+			awardTrans.gameObject.SetActive (true);
 
-			RewardInMap rewardInMap = new RewardInMap (rewardTrans, reward);
+			AwardInMap awardInMap = new AwardInMap (awardTrans, award);
 
-			StartCoroutine ("RewardFlyToPlayer", rewardInMap);
+			StartCoroutine ("AwardFlyToPlayer", awardInMap);
 
 		}
 
-		private IEnumerator RewardFlyToPlayer(RewardInMap rewardInMap){
+		private IEnumerator AwardFlyToPlayer(AwardInMap awardInMap){
 
-			Transform rewardTrans = rewardInMap.rewardTrans;
+			Transform awardTrans = awardInMap.awardTrans;
 
-			float rewardUpAndDownSpeed = 0.5f;
+			float awardUpAndDownSpeed = 0.5f;
 
 			float timer = 0;
 			while (timer < 0.5f) {
-				Vector3 moveVector = new Vector3 (0, rewardUpAndDownSpeed * Time.deltaTime, 0);
-				rewardTrans.position += moveVector;
+				Vector3 moveVector = new Vector3 (0, awardUpAndDownSpeed * Time.deltaTime, 0);
+				awardTrans.position += moveVector;
 				timer += Time.deltaTime;
 				yield return null;
 			}
 			while (timer < 1f) {
-				Vector3 moveVector = new Vector3 (0, -rewardUpAndDownSpeed * Time.deltaTime, 0);
-				rewardTrans.position += moveVector;
+				Vector3 moveVector = new Vector3 (0, -awardUpAndDownSpeed * Time.deltaTime, 0);
+				awardTrans.position += moveVector;
 				timer += Time.deltaTime;
 				yield return null;
 			}
 
 			float passedTime = 0;
 
-			float leftTime = rewardFlyDuration - passedTime;
+			float leftTime = awardFlyDuration - passedTime;
 
 			BattlePlayerController bpCtr = GetBattlePlayer ();
 
-			float distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
-				+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
+			float distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - awardTrans.position.x), 2.0f) 
+				+ Mathf.Pow ((bpCtr.transform.position.y - awardTrans.position.y), 2.0f));
 
 			while (distance > 0.5f) {
 
-				Vector3 rewardVelocity = new Vector3 ((bpCtr.transform.position.x - rewardTrans.position.x) / leftTime, 
-					(bpCtr.transform.position.y - rewardTrans.position.y) / leftTime, 0);
+				Vector3 awardVelocity = new Vector3 ((bpCtr.transform.position.x - awardTrans.position.x) / leftTime, 
+					(bpCtr.transform.position.y - awardTrans.position.y) / leftTime, 0);
 
-				Vector3 newRewardPos = new Vector3 (rewardTrans.position.x + rewardVelocity.x * Time.deltaTime, 
-					rewardTrans.position.y + rewardVelocity.y * Time.deltaTime);
+				Vector3 newAwardPos = new Vector3 (awardTrans.position.x + awardVelocity.x * Time.deltaTime, 
+					awardTrans.position.y + awardVelocity.y * Time.deltaTime);
 
-				rewardTrans.position = newRewardPos;
+				awardTrans.position = newAwardPos;
 
-//				rewardInMap.position = Vector3.MoveTowards(rewardInMap.position,bpCtr.transform.position,
+//				awardInMap.position = Vector3.MoveTowards(awardInMap.position,bpCtr.transform.position,
 
 				passedTime += Time.deltaTime;
 
-				leftTime = rewardFlyDuration - passedTime;
+				leftTime = awardFlyDuration - passedTime;
 
-				distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - rewardTrans.position.x), 2.0f) 
-					+ Mathf.Pow ((bpCtr.transform.position.y - rewardTrans.position.y), 2.0f));
+				distance = Mathf.Sqrt (Mathf.Pow ((bpCtr.transform.position.x - awardTrans.position.x), 2.0f) 
+					+ Mathf.Pow ((bpCtr.transform.position.y - awardTrans.position.y), 2.0f));
 
 				yield return null;
 
 			}
 
-			Item reward = rewardInMap.reward;
+			Item award = awardInMap.award;
 
-			Player.mainPlayer.AddItem (reward);
+			int maxBagCount = 2;
+			int singleBagVolume = 24;
 
-			GetComponent<ExploreManager> ().ObtainReward (reward);
+			if (Player.mainPlayer.allItemsInBag.Count >= maxBagCount * singleBagVolume) {
+				GetComponent<ExploreManager> ().expUICtr.SetUpTintHUD ("背包中物品已满",null);
+			} else {
 
-			AddRewardItemToPool (rewardTrans);
+				Player.mainPlayer.AddItem (award);
+
+				GetComponent<ExploreManager> ().ObtainAward (award);
+			}
+
+			AddAwardItemToPool (awardTrans);
 
 		}
 
-		private void AddRewardItemToPool(Transform rewardItem){
-			rewardItem.gameObject.SetActive (false);
-			rewardItemPool.AddInstanceToPool (rewardItem.gameObject);
+		private void AddAwardItemToPool(Transform awardItem){
+			awardItem.gameObject.SetActive (false);
+			awardItemPool.AddInstanceToPool (awardItem.gameObject);
 		}
 
 		public void AddMapItemInPool(Transform mapItem){
@@ -1726,7 +1733,7 @@ namespace WordJourney
 
 			Destroy (effectAnimPool.gameObject);
 
-			Destroy (rewardItemPool.gameObject);
+			Destroy (awardItemPool.gameObject);
 
 //			Destroy (otherAnimPool.gameObject);
 
@@ -1747,7 +1754,7 @@ namespace WordJourney
 
 			AddAllEffectAnimToPool ();
 
-			AddAllRewardItemToPool ();
+			AddAllAwardItemToPool ();
 
 			consumablesValidPosTintPool.AddChildInstancesToPool (consumablesValidPosTintContainer);
 		}
@@ -1758,9 +1765,9 @@ namespace WordJourney
 			}
 		}
 
-		public void AddAllRewardItemToPool(){
-			while (rewardsContainer.childCount > 0) {
-				AddRewardItemToPool (rewardsContainer.GetChild (0));
+		public void AddAllAwardItemToPool(){
+			while (awardsContainer.childCount > 0) {
+				AddAwardItemToPool (awardsContainer.GetChild (0));
 			}
 		}
 			
@@ -1808,6 +1815,8 @@ namespace WordJourney
 			StopAllCoroutines ();
 
 			AllMapInstancesToPool ();
+
+			destinationAnimation.gameObject.SetActive (false);
 
 		}
 

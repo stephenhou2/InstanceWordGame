@@ -127,15 +127,6 @@ namespace WordJourney
 
 		protected override void AgentExcuteHitEffect ()
 		{
-			// 播放技能对应的怪物技能特效动画
-			if (currentSkill.selfEffectAnimName != string.Empty) {
-				SetEffectAnim (currentSkill.selfEffectAnimName);
-			}
-
-			// 播放技能对应的玩家技能特效动画
-			if (currentSkill.enemyEffectAnimName != string.Empty) {
-				bpCtr.SetEffectAnim (currentSkill.enemyEffectAnimName);
-			}
 
 			SoundManager.Instance.PlayAudioClip ("Skill/" + currentSkill.sfxName);
 
@@ -258,6 +249,8 @@ namespace WordJourney
 			if (agent.isDead) {
 				return;
 			}
+
+			Debug.Log ("monster die");
 
 			agent.isDead = true;
 

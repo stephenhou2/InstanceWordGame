@@ -478,7 +478,7 @@ namespace WordJourney
 			bagItem.GetComponent<ItemInBagCell> ().SetUpItemInBagCell (item);
 
 			if (atIndex >= 0) {
-				bagItem.SetSiblingIndex (atIndex);
+				bagItem.SetSiblingIndex (atIndex - minItemIndexOfCurrentBag);
 			}
 
 		}

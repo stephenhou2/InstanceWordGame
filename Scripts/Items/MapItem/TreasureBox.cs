@@ -23,7 +23,7 @@ namespace WordJourney
 		public TreasureBoxType tbType;
 
 		// 奖励的物品
-		public Item rewardItem;
+		public Item awardItem;
 
 		public Animator mapItemAnimator;
 
