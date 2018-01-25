@@ -50,6 +50,8 @@ namespace WordJourney
 				return;
 			}
 
+			enemy.PlayShakeAnim ();
+
 			//原始魔法伤害值
 			self.propertyCalculator.magicalHurtToEnemy += skillSourceValue;
 
@@ -95,8 +97,6 @@ namespace WordJourney
 
 			self.UpdateStatusPlane ();
 			enemy.UpdateStatusPlane ();
-
-			enemy.PlayShakeAnim ();
 
 		}
 

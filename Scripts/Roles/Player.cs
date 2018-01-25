@@ -173,7 +173,7 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="equipment">Equipment.</param>
 		/// <param name="equipmentIndexInPanel">Equipment index in panel.</param>
-		public PropertyChange UnloadEquipment(Equipment equipment,int equipmentIndexInPanel){
+		public PropertyChange UnloadEquipment(Equipment equipment,int equipmentIndexInPanel,int indexInBag = -1){
 
 			SoundManager.Instance.PlayAudioClip ("UI/sfx_UI_Equipment");
 
@@ -185,28 +185,48 @@ namespace WordJourney
 				return new PropertyChange();
 			}
 
-//			allItemsInBag.Remove (equipment);
-			allItemsInBag.Add (equipment);
+			if (indexInBag == -1) {
+				allItemsInBag.Add (equipment);
+			} else {
+				allItemsInBag.Insert (indexInBag, equipment);
+			}
 
 			for (int i = 0; i < equipment.attachedSkills.Count; i++) {
 				TriggeredSkill attachedSkill = equipment.attachedSkills [i];
 				attachedTriggeredSkills.Remove (attachedSkill);
-				equipment.attachedSkills.RemoveAt (i);
-				Destroy (attachedSkill.gameObject);
 			}
-
-
-
+				
 			Equipment emptyEquipment = new Equipment ();
 
 			allEquipedEquipments [equipmentIndexInPanel] = emptyEquipment;
 
-//			equipmentDragControl.item = emptyEquipment;
+			PropertyChange pc = ResetBattleAgentProperties (false);
 
-			return ResetBattleAgentProperties (false);
+			Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
+			if (exploreManager != null) {
+				exploreManager.GetComponent<ExploreManager>().UpdateTriggeredCallBacks ();
+			}
+
+
+			return pc;
 
 		}
 
+
+		public void DestroyEquipmentInBagAttachedSkills(){
+
+			for (int j = 0; j < allEquipmentsInBag.Count; j++) {
+				Equipment equipment = allEquipmentsInBag [j];
+				if (!equipment.equiped && equipment.attachedSkills.Count > 0) {
+					for (int i = 0; i < equipment.attachedSkills.Count; i++) {
+						TriggeredSkill attachedSkill = equipment.attachedSkills [i];
+						equipment.attachedSkills.RemoveAt (i);
+						Destroy (attachedSkill.gameObject);
+					}
+				}
+			}
+
+		}
 
 
 		/// <summary>
@@ -226,18 +246,56 @@ namespace WordJourney
 
 //			equipmentDragControl.item = equipment;
 
-			for (int i = 0; i < equipment.attachedSkillInfos.Length; i++) {
-				TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i],triggeredSkillsContainer);
-				equipment.attachedSkills.Add (attachedSkill);
-				attachedTriggeredSkills.Add (attachedSkill);
-				attachedSkill.transform.SetParent (triggeredSkillsContainer);
+			if (equipment.attachedSkills.Count == 0) {
+				for (int i = 0; i < equipment.attachedSkillInfos.Length; i++) {
+					TriggeredSkill attachedSkill = SkillGenerator.Instance.GenerateTriggeredSkill (equipment, equipment.attachedSkillInfos [i], triggeredSkillsContainer);
+					equipment.attachedSkills.Add (attachedSkill);
+					attachedTriggeredSkills.Add (attachedSkill);
+					attachedSkill.transform.SetParent (triggeredSkillsContainer);
+				}
+			} else {
+				for (int i = 0; i < equipment.attachedSkills.Count; i++) {
+					TriggeredSkill attachedSkill = equipment.attachedSkills [i];
+					attachedTriggeredSkills.Add (attachedSkill);
+				}
 			}
 
 			allItemsInBag.Remove (equipment);
-//			allEquipmentsInBag.Remove (equipment);
 
-			return ResetBattleAgentProperties (false);
+			PropertyChange pc = ResetBattleAgentProperties (false);
 
+			Transform exploreManager = TransformManager.FindTransform ("ExploreManager");
+			if (exploreManager != null) {
+				exploreManager.GetComponent<ExploreManager>().UpdateTriggeredCallBacks ();
+			}
+
+			return pc;
+
+		}
+
+		public Equipment GetEquipedEquipment(int itemId){
+			Equipment equipedEquipment = null;
+			for (int i = 0; i < allEquipedEquipments.Length; i++) {
+				if (allEquipedEquipments [i].itemId == itemId) {
+					equipedEquipment = allEquipedEquipments [i];
+					return  equipedEquipment;
+				}
+			}
+			return equipedEquipment;
+		}
+
+		public int GetItemIndexInBag(Item item){
+
+			int index = -1;
+
+			for (int i = 0; i < allItemsInBag.Count; i++) {
+				if (allItemsInBag [i] == item) {
+					index = i;
+					return index;
+				}
+			}
+
+			return index;
 		}
 
 
@@ -398,6 +456,7 @@ namespace WordJourney
 
 			switch(item.itemType){
 			case ItemType.Equipment:
+				
 				Equipment equipment = allEquipmentsInBag.Find(delegate(Equipment obj) {
 					return obj == item;
 				});
@@ -411,6 +470,7 @@ namespace WordJourney
 				}
 
 				allEquipmentsInBag.Remove (equipment);
+
 				allItemsInBag.Remove (equipment);
 //				TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().RemoveItem (item);
 				break;
@@ -466,6 +526,10 @@ namespace WordJourney
 
 			// 物品英文名称转换为char数组
 			char[] charArray = item.itemNameInEnglish.ToCharArray ();
+
+			if (charArray.Length == 0) {
+				charArray = CommonData.wholeAlphabet;
+			}
 
 			// 每分解一个物品可以获得的字母碎片数量(解锁卷轴返回对应单词的所有字母，其余物品返回单词中的一个字母）
 			int charactersReturnCount = item.itemType == ItemType.UnlockScroll ? charArray.Length : 1;

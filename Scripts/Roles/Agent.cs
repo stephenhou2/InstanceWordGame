@@ -28,11 +28,10 @@ namespace WordJourney
 	public abstract class Agent : MonoBehaviour {
 
 		public string agentName;
-//		public string agentIconName;
-
-//		public bool isActive;
 
 		public int agentLevel;
+
+		[HideInInspector]public bool isDead;
 
 		protected BattleAgentController mBattleAgentController;
 		protected BattleAgentController battleAgentCtr{
@@ -484,7 +483,7 @@ namespace WordJourney
 		// 仅根据物品重新计人物的属性，其余属性重置为初始状态
 		public virtual PropertyChange ResetBattleAgentProperties (bool toOriginalState = false)
 		{
-			
+
 			// 记录原来人物只佩戴装备时的属性信息
 			int mMaxHealthWithEq = maxHealthWithEquipment;
 			int mHitWithEq = hitWithEquipment;
@@ -523,6 +522,7 @@ namespace WordJourney
 			magicalHurtScaler = originalMagicalHurtScaler;
 			critHurtScaler = originalCritHurtScaler;
 
+
 			// 根据装备计算人物的总的基础属性和总的各项属性加成比例
 			foreach (Equipment equipment in allEquipedEquipments) {
 				if (equipment.itemId >= 0) {
@@ -557,8 +557,10 @@ namespace WordJourney
 			dodge = (int)((dodgeWithEquipment + dodgeChangeFromOther) * (1 + dodgeChangeScalerFromOther));
 			crit = (int)((critWithEquipment + critChangeFromOther) * (1 + critChangeScalerFromOther));
 
+
 			if (toOriginalState) {
 				health = maxHealth;
+				isDead = false;
 			}
 
 			// 计算人物更换装备造成的属性变化
@@ -582,8 +584,6 @@ namespace WordJourney
 			int finalMagicResistChangeFromOther = magicResist  - magicResistWithEquipment;
 			int finalDodgeChangeFromOther = dodge  - dodgeWithEquipment;
 			int finalCritChangeFromOther = crit  - critWithEquipment;
-
-
 
 			return new PropertyChange (maxHealthChangeFromEq, hitChangeFromEq, attackChangeFromEq,
 				manaChangeFromEq, attackSpeedChangeFromEq, armorChangeFromEq, magicResistChangeFromEq,

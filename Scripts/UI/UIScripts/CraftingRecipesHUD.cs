@@ -137,11 +137,21 @@ namespace WordJourney
 
 				recipesItemName.text = item.itemName;
 
+				int itemInBagCount = 0;
+
 				List<Item> sameItemsInBag = Player.mainPlayer.allItemsInBag.FindAll (delegate(Item obj) {
 					return obj.itemId == item.itemId;
 				});
 
-				int itemInBagCount = 0;
+				for(int j = 0; j < Player.mainPlayer.allEquipedEquipments.Length; j++){
+
+					if (Player.mainPlayer.allEquipedEquipments [j].itemId == item.itemId) {
+						itemInBagCount++;
+					}
+
+				}
+
+
 
 				for (int j = 0; j < sameItemsInBag.Count; j++) {
 

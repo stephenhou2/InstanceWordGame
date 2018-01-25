@@ -121,8 +121,11 @@ namespace WordJourney
 				}
 
 			} else {
+
 				AgentPropertyChange (propertyType, change, fromTriggeredSkill);
+		
 				target.agent.ResetPropertiesWithPropertyCalculator (this);
+
 			}
 	
 			target.UpdateStatusPlane ();
@@ -306,13 +309,6 @@ namespace WordJourney
 					if (fromTriggeredSkill) {
 						maxHealthChangeFromTriggeredSkill += (int)change;
 					}
-				}
-				break;
-			case PropertyType.Health:
-				if (change > -1 && change < 1) {
-					health = (int)(health * (1 + change));
-				} else {
-					health += (int)(change);
 				}
 				break;
 			case PropertyType.Hit:

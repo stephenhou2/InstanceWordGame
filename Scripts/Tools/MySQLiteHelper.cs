@@ -18,6 +18,8 @@ namespace WordJourney{
 
 		private IDataReader m_reader;
 
+		private IDbTransaction m_transaction;
+
 		// 已建立连接的数据库
 		private Dictionary<string,IDbConnection> connectionDic = new Dictionary<string, IDbConnection>();
 
@@ -270,6 +272,7 @@ namespace WordJourney{
 				CloseConnection (kv.Key,false);
 
 			}
+
 
 			connectionDic.Clear ();
 		}
@@ -695,22 +698,26 @@ namespace WordJourney{
 		/// <summary>
 		/// 开启查询事务
 		/// </summary>
-		public IDataReader BeginTransaction(){
+		public void BeginTransaction(){
 
-			string queryString = "BEGIN TRANSACTION";
+//			string queryString = "BEGIN TRANSACTION";
+//
+//			return ExecuteQuery (queryString);
 
-			return ExecuteQuery (queryString);
+			m_transaction = m_connection.BeginTransaction ();
 
 		}
 
 		/// <summary>
 		/// 关闭查询事务
 		/// </summary>
-		public IDataReader EndTransaction(){
+		public void EndTransaction(){
 			
-			string queryString = "END TRANSACTION";
+//			string queryString = "END TRANSACTION";
+//
+//			return ExecuteQuery (queryString);
 
-			return ExecuteQuery (queryString);
+			m_transaction.Commit ();
 
 		}
 

@@ -34,10 +34,10 @@ namespace WordJourney
 		private NPC currentEnteredNpc;
 //		private Goods currentSelectGoods;
 
-		private InstancePool choiceButtonPool;
+//		private InstancePool choiceButtonPool;
 		public Transform choiceButtonModel;
 
-		private InstancePool goodsPool;
+//		private InstancePool goodsPool;
 		public Transform goodsModel;
 
 		public TintHUD tintHUD;
@@ -65,8 +65,8 @@ namespace WordJourney
 
 		public void InitNPCHUD(int currentLevelIndex){
 
-			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
-			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
+//			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
+//			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
 
 			this.currentLevelIndex = currentLevelIndex;
 
@@ -129,7 +129,9 @@ namespace WordJourney
 		/// </summary>
 		private void AddChatFunction(){
 
-			Button dialogChoiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
+			Button dialogChoiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button>();
+			dialogChoiceButton.transform.SetParent (choiceContainer);
+//			Button dialogChoiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 			Text dialogFunctionText = dialogChoiceButton.GetComponentInChildren<Text> ();
 
 			dialogFunctionText.text = "交谈";
@@ -170,7 +172,7 @@ namespace WordJourney
 
 			dialogText.text = dialog.dialog;
 
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			bool showNextButton = true;
 
@@ -185,7 +187,11 @@ namespace WordJourney
 
 				showNextButton = false;
 
-				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
+				Button choiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button> ();
+				choiceButton.transform.SetParent (choiceContainer);
+
+
+//				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 
 				choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
 
@@ -244,7 +250,7 @@ namespace WordJourney
 
 			Dialog dialog = currentDialogGroup.dialogs [dialogId];
 
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 
 			SetUpDialogPlane (dialog);
 
@@ -254,7 +260,7 @@ namespace WordJourney
 			
 			dialogText.text = currentEnteredNpc.greetingDialog;
 			nextDialogButton.gameObject.SetActive (false);
-			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
+//			choiceButtonPool.AddChildInstancesToPool (choiceContainer);
 			AddFunctionChoices ();
 		}
 
@@ -264,8 +270,9 @@ namespace WordJourney
 		/// 添加交易功能（交易功能目前是固有功能，暂时不调用）
 		/// </summary>
 		private void AddTradeFunction(){
-			
-			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
+			Button choiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button> ();
+			choiceButton.transform.SetParent (choiceContainer);
+//			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 			Text attachedFunctionText = choiceButton.GetComponentInChildren<Text> ();
 			attachedFunctionText.text = "交易";
 			choiceButton.onClick.RemoveAllListeners ();
@@ -286,7 +293,7 @@ namespace WordJourney
 
 			tradePlane.gameObject.SetActive (true);
 
-			goodsPool.AddChildInstancesToPool (goodsContainer);
+//			goodsPool.AddChildInstancesToPool (goodsContainer);
 
 			List<Item> itemsAsGoods = trader.itemsAsGoodsOfCurrentLevel;
 
@@ -294,8 +301,9 @@ namespace WordJourney
 
 				Item itemAsGoods = itemsAsGoods [i];
 
-
-				Transform goodsCell = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
+				Transform goodsCell = Instantiate (goodsModel.gameObject).transform;
+				goodsCell.SetParent (goodsContainer);
+//				Transform goodsCell = goodsPool.GetInstance<Transform> (goodsModel.gameObject, goodsContainer);
 
 				goodsCell.GetComponent<GoodsCell> ().SetUpGoodsCell (itemAsGoods);
 
@@ -420,8 +428,9 @@ namespace WordJourney
 		/// 添加退出功能（退出功能目前是固有功能，暂时不调用）
 		/// </summary>
 		private void AddQuitFunction(){
-
-			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
+			Button choiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button> ();
+			choiceButton.transform.SetParent (choiceContainer);
+//			Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 			Text attachedFunctionText = choiceButton.GetComponentInChildren<Text> ();
 			attachedFunctionText.text = "离开";
 			choiceButton.onClick.RemoveAllListeners ();
@@ -447,9 +456,9 @@ namespace WordJourney
 
 		}
 
-		public void ClearNpcPlaneCache(){
-			Destroy (goodsPool.gameObject);
-		}
+//		public void ClearNpcPlaneCache(){
+//			Destroy (goodsPool.gameObject);
+//		}
 			
 		
 	}

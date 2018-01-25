@@ -52,6 +52,8 @@ namespace WordJourney
 				return;
 			}
 
+			enemy.PlayShakeAnim ();
+
 			//原始物理伤害值
 			int oriPhysicalHurt = self.propertyCalculator.attack;
 			int crit = self.propertyCalculator.crit;
@@ -112,8 +114,6 @@ namespace WordJourney
 
 			self.UpdateStatusPlane ();
 			enemy.UpdateStatusPlane ();
-
-			enemy.PlayShakeAnim ();
 
 		}
 

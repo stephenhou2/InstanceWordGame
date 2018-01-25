@@ -130,20 +130,28 @@ namespace WordJourney
 			// 如果是从背包中拖拽出来的物品
 			if (draggedObject.GetComponent<ItemInBagDragControl>() != null) {
 
-//				EquipedItemDragControl equipmentDragConrol = GetComponent<EquipedItemDragControl> ();
-
 				int equipmentIndexInPanel = GetEquipmentIndexInPanel (equipmentPrepareToUnload);
 
 				Agent.PropertyChange propertyChangeFromUnload = new Agent.PropertyChange();
 
-				if (equipmentPrepareToUnload.itemId >= 0) {
-					// 该装备移入背包中
-					propertyChangeFromUnload = Player.mainPlayer.UnloadEquipment (equipmentPrepareToUnload, equipmentIndexInPanel);
-//					Player.mainPlayer.allEquipmentsInBag.Add (equipmentPrepareToUnload);
-//					bagView.SetUpEquipedEquipmentsPlane();
-					bagView.AddBagItem (equipmentPrepareToUnload);
+				int oriItemIndexInBag = Player.mainPlayer.GetItemIndexInBag (equipmentPrepareToLoad);
+
+				Debug.Log (oriItemIndexInBag);
+
+				if (oriItemIndexInBag == -1) {
+					Debug.LogError("背包中没有找到该物品");
 				}
 
+				if (equipmentPrepareToUnload.itemId >= 0) {
+					// 该装备移入背包中
+					propertyChangeFromUnload = Player.mainPlayer.UnloadEquipment (equipmentPrepareToUnload, equipmentIndexInPanel,oriItemIndexInBag);
+
+					Debug.Log (equipmentPrepareToUnload.itemName + "UNLOAD");
+
+					bagView.AddBagItem (equipmentPrepareToUnload, oriItemIndexInBag,true);
+
+				}
+					
 				// 背包中的装备移入已装备列表
 				Agent.PropertyChange propertyChangeFromLoad = Player.mainPlayer.EquipEquipment(equipmentPrepareToLoad,equipmentIndexInPanel);
 
@@ -152,18 +160,13 @@ namespace WordJourney
 				bagView.SetUpEquipedEquipmentsPlane ();
 
 				bagView.SetUpPlayerStatusPlane (propertyChange);
-//				Player.mainPlayer.allEquipedEquipments[equipmentIndexInPanel] = equipmentPrepareToLoad;
-
-				// 背包中的装备移出该件装备
-//				Player.mainPlayer.allEquipmentsInBag.Remove (equipmentPrepareToLoad);
 
 				// 对应格子中的装备数据更换
 				GetComponent<EquipedItemDragControl>().item = equipmentPrepareToLoad;
-//				GetDraggedObject (eventData).GetComponent<ItemInBagDragControl> ().item = equipmentPrepareToUnload;
 
 				Player.mainPlayer.ResetBattleAgentProperties (false);
 
-				bagView.RemoveItemInBag (equipmentPrepareToLoad);
+				bagView.RemoveBagItemAt (oriItemIndexInBag + (equipmentPrepareToUnload.itemId >= 0 ? 1 : 0));
 
 				SetDropResult (eventData, true);
 

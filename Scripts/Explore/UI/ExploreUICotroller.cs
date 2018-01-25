@@ -409,7 +409,7 @@ namespace WordJourney
 
 			Destroy (this.gameObject);
 
-			npcUIController.ClearNpcPlaneCache ();
+//			npcUIController.ClearNpcPlaneCache ();
 
 			MyResourceManager.Instance.UnloadAssetBundle (CommonData.exploreSceneBundleName, true);
 		}

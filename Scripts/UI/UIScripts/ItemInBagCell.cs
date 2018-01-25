@@ -16,7 +16,7 @@ namespace WordJourney
 		public Text itemCount;
 
 
-		public void SetUpIteminBagCell(Item item){
+		public void SetUpItemInBagCell(Item item){
 
 			itemIcon.enabled = false;
 			newItemTintIcon.enabled = false;

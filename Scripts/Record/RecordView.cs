@@ -25,7 +25,7 @@ namespace WordJourney
 
 		public Image completionImage;
 
-		public Text completionPercentageText;
+		public Text correctPercentageText;
 
 		public Text learnedWordsCountText;
 
@@ -77,13 +77,13 @@ namespace WordJourney
 			int wrongWordsCount = learnInfo.ungraspedWordCount;
 
 			if (totalWordsCount != 0) {
-				percentage = learnedWordsCount / totalWordsCount;
+				percentage = (float)(learnedWordsCount - wrongWordsCount) / learnedWordsCount;
 			}
 			 
 
 			completionImage.fillAmount = percentage;
 
-			completionPercentageText.text = ((int)(percentage * 100)).ToString() + "%";
+			correctPercentageText.text = ((int)(percentage * 100)).ToString() + "%";
 
 			learnedWordsCountText.text = learnedWordsCount.ToString ();
 

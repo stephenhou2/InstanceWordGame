@@ -28,7 +28,7 @@ namespace WordJourney
 
 		public Transform toolChoicesPlane;
 		public Transform toolChoicesContaienr;
-		private InstancePool toolChoiceButtonPool;
+//		private InstancePool toolChoiceButtonPool;
 		public Transform toolChoiceButtonModel;
 
 
@@ -80,7 +80,7 @@ namespace WordJourney
 //			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
 
 			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
-			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
+//			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
 
 //			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
 
@@ -287,7 +287,6 @@ namespace WordJourney
 			}
 
 			if (consumblesUsedInExploreScene) {
-				QuitConsumablesInBagPlane ();
 				exploreManager.clickForConsumablesPos = true;
 				exploreManager.ShowConsumablesValidPointTintAround (consumables);
 
@@ -296,6 +295,7 @@ namespace WordJourney
 				SetUpConsumablesInBagPlane ();
 			}
 
+			QuitConsumablesInBagPlane ();
 
 		}
 
@@ -342,8 +342,9 @@ namespace WordJourney
 		/// <param name="mapItem">Map item.</param>
 		public void SetUpToolChoicePlane(MapItem mapItem, Consumables tool){
 
-
-			Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
+			Transform toolChoiceButton = Instantiate (toolChoiceButtonModel.gameObject).transform;
+			toolChoiceButton.SetParent (toolChoicesContaienr);
+//			Transform toolChoiceButton = toolChoiceButtonPool.GetInstance<Transform> (toolChoiceButtonModel.gameObject, toolChoicesContaienr);
 
 			Image toolIcon = toolChoiceButton.Find ("ToolIcon").GetComponent<Image> ();
 
@@ -419,7 +420,11 @@ namespace WordJourney
 		/// </summary>
 		public void QuitToolChoicePlane(){
 
-			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
+//			toolChoiceButtonPool.AddChildInstancesToPool (toolChoicesContaienr);
+
+			for (int i = 0; i < toolChoicesContaienr.childCount; i++) {
+				Destroy(toolChoicesContaienr.GetChild(i));
+			}
 
 			toolChoicesPlane.gameObject.SetActive (false);
 

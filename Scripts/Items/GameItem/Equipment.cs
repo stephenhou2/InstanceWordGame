@@ -74,6 +74,7 @@ namespace WordJourney
 
 			// 初始化装备属性
 			this.attackGain = equipment.attackGain;
+			this.hitGain = equipment.hitGain;
 			this.critGain = equipment.critGain;
 			this.armorGain = equipment.armorGain;
 			this.magicResistGain = equipment.magicResistGain;
@@ -104,6 +105,7 @@ namespace WordJourney
 
 			// 初始化装备属性
 			this.attackGain = itemModel.attackGain;
+			this.hitGain = itemModel.hitGain;
 			this.critGain = itemModel.critGain;
 			this.armorGain = itemModel.armorGain;
 			this.magicResistGain = itemModel.magicResistGain;

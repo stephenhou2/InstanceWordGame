@@ -11,11 +11,11 @@ namespace WordJourney
 
 		public Item currentSelectItem;
 
-		private ExploreManager mExploreManager;
-		private ExploreManager exploreManager{
+		private Transform mExploreManager;
+		private Transform exploreManager{
 			get{
 				if (mExploreManager == null) {
-					mExploreManager = TransformManager.FindTransform ("ExploreManager").GetComponent<ExploreManager>();
+					mExploreManager = TransformManager.FindTransform ("ExploreManager");
 				}
 				return mExploreManager;
 			}
@@ -26,23 +26,25 @@ namespace WordJourney
 
 		void Awake(){
 
-//			Player.mainPlayer.AddItem (Item.NewItemWith(8,1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
-//			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
-//			Player.mainPlayer.AddItem(Item.NewItemWith(111,1));
+			Player.mainPlayer.AddItem (Item.NewItemWith(8,1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
+			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
+			Player.mainPlayer.AddItem(Item.NewItemWith(111,1));
 
 
-//			Player.mainPlayer.AddItem (Item.NewItemWith (448, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (448, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
+			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (17, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (4, 1));
 
-
-			#warning 测试物品用
-//			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
+			Player.mainPlayer.AddItem (Item.NewItemWith (50, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (39, 1));
+//			#warning 测试物品用
+////			if (Player.mainPlayer.allEquipmentsInBag.Count == 0) {
 //				for (int i = 0; i < 10; i++) {
 //
 ////					Debug.Log (GameManager.Instance.gameDataCenter.allItemModels.Count);
@@ -57,16 +59,16 @@ namespace WordJourney
 //				}
 //			}
 
-				for (int i = 100; i < 120; i++) {
-					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
-						return obj.itemId == i;
-					});
-
-					Consumables c = new Consumables (im,1);
-
-					Player.mainPlayer.AddItem (c);
-
-				}
+//				for (int i = 100; i < 115; i++) {
+//					ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//						return obj.itemId == i;
+//					});
+//
+//					Consumables c = new Consumables (im,1);
+//
+//					Player.mainPlayer.AddItem (c);
+//
+//				}
 	
 //			#warning 测试解锁卷轴
 //			if (Player.mainPlayer.allUnlockScrollsInBag.Count == 0) {
@@ -152,10 +154,11 @@ namespace WordJourney
 				Equipment equipment = Player.mainPlayer.allEquipedEquipments [i];
 
 				if (equipment.itemId < 0 && equipmentSlotUnlockedArray[i]) {
+					bagView.RemoveBagItem(currentSelectItem);
 					Agent.PropertyChange propertyChange = Player.mainPlayer.EquipEquipment (currentSelectItem as Equipment, i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-					bagView.RemoveItemInBag(currentSelectItem);
+
 					bagView.QuitItemDetailHUD ();
 					bagView.SetUpEquipedEquipmentsPlane ();
 					return;
@@ -176,7 +179,7 @@ namespace WordJourney
 					Agent.PropertyChange propertyChange = Player.mainPlayer.UnloadEquipment (currentSelectItem as Equipment,i);
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
-					bagView.SetUpBagItemsPlane (currentBagIndex);
+					bagView.AddBagItem (currentSelectItem);
 					bagView.QuitItemDetailHUD ();
 					return;
 				}
@@ -243,11 +246,11 @@ namespace WordJourney
 
 			if (consumblesUsedInExploreScene) {
 				OnQuitBagPlaneButtonClick ();
-				exploreManager.clickForConsumablesPos = true;
-				exploreManager.ShowConsumablesValidPointTintAround (consumables);
+				exploreManager.GetComponent<ExploreManager>().clickForConsumablesPos = true;
+				exploreManager.GetComponent<ExploreManager>().ShowConsumablesValidPointTintAround (consumables);
 			}
 
-			bagView.SetUpBagItemsPlane (currentBagIndex);
+			bagView.SetUpCurrentBagItemsPlane ();
 
 		}
 
@@ -346,14 +349,18 @@ namespace WordJourney
 					Item item = Player.mainPlayer.allItemsInBag.Find (delegate (Item obj) {
 						return obj.itemId == itemInfo.itemId;
 					});
+//					bagView.RemoveBagItem (item);
+
+					if (item == null) {
+						item = Player.mainPlayer.GetEquipedEquipment (itemInfo.itemId);
+					}
+
 					Player.mainPlayer.RemoveItem (item,1);
 				}
 			}
 
 			Item craftedItem = Item.NewItemWith (craftItemModel,1);
-			Player.mainPlayer.AddItem (craftedItem);
-
-			Player.mainPlayer.RemoveItem (currentSelectItem,1);
+//			bagView.AddBagItem (craftedItem);
 
 			string tint = string.Format ("获得 <color=orange>{0}</color> x1", craftedItem.itemName);
 
@@ -361,16 +368,24 @@ namespace WordJourney
 				return obj.name == craftedItem.spriteName;
 			});
 
+//			int oriIndexOfCraftingRecipe = Player.mainPlayer.GetItemIndexInBag (currentSelectItem);
+			Player.mainPlayer.RemoveItem (currentSelectItem,1);
+			Player.mainPlayer.AddItem (craftedItem);
+
 			bagView.SetUpTintHUD (tint,itemSprite);
-			bagView.RemoveItemInBag (currentSelectItem);
-			bagView.AddBagItem (craftedItem);
+//			bagView.RemoveBagItemAt (oriIndexOfCraftingRecipe);
+
+			bagView.SetUpCurrentBagItemsPlane ();
+			bagView.SetUpEquipedEquipmentsPlane ();
 
 		}
+
 
 	
 
 		public void RemoveItem(Item item){
-			bagView.RemoveItemInBag (item);
+//			bagView.SetUpBagItemsPlane (currentBagIndex);
+			bagView.RemoveBagItem (item);
 		}
 
 

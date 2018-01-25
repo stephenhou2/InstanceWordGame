@@ -48,6 +48,8 @@ namespace WordJourney
 				return;
 			}
 
+			enemy.PlayShakeAnim ();
+
 			//原始物理伤害值
 			self.propertyCalculator.physicalHurtToEnemy += skillSourceValue;
 
@@ -93,8 +95,6 @@ namespace WordJourney
 
 			self.UpdateStatusPlane ();
 			enemy.UpdateStatusPlane ();
-
-			enemy.PlayShakeAnim ();
 
 		}
 

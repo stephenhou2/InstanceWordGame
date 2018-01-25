@@ -764,17 +764,17 @@ namespace WordJourney
 		/// <param name="position">Position.</param>
 		private void SetUpPlayer(){
 
-
 			int randomIndex = Random.Range (0, playerOriginalPosList.Count);
 //
 			Vector3 position = playerOriginalPosList [randomIndex];
-//			Vector3 position = new Vector3(11,4,0);
 
 			Transform player = Player.mainPlayer.GetComponentInChildren<BattlePlayerController> ().transform;
 
 			player.position = position;
 
 			bpCtr = player.GetComponent<BattlePlayerController> ();
+
+			bpCtr.SetUpPropertyCalculator ();
 
 			bpCtr.ActiveBattlePlayer (true, true, true);
 
@@ -1194,6 +1194,15 @@ namespace WordJourney
 
 			destinationAnimation.position = targetPos;
 
+			StartCoroutine ("LatelyPlayDestinationTintAnim", arrivable);
+		}
+
+		private IEnumerator LatelyPlayDestinationTintAnim(bool arrivable){
+
+			yield return new WaitUntil (() => Time.timeScale == 1);
+
+			yield return null;
+
 			Animator destinationAnimator = destinationAnimation.GetComponent<Animator> ();
 
 			destinationAnimator.ResetTrigger ("PlayArrivable");
@@ -1204,7 +1213,6 @@ namespace WordJourney
 			} else {
 				destinationAnimator.SetTrigger ("PlayUnarrivable");
 			}
-
 
 		}
 			
@@ -1780,6 +1788,7 @@ namespace WordJourney
 
 		public void AddMonsterToPool(BattleMonsterController monster){
 			monster.boxCollider.enabled = false;
+			monster.agent.ResetBattleAgentProperties (true);
 			monster.gameObject.SetActive (false);
 			monster.AddToPool (monsterPool);
 		}

@@ -11,10 +11,12 @@ namespace WordJourney
 	public delegate void SkillCallBack(BattleAgentController selfBaCtr,BattleAgentController enemyBaCtr);
 
 	public class TriggeredSkillExcutor{
+		public TriggeredSkill triggeredSkill;
 		public SkillEffectTarget triggerSource;
 		public SkillCallBack triggeredCallback;
 
-		public TriggeredSkillExcutor(SkillEffectTarget source,SkillCallBack callBack){
+		public TriggeredSkillExcutor(TriggeredSkill ts,SkillEffectTarget source,SkillCallBack callBack){
+			this.triggeredSkill = ts;
 			this.triggerSource = source;
 			this.triggeredCallback = callBack;
 		}
@@ -96,6 +98,12 @@ namespace WordJourney
 
 		public List<string> currentTriggeredEffectAnim = new List<string>();
 
+		public MyTowards towards;
+
+		public Transform effectAnimContainer;
+
+
+
 
 		protected virtual void Awake(){
 
@@ -113,7 +121,6 @@ namespace WordJourney
 			isIdle = true;
 
 			propertyCalculator = new AgentPropertyCalculator ();
-			SetUpPropertyCalculator ();
 
 		}
 
@@ -229,7 +236,9 @@ namespace WordJourney
 
 			Vector3 originPos = modelActive.transform.position;
 
-			Vector3 targetPos = new Vector3 (modelActive.transform.position.x - deltaX * modelActive.transform.localScale.x, transform.position.y);
+			int directionSeed = armatureCom.armature.flipX ? -1 : 1;
+
+			Vector3 targetPos = new Vector3 (modelActive.transform.position.x - deltaX * directionSeed, transform.position.y);
 
 			while (timer < backwardTime) {
 
@@ -334,24 +343,38 @@ namespace WordJourney
 
 			if(triggerName != string.Empty){
 
-				Transform skillEffect = null;
-				Animator skillEffectAnim = null;
-
-				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetEffectAnim (transform);
-
-				skillEffectAnim = skillEffect.GetComponent<Animator> ();
-
-				skillEffectAnim.SetTrigger (triggerName);
-
 				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
-				IEnumerator skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
+				IEnumerator playEffectAnimCoroutine = LatelyPlayEffectAnim (triggerName, cb);
 
-				allSkillEffectReuseCoroutines.Add (skillEffectReuseCoroutine);
-
-				StartCoroutine (skillEffectReuseCoroutine);
+				StartCoroutine (playEffectAnimCoroutine);
 
 			}
+		}
+
+		private IEnumerator LatelyPlayEffectAnim(string triggerName,CallBack cb){
+
+			yield return new WaitUntil (() => Time.timeScale == 1);
+
+			yield return null;
+
+			Transform skillEffect = null;
+			Animator skillEffectAnim = null;
+
+			skillEffect = exploreManager.GetComponent<MapGenerator> ().GetEffectAnim (transform);
+
+			skillEffectAnim = skillEffect.GetComponent<Animator> ();
+
+			skillEffectAnim.transform.SetParent (effectAnimContainer);
+
+			skillEffectAnim.SetTrigger (triggerName);
+
+			IEnumerator skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
+
+			allSkillEffectReuseCoroutines.Add (skillEffectReuseCoroutine);
+
+			StartCoroutine (skillEffectReuseCoroutine);
+
 		}
 
 
@@ -454,13 +477,30 @@ namespace WordJourney
 				if (skillEffectReuseCoroutine != null) {
 					StopCoroutine (skillEffectReuseCoroutine);
 				}
+
 			}
+
+			AllEffectAnimsInfoPool ();
 
 			allSkillEffectReuseCoroutines.Clear ();
 
 			StopCoroutine ("PlayAgentShake");
 
 //			modelActive.transform.localPosition = Vector3.zero;
+		}
+
+		private void AllEffectAnimsInfoPool(){
+
+			for (int i = 0; i < effectAnimContainer.childCount; i++) {
+
+				Transform effectAnim = effectAnimContainer.GetChild (i);
+
+				exploreManager.GetComponent<MapGenerator> ().AddEffectAnimToPool (effectAnim);
+
+				i--;
+
+			}
+
 		}
 
 		public abstract void UpdateStatusPlane ();
@@ -534,11 +574,7 @@ namespace WordJourney
 
 		}
 
-
-		/// <summary>
-		/// 清除角色身上所有的战斗回调和触发型技能效果
-		/// </summary>
-		public void ClearAllEffectStatesAndSkillCallBacks(){
+		public void ClearAllSkillCallBacks(){
 
 			beforeFightTriggerExcutors.Clear ();
 			attackTriggerExcutors.Clear ();
@@ -546,6 +582,16 @@ namespace WordJourney
 			beAttackedTriggerExcutors.Clear ();
 			beHitTriggerExcutors.Clear ();
 			fightEndTriggerExcutors.Clear ();
+
+		}
+
+
+		/// <summary>
+		/// 清除角色身上所有的战斗回调和触发型技能效果
+		/// </summary>
+		public void ClearAllEffectStatesAndSkillCallBacks(){
+
+			ClearAllSkillCallBacks ();
 
 			propertyCalculator.ClearSkillsOfType<TriggeredSkill> ();
 		}

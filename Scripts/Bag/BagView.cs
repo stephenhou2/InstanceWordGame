@@ -57,6 +57,21 @@ namespace WordJourney
 		public Transform choiceHUDWithOneBtn;
 		public Transform choiceHUDWithTwoBtns;
 
+
+		private int minItemIndexOfCurrentBag {
+			get {
+				return currentBagIndex * singleBagItemVolume;
+			}
+		}
+
+		private int maxItemIndexOfCurrentBag {
+			get {
+				return minItemIndexOfCurrentBag + singleBagItemVolume - 1;
+			}
+		}
+
+
+
 		/// <summary>
 		/// 初始化背包界面
 		/// </summary>
@@ -275,54 +290,10 @@ namespace WordJourney
 			queryResolveHUD.gameObject.SetActive (false);
 		}
 
-		/// <summary>
-		/// 初始化背包物品界面
-		/// </summary>
-		public void SetUpBagItemsPlane(int bagIndex){
-
-			currentBagIndex = bagIndex;
-
-			bagItemsPool.AddChildInstancesToPool (bagItemsContainer);
-
-			int minItemIndexOfCurrentBag = bagIndex * singleBagItemVolume;
-
-			int maxItemIndexOfCurrentBag = (bagIndex + 1) * singleBagItemVolume - 1;
-
-			for (int i = minItemIndexOfCurrentBag; i <= maxItemIndexOfCurrentBag; i++) {
-				if (i >= player.allItemsInBag.Count) {
-					return;
-				}
-				AddBagItem (player.allItemsInBag[i]);
-			}
-				
-//			if (loadCount < items.Count) {
-//				
-//				List<Item> myItems = new List<Item> ();
-//
-//				for (int i = 0; i < items.Count; i++) {
-//					myItems.Add (items [i]);
-//				}
-//
-//				IEnumerator coroutine = LoadItemDisplayButtonsAsync (myItems);
-//
-//				StartCoroutine (coroutine);
-//			}	
+		public void SetUpCurrentBagItemsPlane(){
+			SetUpBagItemsPlane (currentBagIndex);
 		}
 			
-//		private IEnumerator LoadItemDisplayButtonsAsync(List<Item> items){
-//
-//			yield return null;
-//
-//			for (int i = maxPreloadCountOfItem; i < items.Count; i++) {
-//
-//				Item item = items [i] as Item;
-//
-//				AddBagItem (item);
-//			}
-//		}
-
-	
-
 		/// <summary>
 		/// 初始化物品详细介绍页面
 		/// </summary>
@@ -389,24 +360,113 @@ namespace WordJourney
 		}
 
 
-
-
 		/// <summary>
-		/// 背包中单个物品按钮的初始化方法
+		/// 初始化背包物品界面
 		/// </summary>
-		/// <param name="item">Item.</param>
-		/// <param name="btn">Button.</param>
-		public void AddBagItem(Item item){
+		public void SetUpBagItemsPlane(int bagIndex){
 
-			if (bagItemsContainer.childCount >= singleBagItemVolume) {
+			currentBagIndex = bagIndex;
+
+			bagItemsPool.AddChildInstancesToPool (bagItemsContainer);
+
+			if (player.allItemsInBag.Count <= minItemIndexOfCurrentBag) {
 				return;
 			}
 
+
+
+			for (int i = minItemIndexOfCurrentBag; i <= maxItemIndexOfCurrentBag; i++) {
+				if (i >= player.allItemsInBag.Count) {
+					return;
+				}
+				AddBagItem (player.allItemsInBag[i]);
+			}
+
+		}
+
+
+		/// <summary>
+		/// 查询物品在背包中的位置序号（-1代表背包中没有这个物品）
+		/// </summary>
+		/// <returns>The item index in bag.</returns>
+		/// <param name="item">Item.</param>
+		public int FindItemIndexInBag(Item item){
+
+			int itemIndex = -1;
+
+			for (int i = 0; i < player.allItemsInBag.Count; i++) {
+				if (player.allItemsInBag [i] == item) {
+					itemIndex = i;
+					return itemIndex;
+				}
+					
+			}
+
+			return itemIndex;
+
+		}
+
+		public void RemoveBagItemAt(int itemIndexInBag){
+			bagItemsPool.AddInstanceToPool (bagItemsContainer.GetChild (itemIndexInBag - minItemIndexOfCurrentBag).gameObject);
+			AddSequenceItemsIfBagNotFull ();
+		}
+			
+		public void RemoveBagItem(Item item){
+
+			int itemIndexInBag = FindItemIndexInBag (item);
+
+			if (itemIndexInBag == -1) {
+				Debug.LogError ("背包中没有找到物品：" + item.itemName);
+			}
+
+			bagItemsPool.AddInstanceToPool (bagItemsContainer.GetChild (itemIndexInBag - minItemIndexOfCurrentBag).gameObject);
+
+			AddSequenceItemsIfBagNotFull ();
+		}
+
+		private void AddSequenceItemsIfBagNotFull(){
+
+
+			if (minItemIndexOfCurrentBag + bagItemsContainer.childCount >= player.allItemsInBag.Count) {
+				return;
+			}
+
+			for (int i = minItemIndexOfCurrentBag + bagItemsContainer.childCount; i <= maxItemIndexOfCurrentBag; i++) {
+
+				if (i > player.allItemsInBag.Count) {
+					return;
+				}
+
+				AddBagItem (player.allItemsInBag [i]);
+
+			}
+
+		}
+
+		/// <summary>
+		/// 背包中单个物品按钮的初始化方法,序号-1代表添加到背包尾部
+		/// </summary>
+		/// <param name="item">Item.</param>
+		/// <param name="btn">Button.</param>
+		public void AddBagItem(Item item,int atIndex = -1,bool forceAdd = false){
+
+			// 如果当前背包已满
+			if (bagItemsContainer.childCount == singleBagItemVolume && !forceAdd) {
+				return;
+			}
+				
+			if (player.allItemsInBag.Count <= minItemIndexOfCurrentBag) {
+				tintHUD.SetUpTintHUD (string.Format("已自动加入背包{0}",currentBagIndex), null);
+				return;
+			}
+				
 			if (item is Equipment && (item as Equipment).equiped) {
+				Debug.LogError ("已装备的物品不应该出现在背包物品列表中" + item.itemName);
 				return;
 			}
 
 			if (item is UnlockScroll && (item as UnlockScroll).unlocked) {
+				Debug.LogError ("已解锁的卷轴不应该出现在背包物品列表中" + item.itemName);
 				return;
 			}
 
@@ -415,7 +475,11 @@ namespace WordJourney
 			ItemInBagDragControl dragItemScript = bagItem.GetComponent<ItemInBagDragControl> ();
 			dragItemScript.item = item;
 
-			bagItem.GetComponent<ItemInBagCell> ().SetUpIteminBagCell (item);
+			bagItem.GetComponent<ItemInBagCell> ().SetUpItemInBagCell (item);
+
+			if (atIndex >= 0) {
+				bagItem.SetSiblingIndex (atIndex);
+			}
 
 		}
 
@@ -434,30 +498,28 @@ namespace WordJourney
 		}
 	
 
-		public void RemoveItemInBag(Item item){
+		private int RemoveItemInBag(Item item){
+
+			int itemIndex = -1;
 
 			for (int i = 0; i < bagItemsContainer.childCount; i++) {
 				
 				Transform bagItem = bagItemsContainer.GetChild (i);
 
 				if (bagItem.GetComponent<ItemDragControl> ().item == item) {
+
+					itemIndex = i;
 					
 					bagItemsPool.AddInstanceToPool (bagItem.gameObject);
 
-					int minItemIndexOfCurrentBag = currentBagIndex * singleBagItemVolume;
-
-					if (minItemIndexOfCurrentBag + bagItemsContainer.childCount < player.allItemsInBag.Count) {
-						int maxItemIndexOfCurrentBag = (currentBagIndex + 1) * singleBagItemVolume - 1;
-						AddBagItem(player.allItemsInBag[maxItemIndexOfCurrentBag]);
-					}
-
-					return;
+					return itemIndex;
 				}
 			}
 
-
+			return itemIndex;
 
 		}
+
 
 		public void SetUpResolveGainHUD(List<char> characters){
 

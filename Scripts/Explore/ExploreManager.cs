@@ -322,23 +322,44 @@ namespace WordJourney
 			battlePlayerCtr.SetUpPropertyCalculator ();
 			battleMonsterCtr.SetUpPropertyCalculator ();
 
+			UpdateTriggeredCallBacks ();
+
+			StartCoroutine ("AdjustAgentsAndCameraAndStartFight");
+
+		}
+
+
+			
+
+		public void UpdateTriggeredCallBacks(){
+
+			if (!battlePlayerCtr.isInFight) {
+				return;
+			}
+
+			battlePlayerCtr.ClearAllSkillCallBacks ();
+			battleMonsterCtr.ClearAllSkillCallBacks ();
+
 			// 初始化人物被动技能
 			for (int i = 0; i < (battlePlayerCtr.agent as Player).attachedTriggeredSkills.Count; i++) {
 				Skill skill = (battlePlayerCtr.agent as Player).attachedTriggeredSkills [i];
 				skill.AffectAgents (battlePlayerCtr, battleMonsterCtr);
 			}
-
+				
 			// 初始化怪物被动技能
 			for (int i = 0; i < (battleMonsterCtr.agent as Monster).attachedTriggeredSkills.Count; i++) {
 				Skill skill = (battleMonsterCtr.agent as Monster).attachedTriggeredSkills [i];
 				skill.AffectAgents (battleMonsterCtr, battlePlayerCtr);
 			}
 
-			StartCoroutine ("AdjustCameraAndStartFight");
 
 		}
 
-		private IEnumerator AdjustCameraAndStartFight(){
+
+		private IEnumerator AdjustAgentsAndCameraAndStartFight(){
+
+			yield return new WaitUntil (() => Time.timeScale == 1);
+			yield return null;
 
 			Vector3 playerOriPos = battlePlayerCtr.transform.position;
 			Vector3 monsterOriPos = battleMonsterCtr.transform.position;
@@ -348,6 +369,12 @@ namespace WordJourney
 				battlePlayerCtr.transform.position = new Vector3 (0.2f * (monsterOriPos.x - playerOriPos.x ) + playerOriPos.x,
 					playerOriPos.y,0);
 
+				if (battlePlayerCtr.towards == MyTowards.Left) {
+					battleMonsterCtr.TowardsRight ();
+				} else {
+					battleMonsterCtr.TowardsLeft ();
+				}
+
 			} else if(Mathf.RoundToInt(playerOriPos.x) == Mathf.RoundToInt(monsterOriPos.x)){
 
 				float newPlayerPosX = playerOriPos.x;
@@ -356,24 +383,46 @@ namespace WordJourney
 				float newMonsterPosX = monsterOriPos.x;
 				float newMonsterPosY = monsterOriPos.y;
 
-				if (playerOriPos.y > monsterOriPos.y) {
-					newPlayerPosX = playerOriPos.x - 0.2f;
+				if (playerOriPos.y > monsterOriPos.y && battleMonsterCtr.towards == MyTowards.Right) {
+					
+					newPlayerPosX = playerOriPos.x + 0.2f;
 					newPlayerPosY = playerOriPos.y - 1f;
 					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY, 0);
+					battlePlayerCtr.TowardsLeft ();
+
+					newMonsterPosX = monsterOriPos.x - 0.2f;
+					newMonsterPosY = monsterOriPos.y - 0.3f;
+					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
+
+				}else if(playerOriPos.y > monsterOriPos.y && battleMonsterCtr.towards == MyTowards.Left)  {
+					newPlayerPosX = playerOriPos.x - 0.2f;
+					newPlayerPosY = playerOriPos.y - 1f;
+					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY,0);
+					battlePlayerCtr.TowardsRight ();
+
 					newMonsterPosX = monsterOriPos.x + 0.2f;
 					newMonsterPosY = monsterOriPos.y - 0.3f;
 					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
+				}else if(playerOriPos.y < monsterOriPos.y && battleMonsterCtr.towards == MyTowards.Left)  {
+					newPlayerPosX = playerOriPos.x - 0.2f;
+					newPlayerPosY = playerOriPos.y + 1f;
+					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY,0);
 					battlePlayerCtr.TowardsRight ();
-					battleMonsterCtr.TowardsLeft ();
-				} else {
+
+					newMonsterPosX = monsterOriPos.x + 0.2f;
+					newMonsterPosY = monsterOriPos.y + 0.3f;
+					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
+
+				} else if(playerOriPos.y < monsterOriPos.y && battleMonsterCtr.towards == MyTowards.Right)  {
 					newPlayerPosX = playerOriPos.x + 0.2f;
 					newPlayerPosY = playerOriPos.y + 1f;
 					battlePlayerCtr.transform.position = new Vector3 (newPlayerPosX, newPlayerPosY,0);
+					battlePlayerCtr.TowardsLeft ();
+
 					newMonsterPosX = monsterOriPos.x - 0.2f;
 					newMonsterPosY = monsterOriPos.y + 0.3f;
 					battleMonsterCtr.transform.position = new Vector3 (newMonsterPosX, newMonsterPosY, 0);
-					battlePlayerCtr.TowardsLeft ();
-					battleMonsterCtr.TowardsRight ();
+
 				}
 			}
 
@@ -594,6 +643,8 @@ namespace WordJourney
 
 		public void BattlePlayerWin(Transform[] monsterTransArray){
 
+			(battlePlayerCtr.agent as Player).DestroyEquipmentInBagAttachedSkills ();
+
 			battlePlayerCtr.enemy = null;
 
 			battleMonsterCtr.enemy = null;
@@ -601,12 +652,7 @@ namespace WordJourney
 			battlePlayerCtr.RemoveTriggeredSkillEffect ();
 			battleMonsterCtr.RemoveTriggeredSkillEffect ();
 
-//			Debug.Log (battlePlayerCtr.agent.health);
-
 			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
-			battleMonsterCtr.agent.ResetBattleAgentProperties (true);
-
-//			Debug.Log (battlePlayerCtr.agent.health);
 
 			FightEndCallBacks ();
 
@@ -620,7 +666,7 @@ namespace WordJourney
 
 			Vector3 monsterPos = trans.GetComponent<BattleMonsterController> ().originalPos;
 
-			// 0.1为位置偏差修正【如果怪物在（10，10）点，可能实际的位置数据为（10.023456，9.023455），故加上0.1作为偏差修正】
+			// 位置偏差修正
 			int X = Mathf.RoundToInt(monsterPos.x);
 			int Y = Mathf.RoundToInt(monsterPos.y);
 
@@ -633,8 +679,7 @@ namespace WordJourney
 			bool isLevelUp = player.LevelUpIfExperienceEnough ();//判断是否升级
 
 			if (isLevelUp) {
-				DisableInteractivity ();
-				StartCoroutine ("LatelyPlayRoleLevelUpAnim");
+				PlayLevelUpAnim ();
 			}
 
 
@@ -651,7 +696,7 @@ namespace WordJourney
 
 			} else {
 
-				int randomCraftingRecipesId = Random.Range (430, 460);
+				int randomCraftingRecipesId = Random.Range (450, 460);
 
 				reward = Item.NewItemWith (randomCraftingRecipesId, 1);
 
@@ -660,7 +705,7 @@ namespace WordJourney
 
 			mapGenerator.SetUpRewardInMap (reward, monsterPos);
 
-			ResetCamareAndContinueMove (!isLevelUp,battleMonsterCtr.originalPos);
+			ResetCamareAndContinueMove (battleMonsterCtr.originalPos);
 
 		}
 
@@ -668,7 +713,7 @@ namespace WordJourney
 
 			yield return new WaitUntil (() => battlePlayerCtr.isIdle);
 
-			PlayLevelUpAnim ();
+
 
 //			EnableInteractivity ();
 		}
@@ -682,6 +727,8 @@ namespace WordJourney
 		}
 
 		public void BattlePlayerLose(){
+
+			(battlePlayerCtr.agent as Player).DestroyEquipmentInBagAttachedSkills ();
 
 			battlePlayerCtr.enemy = null;
 
@@ -713,17 +760,18 @@ namespace WordJourney
 		}
 
 
-		private void ResetCamareAndContinueMove(bool enableInterActivity,Vector3 oriMonsterPos){
+		private void ResetCamareAndContinueMove(Vector3 oriMonsterPos){
 
-			StartCoroutine ("ResetCamera",enableInterActivity);
+			StartCoroutine ("ResetCamera");
 
 			battlePlayerCtr.PlayerMoveToEnemyPosAfterFight (oriMonsterPos);
 		}
 
 
-		private IEnumerator ResetCamera(bool enableInterActivity){
+		private IEnumerator ResetCamera(){
 
-			DisableInteractivity ();
+			yield return new WaitUntil (() => Time.timeScale == 1);
+			yield return null;
 
 			Camera c = Camera.main;
 
@@ -739,12 +787,13 @@ namespace WordJourney
 
 				timer += Time.deltaTime;
 
+				Debug.LogFormat ("{0}--{1}", timer, c.orthographicSize);
+
 				yield return null;
 
 			}
-			if (enableInterActivity) {
-				EnableInteractivity ();
-			}
+
+			EnableInteractivity ();
 
 		}
 

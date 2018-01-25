@@ -531,8 +531,6 @@ namespace WordJourney
 			
 
 
-
-
 		public void DestroyInstances(){
 			GameManager.Instance.UIManager.RemoveCanvasCache ("LearnCanvas");
 			Destroy (this.gameObject);

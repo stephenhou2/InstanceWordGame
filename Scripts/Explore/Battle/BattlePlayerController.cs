@@ -304,7 +304,9 @@ namespace WordJourney
 
 					ActiveBattlePlayer (false, false, true);
 
-					armatureCom.armature.flipX = nextPos.x < transform.position.x;
+					bool nextPosLeft = nextPos.x < transform.position.x;
+					armatureCom.armature.flipX = nextPosLeft;
+					towards = nextPosLeft ? MyTowards.Left : MyTowards.Right;
 
 				}
 
@@ -335,11 +337,6 @@ namespace WordJourney
 						StopWalkBeforeEvent ();
 						if (modelActive != playerSide) {
 							ActiveBattlePlayer (false, false, true);
-						}
-						if (armatureCom.armature.flipX) {
-							r2d.transform.GetComponent<BattleMonsterController> ().TowardsRight ();
-						} else {
-							r2d.transform.GetComponent<BattleMonsterController> ().TowardsLeft ();
 						}
 						enterMonster (r2d.transform);
 						return;
@@ -481,12 +478,14 @@ namespace WordJourney
 			ActiveBattlePlayer (false, false, true);
 			PlayRoleAnim ("wait", 0, null);
 			armatureCom.armature.flipX = true;
+			towards = MyTowards.Left;
 		}
 
 		public override void TowardsRight(){
 			ActiveBattlePlayer (false, false, true);
 			PlayRoleAnim ("wait", 0, null);
 			armatureCom.armature.flipX = false;
+			towards = MyTowards.Right;
 		}
 
 
@@ -712,6 +711,12 @@ namespace WordJourney
 		/// 玩家死亡
 		/// </summary>
 		override public void AgentDie(){
+
+			if (agent.isDead) {
+				return;
+			}
+
+			agent.isDead = true;
 
 			StopCoroutinesWhenFightEnd ();
 

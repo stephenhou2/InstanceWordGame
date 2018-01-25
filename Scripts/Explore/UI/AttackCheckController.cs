@@ -83,7 +83,7 @@ namespace WordJourney
 
 			circleAttackZoneSize = circleAttackZonFillAmout * 180;
 
-			float originalRotationOffset = Random.Range (circleAttackZoneSize -  90, 90);
+			float originalRotationOffset = Random.Range (circleAttackZoneSize -  75, 75);
 			circleAttackZone.localRotation = Quaternion.Euler(new Vector3(0,0,originalRotationOffset));
 			UpdateHealth ();
 			StartCoroutine ("CircleAttackCheckRotate");

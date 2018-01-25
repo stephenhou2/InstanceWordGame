@@ -55,10 +55,10 @@ namespace WordJourney
 
 			switch (towardsIndex) {
 			case 0:
-				armatureCom.armature.flipX = false;
+				TowardsRight ();
 				break;
 			case 1:
-				armatureCom.armature.flipX = true;
+				TowardsLeft ();
 				break;
 			}
 
@@ -255,6 +255,12 @@ namespace WordJourney
 		/// </summary>
 		override public void AgentDie(){
 
+			if (agent.isDead) {
+				return;
+			}
+
+			agent.isDead = true;
+
 			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();
 
 			expUICtr.QuitFight ();
@@ -282,11 +288,13 @@ namespace WordJourney
 		public override void TowardsLeft ()
 		{
 			armatureCom.armature.flipX = true;
+			towards = MyTowards.Left;
 		}
 
 		public override void TowardsRight ()
 		{
 			armatureCom.armature.flipX = false;
+			towards = MyTowards.Right;
 		}
 
 		public void AddToPool(InstancePool pool){

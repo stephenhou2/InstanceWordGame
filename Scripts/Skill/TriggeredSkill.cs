@@ -87,7 +87,7 @@ namespace WordJourney
 					break;
 				}
 
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beforeFightTriggerInfo.triggerSource, BeforeFightTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (this, beforeFightTriggerInfo.triggerSource, BeforeFightTriggerCallBack);
 
 				triggerSource.beforeFightTriggerExcutors.Add (excutor);
 			}
@@ -101,7 +101,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (attackTriggerInfo.triggerSource, AttackTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (this, attackTriggerInfo.triggerSource, AttackTriggerCallBack);
 				triggerSource.attackTriggerExcutors.Add (excutor);
 			}
 
@@ -114,7 +114,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (hitTriggerInfo.triggerSource, HitTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (this, hitTriggerInfo.triggerSource, HitTriggerCallBack);
 				triggerSource.hitTriggerExcutors.Add (excutor);
 			}
 
@@ -139,7 +139,7 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beAttackedTriggerInfo.triggerSource, BeAttackedTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (this, beAttackedTriggerInfo.triggerSource, BeAttackedTriggerCallBack);
 				triggerSource.beAttackedTriggerExcutors.Add (excutor);
 			}
 
@@ -152,11 +152,11 @@ namespace WordJourney
 					triggerSource = enemy;
 					break;
 				}
-				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (beHitTriggerInfo.triggerSource, BeHitTriggerCallBack);
+				TriggeredSkillExcutor excutor = new TriggeredSkillExcutor (this, beHitTriggerInfo.triggerSource, BeHitTriggerCallBack);
 				triggerSource.beHitTriggerExcutors.Add (excutor);
 			}
 				
-			TriggeredSkillExcutor FightEndExcutor = new TriggeredSkillExcutor (fightEndTriggerInfo.triggerSource, FightEndTriggerCallBack);
+			TriggeredSkillExcutor FightEndExcutor = new TriggeredSkillExcutor (this, fightEndTriggerInfo.triggerSource, FightEndTriggerCallBack);
 
 
 			self.fightEndTriggerExcutors.Add (FightEndExcutor);
