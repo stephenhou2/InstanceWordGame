@@ -38,6 +38,7 @@ namespace WordJourney
 			int sortingOrder = -(int)transform.position.y;
 			SetSortingOrder (sortingOrder);
 			SetAnimationSortingOrder (sortingOrder);
+			isDroppable = false;
 			if (tbType == TreasureBoxType.LockedTreasureBox) {
 				locked = true; 
 			}
@@ -72,6 +73,10 @@ namespace WordJourney
 			mapItemAnimator.SetTrigger ("Play");
 
 			StartCoroutine ("ResetMapItemOnAnimFinished");
+
+			if (walkableAfterChangeStatus) {
+				isDroppable = true;
+			}
 		}
 
 		/// <summary>

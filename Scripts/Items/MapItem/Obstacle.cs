@@ -23,6 +23,7 @@ namespace WordJourney
 			int sortingOrder = -(int)transform.position.y;
 			SetSortingOrder (sortingOrder);
 			SetAnimationSortingOrder (sortingOrder);
+			isDroppable = false;
 		}
 
 		private void SetAnimationSortingOrder(int order){
@@ -46,6 +47,8 @@ namespace WordJourney
 			GetComponent<BoxCollider2D> ().enabled = false;
 
 			mapItemRenderer.enabled = false;
+
+			isDroppable = true;
 
 			mapItemAnimator.gameObject.SetActive (true);
 			// 播放对应动画

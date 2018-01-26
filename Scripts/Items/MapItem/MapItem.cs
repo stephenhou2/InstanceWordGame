@@ -44,11 +44,15 @@ namespace WordJourney
 
 		protected BoxCollider2D bc2d;
 
+		public bool isDroppable;
+
 		protected virtual void Awake(){
 
 			mapItemRenderer = GetComponent<SpriteRenderer> ();
 
 			bc2d = GetComponent<BoxCollider2D> ();
+
+			isDroppable = false;
 		}
 
 		public abstract void InitMapItem ();

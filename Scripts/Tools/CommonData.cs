@@ -5,6 +5,7 @@ using UnityEngine;
 namespace WordJourney{
 
 
+
 	public delegate void CallBack ();
 	public delegate void CallBack<T>(T[] parameters);
 

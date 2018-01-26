@@ -17,6 +17,7 @@ namespace WordJourney
 			bc2d.enabled = true;
 			mapItemAnimator.SetBool ("Play",false);
 			SetSortingOrder (-(int)transform.position.y);
+			isDroppable = false;
 		}
 
 		public void CrystalExausted(){
@@ -26,6 +27,8 @@ namespace WordJourney
 			bc2d.enabled = false;
 
 			mapItemAnimator.SetBool ("Play",true);
+
+			isDroppable = true;
 
 		}
 

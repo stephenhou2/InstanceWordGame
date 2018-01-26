@@ -23,7 +23,17 @@ namespace WordJourney
 
 		public bool extraBagUnlocked;
 
+		public void PurchaseSuccess(string productId){
 
+			if (productId == PurchaseManager.equipmentSlot_5_id) {
+				BuyRecord.Instance.equipmentSlotUnlockedArray [4] = true;
+				GameManager.Instance.persistDataManager.SaveBuyRecord ();
+			}else if(productId == PurchaseManager.equipmentSlot_6_id){
+				BuyRecord.Instance.equipmentSlotUnlockedArray [5] = true;
+				GameManager.Instance.persistDataManager.SaveBuyRecord ();
+			}
+
+		}
 
 	}
 }

@@ -1194,6 +1194,7 @@ namespace WordJourney
 
 			destinationAnimation.position = targetPos;
 
+
 			StartCoroutine ("LatelyPlayDestinationTintAnim", arrivable);
 		}
 
@@ -1335,18 +1336,19 @@ namespace WordJourney
 
 		private bool CheckTargetMatchTorch(Vector3 targetPos){
 
-			if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] == 1) {
-				return true;
-			} else if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] == -1) {
+			if (mapWalkableInfoArray [(int)targetPos.x, (int)targetPos.y] != 1) {
 				return false;
-			} else {
-				Transform aliveMonster = GetAliveMonsterAt (targetPos);
-				if (aliveMonster == null) {
-					return false;
+			} 
+
+			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
+			if (mapItemTrans != null) {
+				if (mapItemTrans.GetComponent<MapItem> ().isDroppable) {
+					return true;
 				}
-				BattleMonsterController monster = aliveMonster.GetComponent<BattleMonsterController> ();
-				return monster != null && (monster.agent as Monster).monsterId < 50;
+				return false;
 			}
+				
+			return true;
 		}
 
 		private bool CheckTargetMatchWater(Vector3 targetPos){
@@ -1366,6 +1368,9 @@ namespace WordJourney
 
 			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
 			if (mapItemTrans != null) {
+				if (mapItemTrans.GetComponent<MapItem> ().isDroppable) {
+					return true;
+				}
 				return false;
 			}
 
@@ -1380,6 +1385,9 @@ namespace WordJourney
 
 			Transform mapItemTrans = GetAliveOtherItemAt (targetPos);
 			if (mapItemTrans != null) {
+				if (mapItemTrans.GetComponent<MapItem> ().isDroppable) {
+					return true;
+				}
 				return false;
 			}
 
@@ -1816,6 +1824,7 @@ namespace WordJourney
 
 			AllMapInstancesToPool ();
 
+//			destinationAnimation.GetComponent<Animator> ().SetTrigger ("Empty");
 			destinationAnimation.gameObject.SetActive (false);
 
 		}

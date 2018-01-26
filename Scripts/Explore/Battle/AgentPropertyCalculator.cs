@@ -99,7 +99,7 @@ namespace WordJourney
 					healthChange = (int)(target.agent.maxHealth * change);
 					tintText = string.Format ("<color=green>{0}</color>", healthChange.ToString ());
 					target.AddFightTextToQueue (tintText, SpecialAttackResult.Gain);
-				} else if (change > 1) {
+				} else if (change >= 1) {
 					healthChange = (int)change;
 					tintText = string.Format ("<color=green>{0}</color>", healthChange.ToString ());
 					target.AddFightTextToQueue (tintText, SpecialAttackResult.Gain);

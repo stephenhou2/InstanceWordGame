@@ -440,5 +440,13 @@ namespace WordJourney
 		public override void QuitFight(){
 			attackCheckController.QuitAttackCheck ();
 		}
+
+
+		public void ClearCache(){
+			for (int i = 0; i < consumablesInBagContainer.childCount; i++) {
+				Destroy (consumablesInBagContainer.GetChild(i).gameObject);
+			}
+		}
+
 	}
 }

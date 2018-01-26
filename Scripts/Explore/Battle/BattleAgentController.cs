@@ -345,18 +345,18 @@ namespace WordJourney
 
 				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
-				IEnumerator playEffectAnimCoroutine = LatelyPlayEffectAnim (triggerName, cb);
-
-				StartCoroutine (playEffectAnimCoroutine);
-
-			}
-		}
-
-		private IEnumerator LatelyPlayEffectAnim(string triggerName,CallBack cb){
-
-			yield return new WaitUntil (() => Time.timeScale == 1);
-
-			yield return null;
+//				IEnumerator playEffectAnimCoroutine = LatelyPlayEffectAnim (triggerName, cb);
+//
+//				StartCoroutine (playEffectAnimCoroutine);
+//
+//			}
+//		}
+//
+//		private IEnumerator LatelyPlayEffectAnim(string triggerName,CallBack cb){
+//
+//			yield return new WaitUntil (() => Time.timeScale == 1);
+//
+//			yield return null;
 
 			Transform skillEffect = null;
 			Animator skillEffectAnim = null;
@@ -375,6 +375,7 @@ namespace WordJourney
 
 			StartCoroutine (skillEffectReuseCoroutine);
 
+		}
 		}
 
 

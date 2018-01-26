@@ -18,6 +18,16 @@ namespace WordJourney
 		}
 
 		/// <summary>
+		/// 保存游戏购买记录
+		/// </summary>
+		public void SaveBuyRecord(){
+
+			DataHandler.SaveInstanceDataToFile<BuyRecord> (BuyRecord.Instance, CommonData.buyRecordFilePath);
+
+		}
+
+
+		/// <summary>
 		/// Saves the game settings.
 		/// </summary>
 		public void SaveGameSettings(){

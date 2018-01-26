@@ -57,6 +57,8 @@ namespace WordJourney
 		public Transform choiceHUDWithOneBtn;
 		public Transform choiceHUDWithTwoBtns;
 
+//		public Transform purchasePlane;
+		public PurchasePendingHUD purchaseHUD;
 
 		private int minItemIndexOfCurrentBag {
 			get {
@@ -272,6 +274,7 @@ namespace WordJourney
 				Equipment equipment = player.allEquipedEquipments [i];
 
 				bool equipmentSlotUnlocked = BuyRecord.Instance.equipmentSlotUnlockedArray [i];
+
 
 				equipedEquipmentButton.GetComponent<EquipedEquipmentCell> ().SetUpEquipedEquipmentCell (equipment,equipmentSlotUnlocked);
 
@@ -578,6 +581,18 @@ namespace WordJourney
 			tintHUD.SetUpTintHUD (tint,sprite);
 		}
 			
+		public void SetUpPurchasePlane(){
+
+			purchaseHUD.SetUpPurchasePendingHUD ();
+
+		}
+
+		public void QuitPruchasePlane(){
+
+			purchaseHUD.QuitPurchasePendingHUD ();
+
+		}
+
 
 		// 关闭背包界面
 		public void QuitBagPlane(){

@@ -22,17 +22,23 @@ namespace WordJourney
 		}
 
 
+		public PurchaseManager purchaseManager;
+
 		private int currentBagIndex;
 
 		void Awake(){
 
+//			Player.mainPlayer.AddItem (Item.NewItemWith (48, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+//
+//
 //			Player.mainPlayer.AddItem (Item.NewItemWith(8,2));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (19, 1));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (56, 1));
 //			Player.mainPlayer.AddItem(Item.NewItemWith(51,1));
 //			Player.mainPlayer.AddItem(Item.NewItemWith(111,2));
 //			Player.mainPlayer.AddItem(Item.NewItemWith(21,2));
-
+//
 //			Player.mainPlayer.AddItem (Item.NewItemWith (448, 2));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (14, 2));
@@ -40,7 +46,7 @@ namespace WordJourney
 //			Player.mainPlayer.AddItem (Item.NewItemWith (17, 2));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (17, 2));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (4, 2));
-
+//
 //			Player.mainPlayer.AddItem (Item.NewItemWith (50, 2));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (39, 2));
 //			#warning 测试物品用
@@ -94,6 +100,22 @@ namespace WordJourney
 
 		public void SetUpBagView(bool setVisible){
 
+//			Player.mainPlayer.AddItem (Item.NewItemWith (48, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+//			Player.mainPlayer.AddItem (Item.NewItemWith (110,1));
+//
+//
+//			for (int i = 100; i < 115; i++) {
+//				ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//					return obj.itemId == i;
+//				});
+//
+//				Consumables c = new Consumables (im,2);
+//
+//				Player.mainPlayer.AddItem (c);
+//
+//			}
+
 			currentBagIndex = 0;
 
 //			StartCoroutine ("SetUpViewAfterDataReady",setVisible);
@@ -120,8 +142,14 @@ namespace WordJourney
 		public void OnItemInEquipmentPlaneClick(Item item,int equipmentIndexInPanel){
 
 			if (!BuyRecord.Instance.equipmentSlotUnlockedArray [equipmentIndexInPanel]) {
-				Debug.Log ("未解锁");
-				return;
+				string productId = "";
+				if (equipmentIndexInPanel == 4) {
+					productId = PurchaseManager.equipmentSlot_5_id;
+				} else if (equipmentIndexInPanel == 5) {
+					productId = PurchaseManager.equipmentSlot_6_id;
+				}
+
+				InitPurchase (productId);
 			}
 
 			if (item.itemId < 0) {
@@ -130,6 +158,24 @@ namespace WordJourney
 
 			OnItemInBagClick (item);
 
+		}
+
+		private void InitPurchase(string productId){
+			bagView.SetUpPurchasePlane ();
+			purchaseManager.PurchaseProduct (productId, PurchaseSuccessCallback, PurchaseFailCallback);
+
+		}
+
+		private void PurchaseSuccessCallback(){
+
+			bagView.SetUpEquipedEquipmentsPlane ();
+
+			bagView.QuitPruchasePlane ();
+		}
+
+		private void PurchaseFailCallback(){
+
+			bagView.QuitPruchasePlane ();
 		}
 
 		public void OnItemInBagClick(Item item){
@@ -380,7 +426,23 @@ namespace WordJourney
 
 		}
 
+		public void OnEquipmentSlotPurchaseSucceed(int slotIndex){
 
+			BuyRecord.Instance.equipmentSlotUnlockedArray [slotIndex] = true;
+
+			GameManager.Instance.persistDataManager.SaveBuyRecord ();
+
+			bagView.SetUpTintHUD (string.Format ("成功解锁装备槽{0}", slotIndex + 1), null);
+
+			bagView.SetUpEquipedEquipmentsPlane ();
+		}
+
+
+		public void OnEquipmentSlotPurchaseFail(int slotIndex){
+
+			bagView.SetUpTintHUD ("购买失败", null);
+
+		}
 	
 
 //		public void RemoveItem(Item item){

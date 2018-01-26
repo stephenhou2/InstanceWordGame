@@ -14,6 +14,7 @@ namespace WordJourney
 		public override void InitMapItem ()
 		{
 			bc2d.enabled = true;
+			isDroppable = false;
 			SetSortingOrder (-(int)transform.position.y);
 		}
 

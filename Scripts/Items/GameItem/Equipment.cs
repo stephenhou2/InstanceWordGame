@@ -81,6 +81,7 @@ namespace WordJourney
 			this.dodgeGain = equipment.dodgeGain;
 			this.healthGain = equipment.healthGain;
 			this.manaGain = equipment.manaGain;
+			this.wholePropertyGain = equipment.wholePropertyGain;
 
 			this.attachedSkillInfos = equipment.attachedSkillInfos;
 			this.itemInfosForProduce = equipment.itemInfosForProduce;
@@ -112,6 +113,7 @@ namespace WordJourney
 			this.dodgeGain = itemModel.dodgeGain;
 			this.healthGain = itemModel.healthGain;
 			this.manaGain = itemModel.manaGain;
+			this.wholePropertyGain = itemModel.wholePropertyGain;
 
 			this.attachedSkillInfos = itemModel.attachedSkillInfos;
 			this.itemInfosForProduce = itemModel.itemInfosForProduce;

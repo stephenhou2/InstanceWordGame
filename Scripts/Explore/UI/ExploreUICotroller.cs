@@ -386,6 +386,10 @@ namespace WordJourney
 
 //			TransformManager.DestroyTransform(transform);
 
+			npcUIController.ClearNpcPlaneCache ();
+
+			GetComponent<BattlePlayerUIController> ().ClearCache ();
+
 			DestroyInstances ();
 
 			Resources.UnloadUnusedAssets ();
