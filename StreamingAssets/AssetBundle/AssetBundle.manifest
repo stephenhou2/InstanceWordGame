@@ -1,56 +1,57 @@
 ManifestFileVersion: 0
-CRC: 1598893721
+CRC: 3387454317
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: item/icons
       Dependencies: {}
     Info_1:
-      Name: explore/mapicons
+      Name: ui/common
       Dependencies: {}
     Info_2:
-      Name: explore/monsters
+      Name: explore/mapicons
       Dependencies: {}
     Info_3:
-      Name: learn/canvas
-      Dependencies:
-        Dependency_0: ui/common
-    Info_4:
       Name: home/canvas
       Dependencies:
         Dependency_0: ui/common
-    Info_5:
-      Name: skills/skills
-      Dependencies: {}
-    Info_6:
-      Name: unlockeditems/canvas
-      Dependencies:
-        Dependency_0: ui/common
-    Info_7:
-      Name: explore/scene
-      Dependencies:
-        Dependency_0: explore/mapicons
-        Dependency_1: bag/canvas
-        Dependency_2: ui/common
-    Info_8:
-      Name: spell/canvas
-      Dependencies:
-        Dependency_0: ui/common
-    Info_9:
+    Info_4:
       Name: record/canvas
       Dependencies:
         Dependency_0: ui/common
-    Info_10:
-      Name: setting/canvas
-      Dependencies:
-        Dependency_0: ui/common
-    Info_11:
+    Info_5:
       Name: bag/canvas
       Dependencies:
         Dependency_0: ui/common
-    Info_12:
-      Name: ui/common
-      Dependencies: {}
-    Info_13:
+    Info_6:
       Name: skills/icons
       Dependencies: {}
+    Info_7:
+      Name: explore/scene
+      Dependencies:
+        Dependency_0: ui/common
+        Dependency_1: explore/mapicons
+        Dependency_2: bag/canvas
+    Info_8:
+      Name: explore/monsters
+      Dependencies: {}
+    Info_9:
+      Name: learn/canvas
+      Dependencies:
+        Dependency_0: ui/common
+    Info_10:
+      Name: skills/skills
+      Dependencies: {}
+    Info_11:
+      Name: unlockeditems/canvas
+      Dependencies:
+        Dependency_0: ui/common
+    Info_12:
+      Name: spell/canvas
+      Dependencies:
+        Dependency_0: ui/common
+    Info_13:
+      Name: setting/canvas
+      Dependencies:
+        Dependency_0: ui/common
+        Dependency_1: explore/mapicons

@@ -70,7 +70,13 @@ namespace WordJourney
 			this.purchaseSucceedCallback = successCallback;
 			this.purchaseFailCallback = failCallback;
 
-			controller.InitiatePurchase (productId);
+
+			try{
+				controller.InitiatePurchase (productId);
+			}catch(Exception e){
+				Debug.Log (e);
+				purchaseFailCallback ();
+			}
 
 		}
 

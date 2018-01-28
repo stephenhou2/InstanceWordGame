@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using System.IO;
 
 
@@ -125,6 +126,13 @@ namespace WordJourney
 			return File.Exists (filePath);
 		}
 
+		public static bool DirectoryExist(string dirPath){
+			return Directory.Exists (dirPath);
+		}
+
+		public static void CreateDirectory(string dirPath){
+			Directory.CreateDirectory (dirPath);
+		}
 
 		public static void  CopyDirectory(string sourcePath,string destPath,bool deleteOriDirectoryIfExist){
 
@@ -192,8 +200,16 @@ namespace WordJourney
 				DirectoryInfo subDi = diArray [i];
 				DeleteDirectory (subDi.FullName);
 			}
+		}
 
-
+		public static void DeleteFile(string filePath){
+			if(File.Exists(filePath)){
+				try{
+					File.Delete (filePath);
+				}catch(Exception e){
+					Debug.Log (e);
+				}
+			}
 		}
 
 	}
