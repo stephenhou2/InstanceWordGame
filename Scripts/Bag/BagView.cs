@@ -72,6 +72,15 @@ namespace WordJourney
 			}
 		}
 
+		void Awake(){
+
+			Transform poolContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfBagCanvas");
+
+			//创建缓存池
+			bagItemsPool = InstancePool.GetOrCreateInstancePool ("BagItemsPool",poolContainerOfBagCanvas.name);
+
+		}
+
 
 
 		/// <summary>
@@ -91,14 +100,7 @@ namespace WordJourney
 //			this.sprites = GameManager.Instance.gameDataCenter.allItemSprites;
 			this.player = Player.mainPlayer;
 
-			Transform poolContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfBagCanvas");
-//			Transform modelContainerOfBagCanvas = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfBagCanvas");
 
-			if (poolContainerOfBagCanvas.childCount == 0) {
-				//创建缓存池
-				bagItemsPool = InstancePool.GetOrCreateInstancePool ("BagItemsPool",poolContainerOfBagCanvas.name);
-
-			}
 
 			Agent.PropertyChange propertyChange = player.ResetBattleAgentProperties (false);
 
@@ -491,6 +493,7 @@ namespace WordJourney
 			UnlockScroll currentSelectedUnlockScroll= unlockScrollDetail.unlockScroll;
 			currentSelectedUnlockScroll.unlocked = true;
 			player.RemoveItem (currentSelectedUnlockScroll,1);
+			GetComponent<BagViewController> ().AddItemInWait ();
 			string tint = string.Format ("解锁拼写 <color=orange>{0}</color>", currentSelectedUnlockScroll.itemName);
 			SetUpTintHUD (tint,null);
 			SetUpBagItemsPlane (currentBagIndex);

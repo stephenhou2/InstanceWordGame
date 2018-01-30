@@ -39,8 +39,8 @@ namespace WordJourney
 
 
 		public void InitExploreAgentView(){
-			statusTintPool = InstancePool.GetOrCreateInstancePool ("StatusTintPool", CommonData.poolContainerName);
-			fightTextPool = InstancePool.GetOrCreateInstancePool ("FightTextPool",CommonData.poolContainerName);
+			statusTintPool = InstancePool.GetOrCreateInstancePool ("StatusTintPool", CommonData.exploreScenePoolContainerName);
+			fightTextPool = InstancePool.GetOrCreateInstancePool ("FightTextPool",CommonData.exploreScenePoolContainerName);
 			fightTextManager.InitFightTextManager (fightTextPool, fightTextModel, fightTextContainer);
 		}
 
@@ -64,15 +64,23 @@ namespace WordJourney
 
 			for (int i = 0; i < agent.allStatus.Count; i++) {
 				string status = agent.allStatus [i];
-				Transform statusTint = statusTintPool.GetInstance<Transform> (statusTintModel.gameObject, statusTintContainer);
-				statusTint.GetComponent<Image> ().sprite = GameManager.Instance.gameDataCenter.allSkillSprites.Find (delegate(Sprite obj) {
+				Image statusTint = statusTintPool.GetInstance<Image> (statusTintModel.gameObject, statusTintContainer);
+
+				Sprite sprite = GameManager.Instance.gameDataCenter.allSkillSprites.Find (delegate(Sprite obj) {
 					return obj.name == status;
 				});
+
+				statusTint.sprite = sprite;
+				statusTint.enabled = sprite != null;
 			}
 
 		}
 
+		public void PrepareForRefreshment(){
 
+			fightTextManager.AllFightTextClearAndIntoPool ();
+
+		}
 
 //		// 动画管理方法，复杂回调单独写函数传入，简单回调使用拉姆达表达式
 //		private void ManageAnimations(Tweener newTweener,CallBack tc){

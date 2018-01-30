@@ -83,7 +83,7 @@ namespace WordJourney
 				return;
 			}
 
-			self.propertyCalculator.AgentPropertyChange (propertyType, -skillSourceValue);
+			self.propertyCalculator.InstantPropertyChange (self,propertyType, -skillSourceValue);
 			self = null;
 			Destroy (this.gameObject);
 

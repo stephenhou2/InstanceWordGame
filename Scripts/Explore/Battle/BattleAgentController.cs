@@ -343,7 +343,7 @@ namespace WordJourney
 
 			if(triggerName != string.Empty){
 
-				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
+//				Debug.LogFormat ("{0}触发技能特效{1}", agent.agentName, triggerName);
 
 //				IEnumerator playEffectAnimCoroutine = LatelyPlayEffectAnim (triggerName, cb);
 //
@@ -358,24 +358,24 @@ namespace WordJourney
 //
 //			yield return null;
 
-			Transform skillEffect = null;
-			Animator skillEffectAnim = null;
+				Transform skillEffect = null;
+				Animator skillEffectAnim = null;
 
-			skillEffect = exploreManager.GetComponent<MapGenerator> ().GetEffectAnim (transform);
+				skillEffect = exploreManager.GetComponent<MapGenerator> ().GetEffectAnim (transform);
 
-			skillEffectAnim = skillEffect.GetComponent<Animator> ();
+				skillEffectAnim = skillEffect.GetComponent<Animator> ();
 
-			skillEffectAnim.transform.SetParent (effectAnimContainer);
+				skillEffectAnim.transform.SetParent (effectAnimContainer);
 
-			skillEffectAnim.SetTrigger (triggerName);
+				skillEffectAnim.SetTrigger (triggerName);
 
-			IEnumerator skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
+				IEnumerator skillEffectReuseCoroutine = AddSkillEffectToPoolAfterAnimEnd (skillEffect.transform,cb);
 
-			allSkillEffectReuseCoroutines.Add (skillEffectReuseCoroutine);
+				allSkillEffectReuseCoroutines.Add (skillEffectReuseCoroutine);
 
-			StartCoroutine (skillEffectReuseCoroutine);
+				StartCoroutine (skillEffectReuseCoroutine);
 
-		}
+			}
 		}
 
 
@@ -415,7 +415,7 @@ namespace WordJourney
 
 //			animator.ResetTrigger (triggerName);
 
-			Debug.LogFormat ("{0}回收技能特效", agent.agentName);
+//			Debug.LogFormat ("{0}回收技能特效", agent.agentName);
 
 		}
 
@@ -549,31 +549,31 @@ namespace WordJourney
 			}
 		}
 
-		public void RemoveTriggeredSkillEffect(){
-			agent.AddPropertyChangeFromOther (
-				-propertyCalculator.maxHealthChangeFromTriggeredSkill,
-				-propertyCalculator.hitChangeFromTriggeredSkill,
-				-propertyCalculator.attackChangeFromTriggeredSkill,
-				-propertyCalculator.attackSpeedChangeFromTriggeredSkill,
-				-propertyCalculator.manaChangeFromTriggeredSkill,
-				-propertyCalculator.armorChangeFromTriggeredSkill,
-				-propertyCalculator.magicResistChangeFromTriggeredSkill,
-				-propertyCalculator.dodgeChangeFromTriggeredSkill,
-				-propertyCalculator.critChangeFromTriggeredSkill,
-				-propertyCalculator.maxHealthChangeScalerFromTriggeredSkill,
-				-propertyCalculator.hitChangeScalerFromTriggeredSkill,
-				-propertyCalculator.attackChangeScalerFromTriggeredSkill,
-				-propertyCalculator.attackSpeedChangeScalerFromTriggeredSkill,
-				-propertyCalculator.manaChangeScalerFromTriggeredSkill,
-				-propertyCalculator.armorChangeScalerFromTriggeredSkill,
-				-propertyCalculator.magicResistChangeScalerFromTriggeredSkill,
-				-propertyCalculator.dodgeChangeScalerFromTriggeredSkill,
-				-propertyCalculator.critChangeScalerFromTriggeredSkill,
-				-propertyCalculator.physicalHurtScalerChangeFromTriggeredSkill,
-				-propertyCalculator.magicalHurtScalerChangeFromTriggeredSkill,
-				-propertyCalculator.critChangeScalerFromTriggeredSkill);
-
-		}
+//		public void RemoveTriggeredSkillEffect(){
+//			agent.AddPropertyChangeFromOther (
+//				-propertyCalculator.maxHealthChangeFromTriggeredSkill,
+//				-propertyCalculator.hitChangeFromTriggeredSkill,
+//				-propertyCalculator.attackChangeFromTriggeredSkill,
+//				-propertyCalculator.attackSpeedChangeFromTriggeredSkill,
+//				-propertyCalculator.manaChangeFromTriggeredSkill,
+//				-propertyCalculator.armorChangeFromTriggeredSkill,
+//				-propertyCalculator.magicResistChangeFromTriggeredSkill,
+//				-propertyCalculator.dodgeChangeFromTriggeredSkill,
+//				-propertyCalculator.critChangeFromTriggeredSkill,
+//				-propertyCalculator.maxHealthChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.hitChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.attackChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.attackSpeedChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.manaChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.armorChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.magicResistChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.dodgeChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.critChangeScalerFromTriggeredSkill,
+//				-propertyCalculator.physicalHurtScalerChangeFromTriggeredSkill,
+//				-propertyCalculator.magicalHurtScalerChangeFromTriggeredSkill,
+//				-propertyCalculator.critChangeScalerFromTriggeredSkill);
+//
+//		}
 
 		public void ClearAllSkillCallBacks(){
 

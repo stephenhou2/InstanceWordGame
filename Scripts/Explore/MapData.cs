@@ -35,7 +35,7 @@ namespace WordJourney{
 			string mapDataFilePath = string.Format ("{0}/MapData/Level_{1}.json", CommonData.persistDataPath, level);
 //			string mapDataFilePath = string.Format ("{0}/Level_{1}.json", CommonData.persistDataPath, level);
 
-			Debug.Log (mapDataFilePath);
+//			Debug.Log (mapDataFilePath);
 
 			return DataHandler.LoadDataToSingleModelWithPath<MapData> (mapDataFilePath);
 

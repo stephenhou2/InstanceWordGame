@@ -83,6 +83,13 @@ namespace WordJourney
 
 			// 如果是从已装备面板拖拽过来的物品
 			if (draggedObject.GetComponent<EquipedItemDragControl>() != null) {
+
+				if (Player.mainPlayer.CheckBagFull ()) {
+					SetDropResult (eventData, false);
+					tintImage.enabled = false;
+					bagView.SetUpTintHUD ("背包已满",null);
+					return;
+				}
 	
 //				EquipedItemDragControl equipmentDragControl = draggedObject.GetComponent<EquipedItemDragControl> ();
 

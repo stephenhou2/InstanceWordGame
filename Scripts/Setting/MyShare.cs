@@ -51,20 +51,17 @@ namespace WordJourney
 				QuitShareHUD ();
 				string tintStr = "分享成功，获得水晶x30";
 				tintHUD.SetUpTintHUD (tintStr, null);
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/tempPics/fullScreenshot.png");
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/tempPics/shareImg.png");
+				DataHandler.DeleteFile (Application.persistentDataPath + "/tempPics/shareImage.png");
 	        }else if (state == ResponseState.Fail)
 			{
 				QuitShareHUD ();
 				string tintStr = "打开客户端失败";
 				tintHUD.SetUpTintHUD (tintStr, null);
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/fullScreenshot.png");
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/shareImg.png");
+				DataHandler.DeleteFile (Application.persistentDataPath + "/tempPics/shareImage.png");
 	        }else if (state == ResponseState.Cancel)
 	        {
 				QuitShareHUD ();
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/fullScreenshot.png");
-//				DataHandler.DeleteFile (Application.persistentDataPath + "/shareImg.png");
+				DataHandler.DeleteFile (Application.persistentDataPath + "/tempPics/shareImage.png");
 	        }
 	    }
 
@@ -102,8 +99,6 @@ namespace WordJourney
 
 			shareButton.gameObject.SetActive (false);
 
-			Application.CaptureScreenshot ("fullScreenShot.png");
-
 			StartCoroutine ("TrimScreenShotAndShare");
 
 		}
@@ -115,46 +110,24 @@ namespace WordJourney
 
 			yield return new WaitForEndOfFrame();
 
+			Texture2D texture = ScreenCapture.CaptureScreenshotAsTexture ();
+
 			QuitShareHUD ();
 
-			yield return null;
-
-				
-			#if UNITY_EDITOR
-			string screenShotPath = "/Users/houlianghong/Desktop/Unityfolder/TestOnSkills/fullScreenShot.png";
-			#elif UNITY_IOS || UNITY_ANDROID
-			string screenShotPath = Application.persistentDataPath + "/fullScreenShot.png";
-			#endif
-
-
-			yield return new WaitUntil (()=>DataHandler.FileExist (screenShotPath));
-
-
-			byte[] data = File.ReadAllBytes (screenShotPath);
-
-			int screenWidth = Screen.currentResolution.width;
-			int screenHeight = Screen.currentResolution.height;
-
-
-
-			Texture2D t2d = new Texture2D (screenWidth, screenHeight);
-
-			t2d.LoadImage (data);
-
-			Debug.LogFormat ("截屏图片大小[{0},{1}]",t2d.width,t2d.height);
+			Debug.LogFormat ("截屏图片大小[{0},{1}]",texture.width,texture.height);
 
 			int shareHUDWidth = (int)((shareContainer.transform as RectTransform).rect.width / CommonData.scalerToPresetResulotion);
 			int shareHUDHeight = (int)((shareContainer.transform as RectTransform).rect.height/CommonData.scalerToPresetResulotion);
 
-			int offsetX = (int)((t2d.width - shareHUDWidth) / 2);
-			int offsetY = (int)((t2d.height - shareHUDHeight) / 2);
+			int offsetX = (int)((texture.width - shareHUDWidth) / 2);
+			int offsetY = (int)((texture.height - shareHUDHeight) / 2);
 
 			Texture2D newT2d = new Texture2D (shareHUDWidth, shareHUDHeight);
 
-			for (int i = offsetX; i < t2d.width - offsetX; i++) {
-				for (int j = offsetY; j < t2d.height - offsetY; j++) {
+			for (int i = offsetX; i < texture.width - offsetX; i++) {
+				for (int j = offsetY; j < texture.height - offsetY; j++) {
 
-					Color c = t2d.GetPixel(i,j);
+					Color c = texture.GetPixel(i,j);
 
 					newT2d.SetPixel (i - offsetX, j - offsetY, c);
 
@@ -163,16 +136,23 @@ namespace WordJourney
 
 			newT2d.Apply ();
 
-			Texture2D resizedT2d = ScaleTexture (newT2d, t2d.width, t2d.height);
+			Texture2D resizedT2d = ScaleTexture (newT2d, texture.width, texture.height);
 
 			byte[] trimImgData = resizedT2d.EncodeToPNG ();
 
-			string trimImgPath = Application.persistentDataPath + "/shareImage.png";
+			if (!DataHandler.DirectoryExist (Application.persistentDataPath + "/tempPics")) {
+				DataHandler.CreateDirectory (Application.persistentDataPath + "/tempPics");
+			}
+
+			string trimImgPath = Application.persistentDataPath + "/tempPics/shareImage.png";
 
 			File.WriteAllBytes (trimImgPath, trimImgData);
 
 
-//			Share ();
+			#if UNITY_EDITORtemp
+			#elif UNITY_IOS || UNITY_ANDROID
+			Share ();
+			#endif
 
 		}
 
@@ -196,7 +176,7 @@ namespace WordJourney
 
 		private void Share(){
 
-			string shareImgPath = Application.persistentDataPath + "/shareImage.png";
+			string shareImgPath = Application.persistentDataPath + "/tempPics/shareImage.png";
 
 			ShareContent content = new ShareContent ();
 
@@ -213,7 +193,7 @@ namespace WordJourney
 				content.SetImagePath (shareImgPath);
 
 				//设置分享的类型
-				content.SetShareType (ContentType.Image);
+				content.SetShareType (ContentType.Auto);
 
 				//直接分享
 				ssdk.ShareContent (PlatformType.WeChatMoments, content);

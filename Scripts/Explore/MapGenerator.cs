@@ -154,23 +154,27 @@ namespace WordJourney
 
 
 
+		void Awake(){
+
+			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.exploreScenePoolContainerName);
+
+			floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool",poolContainerOfExploreScene.name);
+			mapItemPool = InstancePool.GetOrCreateInstancePool ("MapItemPool",poolContainerOfExploreScene.name);
+			monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
+			effectAnimPool = InstancePool.GetOrCreateInstancePool ("EffectAnimPool",poolContainerOfExploreScene.name);
+			awardItemPool = InstancePool.GetOrCreateInstancePool ("AwardItemPool", poolContainerOfExploreScene.name);
+			consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
+
+
+		}
+
 		//SetupScene initializes our level and calls the previous functions to lay out the game board
 		public void SetUpMap (GameLevelData levelData)
 		{
 
-			Transform poolContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreScene");
-//			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform (CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
-
-			if (poolContainerOfExploreScene.childCount == 0) {
-				floorPool = InstancePool.GetOrCreateInstancePool ("FloorPool",poolContainerOfExploreScene.name);
-				mapItemPool = InstancePool.GetOrCreateInstancePool ("MapItemPool",poolContainerOfExploreScene.name);
-				monsterPool = InstancePool.GetOrCreateInstancePool ("MonsterPool",poolContainerOfExploreScene.name);
-				effectAnimPool = InstancePool.GetOrCreateInstancePool ("EffectAnimPool",poolContainerOfExploreScene.name);
-				awardItemPool = InstancePool.GetOrCreateInstancePool ("AwardItemPool", poolContainerOfExploreScene.name);
-				consumablesValidPosTintPool = InstancePool.GetOrCreateInstancePool ("ConsumablesValidPosTintPool", poolContainerOfExploreScene.name);
-			}
-
 			AllMapInstancesToPool ();
+
+			ResetDestinationAnim ();
 
 			this.levelData = levelData;
 
@@ -1192,8 +1196,9 @@ namespace WordJourney
 
 		public void PlayDestinationAnim(Vector3 targetPos,bool arrivable){
 
-			destinationAnimation.position = targetPos;
+//			if(
 
+			destinationAnimation.position = targetPos;
 
 			StartCoroutine ("LatelyPlayDestinationTintAnim", arrivable);
 		}
@@ -1216,11 +1221,17 @@ namespace WordJourney
 			}
 
 		}
+
+		private void ResetDestinationAnim(){
+			StopCoroutine ("LatelyPlayDestinationTintAnim");
+			Animator destinationAnimator = destinationAnimation.GetComponent<Animator> ();
+//			destinationAnimator.ResetTrigger ("PlayArrivable");
+//			destinationAnimator.ResetTrigger ("PlayUnarrivable");
+			destinationAnimator.SetTrigger ("Empty");
+		}
 			
 
 		public void ShowConsumablesValidPointsTint(Consumables consumables){
-
-			Debug.Log ("显示消耗品可用位置提示");
 
 			Vector3 basePosition = GetBattlePlayer ().transform.position;
 
@@ -1701,17 +1712,17 @@ namespace WordJourney
 
 			Item award = awardInMap.award;
 
-			int maxBagCount = 2;
-			int singleBagVolume = 24;
-
-			if (Player.mainPlayer.allItemsInBag.Count >= maxBagCount * singleBagVolume) {
-				GetComponent<ExploreManager> ().expUICtr.SetUpTintHUD ("背包中物品已满",null);
+			if (award.itemType != ItemType.CharacterFragment && Player.mainPlayer.CheckBagFull ()) {
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().AddBagItemWhenBagFull (award);
+				}, false, true);
 			} else {
 
 				Player.mainPlayer.AddItem (award);
 
 				GetComponent<ExploreManager> ().ObtainAward (award);
 			}
+
 
 			AddAwardItemToPool (awardTrans);
 
@@ -1728,10 +1739,6 @@ namespace WordJourney
 
 
 		public void DestroyInstancePools(){
-
-//			mapItems = null;
-//			mapNpcs = null;
-//			monsters = null;
 
 			Destroy (floorPool.gameObject);
 
@@ -1824,8 +1831,9 @@ namespace WordJourney
 
 			AllMapInstancesToPool ();
 
-//			destinationAnimation.GetComponent<Animator> ().SetTrigger ("Empty");
-			destinationAnimation.gameObject.SetActive (false);
+			ResetDestinationAnim();
+
+//			destinationAnimation.gameObject.SetActive (false);
 
 		}
 

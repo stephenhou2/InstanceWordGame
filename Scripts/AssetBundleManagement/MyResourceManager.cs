@@ -27,6 +27,8 @@ namespace WordJourney
 			
 		}
 
+	
+
 		/// <summary>
 		/// 已加载的bundle缓存字典
 		/// </summary>

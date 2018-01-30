@@ -109,6 +109,8 @@ namespace WordJourney
 
 						pathPos.Reverse ();
 
+//						pathPos.RemoveAt (0);
+
 						return pathPos;
 					}
 
@@ -224,8 +226,8 @@ namespace WordJourney
 		}
 
 		public PointIn2D(Vector3 positon){
-			this.x = (int)positon.x;
-			this.y = (int)positon.y;
+			this.x = Mathf.RoundToInt(positon.x);
+			this.y = Mathf.RoundToInt(positon.y);
 		}
 
 		public void CaculateFGH(PointIn2D fatherPoint,PointIn2D endPoint,int GofNewPoint){

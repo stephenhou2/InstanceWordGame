@@ -19,6 +19,14 @@ namespace WordJourney
 
 		}
 
+//		public static Vector3 RoundToIntPos(Vector3 oriPos){
+//			int pos_x = Mathf.RoundToInt (oriPos.x);
+//			int pos_y = Mathf.RoundToInt (oriPos.y);
+//			int pos_z = Mathf.RoundToInt (oriPos.z);
+//			return new Vector3 (pos_x, pos_y, pos_z);
+//
+//		}
+
 
 		public static Vector3 FindNearestPos(Vector3 oriPos,List<Vector3> endPosList){
 

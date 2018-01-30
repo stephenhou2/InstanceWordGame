@@ -62,7 +62,9 @@ namespace WordJourney
 		public Button nextPageButton;
 		public Button lastPageButton;
 
-
+		void Awake(){
+			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", CommonData.exploreScenePoolContainerName);
+		}
 
 		/// <summary>
 		/// 初始化探索界面中玩家UI
@@ -75,17 +77,6 @@ namespace WordJourney
 			currentConsumablesPage = 0;
 
 			this.player = player;
-
-			Transform poolContainerOfExploreCanvas = TransformManager.FindOrCreateTransform (CommonData.poolContainerName + "/PoolContainerOfExploreCanvas");
-//			Transform modelContainerOfExploreScene = TransformManager.FindOrCreateTransform(CommonData.instanceContainerName + "/ModelContainerOfExploreScene");
-
-			consumablesButtonPool = InstancePool.GetOrCreateInstancePool ("ConsumablesButtonPool", poolContainerOfExploreCanvas.name);
-//			toolChoiceButtonPool = InstancePool.GetOrCreateInstancePool ("ToolChoiceButtonPool", poolContainerOfExploreCanvas.name);
-
-//			toolChoiceButtonModel = TransformManager.FindTransform ("ToolChoiceButtonModel");
-
-//			consumablesButtonModel.SetParent (modelContainerOfExploreScene);
-//			toolChoiceButtonModel.SetParent (modelContainerOfExploreScene);
 
 			SetUpPlayerStatusPlane ();
 			SetUpBottomConsumablesButtons ();
@@ -438,14 +429,14 @@ namespace WordJourney
 		/// 退出战斗时的逻辑
 		/// </summary>
 		public override void QuitFight(){
+			statusTintPool.AddChildInstancesToPool (statusTintContainer);
+		
 			attackCheckController.QuitAttackCheck ();
 		}
 
 
 		public void ClearCache(){
-			for (int i = 0; i < consumablesInBagContainer.childCount; i++) {
-				Destroy (consumablesInBagContainer.GetChild(i).gameObject);
-			}
+			Destroy (consumablesButtonPool.gameObject);
 		}
 
 	}

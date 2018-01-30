@@ -55,7 +55,7 @@ namespace WordJourney
 
 			Player p = TransformManager.FindTransform ("Player").GetComponent<Player> ();
 
-			p.allEquipedEquipments = new Equipment[6];
+//			p.allEquipedEquipments = new Equipment[6];
 
 			p.physicalHurtScaler = 1.0f;
 			p.magicalHurtScaler = 1.0f;

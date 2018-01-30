@@ -53,6 +53,9 @@ namespace WordJourney
 
 		public Transform crystalQueryHUD;
 
+		public BattlePlayerUIController bpUICtr;
+		public BattleMonsterUIController bmUICtr;
+
 
 		public void SetUpExploreCanvas(int gameLevelIndex, string gameLevelLocation){
 
@@ -72,11 +75,11 @@ namespace WordJourney
 			}
 				
 			string gameLevelInCurrentLocation = MyTool.NumberToChinese(gameLevelIndex % 5 + 1);
-			gameLevelLocationText.text = string.Format("{0}  第 {1} 关",gameLevelLocation,gameLevelInCurrentLocation);
+			gameLevelLocationText.text = string.Format("{0}  第 {1} 层",gameLevelLocation,gameLevelInCurrentLocation);
 
-			GetComponent<BattlePlayerUIController> ().InitExploreAgentView ();
-			GetComponent<BattlePlayerUIController> ().SetUpExplorePlayerView (Player.mainPlayer);
-			GetComponent<BattleMonsterUIController> ().InitExploreAgentView ();
+			bpUICtr.InitExploreAgentView ();
+			bpUICtr.SetUpExplorePlayerView (Player.mainPlayer);
+			bmUICtr.InitExploreAgentView ();
 
 			GetComponent<Canvas> ().enabled = true;
 
@@ -92,7 +95,7 @@ namespace WordJourney
 
 		public void ShowFightPlane(){
 			battlePlane.gameObject.SetActive (true);
-			GetComponent<BattlePlayerUIController> ().SetUpFightAttackCheck ();
+			bpUICtr.SetUpFightAttackCheck ();
 
 		}
 
@@ -109,11 +112,11 @@ namespace WordJourney
 		/// 更新底部消耗品栏
 		/// </summary>
 		public void UpdateBottomBar(){
-			GetComponent<BattlePlayerUIController> ().SetUpBottomConsumablesButtons ();
+			bpUICtr.SetUpBottomConsumablesButtons ();
 		}
 
 		public void UpdatePlayerStatusBar(){
-			GetComponent<BattlePlayerUIController> ().UpdateAgentStatusPlane ();
+			bpUICtr.UpdateAgentStatusPlane ();
 		}
 
 //		public void SetUpTintHUD(string tint){
@@ -374,9 +377,14 @@ namespace WordJourney
 		}
 
 
+		public void PrepareForRefreshment(){
+			bpUICtr.PrepareForRefreshment ();
+			bmUICtr.PrepareForRefreshment ();
+		}
+
 		public void QuitFight(){
-			GetComponent<BattlePlayerUIController> ().QuitFight ();
-			GetComponent<BattleMonsterUIController>().QuitFight ();
+			bpUICtr.QuitFight ();
+			bmUICtr.QuitFight ();
 			HideFightPlane ();
 		}
 
@@ -384,23 +392,9 @@ namespace WordJourney
 
 		public void QuitExplore(){
 
-//			TransformManager.DestroyTransform(transform);
-
-			npcUIController.ClearNpcPlaneCache ();
-
 			GetComponent<BattlePlayerUIController> ().ClearCache ();
 
 			DestroyInstances ();
-
-			Resources.UnloadUnusedAssets ();
-
-			System.GC.Collect ();
-
-//			GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.homeCanvasBundleName, "HomeCanvas", () => {
-//
-//				TransformManager.FindTransform("HomeCanvas").GetComponent<HomeViewController> ().SetUpHomeView ();
-//
-//			});
 
 		}
 
@@ -415,7 +409,7 @@ namespace WordJourney
 
 //			npcUIController.ClearNpcPlaneCache ();
 
-			MyResourceManager.Instance.UnloadAssetBundle (CommonData.exploreSceneBundleName, true);
+
 		}
 
 

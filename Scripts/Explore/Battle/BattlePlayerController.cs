@@ -120,14 +120,25 @@ namespace WordJourney
 		/// <param name="moveDestination">End position.</param>
 		public bool MoveToPosition(Vector3 moveDestination,int[,] mapWalkableInfoArray){
 
+//			Debug.Log (moveDestination);
+
 			if (onlyStoreDestination) {
 				storedDestination = moveDestination;
 				thereIsStoredDestination = true;
+//				Vector3 startPos = MyTool.RoundToIntPos (singleMoveEndPos);
 				return navHelper.FindPath (singleMoveEndPos, moveDestination, mapWalkableInfoArray).Count > 0;
 			}
 
 			// 计算自动寻路路径
 			pathPosList = navHelper.FindPath(singleMoveEndPos,moveDestination,mapWalkableInfoArray);
+
+//			Debug.Log ("-----------path start -----------");
+//
+//			for (int i = 0; i < pathPosList.Count; i++) {
+//				Debug.Log (pathPosList [i]);
+//			}
+//
+//			Debug.Log ("------------path end---------");
 
 
 			StopCoroutine ("MoveWithNewPath");
@@ -224,14 +235,13 @@ namespace WordJourney
 		}
 
 		/// <summary>
-		/// 判断当前是否已经走到了终点位置，位置度容差0.05
+		/// 判断当前是否已经走到了终点位置
 		/// </summary>
 		/// <returns><c>true</c>, if end point was arrived, <c>false</c> otherwise.</returns>
 		private bool ArriveEndPoint(){
 
 
-			if(Mathf.Abs(transform.position.x - moveDestination.x) <= 0.05f &&
-				Mathf.Abs(transform.position.y - moveDestination.y) <= 0.05f){
+			if(MyTool.ApproximatelySamePosition2D(moveDestination,transform.position)){
 				return true;
 			}
 
@@ -297,8 +307,8 @@ namespace WordJourney
 
 					if (modelActive != playerSide) {
 						resetWalkAnim = true;
-					}else if ((nextPos.x > transform.position.x && armatureCom.flipX == true) ||
-						(nextPos.x < transform.position.x && armatureCom.flipX == false)){
+					}else if ((nextPos.x > transform.position.x && armatureCom.armature.flipX == true) ||
+						(nextPos.x < transform.position.x && armatureCom.armature.flipX == false)){
 						resetWalkAnim = true;
 					} 
 
@@ -415,7 +425,7 @@ namespace WordJourney
 					moveTweener.Kill (true);
 					backgroundMoveTweener.Kill (true);
 					PlayRoleAnim ("wait", 0, null);
-					Debug.Log ("到达终点");
+//					Debug.Log ("到达终点");
 				} else {
 					Debug.Log (string.Format("actual pos:{0}/ntarget pos:{1},predicat pos{2}",transform.position,moveDestination,singleMoveEndPos));
 					throw new System.Exception ("路径走完但是未到终点");

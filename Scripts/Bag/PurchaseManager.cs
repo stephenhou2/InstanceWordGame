@@ -52,7 +52,7 @@ namespace WordJourney
 
 			this.controller = controller;
 //			this.extensions = extensions;
-			Debug.Log("Initialize success");
+//			Debug.Log("Initialize success");
 		}
 
 		private bool IsInitialized()

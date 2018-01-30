@@ -161,8 +161,6 @@ namespace WordJourney
 				return;
 			}
 
-			Debug.Log (canvasName);
-
 			UIDic.Remove (canvasName);
 		}
 

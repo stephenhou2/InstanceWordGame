@@ -51,28 +51,28 @@ namespace WordJourney
 		public float critFixScaler;
 		public float dodgeFixScaler;
 
-		public int maxHealthChangeFromTriggeredSkill;
-		public int hitChangeFromTriggeredSkill;
-		public int manaChangeFromTriggeredSkill;
-		public int attackChangeFromTriggeredSkill;
-		public int attackSpeedChangeFromTriggeredSkill;
-		public int armorChangeFromTriggeredSkill;
-		public int magicResistChangeFromTriggeredSkill;
-		public int dodgeChangeFromTriggeredSkill;
-		public int critChangeFromTriggeredSkill;
+//		public int maxHealthChangeFromTriggeredSkill;
+//		public int hitChangeFromTriggeredSkill;
+//		public int manaChangeFromTriggeredSkill;
+//		public int attackChangeFromTriggeredSkill;
+//		public int attackSpeedChangeFromTriggeredSkill;
+//		public int armorChangeFromTriggeredSkill;
+//		public int magicResistChangeFromTriggeredSkill;
+//		public int dodgeChangeFromTriggeredSkill;
+//		public int critChangeFromTriggeredSkill;
 
-		public float maxHealthChangeScalerFromTriggeredSkill;
-		public float hitChangeScalerFromTriggeredSkill;
-		public float manaChangeScalerFromTriggeredSkill;
-		public float attackChangeScalerFromTriggeredSkill;
-		public float attackSpeedChangeScalerFromTriggeredSkill;
-		public float armorChangeScalerFromTriggeredSkill;
-		public float magicResistChangeScalerFromTriggeredSkill;
-		public float dodgeChangeScalerFromTriggeredSkill;
-		public float critChangeScalerFromTriggeredSkill;
-		public float physicalHurtScalerChangeFromTriggeredSkill;
-		public float magicalHurtScalerChangeFromTriggeredSkill;
-		public float critHurtScalerChangeFromTriggeredSkill;
+//		public float maxHealthChangeScalerFromTriggeredSkill;
+//		public float hitChangeScalerFromTriggeredSkill;
+//		public float manaChangeScalerFromTriggeredSkill;
+//		public float attackChangeScalerFromTriggeredSkill;
+//		public float attackSpeedChangeScalerFromTriggeredSkill;
+//		public float armorChangeScalerFromTriggeredSkill;
+//		public float magicResistChangeScalerFromTriggeredSkill;
+//		public float dodgeChangeScalerFromTriggeredSkill;
+//		public float critChangeScalerFromTriggeredSkill;
+//		public float physicalHurtScalerChangeFromTriggeredSkill;
+//		public float magicalHurtScalerChangeFromTriggeredSkill;
+//		public float critHurtScalerChangeFromTriggeredSkill;
 
 		/// <summary>
 		/// 如果是即时性的属性变化，需要使用这个方法
@@ -287,7 +287,7 @@ namespace WordJourney
 		/// </summary>
 		/// <param name="propertyType">Property type.</param>
 		/// <param name="change">change.</param>
-		public void AgentPropertyChange(PropertyType propertyType,float change,bool fromTriggeredSkill = true){
+		private void AgentPropertyChange(PropertyType propertyType,float change,bool fromTriggeredSkill = true){
 
 			if (propertyType == PropertyType.Health) {
 				return;
@@ -295,292 +295,200 @@ namespace WordJourney
 
 			self.agent.AddPropertyChangeFromOther (propertyType, change);
 
-			switch (propertyType) {
-			case PropertyType.MaxHealth:
-				if (change > -1 && change < 1) {
-					maxHealth = (int)(maxHealth * (1 + change));
-					health = (int)(health * (1 + change));
-					if (fromTriggeredSkill) {
-						maxHealthChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					maxHealth += (int)change;
-					health += (int)(health * change / maxHealth);
-					if (fromTriggeredSkill) {
-						maxHealthChangeFromTriggeredSkill += (int)change;
-					}
-				}
-				break;
-			case PropertyType.Hit:
-				if (change > -1 && change < 1) {
-					hit = (int)(mana * (1 + change));
-					if (fromTriggeredSkill) {
-						hitChangeScalerFromTriggeredSkill += (int)change;
-					}
-				} else {
-					hit += (int)change;
-					if (fromTriggeredSkill) {
-						hitChangeFromTriggeredSkill += (int)change;
-					}
-				}
-				break;
-			case PropertyType.Mana:
-				if (change > -1 && change < 1) {
-					mana = (int)(mana * (1 + change));
-					if (fromTriggeredSkill) {
-						manaChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					mana += (int)change;
-					if (fromTriggeredSkill) {
-						manaChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.Attack:
-				if (change > -1 && change < 1) {
-					attack = (int)(attack * (1 + change));
-					if (fromTriggeredSkill) {
-						attackChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					attack += (int)change;
-					if (fromTriggeredSkill) {
-						attackChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.AttackSpeed:
-				if (change > -1 && change < 1) {
-					attackSpeed = (int)(attackSpeed * (1 + change));
-					if (fromTriggeredSkill) {
-						attackSpeedChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					attackSpeed += (int)change;
-					if (fromTriggeredSkill) {
-						attackSpeedChangeFromTriggeredSkill += (int)change;
-					}
-				}
-				break;
-			case PropertyType.Armor:
-				if (change > -1 && change < 1) {
-					armor = (int)(armor * (1 + change));
-					if (fromTriggeredSkill) {
-						armorChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					armor += (int)change;
-					if (fromTriggeredSkill) {
-						armorChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.MagicResist:
-				if (change > -1 && change < 1) {
-					magicResist = (int)(magicResist * (1 + change));
-					if (fromTriggeredSkill) {
-						magicResistChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					magicResist += (int)change;
-					if (fromTriggeredSkill) {
-						magicResistChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.Dodge:
-				if (change > -1 && change < 1) {
-					dodge = (int)(dodge * (1 + change));
-					if (fromTriggeredSkill) {
-						dodgeChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					dodge += (int)change;
-					if (fromTriggeredSkill) {
-						dodgeChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.Crit:
-				if (change > -1 && change < 1) {
-					crit = (int)(crit * (1 + change));
-					if (fromTriggeredSkill) {
-						critChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					crit += (int)change;
-					if (fromTriggeredSkill) {
-						critChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			case PropertyType.PhysicalHurtScaler:
-				physicalHurtScaler += change;
-				if (fromTriggeredSkill) {
-					physicalHurtScalerChangeFromTriggeredSkill += change;
-				}
-				break;
-			case PropertyType.MagicalHurtScaler:
-				magicalHurtScaler += change;
-				if (fromTriggeredSkill) {
-					magicalHurtScalerChangeFromTriggeredSkill += change;
-				}
-				break;
-			case PropertyType.CritHurtScaler:
-				critHurtScaler += change;
-				if (fromTriggeredSkill) {
-					critHurtScalerChangeFromTriggeredSkill += change;
-				}
-				break;
-			case PropertyType.WholeProperty:
-				if (change > -1 && change < 1) {
-					maxHealth = (int)(health * (1 + change));
-					mana = (int)(mana * (1 + change));
-					attack = (int)(attack * (1 + change));
-					attackSpeed = (int)(attackSpeed * (1 + change));
-					armor = (int)(armor * (1 + change));
-					magicResist = (int)(magicResist * (1 + change));
-					dodge = (int)(dodge * (1 + change));
-					crit = (int)(crit * (1 + change));
-					hit = (int)(hit * (1 + change));
-					if (fromTriggeredSkill) {
-						maxHealthChangeScalerFromTriggeredSkill += change;
-						manaChangeScalerFromTriggeredSkill += change;
-						attackChangeScalerFromTriggeredSkill += change;
-						attackSpeedChangeScalerFromTriggeredSkill += change;
-						armorChangeScalerFromTriggeredSkill += change;
-						magicResistChangeScalerFromTriggeredSkill += change;
-						dodgeChangeScalerFromTriggeredSkill += change;
-						critChangeScalerFromTriggeredSkill += change;
-						hitChangeScalerFromTriggeredSkill += change;
-					}
-				} else {
-					health += (int)change;
-					mana += (int)change;
-					attack += (int)change;
-					attackSpeed += (int)change;
-					armor += (int)change;
-					magicResist += (int)change;
-					dodge += (int)change;
-					crit += (int)change;
-					hit += (int)change;
-					if (fromTriggeredSkill) {
-						maxHealthChangeFromTriggeredSkill += (int)change;
-						manaChangeFromTriggeredSkill += (int)change;
-						attackChangeFromTriggeredSkill += (int)change;
-						attackSpeedChangeFromTriggeredSkill += (int)change;
-						armorChangeFromTriggeredSkill += (int)change;
-						magicResistChangeFromTriggeredSkill += (int)change;
-						dodgeChangeFromTriggeredSkill += (int)change;
-						critChangeFromTriggeredSkill += (int)change;
-						hitChangeFromTriggeredSkill += (int)change;
-					}
-				}
-
-				break;
-			}
-
-		}
-
-		public void AgentPropertySetToValue(PropertyType propertyType,float propertyValue){
-
-			switch (propertyType) {
-			case PropertyType.MaxHealth:
-				maxHealth = (int)propertyValue;
-				break;
-			case PropertyType.Mana:
-				mana = (int)propertyValue;
-				break;
-			case PropertyType.Attack:
-				attack = (int)propertyValue;
-				break;
-			case PropertyType.AttackSpeed:
-				attackSpeed = (int)propertyValue;
-				break;
-			case PropertyType.Hit:
-				hit = (int)propertyValue;
-				break;
-			case PropertyType.Armor:
-				armor = (int)propertyValue;
-				break;
-			case PropertyType.MagicResist:
-				magicResist = (int)propertyValue;
-				break;
-			case PropertyType.Dodge:
-				dodge = (int)propertyValue;
-				break;
-			case PropertyType.Crit:
-				crit = (int)propertyValue;
-				break;
-			case PropertyType.PhysicalHurtScaler:
-				physicalHurtScaler = propertyValue;
-				break;
-			case PropertyType.MagicalHurtScaler:
-				magicalHurtScaler = propertyValue;
-				break;
-			case PropertyType.CritHurtScaler:
-				critHurtScaler = propertyValue;
-				break;
-			
-			}
+//			switch (propertyType) {
+//			case PropertyType.MaxHealth:
+//				if (change > -1 && change < 1) {
+//					maxHealth = (int)(maxHealth * (1 + change));
+//					health = (int)(health * (1 + change));
+//					if (fromTriggeredSkill) {
+//						maxHealthChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					maxHealth += (int)change;
+//					health += (int)(health * change / maxHealth);
+//					if (fromTriggeredSkill) {
+//						maxHealthChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//				break;
+//			case PropertyType.Hit:
+//				if (change > -1 && change < 1) {
+//					hit = (int)(mana * (1 + change));
+//					if (fromTriggeredSkill) {
+//						hitChangeScalerFromTriggeredSkill += (int)change;
+//					}
+//				} else {
+//					hit += (int)change;
+//					if (fromTriggeredSkill) {
+//						hitChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//				break;
+//			case PropertyType.Mana:
+//				if (change > -1 && change < 1) {
+//					mana = (int)(mana * (1 + change));
+//					if (fromTriggeredSkill) {
+//						manaChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					mana += (int)change;
+//					if (fromTriggeredSkill) {
+//						manaChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.Attack:
+//				if (change > -1 && change < 1) {
+//					attack = (int)(attack * (1 + change));
+//					if (fromTriggeredSkill) {
+//						attackChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					attack += (int)change;
+//					if (fromTriggeredSkill) {
+//						attackChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.AttackSpeed:
+//				if (change > -1 && change < 1) {
+//					attackSpeed = (int)(attackSpeed * (1 + change));
+//					if (fromTriggeredSkill) {
+//						attackSpeedChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					attackSpeed += (int)change;
+//					if (fromTriggeredSkill) {
+//						attackSpeedChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//				break;
+//			case PropertyType.Armor:
+//				if (change > -1 && change < 1) {
+//					armor = (int)(armor * (1 + change));
+//					if (fromTriggeredSkill) {
+//						armorChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					armor += (int)change;
+//					if (fromTriggeredSkill) {
+//						armorChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.MagicResist:
+//				if (change > -1 && change < 1) {
+//					magicResist = (int)(magicResist * (1 + change));
+//					if (fromTriggeredSkill) {
+//						magicResistChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					magicResist += (int)change;
+//					if (fromTriggeredSkill) {
+//						magicResistChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.Dodge:
+//				if (change > -1 && change < 1) {
+//					dodge = (int)(dodge * (1 + change));
+//					if (fromTriggeredSkill) {
+//						dodgeChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					dodge += (int)change;
+//					if (fromTriggeredSkill) {
+//						dodgeChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.Crit:
+//				if (change > -1 && change < 1) {
+//					crit = (int)(crit * (1 + change));
+//					if (fromTriggeredSkill) {
+//						critChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					crit += (int)change;
+//					if (fromTriggeredSkill) {
+//						critChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			case PropertyType.PhysicalHurtScaler:
+//				physicalHurtScaler += change;
+//				if (fromTriggeredSkill) {
+//					physicalHurtScalerChangeFromTriggeredSkill += change;
+//				}
+//				break;
+//			case PropertyType.MagicalHurtScaler:
+//				magicalHurtScaler += change;
+//				if (fromTriggeredSkill) {
+//					magicalHurtScalerChangeFromTriggeredSkill += change;
+//				}
+//				break;
+//			case PropertyType.CritHurtScaler:
+//				critHurtScaler += change;
+//				if (fromTriggeredSkill) {
+//					critHurtScalerChangeFromTriggeredSkill += change;
+//				}
+//				break;
+//			case PropertyType.WholeProperty:
+//				if (change > -1 && change < 1) {
+//					maxHealth = (int)(health * (1 + change));
+//					mana = (int)(mana * (1 + change));
+//					attack = (int)(attack * (1 + change));
+//					attackSpeed = (int)(attackSpeed * (1 + change));
+//					armor = (int)(armor * (1 + change));
+//					magicResist = (int)(magicResist * (1 + change));
+//					dodge = (int)(dodge * (1 + change));
+//					crit = (int)(crit * (1 + change));
+//					hit = (int)(hit * (1 + change));
+//					if (fromTriggeredSkill) {
+//						maxHealthChangeScalerFromTriggeredSkill += change;
+//						manaChangeScalerFromTriggeredSkill += change;
+//						attackChangeScalerFromTriggeredSkill += change;
+//						attackSpeedChangeScalerFromTriggeredSkill += change;
+//						armorChangeScalerFromTriggeredSkill += change;
+//						magicResistChangeScalerFromTriggeredSkill += change;
+//						dodgeChangeScalerFromTriggeredSkill += change;
+//						critChangeScalerFromTriggeredSkill += change;
+//						hitChangeScalerFromTriggeredSkill += change;
+//					}
+//				} else {
+//					health += (int)change;
+//					mana += (int)change;
+//					attack += (int)change;
+//					attackSpeed += (int)change;
+//					armor += (int)change;
+//					magicResist += (int)change;
+//					dodge += (int)change;
+//					crit += (int)change;
+//					hit += (int)change;
+//					if (fromTriggeredSkill) {
+//						maxHealthChangeFromTriggeredSkill += (int)change;
+//						manaChangeFromTriggeredSkill += (int)change;
+//						attackChangeFromTriggeredSkill += (int)change;
+//						attackSpeedChangeFromTriggeredSkill += (int)change;
+//						armorChangeFromTriggeredSkill += (int)change;
+//						magicResistChangeFromTriggeredSkill += (int)change;
+//						dodgeChangeFromTriggeredSkill += (int)change;
+//						critChangeFromTriggeredSkill += (int)change;
+//						hitChangeFromTriggeredSkill += (int)change;
+//					}
+//				}
+//
+//				break;
+//			}
 
 		}
 
-		public float GetAgentPropertyWithType(PropertyType propertyType){
-
-			float propertyValue = 0;
-
-			switch (propertyType) {
-			case PropertyType.MaxHealth:
-				propertyValue = maxHealth;
-				break;
-			case PropertyType.Health:
-				propertyValue = health;
-				break;
-			case PropertyType.Mana:
-				propertyValue = mana;
-				break;
-			case PropertyType.Attack:
-				propertyValue = attack;
-				break;
-			case PropertyType.AttackSpeed:
-				propertyValue = attackSpeed;
-				break;
-			case PropertyType.Hit:
-				propertyValue = hit;
-				break;
-			case PropertyType.Armor:
-				propertyValue = armor;
-				break;
-			case PropertyType.MagicResist:
-				propertyValue = magicResist;
-				break;
-			case PropertyType.Dodge:
-				propertyValue = dodge;
-				break;
-			case PropertyType.Crit:
-				propertyValue = crit;
-				break;
-			case PropertyType.PhysicalHurtScaler:
-				propertyValue = physicalHurtScaler;
-				break;
-			case PropertyType.MagicalHurtScaler:
-				propertyValue = magicalHurtScaler;
-				break;
-			case PropertyType.CritHurtScaler:
-				propertyValue = critHurtScaler;
-				break;
-			}
-
-			return propertyValue;
-		}
 
 
 

@@ -250,8 +250,6 @@ namespace WordJourney
 				return;
 			}
 
-			Debug.Log ("monster die");
-
 			agent.isDead = true;
 
 			ExploreUICotroller expUICtr = bmUICtr.GetComponent<ExploreUICotroller> ();

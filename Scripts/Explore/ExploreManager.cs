@@ -146,7 +146,7 @@ namespace WordJourney
 
 	
 			if(EventSystem.current.IsPointerOverGameObject()){
-				Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
+//				Debug.LogFormat("点击在UI上{0}",EventSystem.current.currentSelectedGameObject);
 
 				if(clickForConsumablesPos){
 					mapGenerator.RemoveConsumablesTints ();
@@ -293,6 +293,8 @@ namespace WordJourney
 		/// <param name="monsterTrans">Monster trans.</param>
 		public void EnterMonster(Transform monsterTrans){
 
+			DisableInteractivity ();
+
 			monsterEntered = monsterTrans;
 
 			battlePlayerCtr.isInFight = true;
@@ -435,7 +437,7 @@ namespace WordJourney
 			battlePlayerCtr.InitFightTextDirectionTowards (battleMonsterCtr.transform.position);
 			battleMonsterCtr.InitFightTextDirectionTowards (battlePlayerCtr.transform.position);
 
-			DisableInteractivity ();
+
 
 			Camera c = Camera.main;
 
@@ -483,7 +485,8 @@ namespace WordJourney
 			if (tool != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具",null);
+				string tint = string.Format("缺少{0}x1",obstacle.destroyToolName);
+				expUICtr.SetUpTintHUD (tint,null);
 			}
 
 		}
@@ -539,7 +542,7 @@ namespace WordJourney
 			if (key != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (tb, key);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少打开箱子的工具",null);
+				expUICtr.SetUpTintHUD ("缺少钥匙x1",null);
 			}
 
 		}
@@ -562,14 +565,14 @@ namespace WordJourney
 //		}
 
 		private void EnterCrystal(Transform crystal){
-			Debug.Log ("进入水晶");
+//			Debug.Log ("进入水晶");
 			crystalEntered = crystal;
 			expUICtr.SetUpCrystaleQueryHUD();
 		}
 
 		private void EnterBillboard(Transform billboard){
 
-			Debug.Log ("进入公告牌");
+//			Debug.Log ("进入公告牌");
 
 			Billboard bb = billboard.GetComponent<Billboard> ();
 
@@ -578,7 +581,7 @@ namespace WordJourney
 		}
 
 		private void EnterHole(Transform hole){
-			Debug.Log ("进入坑洞");
+//			Debug.Log ("进入坑洞");
 
 			hole.GetComponent<Hole> ().EnterHole (mapGenerator,battlePlayerCtr);
 
@@ -587,7 +590,7 @@ namespace WordJourney
 
 		private void EnterMovableBox(Transform movableBox){
 
-			Debug.Log ("推箱子");
+//			Debug.Log ("推箱子");
 
 			movableBox.GetComponent<MovableBox> ().OnAgentPushBox (battlePlayerCtr,mapGenerator);
 
@@ -597,7 +600,7 @@ namespace WordJourney
 
 			EnterNextLevel ();
 
-			Debug.Log ("进入传送阵");
+//			Debug.Log ("进入传送阵");
 
 
 		}
@@ -613,10 +616,10 @@ namespace WordJourney
 			if (tool != null) {
 				expUICtr.GetComponent<BattlePlayerUIController> ().SetUpToolChoicePlane (obstacle,tool);
 			} else {
-				expUICtr.SetUpTintHUD ("缺少可以清除当前路障的工具",null);
+				expUICtr.SetUpTintHUD ("缺少镰刀x1",null);
 			}
 
-			Debug.Log ("碰到了植物");
+//			Debug.Log ("碰到了植物");
 		}
 
 		public void ShowConsumablesValidPointTintAround(Consumables consumables){
@@ -655,12 +658,12 @@ namespace WordJourney
 
 			battleMonsterCtr.enemy = null;
 
-			battlePlayerCtr.RemoveTriggeredSkillEffect ();
-			battleMonsterCtr.RemoveTriggeredSkillEffect ();
-
-			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
+//			battlePlayerCtr.RemoveTriggeredSkillEffect ();
+//			battleMonsterCtr.RemoveTriggeredSkillEffect ();
 
 			FightEndCallBacks ();
+
+			battlePlayerCtr.agent.ResetBattleAgentProperties (false);
 
 			mapGenerator.AddAllEffectAnimToPool ();
 
@@ -831,6 +834,8 @@ namespace WordJourney
 
 		public void EnterNextLevel(){
 
+			DisableInteractivity ();
+
 			Player player = Player.mainPlayer;
 
 			player.currentLevelIndex++;
@@ -849,6 +854,8 @@ namespace WordJourney
 			GameLevelData levelData = GameManager.Instance.gameDataCenter.gameLevelDatas [player.currentLevelIndex];
 
 			SetUpExploreView (levelData);
+
+			EnableInteractivity ();
 
 		}
 
@@ -872,15 +879,21 @@ namespace WordJourney
 		
 			mapGenerator.DestroyInstancePools ();
 
+			TransformManager.DestroyTransfromWithName (CommonData.exploreScenePoolContainerName, TransformRoot.Plain);
+
 			Destroy(this.gameObject);
 
 			GameManager.Instance.gameDataCenter.ReleaseDataWithDataTypes (new GameDataCenter.GameDataType[] {
 				GameDataCenter.GameDataType.MapSprites,
-//				GameDataCenter.GameDataType.Skills, 
 				GameDataCenter.GameDataType.SkillSprites,
 				GameDataCenter.GameDataType.Monsters,
 				GameDataCenter.GameDataType.NPCs,
+				GameDataCenter.GameDataType.GameLevelDatas
+
 			});
+
+			MyResourceManager.Instance.UnloadAssetBundle (CommonData.exploreSceneBundleName, true);
+
 
 			TransformManager.FindTransform ("ExploreCanvas").GetComponent<ExploreUICotroller> ().QuitExplore ();
 

@@ -170,6 +170,12 @@ namespace WordJourney
 
 				SetDropResult (eventData, true);
 
+				if (!Player.mainPlayer.CheckBagFull ()) {
+
+					bagView.GetComponent<BagViewController> ().AddItemInWait ();
+
+				}
+
 				tintImage.enabled = false;
 
 				return;

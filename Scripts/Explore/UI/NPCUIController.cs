@@ -64,10 +64,15 @@ namespace WordJourney
 			}
 		}
 
-		public void InitNPCHUD(int currentLevelIndex){
 
-			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.poolContainerName);
-			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.poolContainerName);
+		void Awake(){
+
+			this.choiceButtonPool = InstancePool.GetOrCreateInstancePool ("NPCChoiceButtonPool", CommonData.exploreScenePoolContainerName);
+			this.goodsPool = InstancePool.GetOrCreateInstancePool ("NPCGoodsPool", CommonData.exploreScenePoolContainerName);
+
+		}
+
+		public void InitNPCHUD(int currentLevelIndex){
 
 			this.currentLevelIndex = currentLevelIndex;
 
@@ -190,11 +195,11 @@ namespace WordJourney
 
 				showNextButton = false;
 
-				Button choiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button> ();
-				choiceButton.transform.SetParent (choiceContainer);
+//				Button choiceButton = Instantiate (choiceButtonModel.gameObject).GetComponent<Button> ();
+//				choiceButton.transform.SetParent (choiceContainer);
 
 
-//				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
+				Button choiceButton = choiceButtonPool.GetInstance<Button> (choiceButtonModel.gameObject, choiceContainer);
 
 				choiceButton.GetComponentInChildren<Text> ().text = choice.choice;
 
@@ -206,9 +211,7 @@ namespace WordJourney
 
 			}
 
-			if (showNextButton) {
-				nextDialogButton.gameObject.SetActive (true);
-			}
+			nextDialogButton.gameObject.SetActive (showNextButton);
 
 			if (dialog.rewardIds.Length != 0) {
 				for (int i = 0; i < dialog.rewardIds.Length; i++) {
@@ -369,23 +372,33 @@ namespace WordJourney
 				return;
 			}
 
-			switch (currentSelectedItem.itemType) {
-			case ItemType.UnlockScroll:
-				tint = string.Format ("获得 解锁卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
-				break;
-			case ItemType.CraftingRecipes:
-				tint = string.Format ("获得 合成卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
-				break;
-			default:
-				tint = string.Format ("获得 {0} x1", currentSelectedItem.itemName);
-				break;
+			if (Player.mainPlayer.CheckBagFull ()) {
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+
+					TransformManager.FindTransform ("BagCanvas").GetComponent<BagViewController> ().AddBagItemWhenBagFull (currentSelectedItem);
+
+				}, false, true);
+					
+			} else {
+
+				switch (currentSelectedItem.itemType) {
+				case ItemType.UnlockScroll:
+					tint = string.Format ("获得 解锁卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
+					break;
+				case ItemType.CraftingRecipes:
+					tint = string.Format ("获得 合成卷轴{0}{1}{2}", CommonData.diamond, currentSelectedItem.itemName, CommonData.diamond);
+					break;
+				default:
+					tint = string.Format ("获得 {0} x1", currentSelectedItem.itemName);
+					break;
+				}
+
+				Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+					return obj.name == currentSelectedItem.spriteName;
+				});
+
+				tintHUD.SetUpTintHUD (tint, goodsSprite);
 			}
-
-			Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
-				return obj.name == currentSelectedItem.spriteName;
-			});
-
-			tintHUD.SetUpTintHUD (tint,goodsSprite);
 
 			bpUICtr.UpdateItemButtonsAndStatusPlane ();
 
@@ -445,6 +458,8 @@ namespace WordJourney
 
 			QuitTradePlane ();
 
+			QuitChatDialogs ();
+
 			dialogText.text = string.Empty;
 
 			gameObject.SetActive (false);
@@ -460,11 +475,13 @@ namespace WordJourney
 			goodsPool.AddChildInstancesToPool(goodsContainer);
 			tradePlane.gameObject.SetActive (false);
 
+			bpUICtr.UpdateItemButtonsAndStatusPlane ();
+
 		}
 
 		public void ClearNpcPlaneCache(){
 			Destroy (goodsPool.gameObject);
-			Destroy (choiceContainer.gameObject);
+			Destroy (choiceButtonPool.gameObject);
 		}
 			
 		

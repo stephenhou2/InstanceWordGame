@@ -40,6 +40,8 @@ namespace WordJourney{
 		public static string instanceContainerName = "InstanceContainer";
 		public static string poolContainerName = "PoolsContainer";
 
+		public static string exploreScenePoolContainerName = CommonData.poolContainerName + "/ExploreScenePoolContainer";
+		public static string bagCanvasPoolContainerName = CommonData.poolContainerName + "/BagCanvasPoolContainer";
 
 
 

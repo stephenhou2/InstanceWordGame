@@ -49,27 +49,27 @@ namespace WordJourney
 
 			shareButton.gameObject.SetActive (false);
 
-			Application.CaptureScreenshot ("screenShot.png");
-
 			StartCoroutine ("TrimScreenShotAndShare");
 
 		}
 
 		private IEnumerator TrimScreenShotAndShare(){
 
-			yield return null;
+			yield return new WaitForEndOfFrame();
+
+			Texture2D t2d = ScreenCapture.CaptureScreenshotAsTexture (1);
 
 			shareContainer.gameObject.SetActive (false);
 
 //			yield return new WaitForSeconds (0.5f);
 
-			byte[] data = File.ReadAllBytes (Application.persistentDataPath + "/screenShot.png");
+//			byte[] data = File.ReadAllBytes (Application.persistentDataPath + "/screenShot.png");
+//
+//			Texture2D t2d = new Texture2D (1080, 1920);
 
-			Texture2D t2d = new Texture2D (1080, 1920);
+//			bool success = t2d.LoadImage (data);
 
-			bool success = t2d.LoadImage (data);
-
-			Debug.Log (success);
+//			Debug.Log (success);
 
 			Texture2D newT2d = new Texture2D (480, 1320);
 

@@ -9,31 +9,11 @@ namespace WordJourney
 
 		private bool isPressOn;
 
-		private Sprite m_SwitchOffSprite;
-		private Sprite switchOffSprite{
-			get{
-				if (m_SwitchOffSprite == null) {
-					m_SwitchOffSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
-						return obj.name == "press_switch_off";
-					});
-				}
-				return m_SwitchOffSprite;
-			}
-		}
+		public Sprite switchOffSprite;
 
-		private Sprite m_SwitchOnSprite;
-		private Sprite switchOnSprite{
-			get{
-				if (m_SwitchOnSprite == null) {
-					m_SwitchOnSprite = GameManager.Instance.gameDataCenter.allMapSprites.Find (delegate(Sprite obj) {
-						return obj.name == "press_switch_on";
-					});
-				}
-				return m_SwitchOnSprite;
-			}
-		}
+		public Sprite switchOnSprite;
 
-//		private Transform m_controlledDoor;
+
 		public Door controlledDoor;
 
 		private Transform m_exploreManager;
@@ -57,7 +37,7 @@ namespace WordJourney
 		}
 
 
-		private float cameraMoveDuration = 1.0f;
+//		private float cameraMoveDuration = 1.0f;
 		private Vector3 playerOriginalDestination;
 
 		public override void InitMapItem ()

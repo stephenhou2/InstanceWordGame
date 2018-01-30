@@ -26,10 +26,12 @@ namespace WordJourney
 
 		private int currentBagIndex;
 
+		private Item itemToAddWhenBagFull;
+
 		void Awake(){
 
-//			Player.mainPlayer.AddItem (Item.NewItemWith (48, 1));
-//			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (48, 1));
+			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
 //
 //
 //			Player.mainPlayer.AddItem (Item.NewItemWith(8,2));
@@ -94,11 +96,30 @@ namespace WordJourney
 
 		}
 
+		public void AddBagItemWhenBagFull(Item item){
 
+			SetUpBagView (true);
+
+			bagView.SetUpTintHUD ("背包已满，请先整理背包", null);
+
+			itemToAddWhenBagFull = item;
+
+		}
 
 
 
 		public void SetUpBagView(bool setVisible){
+
+//			for (int i = 100; i < 115; i++) {
+//				ItemModel im = GameManager.Instance.gameDataCenter.allItemModels.Find (delegate(ItemModel obj) {
+//					return obj.itemId == i;
+//				});
+//
+//				Consumables c = new Consumables (im,2);
+//
+//				Player.mainPlayer.AddItem (c);
+//
+//			}
 
 //			Player.mainPlayer.AddItem (Item.NewItemWith (48, 1));
 //			Player.mainPlayer.AddItem (Item.NewItemWith (13, 1));
@@ -205,6 +226,9 @@ namespace WordJourney
 					bagView.SetUpEquipedEquipmentsPlane ();
 					bagView.SetUpPlayerStatusPlane (propertyChange);
 					bagView.RemoveBagItemAt (oriItemIndexInBag);
+
+					AddItemInWait ();
+
 					bagView.QuitItemDetailHUD ();
 					bagView.SetUpEquipedEquipmentsPlane ();
 					return;
@@ -215,10 +239,50 @@ namespace WordJourney
 
 		}
 
+
+		public void AddItemInWait(){
+
+			if (itemToAddWhenBagFull == null) {
+				return;
+			}
+			
+			Player.mainPlayer.AddItem (itemToAddWhenBagFull);
+
+			bagView.AddBagItem (itemToAddWhenBagFull);
+
+			itemToAddWhenBagFull = null;
+
+//			string tint = "";
+//
+//			switch (itemToAddWhenBagFull.itemType) {
+//			case ItemType.UnlockScroll:
+//				tint = string.Format ("获得 解锁卷轴{0}{1}{2}", CommonData.diamond, itemToAddWhenBagFull.itemName, CommonData.diamond);
+//				break;
+//			case ItemType.CraftingRecipes:
+//				tint = string.Format ("获得 合成卷轴{0}{1}{2}", CommonData.diamond, itemToAddWhenBagFull.itemName, CommonData.diamond);
+//				break;
+//			default:
+//				tint = string.Format ("获得 {0} x1", itemToAddWhenBagFull.itemName);
+//				break;
+//			}
+//
+//			Sprite goodsSprite = GameManager.Instance.gameDataCenter.allItemSprites.Find (delegate(Sprite obj) {
+//				return obj.name == itemToAddWhenBagFull.spriteName;
+//			});
+//
+//			bagView.SetUpTintHUD (tint,goodsSprite);
+
+		}
+
 		/// <summary>
 		/// 在物品详细信息页点击了卸下按钮（装备）
 		/// </summary>
 		public void OnUnloadButtonClick(){
+
+			if (Player.mainPlayer.CheckBagFull ()) {
+				bagView.SetUpTintHUD ("背包已满",null);
+				return;
+			}
 
 			for (int i = 0; i < Player.mainPlayer.allEquipedEquipments.Length; i++) {
 				if (currentSelectItem == Player.mainPlayer.allEquipedEquipments [i]) {
@@ -296,6 +360,10 @@ namespace WordJourney
 				exploreManager.GetComponent<ExploreManager>().ShowConsumablesValidPointTintAround (consumables);
 			}
 
+			if (!Player.mainPlayer.CheckBagFull ()) {
+				AddItemInWait ();
+			}
+				
 			bagView.SetUpCurrentBagItemsPlane ();
 
 		}
@@ -325,6 +393,9 @@ namespace WordJourney
 			ResolveCurrentSelectItemAndGetCharacters ();
 			bagView.QuitQueryResolveHUD ();
 			bagView.QuitItemDetailHUD ();
+			if (!Player.mainPlayer.CheckBagFull ()) {
+				AddItemInWait ();
+			}
 		}
 
 		/// <summary>
@@ -421,6 +492,10 @@ namespace WordJourney
 			bagView.SetUpTintHUD (tint,itemSprite);
 //			bagView.RemoveBagItemAt (oriIndexOfCraftingRecipe);
 
+			if (Player.mainPlayer.CheckBagFull ()) {
+				AddItemInWait ();
+			}
+
 			bagView.SetUpCurrentBagItemsPlane ();
 			bagView.SetUpEquipedEquipmentsPlane ();
 
@@ -461,6 +536,8 @@ namespace WordJourney
 
 		// 退出背包界面
 		public void OnQuitBagPlaneButtonClick(){
+
+			itemToAddWhenBagFull = null;
 
 			bagView.QuitBagPlane ();
 

@@ -31,6 +31,7 @@ TextureImporter:
     21300048: ui_textFrame1
     21300050: ui_textFrame2
     21300052: ui_topBar
+  externalObjects: {}
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -39,6 +40,8 @@ TextureImporter:
     linearTexture: 0
     fadeOut: 0
     borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
     mipMapFadeDistanceEnd: 3
   bumpmap:
@@ -54,10 +57,13 @@ TextureImporter:
   textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
+    serializedVersion: 2
     filterMode: -1
     aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -79,36 +85,44 @@ TextureImporter:
   platformSettings:
   - buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   - buildTarget: Standalone
     maxTextureSize: 2048
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   - buildTarget: iPhone
     maxTextureSize: 2048
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   - buildTarget: Android
     maxTextureSize: 2048
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -124,6 +138,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 50, y: 50, z: 50, w: 50}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_bagIcon
@@ -137,6 +152,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_barFrame
@@ -150,6 +166,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 198, y: 29, z: 198, w: 28}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_boxGuide
@@ -163,6 +180,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 66, y: 68, z: 61, w: 57}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_chapterFrame
@@ -176,6 +194,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_createIcon
@@ -189,6 +208,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_currentWordIcon
@@ -202,6 +222,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_cyrstalIcon
@@ -215,6 +236,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_describeBorder
@@ -228,6 +250,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 110, y: 49, z: 125, w: 64}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_equipNameFrame
@@ -241,6 +264,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_euipFullFrame
@@ -254,6 +278,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_healthIcon
@@ -267,6 +292,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_informationFrame
@@ -280,6 +306,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 120, y: 57, z: 118, w: 56}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_lineAlong
@@ -293,6 +320,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 68, z: 0, w: 70}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_lineCorner
@@ -306,6 +334,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 28, y: 0, z: 28, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_linePoint
@@ -319,6 +348,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_nameFrame
@@ -332,6 +362,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 117, y: 26, z: 116, w: 26}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_regularButton1
@@ -345,6 +376,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 120, y: 55, z: 120, w: 55}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_regularContainer
@@ -358,6 +390,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 60, y: 60, z: 60, w: 60}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_regularDangerButton1
@@ -371,6 +404,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 115, y: 50, z: 115, w: 50}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_returnButton
@@ -384,6 +418,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_separator
@@ -397,6 +432,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_settingIcon
@@ -410,6 +446,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_spellButton1
@@ -423,6 +460,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_textFrame1
@@ -436,6 +474,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 116, y: 22, z: 116, w: 22}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_textFrame2
@@ -449,6 +488,7 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 20, y: 25, z: 20, w: 20}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
       name: ui_topBar
@@ -462,8 +502,10 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
+      physicsShape: []
       tessellationDetail: -1
     outline: []
+    physicsShape: []
   spritePackingTag: 
   userData: 
   assetBundleName: ui/common

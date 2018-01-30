@@ -6,11 +6,17 @@ using System.Collections;
 
 namespace WordJourney
 {
+
 	public class GameLoader : MonoBehaviour {
 
 		public bool alwaysPersistData;
 
 		void Awake(){
+			#if UNITY_EDITOR
+			Debug.unityLogger.logEnabled = true;
+			#else
+			Debug.unityLogger.logEnabled = false;
+			#endif
 			PersistData();
 		}
 

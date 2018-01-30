@@ -44,6 +44,8 @@ namespace WordJourney
 
 		private List<FightText> fightTextList = new List<FightText> ();
 
+//		private List<Transform> allDisplayingFightText = new List<Transform> ();
+
 		private float lastFightTextPlayTime;
 
 		public void InitFightTextManager(InstancePool fightTextPool,Transform fightTextModel,Transform fightTextContainer){
@@ -171,7 +173,6 @@ namespace WordJourney
 					hurtText.text = "";
 					hurtText.gameObject.SetActive(false);
 					fightTextPool.AddInstanceToPool(hurtText.gameObject);
-//					fightTextList.Remove(hurtText);
 				});
 
 			});
@@ -210,7 +211,6 @@ namespace WordJourney
 				gainText.text = "";
 				gainText.gameObject.SetActive(false);
 				fightTextPool.AddInstanceToPool(gainText.gameObject);
-//				fightTextList.Remove(gainText);
 			});
 
 		}
@@ -240,11 +240,18 @@ namespace WordJourney
 
 				fightTextPool.AddInstanceToPool(tintText.gameObject);
 
-//				fightTextList.Remove(tintText);
-
 			});
 		}
 
+		public void AllFightTextClearAndIntoPool(){
+
+			for (int i = 0; i < fightTextContainer.childCount; i++) {
+				Text fightText = fightTextContainer.GetChild (i).GetComponent<Text> ();
+				fightText.text = "";
+				fightTextPool.AddInstanceToPool (fightText.gameObject);
+			}
+
+		}
 
 		/// <summary>
 		/// 世界坐标转2D画布中的坐标
@@ -260,8 +267,6 @@ namespace WordJourney
 			return posInCanvas;
 
 		}
-
-
 
 
 

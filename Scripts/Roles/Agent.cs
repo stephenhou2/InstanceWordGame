@@ -368,6 +368,8 @@ namespace WordJourney
 			magicalHurtScaler = cal.magicalHurtScaler;
 			critHurtScaler = cal.critHurtScaler;
 
+//			Debug.Log (dodge.ToString()+"--------");
+
 //			allStatus.Clear ();
 //
 //			for (int i = 0; i < cal.triggeredSkills.Count; i++) {
@@ -535,6 +537,8 @@ namespace WordJourney
 			dodgeWithEquipment = (int)(dodgeWithEquipment * (1 + dodgeGainScalerFromEq));
 			critWithEquipment = (int)(critWithEquipment * (1 + critGainScalerFromEq));
 
+//			Debug.Log (dodgeChangeFromOther.ToString() + "``````````");
+
 			// 根据其他状态加成重新计算人物最终属性
 			maxHealth = (int)((maxHealthWithEquipment + maxHealthChangeFromOther) * (1 + maxHealthChangeScalerFromOther));
 			health = (int)((healthWithEquipment + healthChangeFromOther) * (1 + healthChangeScalerFromOther));
@@ -590,6 +594,9 @@ namespace WordJourney
 		/// </summary>
 		public void AddPropertyChangeFromOther(PropertyType propertyType, float change)
 		{
+			Debug.LogFormat ("{0}角色属性变化：{1}==={2}", agentName, propertyType, change);
+
+
 			switch(propertyType){
 			case PropertyType.MaxHealth:
 				if (change < -1 || change > 1) {
@@ -650,6 +657,7 @@ namespace WordJourney
 			case PropertyType.Dodge:
 				if (change < -1 || change > 1) {
 					dodgeChangeFromOther += (int)change;
+
 				} else {
 					dodgeChangeScalerFromOther += change;
 				}
@@ -696,6 +704,7 @@ namespace WordJourney
 				break;
 			}
 
+			Debug.Log (dodgeChangeFromOther.ToString()+"aaaaaa");
 
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Text;
 
 namespace WordJourney
 {
@@ -105,7 +106,7 @@ namespace WordJourney
 		private List<DialogGroup> chatDialogGroups = new List<DialogGroup>();
 		private List<DialogGroup> taskDialogGroups =new List<DialogGroup>();
 
-
+		private List<string[]> goodsIdsInString = new List<string[]>();
 
 		public void OnGUI(){
 
@@ -124,7 +125,7 @@ namespace WordJourney
 			rect = EditorGUILayout.GetControlRect(GUILayout.Width(300));
 			npcDataPath = EditorGUI.TextField(rect, npcDataPath);
 			//如果鼠标正在拖拽中或拖拽结束时，并且鼠标所在位置在文本输入框内
-			if ((UnityEngine.Event.current.type == UnityEngine.EventType.dragUpdated
+			if ((UnityEngine.Event.current.type == UnityEngine.EventType.DragUpdated
 				|| UnityEngine.Event.current.type == UnityEngine.EventType.DragExited)
 				&& rect.Contains (UnityEngine.Event.current.mousePosition)) {
 				//改变鼠标的外表
@@ -162,18 +163,19 @@ namespace WordJourney
 
 				npc = DataHandler.LoadDataToSingleModelWithPath<MyNpc> (npcDataPath);
 
+
+
 				switch (npcTypeStr) {
 				case "Normal":
 					npcType = NPCType.Normal;
 						break;
 				case "Trader":
 					npcType = NPCType.Trader;
+					goodsIdsInString = TransferGoodsIdsToString (npc);
 					break;
 				}
 
 				Debug.Log (npcDataPath);
-
-
 
 				for (int i = 0; i < npc.chatDialogGroups.Count; i++) {
 					dialogGroups.Add (npc.chatDialogGroups [i]);
@@ -481,12 +483,12 @@ namespace WordJourney
 
 					EditorGUILayout.BeginHorizontal ();
 
-					bool addNewGoods = GUILayout.Button ("新增商品", new GUILayoutOption[] {
+					bool addNewGoods = GUILayout.Button ("新增商品组", new GUILayoutOption[] {
 						GUILayout.Height (20),
 						GUILayout.Width (100)
 					});
 
-					bool removeLastGoods = GUILayout.Button ("删除尾部商品", new GUILayoutOption[] {
+					bool removeLastGoods = GUILayout.Button ("删除尾部商品组", new GUILayoutOption[] {
 						GUILayout.Height (20),
 						GUILayout.Width (100)
 					});
@@ -506,21 +508,19 @@ namespace WordJourney
 
 						Goods goods = goodsGroup.goodsList [j];
 
-						EditorGUILayout.BeginVertical ();
-
 						EditorGUILayout.BeginHorizontal ();
 
 						EditorGUILayout.LabelField ("物品id组：", new GUILayoutOption[] {
 							GUILayout.Height(20),
 							GUILayout.Width(50)
 						});
+							
+						string possibleGoodsIdsInString = goodsIdsInString[i][j];
+						possibleGoodsIdsInString = EditorGUILayout.TextField (possibleGoodsIdsInString, normalInputLayouts);
 
-						#warning 商品id数组，后续修正一下
-//						goods.goodsId = EditorGUILayout.IntField (goods.goodsId, normalInputLayouts);
+						goods.possibleItemIdsAsGoods = IdsStringToIntArray (possibleGoodsIdsInString);
 
 						EditorGUILayout.EndHorizontal ();
-
-						EditorGUILayout.EndVertical ();
 					}
 
 					EditorGUILayout.EndHorizontal ();
@@ -548,6 +548,56 @@ namespace WordJourney
 
 			characterTradeFunction = EditorGUILayout.Toggle ("交易", characterTradeFunction, toggleLayouts);
 
+		}
+
+
+		private int[] IdsStringToIntArray(string idsString){
+
+			string[] idsArray = idsString.Split (new char[]{ '_' });
+			int[] idsIntArray = new int[idsArray.Length];
+
+			for (int i = 0; i < idsIntArray.Length; i++) {
+				idsIntArray [i] = Convert.ToInt16 (idsArray [i]);
+			}
+
+			return idsIntArray;
+
+		}
+
+		private List<string[]> TransferGoodsIdsToString(MyNpc trader){
+
+			List<string[]> goodsListTotal = new List<string[]> ();
+
+			for (int i = 0; i < trader.goodsGroupList.Count; i++) {
+
+				GoodsGroup gg = trader.goodsGroupList [i];
+
+				string[] idsInString = new string[5];
+
+				for (int j = 0; j < 5; j++) {
+
+					Goods g = gg.goodsList [j];
+
+					StringBuilder sb = new StringBuilder ();
+
+					for (int k = 0; k < g.possibleItemIdsAsGoods.Length; k++) {
+
+						sb.AppendFormat ("{0}_", g.possibleItemIdsAsGoods [k].ToString ());
+
+					}
+
+					sb.Remove (sb.Length - 1, 1);
+
+					idsInString [j] = sb.ToString ();
+
+
+				}
+
+				goodsListTotal.Add (idsInString);
+
+			}
+
+			return goodsListTotal;
 		}
 
 		private void CreateDialogGroupGUI(DialogGroup dg,List<bool> foldoutList,List<int> rewardTypeCountList){
@@ -716,9 +766,9 @@ namespace WordJourney
 
 			List<Choice> choices = dialog.choices;
 
-			EditorGUILayout.BeginHorizontal ();
+//			EditorGUILayout.BeginVertical ();
 
-			EditorGUILayout.BeginVertical ();
+			EditorGUILayout.BeginHorizontal ();
 
 			EditorGUILayout.LabelField ("选择1:", labelLayouts);
 
@@ -738,9 +788,9 @@ namespace WordJourney
 				choice1.triggerType = (ChoiceTriggerType)EditorGUILayout.EnumPopup (choice1.triggerType, toggleLayouts);
 			}
 
-			EditorGUILayout.EndVertical ();
-
-			EditorGUILayout.BeginVertical ();
+			EditorGUILayout.EndHorizontal ();
+				
+			EditorGUILayout.BeginHorizontal ();
 
 			EditorGUILayout.LabelField ("选择2：", labelLayouts);
 
@@ -759,7 +809,7 @@ namespace WordJourney
 				choice2.triggerType = (ChoiceTriggerType)EditorGUILayout.EnumPopup (choice2.triggerType, toggleLayouts);
 			} 
 
-			EditorGUILayout.EndVertical ();
+//			EditorGUILayout.EndVertical ();
 
 			EditorGUILayout.EndHorizontal ();
 

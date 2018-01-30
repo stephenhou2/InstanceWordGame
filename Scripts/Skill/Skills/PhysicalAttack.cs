@@ -109,11 +109,13 @@ namespace WordJourney
 			self.UpdateFightStatus ();
 			enemy.UpdateFightStatus ();
 
+			self.UpdateStatusPlane ();
+			enemy.UpdateStatusPlane ();
+
 			self.propertyCalculator.ResetAllHurt ();
 			enemy.propertyCalculator.ResetAllHurt ();
 
-			self.UpdateStatusPlane ();
-			enemy.UpdateStatusPlane ();
+
 
 		}
 

@@ -95,7 +95,7 @@ namespace WordJourney
 			if (propertyType == PropertyType.Health) {
 				return;
 			}
-			self.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange,false);
+			self.propertyCalculator.InstantPropertyChange (self,propertyType, -propertyChange,false);
 
 		}
 	}

@@ -83,9 +83,9 @@ namespace WordJourney
 //				yield return null;
 //			}
 
-			#warning 这里测试拼写，人物字母碎片全都初始化为10个，后面去掉
+//			#warning 这里测试拼写，人物字母碎片全都初始化为10个，后面去掉
 //			for (int i = 0; i < 26; i++) {
-//				Player.mainPlayer.charactersCount [i] = 10;
+//				Player.mainPlayer.charactersCount [i] = 26;
 //			}
 				
 			spellView.SetUpSpellViewWith (itemModel);
@@ -431,6 +431,12 @@ namespace WordJourney
 
 		public void AddItemToBag(){
 
+			if (Player.mainPlayer.CheckBagFull ()) {
+				GameManager.Instance.UIManager.SetUpCanvasWith (CommonData.bagCanvasBundleName, "BagCanvas", () => {
+					TransformManager.FindTransform("BagCanvas").GetComponent<BagViewController>().AddBagItemWhenBagFull(itemCreated);
+				}, false, true);
+				return;
+			}
 			// 更新玩家物品数据
 			Player.mainPlayer.AddItem (itemCreated);
 

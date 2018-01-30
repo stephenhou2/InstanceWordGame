@@ -18,7 +18,6 @@ namespace WordJourney
 			MapSprites,
 			Skills,
 			SkillSprites,
-			UISprites,
 			Monsters,
 			NPCs,
 		}
@@ -285,9 +284,9 @@ namespace WordJourney
 
 		public void ReleaseDataWithDataTypes(GameDataType[] dataTypes){
 
-//			for (int i = 0; i < dataTypes.Length; i++) {
-//				ReleaseDataWithName (dataTypes [i]);
-//			}
+			for (int i = 0; i < dataTypes.Length; i++) {
+				ReleaseDataWithName (dataTypes [i]);
+			}
 
 			Resources.UnloadUnusedAssets ();
 
@@ -295,87 +294,49 @@ namespace WordJourney
 
 		}
 
-//		private void ReleaseDataWithName(GameDataType type){
-//
-//			switch (type) {
-//			case GameDataType.GameSettings:
-//				mGameSettings = null;
-//				dataReadyDic [GameDataType.GameSettings] = false;
+		private void ReleaseDataWithName(GameDataType type){
+
+			switch (type) {
+			case GameDataType.GameSettings:
+				mGameSettings = null;
+				break;
+//			case GameDataType.LearnInfo:
+//				mLearnInfo = null;
+//				dataReadyDic [GameDataType.LearnInfo] = false;
 //				break;
-////			case GameDataType.LearnInfo:
-////				mLearnInfo = null;
-////				dataReadyDic [GameDataType.LearnInfo] = false;
-////				break;
-//			case GameDataType.GameLevelDatas:
-//				mGameLevelDatas.Clear ();
-//				dataReadyDic [GameDataType.GameLevelDatas] = false;
-//				break;
-//			case GameDataType.ItemModels:
-//				mAllItemModels.Clear ();
-//				dataReadyDic [GameDataType.ItemModels] = false;
-//				break;
-//			case GameDataType.ItemSprites:
-//				mAllItemSprites.Clear ();
-//				dataReadyDic [GameDataType.ItemSprites] = false;
-//				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allItemSpritesBundleName);
-//				break;
-////			case GameDataType.EquipmentAttachedProperties:
-////				mAllEquipmentAttachedProperties.Clear ();
-////				dataReadyDic [GameDataType.EquipmentAttachedProperties] = false;
-////				break;
-//			case GameDataType.MapSprites:
-//				mAllMapSprites.Clear ();
-//				dataReadyDic [GameDataType.MapSprites] = false;
-//				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allMapSpritesBundleName);
-//				break;
-//			case GameDataType.Skills:
-//				mAllSkills.Clear ();
-//				dataReadyDic [GameDataType.Skills] = false;
-//				TransformManager.DestroyTransfromWithName("AllSkills",TransformRoot.InstanceContainer);
-//				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allSkillsBundleName);
-//				break;
-//			case GameDataType.SkillSprites:
-//				mAllSkillSprites.Clear ();
-//				dataReadyDic [GameDataType.SkillSprites] = false;
-//				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allSkillSpritesBundleName);
-//				break;
-//			case GameDataType.Monsters:
-//				mAllMonsters.Clear ();
-//				dataReadyDic [GameDataType.Monsters] = false;
-//				TransformManager.DestroyTransfromWithName("AllMonsters",TransformRoot.InstanceContainer);
-//				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allMonstersBundleName);
-//				break;
-//			case GameDataType.NPCs:
-//				mAllNpcs.Clear ();
-//				dataReadyDic [GameDataType.NPCs] = false;
-//				break;
-////			case GameDataType.AnimatorControllers:
-////				allAnimatorControllers.Clear ();
-////				dataReadyDic [GameDataType.AnimatorControllers] = false;
-////				ResourceManager.Instance.UnloadAssetBunlde ("animator/runtimecontrollers");
-////				break;
-////			case GameDataType.UIAudio:
-////				mAllUIAudioClips.Clear ();
-////				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allUIAudioClipsBundleName);
-////				break;
-////			case GameDataType.FootStepAudio:
-////				mAllFootStepAudioClips.Clear ();
-////				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allFootStepAudioClipBundleName);
-////				break;
-////			case GameDataType.MapEffectsAudio:
-////				mAllMapEffectAudioClips.Clear ();
-////				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allMapEffectAudoClipBundleName);
-////				break;
-////			case GameDataType.SkillEffectsAudio:
-////				mAllSkillEffectAudioClips.Clear ();
-////				ResourceManager.Instance.UnloadAssetBunlde (CommonData.allSkillEffectAudioClipBundleName);
-////				break;
-//			default:
-//				Debug.LogErrorFormat ("{0} is not data managed by data center", type);
-//				break;
-//			}
-//
-//		}
+			case GameDataType.GameLevelDatas:
+				mGameLevelDatas.Clear ();
+				break;
+			case GameDataType.ItemModels:
+				mAllItemModels.Clear ();
+				break;
+			case GameDataType.ItemSprites:
+				mAllItemSprites.Clear ();
+				MyResourceManager.Instance.UnloadAssetBundle (CommonData.allItemSpritesBundleName,true);
+				break;
+			case GameDataType.MapSprites:
+				mAllMapSprites.Clear ();
+				MyResourceManager.Instance.UnloadAssetBundle (CommonData.allMapSpritesBundleName,true);
+				break;
+			case GameDataType.Skills:
+				mAllSkills.Clear ();
+				TransformManager.DestroyTransfromWithName ("AllSkills", TransformRoot.InstanceContainer);
+				MyResourceManager.Instance.UnloadAssetBundle (CommonData.allSkillsBundleName,true);
+				break;
+			case GameDataType.SkillSprites:
+				mAllSkillSprites.Clear ();
+				MyResourceManager.Instance.UnloadAssetBundle (CommonData.allSkillSpritesBundleName,true);
+				break;
+			case GameDataType.Monsters:
+//				TransformManager.DestroyTransfromWithName ("MonstersContainer", TransformRoot.InstanceContainer);
+				MyResourceManager.Instance.UnloadAssetBundle (CommonData.allMonstersBundleName,true);
+				break;
+			case GameDataType.NPCs:
+				mAllNpcs.Clear ();
+				break;
+			}
+		}
+
 
 
 	}

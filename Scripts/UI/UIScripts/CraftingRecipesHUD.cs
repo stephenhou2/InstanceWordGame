@@ -33,14 +33,18 @@ namespace WordJourney
 
 		private int widthX = 520;
 
+		void Awake(){
+
+			recipesItemPool = InstancePool.GetOrCreateInstancePool ("RecipesItemPool", CommonData.bagCanvasPoolContainerName);
+
+		}
+
+
 		public void InitCraftingRecipesHUD(bool quitWhenClickBackground,CallBack quitCallBack,CallBack craftCallBack){
 
 			this.quitWhenClickBackground = quitWhenClickBackground;
 			this.quitCallBack = quitCallBack;
 			this.craftCallBack = craftCallBack;
-
-			recipesItemPool = InstancePool.GetOrCreateInstancePool ("RecipesItemPool", CommonData.poolContainerName);
-
 		}
 
 		public void SetUpCraftingRecipesHUD(Item item){

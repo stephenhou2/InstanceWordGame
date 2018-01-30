@@ -121,7 +121,7 @@ namespace WordJourney
 
 			if (www.isDone) {
 
-				AudioClip pronunciationClip = WWWAudioExtensions.GetAudioClip (www);
+				AudioClip pronunciationClip = www.GetAudioClip (false);
 
 				Pronunciation pro = new Pronunciation (wordToPronounce, pronunciationClip);
 

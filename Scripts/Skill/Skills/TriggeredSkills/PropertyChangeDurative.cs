@@ -94,7 +94,7 @@ namespace WordJourney
 
 			if (propertyType != PropertyType.Health) {
 				// 如果状态变化是攻击，命中，最大生命，攻速，护甲，抗性，闪避，暴击，魔法，在状态结束后将属性重置为初始值
-				affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+				affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent,propertyType, -propertyChange);
 			}
 
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
@@ -163,7 +163,7 @@ namespace WordJourney
 			}
 
 			if (propertyType != PropertyType.Health) {
-				affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+				affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent,propertyType, -propertyChange);
 			}
 
 			if (affectedAgent != null && removeSkill) {

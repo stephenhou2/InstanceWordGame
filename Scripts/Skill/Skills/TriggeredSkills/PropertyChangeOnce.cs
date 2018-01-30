@@ -109,7 +109,7 @@ namespace WordJourney
 		/// 执行技能，如果技能有时效性，则在时效结束时重置人物相应属性
 		/// </summary>
 		private void Excute(){
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, skillSourceValue);
+			affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent,propertyType, skillSourceValue);
 			propertyChange += skillSourceValue;
 			if (duration > 0) {
 				ResetPropertyCoroutine = ResetPropertyWhenTimeOut (affectedAgent, propertyType, duration);
@@ -171,7 +171,9 @@ namespace WordJourney
 				return;
 			}
 				
-			affectedAgent.propertyCalculator.AgentPropertyChange (propertyType, -propertyChange);
+			Debug.LogFormat ("{0}重置属性{1}===={2}",affectedAgent.agent.agentName, propertyType, -propertyChange);
+
+			affectedAgent.propertyCalculator.InstantPropertyChange (affectedAgent,propertyType, -propertyChange);
 			affectedAgent.propertyCalculator.RemoveAttachedSkill<TriggeredSkill> (this);
 
 			affectedAgent = null;

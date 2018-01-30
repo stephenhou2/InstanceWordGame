@@ -39,6 +39,8 @@ namespace WordJourney
 
 		public override void QuitFight ()
 		{
+
+			statusTintPool.AddChildInstancesToPool (statusTintContainer);
 			monsterStatusPlane.gameObject.SetActive (false);
 		}
 //		public void PlayMonsterDieAnim(BattleAgentController baCtr,CallBack<Transform> cb,Transform[] transArray){

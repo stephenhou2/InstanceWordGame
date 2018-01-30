@@ -67,6 +67,9 @@ namespace WordJourney
 
 		public int currentLevelIndex;
 
+		private int maxBagCount = 2;
+		private int singleBagVolume = 24;
+
 		public void SetUpPlayerWithPlayerData(PlayerData playerData){
 
 			if (playerData == null) {
@@ -402,6 +405,11 @@ namespace WordJourney
 			} else {
 				charactersCount [characterIndex] -= count;
 			}
+		}
+
+
+		public bool CheckBagFull(){
+			return allItemsInBag.Count >= maxBagCount * singleBagVolume;
 		}
 
 		/// <summary>
@@ -862,6 +870,9 @@ namespace WordJourney
 
 		private void ClearAllEquipmentAttachedSkills(){
 			for (int i = 0; i < allEquipedEquipments.Length; i++) {
+				if (allEquipedEquipments [i].attachedSkills == null) {
+					continue;
+				}
 				allEquipedEquipments [i].attachedSkills.Clear ();
 			}
 		}
